@@ -6,3 +6,4 @@ server/Cargo.lock
 
 server/**/*.rs.bk
 
+**/*.DS_Store
