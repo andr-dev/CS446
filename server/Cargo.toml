@@ -4,3 +4,11 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
+
+chrono = { version = "=0.4.22", features = ["serde"] }
+rocket = { version = "=0.5.0-rc.2", features = [ "json" ] }
+serde = { version = "=1.0.152" }
+serde_derive = { version = "=1.0.152" }
+serde_json = { version = "=1.0.92" }
+sqlx = { version = "=0.5.13", features = [ "runtime-tokio-rustls", "sqlite", "chrono"] }
+tokio = { version = "=1.25.0" }

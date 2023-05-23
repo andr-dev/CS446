@@ -1,8 +1,8 @@
 # Cargo
-server/debug/
-server/target/
-
 server/Cargo.lock
+server/db/*.db-shm
+server/db/*.db-wal
+server/target/
 
 server/**/*.rs.bk
 
