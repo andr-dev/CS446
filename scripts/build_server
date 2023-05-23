@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+
+set -e
+
+sudo docker build -t cs446:server -f deploy/Dockerfile .
+
