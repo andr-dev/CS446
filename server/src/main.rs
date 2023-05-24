@@ -7,7 +7,10 @@ use state::AppState;
 mod api;
 mod cors;
 mod error;
+mod model;
 mod state;
+mod types;
+mod proto;
 
 fn rocket() -> Rocket<Build> {
     rocket::build().mount("/api", api::routes())
