@@ -1,7 +1,9 @@
 use sqlx::{sqlite::SqlitePoolOptions, Pool, Sqlite};
 
+pub type ServicePool = Pool<Sqlite>;
+
 pub struct AppState {
-    pub pool: Pool<Sqlite>,
+    pub pool: ServicePool,
 }
 
 impl AppState {
