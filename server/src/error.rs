@@ -1,16 +1,21 @@
-use rocket::serde::Serialize;
-use sqlx::FromRow;
+use rocket::{http::Status, response::Responder, serde::json::Json, Request};
+use thiserror::Error;
 
-#[derive(FromRow, Debug)]
-pub struct ServiceError {
-    pub error: Box<dyn std::error::Error>,
+#[derive(Error, Debug)]
+pub enum ServiceError {
+    #[error("SerdeJson Error {source:?}")]
+    SerdeJson {
+        #[from]
+        source: serde_json::Error,
+    },
+    #[error("Internal Error")]
+    InternalError,
 }
 
-impl Serialize for ServiceError {
-    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
-    where
-        S: rocket::serde::Serializer,
-    {
-        serializer.serialize_str(&self.error.to_string())
+pub type ServiceResult<T> = std::result::Result<Json<T>, ServiceError>;
+
+impl<'r, 'o: 'r> Responder<'r, 'o> for ServiceError {
+    fn respond_to(self, req: &'r Request<'_>) -> rocket::response::Result<'o> {
+        Status::InternalServerError.respond_to(req)
     }
 }
