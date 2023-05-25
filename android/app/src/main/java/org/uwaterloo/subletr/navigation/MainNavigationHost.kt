@@ -5,7 +5,7 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import org.uwaterloo.subletr.components.helloworld.HelloWorldPageView
+import org.uwaterloo.subletr.components.homepage.HomePageView
 
 @Composable
 fun MainNavigationHost(
@@ -17,7 +17,7 @@ fun MainNavigationHost(
 		startDestination = "home",
 	) {
 		composable("home") {
-			HelloWorldPageView(
+			HomePageView(
 				modifier = modifier
 			)
 		}
