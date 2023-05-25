@@ -48,6 +48,7 @@ dependencies {
     implementation 'androidx.appcompat:appcompat:1.6.1'
     implementation 'androidx.compose.material3:material3-android:1.1.0-beta02'
     implementation 'androidx.compose.runtime:runtime-livedata:1.4.3'
+    implementation 'androidx.compose.runtime:runtime-rxjava3:1.4.3'
     implementation 'androidx.compose.ui:ui:1.5.0-alpha04'
     implementation 'androidx.compose.ui:ui-graphics:1.4.3'
     implementation 'androidx.compose.ui:ui-tooling-preview:1.4.3'
@@ -60,7 +61,7 @@ dependencies {
     implementation "com.squareup.okhttp3:okhttp:4.10.0"
     implementation 'com.google.android.material:material:1.9.0'
     implementation 'com.google.dagger:hilt-android:2.46.1'
-    implementation 'androidx.core:core-ktx:1.10.1'
+    implementation 'io.reactivex.rxjava3:rxjava:3.1.6'
     annotationProcessor 'com.google.dagger:hilt-compiler:2.46.1'
     debugImplementation "androidx.compose.ui:ui-tooling:1.4.3"
     debugImplementation "androidx.compose.ui:ui-tooling-preview:1.4.3"
