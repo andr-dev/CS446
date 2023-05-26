@@ -5,4 +5,5 @@
 | 2023-05-15 | 3 hours | Proposal Document Writing |
 | 2023-05-17 | 5 hours | Set up basic Android app |
 | 2023-05-23 | 3 hours | Drawing Figma low-Fi mock ups and researching tools |
-|      |      |       |
+| 2023-05-26 | 5 hours | Set up theme and home page view |
+|  |  |  |
