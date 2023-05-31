@@ -9,18 +9,25 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
+import org.uwaterloo.subletr.components.bottombar.BottomBarView
 import org.uwaterloo.subletr.navigation.MainNavigation
 
 @Composable
 fun MainScaffoldView(
 	modifier: Modifier = Modifier,
-	@Suppress("UnusedPrivateMember")
-	viewModel: MainScaffoldViewModel = hiltViewModel()
+	viewModel: MainScaffoldViewModel = hiltViewModel(),
+	mainAppState: MainAppState = rememberMainAppState(),
 ) {
 	val snackbarHostState: SnackbarHostState = remember { SnackbarHostState() }
 
 	Scaffold(
 		modifier = modifier,
+		bottomBar = {
+			BottomBarView(
+				modifier = Modifier,
+				navHostController = mainAppState.navHostController,
+			)
+		},
 		snackbarHost = {
 			SnackbarHost(
 				hostState = snackbarHostState,
@@ -30,7 +37,8 @@ fun MainScaffoldView(
 		MainNavigation(
 			modifier = Modifier.padding(
 				paddingValues = paddingValues
-			)
+			),
+			navHostController = mainAppState.navHostController,
 		)
 	}
 }

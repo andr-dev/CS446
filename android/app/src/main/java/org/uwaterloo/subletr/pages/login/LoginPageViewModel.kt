@@ -1,4 +1,4 @@
-package org.uwaterloo.subletr.components.homepage
+package org.uwaterloo.subletr.pages.login
 
 import androidx.lifecycle.ViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -7,9 +7,9 @@ import org.uwaterloo.subletr.R
 import javax.inject.Inject
 
 @HiltViewModel
-class HomePageViewModel @Inject constructor() : ViewModel() {
-	val uiStateStream: BehaviorSubject<HomePageUiState> = BehaviorSubject.createDefault(
-		HomePageUiState.Loaded(
+class LoginPageViewModel @Inject constructor() : ViewModel() {
+	val uiStateStream: BehaviorSubject<LoginPageUiState> = BehaviorSubject.createDefault(
+		LoginPageUiState.Loaded(
 			titleBlackStringId = R.string.app_name_black_part,
 			titlePinkStringId = R.string.app_name_pink_part,
 			emailStringId = R.string.email,
