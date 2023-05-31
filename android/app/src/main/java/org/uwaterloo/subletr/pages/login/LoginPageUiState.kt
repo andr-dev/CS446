@@ -1,7 +1,7 @@
-package org.uwaterloo.subletr.components.homepage
+package org.uwaterloo.subletr.pages.login
 
-sealed interface HomePageUiState {
-	object Loading : HomePageUiState
+sealed interface LoginPageUiState {
+	object Loading : LoginPageUiState
 
 	data class Loaded(
 		val titleBlackStringId: Int,
@@ -11,5 +11,5 @@ sealed interface HomePageUiState {
 		val loginStringId: Int,
 		val orStringId: Int,
 		val createAccountStringId: Int,
-	) : HomePageUiState
+	) : LoginPageUiState
 }

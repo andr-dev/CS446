@@ -1,4 +1,4 @@
-package org.uwaterloo.subletr.components.homepage
+package org.uwaterloo.subletr.pages.login
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -32,14 +32,14 @@ import org.uwaterloo.subletr.theme.secondarySubletrPink
 import org.uwaterloo.subletr.theme.subletrPink
 
 @Composable
-fun HomePageView(
+fun LoginPageView(
 	modifier: Modifier = Modifier,
-	viewModel: HomePageViewModel = hiltViewModel()
+	viewModel: LoginPageViewModel = hiltViewModel()
 ) {
 	val uiState by viewModel.uiStateStream.subscribeAsState(
-		HomePageUiState.Loading
+		LoginPageUiState.Loading
 	)
-	if (uiState is HomePageUiState.Loading) {
+	if (uiState is LoginPageUiState.Loading) {
 		Column(
 			modifier = modifier
 				.fillMaxSize(1.0f)
@@ -47,13 +47,12 @@ fun HomePageView(
 			horizontalAlignment = Alignment.CenterHorizontally,
 			verticalArrangement = Arrangement.Center,
 		) {
-
+			Text(
+				text = stringResource(id = R.string.loading)
+			)
 		}
-		Text(
-			text = stringResource(id = R.string.loading)
-		)
 	} else {
-		val castedUiState = uiState as HomePageUiState.Loaded
+		val castedUiState = uiState as LoginPageUiState.Loaded
 
 		Column(
 			modifier = modifier
@@ -193,6 +192,6 @@ fun HomePageView(
 
 @Preview(showBackground = true)
 @Composable
-fun HomePageViewPreview() {
-	HomePageView()
+fun LoginPageViewPreview() {
+	LoginPageView()
 }
