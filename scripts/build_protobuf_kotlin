@@ -1,3 +1,14 @@
 #!/usr/bin/env bash
 
+set -e
+
+KOTLIN_PROTO_DIR="android/app/src/main/java/org/uwaterloo/subletr/proto"
+
+cd $(git rev-parse --show-toplevel)
+
+rm -rf $KOTLIN_PROTO_DIR
+
+mkdir -p $KOTLIN_PROTO_DIR
+
+protoc -Iprotos --kotlin_out="$KOTLIN_PROTO_DIR" $(find "protos" -name "*.proto" | xargs)
 
