@@ -15,15 +15,15 @@ public final class Login {
         (com.google.protobuf.ExtensionRegistryLite) registry);
   }
   static final com.google.protobuf.Descriptors.Descriptor
-    internal_static_org_uwaterloo_subletr_proto_auth_UserLoginRequest_descriptor;
+    internal_static_auth_UserLoginRequest_descriptor;
   static final 
     com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
-      internal_static_org_uwaterloo_subletr_proto_auth_UserLoginRequest_fieldAccessorTable;
+      internal_static_auth_UserLoginRequest_fieldAccessorTable;
   static final com.google.protobuf.Descriptors.Descriptor
-    internal_static_org_uwaterloo_subletr_proto_auth_UserLoginResponse_descriptor;
+    internal_static_auth_UserLoginResponse_descriptor;
   static final 
     com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
-      internal_static_org_uwaterloo_subletr_proto_auth_UserLoginResponse_fieldAccessorTable;
+      internal_static_auth_UserLoginResponse_fieldAccessorTable;
 
   public static com.google.protobuf.Descriptors.FileDescriptor
       getDescriptor() {
@@ -33,26 +33,26 @@ public final class Login {
       descriptor;
   static {
     java.lang.String[] descriptorData = {
-      "\n\020auth/login.proto\022 org.uwaterloo.sublet" +
-      "r.proto.auth\"3\n\020UserLoginRequest\022\r\n\005emai" +
-      "l\030\001 \001(\t\022\020\n\010password\030\002 \001(\t\"\"\n\021UserLoginRe" +
-      "sponse\022\r\n\005token\030\001 \001(\tB\002P\001b\006proto3"
+      "\n\020auth/login.proto\022\004auth\"3\n\020UserLoginReq" +
+      "uest\022\r\n\005email\030\001 \001(\t\022\020\n\010password\030\002 \001(\t\"\"\n" +
+      "\021UserLoginResponse\022\r\n\005token\030\001 \001(\tB$\n org" +
+      ".uwaterloo.subletr.proto.authP\001b\006proto3"
     };
     descriptor = com.google.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,
         new com.google.protobuf.Descriptors.FileDescriptor[] {
         });
-    internal_static_org_uwaterloo_subletr_proto_auth_UserLoginRequest_descriptor =
+    internal_static_auth_UserLoginRequest_descriptor =
       getDescriptor().getMessageTypes().get(0);
-    internal_static_org_uwaterloo_subletr_proto_auth_UserLoginRequest_fieldAccessorTable = new
+    internal_static_auth_UserLoginRequest_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
-        internal_static_org_uwaterloo_subletr_proto_auth_UserLoginRequest_descriptor,
+        internal_static_auth_UserLoginRequest_descriptor,
         new java.lang.String[] { "Email", "Password", });
-    internal_static_org_uwaterloo_subletr_proto_auth_UserLoginResponse_descriptor =
+    internal_static_auth_UserLoginResponse_descriptor =
       getDescriptor().getMessageTypes().get(1);
-    internal_static_org_uwaterloo_subletr_proto_auth_UserLoginResponse_fieldAccessorTable = new
+    internal_static_auth_UserLoginResponse_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
-        internal_static_org_uwaterloo_subletr_proto_auth_UserLoginResponse_descriptor,
+        internal_static_auth_UserLoginResponse_descriptor,
         new java.lang.String[] { "Token", });
   }
 
