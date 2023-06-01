@@ -1,0 +1,8 @@
+CREATE TABLE users (
+  user_id BIGINT NOT NULL PRIMARY KEY,
+  first_name VARCHAR NOT NULL,
+  last_name VARCHAR NOT NULL,
+  email VARCHAR UNIQUE NOT NULL,
+  password_hash VARCHAR NOT NULL,
+  gender VARCHAR NOT NULL
+)

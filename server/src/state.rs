@@ -1,6 +1,9 @@
-use sqlx::{sqlite::SqlitePoolOptions, Pool, Sqlite};
+use diesel::{
+    r2d2::{ConnectionManager, Pool},
+    SqliteConnection,
+};
 
-pub type ServicePool = Pool<Sqlite>;
+pub type ServicePool = Pool<ConnectionManager<SqliteConnection>>;
 
 pub struct AppState {
     pub pool: ServicePool,
@@ -8,11 +11,10 @@ pub struct AppState {
 
 impl AppState {
     pub async fn new() -> Result<Self, Box<dyn std::error::Error>> {
-        let pool = SqlitePoolOptions::new()
-            .max_connections(4)
-            .connect(&std::env::var("DATABASE_URL")?)
-            .await?;
+        let manager = ConnectionManager::<SqliteConnection>::new(std::env::var("DATABASE_URL")?);
 
-        Ok(AppState { pool })
+        Ok(AppState {
+            pool: Pool::builder().test_on_check_out(true).build(manager)?,
+        })
     }
 }

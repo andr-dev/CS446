@@ -8,8 +8,24 @@ pub enum ServiceError {
         #[from]
         source: serde_json::Error,
     },
+
+    #[error("Diesel Error {source:?}")]
+    Diesel {
+        #[from]
+        source: diesel::result::Error,
+    },
+
+    #[error("Database Error {source:?}")]
+    R2D2 {
+        #[from]
+        source: r2d2::Error,
+    },
+
     #[error("Internal Error")]
     InternalError,
+
+    #[error("Authentication Error")]
+    AuthenticationError,
 }
 
 pub type ServiceResult<T> = std::result::Result<Json<T>, ServiceError>;

@@ -4,6 +4,9 @@ use rocket::{get, routes, serde::json::Json, Route};
 use crate::error::ServiceResult;
 
 mod auth;
+mod token;
+mod user;
+mod utils;
 
 #[get("/ping")]
 fn ping() -> ServiceResult<&'static str> {
@@ -19,6 +22,7 @@ pub(super) fn routes() -> Vec<Route> {
     let mut routes = routes![ping, time];
 
     routes.extend(auth::routes());
+    routes.extend(user::routes());
 
     routes
 }

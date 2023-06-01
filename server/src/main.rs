@@ -8,9 +8,9 @@ mod api;
 mod cors;
 mod error;
 mod model;
-mod state;
-mod types;
 mod proto;
+mod schema;
+mod state;
 
 fn rocket() -> Rocket<Build> {
     rocket::build().mount("/api", api::routes())
