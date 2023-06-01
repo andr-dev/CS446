@@ -1,7 +1,8 @@
 syntax = "proto3";
 
-package org.uwaterloo.subletr.proto.user;
 option java_multiple_files = true;
+
+package user;
 
 message CreateUserRequest {
 	string first_name = 1;

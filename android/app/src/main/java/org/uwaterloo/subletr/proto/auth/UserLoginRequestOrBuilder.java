@@ -4,7 +4,7 @@
 package org.uwaterloo.subletr.proto.auth;
 
 public interface UserLoginRequestOrBuilder extends
-    // @@protoc_insertion_point(interface_extends:org.uwaterloo.subletr.proto.auth.UserLoginRequest)
+    // @@protoc_insertion_point(interface_extends:auth.UserLoginRequest)
     com.google.protobuf.MessageOrBuilder {
 
   /**

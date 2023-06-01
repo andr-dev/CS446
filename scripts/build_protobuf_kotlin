@@ -2,14 +2,49 @@
 
 set -e
 
-KOTLIN_MAIN_DIR="android/app/src/main/java"
-KOTLIN_PROTO_DIR="$KOTLIN_MAIN_DIR/org/uwaterloo/subletr/proto"
+# Create temp dir and register exit trap
+
+TMP_DIR=$(mktemp -d)
+
+function cleanup {
+  rm -rf "$TMP_DIR"
+  printf "Deleted temp working directory $TMP_DIR\n"
+}
+
+trap cleanup EXIT
+
+# Transform protos to include java_package
 
 cd $(git rev-parse --show-toplevel)
 
-rm -rf $KOTLIN_PROTO_DIR
+cp -R protos/* $TMP_DIR
 
-mkdir -p $KOTLIN_PROTO_DIR
+for file in $(find $TMP_DIR -name "*.proto" | xargs); do
+	set +e
+	package=$(cat $file | grep -Po '^package \K\S+(?=;$)')
+	package_status=$?
+	set -e
 
-protoc -Iprotos --java_out="$KOTLIN_MAIN_DIR" --kotlin_out="$KOTLIN_MAIN_DIR" $(find "protos" -name "*.proto" | xargs)
+	if [ ${package_status} -ne 0 ]; then
+		printf "Failed to process file ${file}\nReason: failed to determine package name.\n\n"
+		exit 1
+	fi
+
+	printf "Processing file ${file} in package ${package} ..."
+
+	sed -i 's/syntax = "proto3";/syntax = "proto3";\n\noption java_package = "org.uwaterloo.subletr.proto.'${package}'";/g' ${file}
+
+	printf " done!\n"
+done
+
+# Store to android protos package
+
+JAVA_DIR="android/app/src/main/java/"
+PROTO_DIR="${JAVA_DIR}/org/uwaterloo/subletr/proto"
+
+rm -rf $PROTO_DIR
+
+mkdir -p $PROTO_DIR
+
+protoc -I$TMP_DIR --java_out=${JAVA_DIR} --kotlin_out=${JAVA_DIR} $(find $TMP_DIR -name "*.proto" | xargs)
 
