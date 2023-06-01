@@ -32,7 +32,7 @@ for file in $(find $TMP_DIR -name "*.proto" | xargs); do
 
 	printf "Processing file ${file} in package ${package} ..."
 
-	sed -i 's/syntax = "proto3";/syntax = "proto3";\n\noption java_package = "org.uwaterloo.subletr.proto.'${package}'";/g' ${file}
+	sed -i 's/syntax = "proto3";/syntax = "proto3";\n\noption java_package = "org.uwaterloo.subletr.proto.'${package}'";\noption java_multiple_files = true;/g' ${file}
 
 	printf " done!\n"
 done
