@@ -15,6 +15,7 @@ import org.uwaterloo.subletr.navigation.MainNavigation
 @Composable
 fun MainScaffoldView(
 	modifier: Modifier = Modifier,
+	@Suppress("UnusedParameter")
 	viewModel: MainScaffoldViewModel = hiltViewModel(),
 	mainAppState: MainAppState = rememberMainAppState(),
 ) {

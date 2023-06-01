@@ -1,3 +1,6 @@
+import io.gitlab.arturbosch.detekt.Detekt
+import io.gitlab.arturbosch.detekt.DetektCreateBaselineTask
+
 plugins {
     id 'com.android.application'
     id 'org.jetbrains.kotlin.android'
@@ -44,12 +47,12 @@ android {
 }
 
 dependencies {
-    implementation 'androidx.activity:activity-compose:1.7.1'
+    implementation 'androidx.activity:activity-compose:1.7.2'
     implementation 'androidx.appcompat:appcompat:1.6.1'
-    implementation 'androidx.compose.material3:material3-android:1.1.0-beta02'
+    implementation 'androidx.compose.material3:material3-android:1.2.0-alpha02'
     implementation 'androidx.compose.runtime:runtime-livedata:1.4.3'
     implementation 'androidx.compose.runtime:runtime-rxjava3:1.4.3'
-    implementation 'androidx.compose.ui:ui:1.5.0-alpha04'
+    implementation 'androidx.compose.ui:ui:1.5.0-beta01'
     implementation 'androidx.compose.ui:ui-graphics:1.4.3'
     implementation 'androidx.compose.ui:ui-tooling-preview:1.4.3'
     implementation 'androidx.core:core-ktx:1.10.1'
@@ -61,6 +64,8 @@ dependencies {
     implementation "com.squareup.okhttp3:okhttp:4.10.0"
     implementation 'com.google.android.material:material:1.9.0'
     implementation 'com.google.dagger:hilt-android:2.46.1'
+    implementation 'com.google.protobuf:protobuf-java:3.23.2'
+    implementation 'com.google.protobuf:protobuf-kotlin:3.23.2'
     implementation 'io.reactivex.rxjava3:rxjava:3.1.6'
     annotationProcessor 'com.google.dagger:hilt-compiler:2.46.1'
     debugImplementation "androidx.compose.ui:ui-tooling:1.4.3"
@@ -84,4 +89,12 @@ detekt {
     config = files(
         "../config/detekt-config.yml"
     )
+}
+
+tasks.withType(Detekt).configureEach {
+    exclude("**/proto/**")
+}
+
+tasks.withType(DetektCreateBaselineTask).configureEach {
+    exclude("**/proto/**")
 }
