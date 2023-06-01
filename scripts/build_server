@@ -2,5 +2,7 @@
 
 set -e
 
-sudo docker build -t cs446:server -f deploy/Dockerfile .
+cd $(git rev-parse --show-toplevel)/server
+
+sudo docker build -t cs446:server .
 
