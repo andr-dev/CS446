@@ -21,7 +21,7 @@ cp -R protos/* $TMP_DIR
 
 for file in $(find $TMP_DIR -name "*.proto" | xargs); do
 	set +e
-	package=$(cat $file | grep -Po '^package \K\S+(?=;$)')
+	package=$(cat $file | grep -E -o "^package \S+;$" | cut -d';' -f 1 | cut -c 9-)
 	package_status=$?
 	set -e
 
