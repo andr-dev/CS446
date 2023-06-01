@@ -2,6 +2,17 @@
 
 set -e
 
+# Set OS dependent sed command
+
+if [[ "$OSTYPE" == "linux-gnu"* ]]; then
+	SEDCMD="sed -i"
+elif [[ "$OSTYPE" == "darwin"* ]]; then
+    SEDCMD="sed -i'.backup' -e"
+else
+	printf "Unsupported OS!\n"
+	exit 1
+fi
+
 # Create temp dir and register exit trap
 
 TMP_DIR=$(mktemp -d)
@@ -32,7 +43,7 @@ for file in $(find $TMP_DIR -name "*.proto" | xargs); do
 
 	printf "Processing file ${file} in package ${package} ..."
 
-	sed -i 's/syntax = "proto3";/syntax = "proto3";\n\noption java_package = "org.uwaterloo.subletr.proto.'${package}'";\noption java_multiple_files = true;/g' ${file}
+	${SEDCMD} 's/syntax = "proto3";/syntax = "proto3";\n\noption java_package = "org.uwaterloo.subletr.proto.'${package}'";\noption java_multiple_files = true;/g' ${file}
 
 	printf " done!\n"
 done
