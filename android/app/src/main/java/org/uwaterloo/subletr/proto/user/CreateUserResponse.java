@@ -4,11 +4,11 @@
 package org.uwaterloo.subletr.proto.user;
 
 /**
- * Protobuf type {@code org.uwaterloo.subletr.proto.user.CreateUserResponse}
+ * Protobuf type {@code user.CreateUserResponse}
  */
 public final class CreateUserResponse extends
     com.google.protobuf.GeneratedMessageV3 implements
-    // @@protoc_insertion_point(message_implements:org.uwaterloo.subletr.proto.user.CreateUserResponse)
+    // @@protoc_insertion_point(message_implements:user.CreateUserResponse)
     CreateUserResponseOrBuilder {
 private static final long serialVersionUID = 0L;
   // Use CreateUserResponse.newBuilder() to construct.
@@ -32,13 +32,13 @@ private static final long serialVersionUID = 0L;
   }
   public static final com.google.protobuf.Descriptors.Descriptor
       getDescriptor() {
-    return org.uwaterloo.subletr.proto.user.Create.internal_static_org_uwaterloo_subletr_proto_user_CreateUserResponse_descriptor;
+    return org.uwaterloo.subletr.proto.user.Create.internal_static_user_CreateUserResponse_descriptor;
   }
 
   @java.lang.Override
   protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
       internalGetFieldAccessorTable() {
-    return org.uwaterloo.subletr.proto.user.Create.internal_static_org_uwaterloo_subletr_proto_user_CreateUserResponse_fieldAccessorTable
+    return org.uwaterloo.subletr.proto.user.Create.internal_static_user_CreateUserResponse_fieldAccessorTable
         .ensureFieldAccessorsInitialized(
             org.uwaterloo.subletr.proto.user.CreateUserResponse.class, org.uwaterloo.subletr.proto.user.CreateUserResponse.Builder.class);
   }
@@ -211,21 +211,21 @@ private static final long serialVersionUID = 0L;
     return builder;
   }
   /**
-   * Protobuf type {@code org.uwaterloo.subletr.proto.user.CreateUserResponse}
+   * Protobuf type {@code user.CreateUserResponse}
    */
   public static final class Builder extends
       com.google.protobuf.GeneratedMessageV3.Builder<Builder> implements
-      // @@protoc_insertion_point(builder_implements:org.uwaterloo.subletr.proto.user.CreateUserResponse)
+      // @@protoc_insertion_point(builder_implements:user.CreateUserResponse)
       org.uwaterloo.subletr.proto.user.CreateUserResponseOrBuilder {
     public static final com.google.protobuf.Descriptors.Descriptor
         getDescriptor() {
-      return org.uwaterloo.subletr.proto.user.Create.internal_static_org_uwaterloo_subletr_proto_user_CreateUserResponse_descriptor;
+      return org.uwaterloo.subletr.proto.user.Create.internal_static_user_CreateUserResponse_descriptor;
     }
 
     @java.lang.Override
     protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
         internalGetFieldAccessorTable() {
-      return org.uwaterloo.subletr.proto.user.Create.internal_static_org_uwaterloo_subletr_proto_user_CreateUserResponse_fieldAccessorTable
+      return org.uwaterloo.subletr.proto.user.Create.internal_static_user_CreateUserResponse_fieldAccessorTable
           .ensureFieldAccessorsInitialized(
               org.uwaterloo.subletr.proto.user.CreateUserResponse.class, org.uwaterloo.subletr.proto.user.CreateUserResponse.Builder.class);
     }
@@ -251,7 +251,7 @@ private static final long serialVersionUID = 0L;
     @java.lang.Override
     public com.google.protobuf.Descriptors.Descriptor
         getDescriptorForType() {
-      return org.uwaterloo.subletr.proto.user.Create.internal_static_org_uwaterloo_subletr_proto_user_CreateUserResponse_descriptor;
+      return org.uwaterloo.subletr.proto.user.Create.internal_static_user_CreateUserResponse_descriptor;
     }
 
     @java.lang.Override
@@ -422,10 +422,10 @@ private static final long serialVersionUID = 0L;
     }
 
 
-    // @@protoc_insertion_point(builder_scope:org.uwaterloo.subletr.proto.user.CreateUserResponse)
+    // @@protoc_insertion_point(builder_scope:user.CreateUserResponse)
   }
 
-  // @@protoc_insertion_point(class_scope:org.uwaterloo.subletr.proto.user.CreateUserResponse)
+  // @@protoc_insertion_point(class_scope:user.CreateUserResponse)
   private static final org.uwaterloo.subletr.proto.user.CreateUserResponse DEFAULT_INSTANCE;
   static {
     DEFAULT_INSTANCE = new org.uwaterloo.subletr.proto.user.CreateUserResponse();

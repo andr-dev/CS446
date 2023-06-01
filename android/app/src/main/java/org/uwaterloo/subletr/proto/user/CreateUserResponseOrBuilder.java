@@ -4,7 +4,7 @@
 package org.uwaterloo.subletr.proto.user;
 
 public interface CreateUserResponseOrBuilder extends
-    // @@protoc_insertion_point(interface_extends:org.uwaterloo.subletr.proto.user.CreateUserResponse)
+    // @@protoc_insertion_point(interface_extends:user.CreateUserResponse)
     com.google.protobuf.MessageOrBuilder {
 
   /**

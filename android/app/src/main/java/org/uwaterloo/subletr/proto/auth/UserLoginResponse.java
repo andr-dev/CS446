@@ -4,11 +4,11 @@
 package org.uwaterloo.subletr.proto.auth;
 
 /**
- * Protobuf type {@code org.uwaterloo.subletr.proto.auth.UserLoginResponse}
+ * Protobuf type {@code auth.UserLoginResponse}
  */
 public final class UserLoginResponse extends
     com.google.protobuf.GeneratedMessageV3 implements
-    // @@protoc_insertion_point(message_implements:org.uwaterloo.subletr.proto.auth.UserLoginResponse)
+    // @@protoc_insertion_point(message_implements:auth.UserLoginResponse)
     UserLoginResponseOrBuilder {
 private static final long serialVersionUID = 0L;
   // Use UserLoginResponse.newBuilder() to construct.
@@ -33,13 +33,13 @@ private static final long serialVersionUID = 0L;
   }
   public static final com.google.protobuf.Descriptors.Descriptor
       getDescriptor() {
-    return org.uwaterloo.subletr.proto.auth.Login.internal_static_org_uwaterloo_subletr_proto_auth_UserLoginResponse_descriptor;
+    return org.uwaterloo.subletr.proto.auth.Login.internal_static_auth_UserLoginResponse_descriptor;
   }
 
   @java.lang.Override
   protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
       internalGetFieldAccessorTable() {
-    return org.uwaterloo.subletr.proto.auth.Login.internal_static_org_uwaterloo_subletr_proto_auth_UserLoginResponse_fieldAccessorTable
+    return org.uwaterloo.subletr.proto.auth.Login.internal_static_auth_UserLoginResponse_fieldAccessorTable
         .ensureFieldAccessorsInitialized(
             org.uwaterloo.subletr.proto.auth.UserLoginResponse.class, org.uwaterloo.subletr.proto.auth.UserLoginResponse.Builder.class);
   }
@@ -238,21 +238,21 @@ private static final long serialVersionUID = 0L;
     return builder;
   }
   /**
-   * Protobuf type {@code org.uwaterloo.subletr.proto.auth.UserLoginResponse}
+   * Protobuf type {@code auth.UserLoginResponse}
    */
   public static final class Builder extends
       com.google.protobuf.GeneratedMessageV3.Builder<Builder> implements
-      // @@protoc_insertion_point(builder_implements:org.uwaterloo.subletr.proto.auth.UserLoginResponse)
+      // @@protoc_insertion_point(builder_implements:auth.UserLoginResponse)
       org.uwaterloo.subletr.proto.auth.UserLoginResponseOrBuilder {
     public static final com.google.protobuf.Descriptors.Descriptor
         getDescriptor() {
-      return org.uwaterloo.subletr.proto.auth.Login.internal_static_org_uwaterloo_subletr_proto_auth_UserLoginResponse_descriptor;
+      return org.uwaterloo.subletr.proto.auth.Login.internal_static_auth_UserLoginResponse_descriptor;
     }
 
     @java.lang.Override
     protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
         internalGetFieldAccessorTable() {
-      return org.uwaterloo.subletr.proto.auth.Login.internal_static_org_uwaterloo_subletr_proto_auth_UserLoginResponse_fieldAccessorTable
+      return org.uwaterloo.subletr.proto.auth.Login.internal_static_auth_UserLoginResponse_fieldAccessorTable
           .ensureFieldAccessorsInitialized(
               org.uwaterloo.subletr.proto.auth.UserLoginResponse.class, org.uwaterloo.subletr.proto.auth.UserLoginResponse.Builder.class);
     }
@@ -278,7 +278,7 @@ private static final long serialVersionUID = 0L;
     @java.lang.Override
     public com.google.protobuf.Descriptors.Descriptor
         getDescriptorForType() {
-      return org.uwaterloo.subletr.proto.auth.Login.internal_static_org_uwaterloo_subletr_proto_auth_UserLoginResponse_descriptor;
+      return org.uwaterloo.subletr.proto.auth.Login.internal_static_auth_UserLoginResponse_descriptor;
     }
 
     @java.lang.Override
@@ -491,10 +491,10 @@ private static final long serialVersionUID = 0L;
     }
 
 
-    // @@protoc_insertion_point(builder_scope:org.uwaterloo.subletr.proto.auth.UserLoginResponse)
+    // @@protoc_insertion_point(builder_scope:auth.UserLoginResponse)
   }
 
-  // @@protoc_insertion_point(class_scope:org.uwaterloo.subletr.proto.auth.UserLoginResponse)
+  // @@protoc_insertion_point(class_scope:auth.UserLoginResponse)
   private static final org.uwaterloo.subletr.proto.auth.UserLoginResponse DEFAULT_INSTANCE;
   static {
     DEFAULT_INSTANCE = new org.uwaterloo.subletr.proto.auth.UserLoginResponse();
