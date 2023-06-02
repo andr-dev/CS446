@@ -11,14 +11,23 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Visibility
+import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.rxjava3.subscribeAsState
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -46,6 +55,8 @@ fun LoginPageView(
 		LoginPageUiState.Loading
 	).value,
 ) {
+	var passwordVisible by rememberSaveable { mutableStateOf(false) }
+
 	if (uiState is LoginPageUiState.Loading) {
 		Column(
 			modifier = modifier
@@ -137,12 +148,30 @@ fun LoginPageView(
 					unfocusedIndicatorColor = Color.Transparent,
 					focusedIndicatorColor = Color.Transparent,
 				),
-				visualTransformation = PasswordVisualTransformation(),
+				visualTransformation =
+				if (passwordVisible) VisualTransformation.None
+				else PasswordVisualTransformation(),
 				placeholder = {
 					Text(
 						text = stringResource(id = R.string.password),
 						color = secondaryTextColor,
 					)
+				},
+				trailingIcon = {
+		  			IconButton(onClick = { passwordVisible = !passwordVisible }) {
+						Icon(
+							imageVector =
+							if (passwordVisible) Icons.Filled.Visibility
+							else Icons.Filled.VisibilityOff,
+							contentDescription =
+							if (passwordVisible) stringResource(
+								id = R.string.hide_password
+							)
+							else stringResource(
+								id = R.string.show_password
+							),
+						)
+					}
 				},
 				value = uiState.password,
 				onValueChange = {
@@ -210,7 +239,7 @@ fun LoginPageView(
 	}
 }
 
-const val ELEMENT_WIDTH = 0.75f;
+const val ELEMENT_WIDTH = 0.75f
 
 @Preview(showBackground = true)
 @Composable
