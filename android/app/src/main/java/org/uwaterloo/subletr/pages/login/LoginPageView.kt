@@ -1,15 +1,16 @@
 package org.uwaterloo.subletr.pages.login
 
-import androidx.compose.foundation.background
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.imePadding
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
@@ -17,28 +18,34 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rxjava3.subscribeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import org.uwaterloo.subletr.R
+import org.uwaterloo.subletr.models.ConcavePentagon
+import org.uwaterloo.subletr.theme.SubletrTheme
 import org.uwaterloo.subletr.theme.buttonBackgroundColor
-import org.uwaterloo.subletr.theme.secondarySubletrPink
+import org.uwaterloo.subletr.theme.secondaryTextColor
 import org.uwaterloo.subletr.theme.subletrPink
 
 @Composable
 fun LoginPageView(
 	modifier: Modifier = Modifier,
-	viewModel: LoginPageViewModel = hiltViewModel()
-) {
-	val uiState by viewModel.uiStateStream.subscribeAsState(
+	viewModel: LoginPageViewModel = hiltViewModel(),
+	uiState: LoginPageUiState = viewModel.uiStateStream.subscribeAsState(
 		LoginPageUiState.Loading
-	)
+	).value,
+) {
 	if (uiState is LoginPageUiState.Loading) {
 		Column(
 			modifier = modifier
@@ -51,147 +58,175 @@ fun LoginPageView(
 				text = stringResource(id = R.string.loading)
 			)
 		}
-	} else {
-		val castedUiState = uiState as LoginPageUiState.Loaded
-
+	} else if (uiState is LoginPageUiState.Loaded) {
 		Column(
 			modifier = modifier
-				.fillMaxSize(1.0f)
-				.imePadding(),
+				.fillMaxSize(1.0f),
 			horizontalAlignment = Alignment.CenterHorizontally,
-			verticalArrangement = Arrangement.Bottom,
+			verticalArrangement = Arrangement.Center,
 		) {
+			Image(
+				painter = painterResource(
+					id = R.drawable.uwaterloo_overview,
+				),
+				contentDescription = stringResource(id = R.string.uw_overview),
+				contentScale = ContentScale.FillWidth,
+				modifier = Modifier
+					.fillMaxWidth(1.0f)
+					.clip(ConcavePentagon())
+			)
+
+			Spacer(
+				modifier = Modifier.weight(weight = 20.0f)
+			)
+
 			Row {
 				Text(
-					text = stringResource(id = castedUiState.titleBlackStringId),
+					text = stringResource(id = R.string.app_name_black_part),
 					style = MaterialTheme.typography.titleLarge,
 				)
 				Text(
-					text = stringResource(id = castedUiState.titlePinkStringId),
+					text = stringResource(id = R.string.app_name_pink_part),
 					style = MaterialTheme.typography.titleLarge,
 					color = subletrPink,
 				)
 			}
 
 			Spacer(
-				modifier = Modifier.height(80.dp)
+				modifier = Modifier.weight(weight = 10.0f)
 			)
 
 			TextField(
-				value = "",
-				onValueChange = {},
+				modifier = Modifier
+					.fillMaxWidth(ELEMENT_WIDTH),
+				shape = RoundedCornerShape(size = 100.dp),
+				colors = TextFieldDefaults.colors(
+					unfocusedContainerColor = buttonBackgroundColor,
+					focusedContainerColor = buttonBackgroundColor,
+					unfocusedIndicatorColor = Color.Transparent,
+					focusedIndicatorColor = Color.Transparent,
+				),
 				placeholder = {
 					Text(
-						text = stringResource(id = castedUiState.emailStringId)
+						text = stringResource(id = R.string.email),
+						color = secondaryTextColor,
 					)
 				},
-				colors = TextFieldDefaults.colors(
-					focusedContainerColor = Color.Transparent,
-					unfocusedContainerColor = Color.Transparent,
-					disabledContainerColor = Color.Transparent,
-					focusedIndicatorColor = subletrPink,
-					unfocusedIndicatorColor = secondarySubletrPink,
-					disabledIndicatorColor = Color.Transparent
-				)
+				value = uiState.email,
+				onValueChange = {
+					viewModel.updateUiState(
+						LoginPageUiState.Loaded(
+							email = it,
+							password = uiState.password,
+						)
+					)
+				}
 			)
 
 			Spacer(
-				modifier = Modifier.height(40.dp)
+				modifier = Modifier.weight(weight = 2.0f)
 			)
 
 			TextField(
-				value = "",
-				onValueChange = {},
+				modifier = Modifier
+					.fillMaxWidth(ELEMENT_WIDTH),
+				shape = RoundedCornerShape(size = 100.dp),
+				colors = TextFieldDefaults.colors(
+					unfocusedContainerColor = buttonBackgroundColor,
+					focusedContainerColor = buttonBackgroundColor,
+					unfocusedIndicatorColor = Color.Transparent,
+					focusedIndicatorColor = Color.Transparent,
+				),
+				visualTransformation = PasswordVisualTransformation(),
 				placeholder = {
 					Text(
-						text = stringResource(id = castedUiState.passwordStringId)
+						text = stringResource(id = R.string.password),
+						color = secondaryTextColor,
 					)
 				},
-				colors = TextFieldDefaults.colors(
-					focusedContainerColor = Color.Transparent,
-					unfocusedContainerColor = Color.Transparent,
-					disabledContainerColor = Color.Transparent,
-					focusedIndicatorColor = subletrPink,
-					unfocusedIndicatorColor = secondarySubletrPink,
-					disabledIndicatorColor = Color.Transparent
-				)
+				value = uiState.password,
+				onValueChange = {
+					viewModel.updateUiState(
+						LoginPageUiState.Loaded(
+							email = uiState.email,
+							password = it,
+						)
+					)
+				}
 			)
 
 			Spacer(
-				modifier = Modifier.height(40.dp)
-			)
-
-			Button(
-				colors = ButtonDefaults.buttonColors(
-					containerColor = buttonBackgroundColor
-				),
-				onClick = {},
-			) {
-				Text(
-					text = stringResource(id = castedUiState.loginStringId)
-				)
-			}
-
-			Spacer(
-				modifier = Modifier.height(30.dp)
-			)
-
-			Row(
-				modifier = Modifier,
-				horizontalArrangement = Arrangement.Center,
-				verticalAlignment = Alignment.CenterVertically,
-			) {
-				Spacer(
-					modifier = Modifier.width(80.dp)
-				)
-
-				Box(
-					modifier
-						.height(2.dp)
-						.background(color = Color.Gray)
-						.weight(1.0f)
-				)
-
-				Text(
-					text = stringResource(id = castedUiState.orStringId)
-				)
-
-				Box(
-					modifier
-						.height(2.dp)
-						.background(color = Color.Gray)
-						.weight(1.0f)
-				)
-
-				Spacer(
-					modifier = Modifier.width(80.dp)
-				)
-			}
-
-			Spacer(
-				modifier = Modifier.height(30.dp)
+				modifier = Modifier.weight(weight = 2.0f)
 			)
 
 			Button(
+				modifier = Modifier
+					.fillMaxWidth(ELEMENT_WIDTH)
+					.height(50.dp),
 				onClick = {},
 				colors = ButtonDefaults.buttonColors(
-					containerColor = buttonBackgroundColor
-				),
+					containerColor = subletrPink,
+					contentColor = Color.White,
+				)
 			) {
 				Text(
-					text = stringResource(id = castedUiState.createAccountStringId)
+					text = stringResource(id = R.string.log_in),
+					color = Color.White,
 				)
 			}
 
 			Spacer(
-				modifier = Modifier.height(70.dp)
+				modifier = Modifier.weight(weight = 15.0f)
+			)
+
+			Row(verticalAlignment = Alignment.CenterVertically) {
+				Text(
+					text = stringResource(id = R.string.dont_have_an_account),
+					color = secondaryTextColor,
+				)
+				Button(
+					contentPadding = PaddingValues(1.dp),
+					onClick = {
+						println("Fill")
+					},
+					colors = ButtonDefaults.buttonColors(
+						containerColor = Color.Transparent,
+						contentColor = Color.Transparent,
+					)
+				) {
+					Text(
+						text = stringResource(id = R.string.sign_up),
+						color = subletrPink,
+					)
+				}
+			}
+			
+			Spacer(
+				modifier = Modifier
+					.weight(weight = 5.0f)
+					.imePadding()
 			)
 		}
 	}
 }
 
+const val ELEMENT_WIDTH = 0.75f;
+
 @Preview(showBackground = true)
 @Composable
-fun LoginPageViewPreview() {
+fun LoginPageViewLoadingPreview() {
 	LoginPageView()
+}
+
+@Preview(showBackground = true)
+@Composable
+fun LoginPageViewLoadedPreview() {
+	SubletrTheme {
+		LoginPageView(
+			uiState = LoginPageUiState.Loaded(
+				email = "",
+				password = "",
+			)
+		)
+	}
 }
