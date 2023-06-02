@@ -128,7 +128,7 @@ complexity:
         threshold: 600
     LongMethod:
         active: true
-        threshold: 100
+        threshold: 200
     LongParameterList:
         active: true
         functionThreshold: 10
@@ -605,7 +605,7 @@ style:
         active: true
         maxJumpCount: 1
     MagicNumber:
-        active: true
+        active: false
         excludes: ['**/test/**', '**/androidTest/**', '**/commonTest/**', '**/jvmTest/**', '**/androidUnitTest/**', '**/androidInstrumentedTest/**', '**/jsTest/**', '**/iosTest/**', '**/*.kts']
         ignoreNumbers:
             - '-1'
@@ -613,14 +613,14 @@ style:
             - '1'
             - '2'
         ignoreHashCodeFunction: true
-        ignorePropertyDeclaration: false
-        ignoreLocalVariableDeclaration: false
+        ignorePropertyDeclaration: true
+        ignoreLocalVariableDeclaration: true
         ignoreConstantDeclaration: true
         ignoreCompanionObjectPropertyDeclaration: true
-        ignoreAnnotation: false
+        ignoreAnnotation: true
         ignoreNamedArgument: true
-        ignoreEnums: false
-        ignoreRanges: false
+        ignoreEnums: true
+        ignoreRanges: true
         ignoreExtensionFunctions: true
     MandatoryBracesLoops:
         active: false

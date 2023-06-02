@@ -10,14 +10,13 @@ val Purple900 = Color(0xFF4A148C)
 
 val Purple500 = Color(0xFF9C27B0)
 
-val subletrPink = Color(0xFFF40076)
-val secondarySubletrPink = Color(0xFFF74D9F)
+val subletrPink = Color(0xFFF4717F)
 
+val secondaryTextColor = Color((0xFF808080))
 val buttonBackgroundColor = Color((0xFFD9D9D9))
 
 internal val SubletrDarkColorScheme = darkColorScheme(
 	primary = subletrPink,
-	secondary = secondarySubletrPink,
 	tertiary = Purple900,
 	background = Color(0xFFFFFBFE),
 	surface = Color(0xFFFFFBFE),
@@ -30,7 +29,6 @@ internal val SubletrDarkColorScheme = darkColorScheme(
 
 internal val SubletrLightColorScheme = lightColorScheme(
 	primary = subletrPink,
-	secondary = secondarySubletrPink,
 	tertiary = Purple500,
 	background = Color(0xFFFFFBFE),
 	surface = Color(0xFFFFFBFE),
