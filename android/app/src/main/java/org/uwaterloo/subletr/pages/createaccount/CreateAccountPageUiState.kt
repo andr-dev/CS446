@@ -6,7 +6,7 @@ sealed interface CreateAccountPageUiState {
 	enum class Gender(val gender: String) {
 		MALE("Male"),
 		FEMALE("Female"),
-		OTHER("Other")
+		OTHER("Other"),
 	}
 
 	data class NewAccountInfo(
@@ -15,6 +15,6 @@ sealed interface CreateAccountPageUiState {
 		val email: String,
 		val password: String,
 		val confirmPassword: String,
-		val gender: Gender
+		val gender: Gender,
 	) : CreateAccountPageUiState
 }

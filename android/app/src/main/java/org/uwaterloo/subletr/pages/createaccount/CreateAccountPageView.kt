@@ -1,6 +1,7 @@
 package org.uwaterloo.subletr.pages.createaccount
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -11,10 +12,13 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -24,6 +28,7 @@ import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rxjava3.subscribeAsState
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
@@ -55,6 +60,7 @@ fun CreateAccountPageView(
 	).value,
 ) {
 	var passwordVisible by rememberSaveable { mutableStateOf(false) }
+	var expandedDropdown by remember { mutableStateOf(false) }
 	if (uiState is CreateAccountPageUiState.NewAccountInfo) {
 		Column(
 			modifier = modifier
@@ -283,36 +289,63 @@ fun CreateAccountPageView(
 				modifier = Modifier.weight(weight = 1.0f)
 			)
 
-			TextField(
-				modifier = Modifier
-					.fillMaxWidth(ELEMENT_WIDTH),
-				shape = RoundedCornerShape(size = 100.dp),
-				colors = TextFieldDefaults.colors(
-					unfocusedContainerColor = buttonBackgroundColor,
-					focusedContainerColor = buttonBackgroundColor,
-					unfocusedIndicatorColor = Color.Transparent,
-					focusedIndicatorColor = Color.Transparent,
-				),
-				placeholder = {
-					Text(
-						text = stringResource(id = R.string.gender),
-						color = secondaryTextColor,
+			Box {
+				Button(
+					modifier = Modifier
+						.fillMaxWidth(ELEMENT_WIDTH)
+						.height(50.dp),
+					onClick = {
+						expandedDropdown = true
+					},
+					colors = ButtonDefaults.buttonColors(
+						containerColor = buttonBackgroundColor,
+						contentColor = secondaryTextColor,
 					)
-				},
-				value = uiState.gender.gender,
-				onValueChange = {
-					viewModel.updateUiState(
-						CreateAccountPageUiState.NewAccountInfo(
-							firstName = uiState.firstName,
-							lastName = uiState.confirmPassword,
-							email = uiState.email,
-							password = uiState.password,
-							confirmPassword = uiState.confirmPassword,
-							gender = CreateAccountPageUiState.Gender.valueOf(it),
+				) {
+					Row(
+						verticalAlignment = Alignment.CenterVertically
+					) {
+						Text(
+							text = uiState.gender.gender,
+							color = secondaryTextColor,
 						)
-					)
+
+						Spacer(modifier = Modifier.weight(1.0f))
+
+						Icon(
+							imageVector = Icons.Filled.KeyboardArrowDown,
+							contentDescription = "genders"
+						)
+					}
 				}
-			)
+				DropdownMenu(
+					expanded = expandedDropdown,
+					onDismissRequest = { expandedDropdown = false },
+					modifier = Modifier
+						.fillMaxWidth(ELEMENT_WIDTH)
+				) {
+					enumValues<CreateAccountPageUiState.Gender>().forEach { choice ->
+						DropdownMenuItem(
+							text = {
+								Text(text = choice.gender)
+							},
+							onClick = {
+								viewModel.updateUiState(
+									CreateAccountPageUiState.NewAccountInfo(
+										firstName = uiState.firstName,
+										lastName = uiState.lastName,
+										email = uiState.email,
+										password = uiState.password,
+										confirmPassword = uiState.confirmPassword,
+										gender = choice,
+									)
+								)
+								expandedDropdown = false
+							}
+						)
+					}
+				}
+			}
 
 			Spacer(
 				modifier = Modifier.weight(weight = 1.0f)
