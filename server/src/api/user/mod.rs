@@ -1,18 +1,23 @@
 use diesel::{QueryDsl, RunQueryDsl};
+use okapi::openapi3::OpenApi;
 use rand::Rng;
-use rocket::{get, post, routes, serde::json::Json, Route, State};
+use rocket::{get, post, serde::json::Json, Route, State};
+use rocket_okapi::{openapi, openapi_get_routes_spec};
 
 use crate::{
     api::token::AuthenticatedUser,
+    db::model::users::{NewUser, User},
     error::{ServiceError, ServiceResult},
-    model::users::{NewUser, User},
-    proto::user::{CreateUserRequest, CreateUserResponse},
     state::AppState,
 };
 
-use super::utils::hash_password;
+use super::{
+    model::user::{CreateUserRequest, CreateUserResponse},
+    utils::hash_password,
+};
 
-#[post("/user/create", format = "json", data = "<create_user_request>")]
+#[openapi]
+#[post("/create", format = "json", data = "<create_user_request>")]
 fn create(
     state: &State<AppState>,
     create_user_request: Json<CreateUserRequest>,
@@ -25,7 +30,7 @@ fn create(
 
     let user_id: i64 = rand::thread_rng().gen();
 
-    diesel::insert_into(crate::schema::users::table)
+    diesel::insert_into(crate::db::schema::users::table)
         .values(&NewUser {
             user_id,
             first_name: &create_user_request.first_name,
@@ -39,11 +44,12 @@ fn create(
     Ok(Json(CreateUserResponse { user_id }))
 }
 
-#[get("/user/email")]
+#[openapi]
+#[get("/email")]
 fn email(state: &State<AppState>, user: AuthenticatedUser) -> ServiceResult<String> {
     let mut dbcon = state.pool.get()?;
 
-    let user: User = crate::schema::users::dsl::users
+    let user: User = crate::db::schema::users::dsl::users
         .find(user.user_id)
         .first(&mut dbcon)
         .unwrap();
@@ -51,8 +57,6 @@ fn email(state: &State<AppState>, user: AuthenticatedUser) -> ServiceResult<Stri
     Ok(Json(user.email))
 }
 
-pub(super) fn routes() -> Vec<Route> {
-    let routes = routes![create, email];
-
-    routes
+pub fn routes() -> (Vec<Route>, OpenApi) {
+    openapi_get_routes_spec![create, email]
 }

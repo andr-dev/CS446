@@ -7,12 +7,12 @@ use rocket::{
     request::{FromRequest, Outcome},
     Request,
 };
+use rocket_okapi::OpenApiFromRequest;
 use serde_derive::{Deserialize, Serialize};
 
 use crate::error::ServiceError;
 
-pub const JWT_SECRET: &'static str = "test"; // std::env!("API_SECRET_KEY");
-pub const JWT_AUDIENCE: &'static str = "server_cs458";
+use super::constants::{JWT_AUDIENCE, JWT_EXP_HOURS, JWT_SECRET};
 
 pub(super) fn generate_token(user_id: i64) -> Result<String, jsonwebtoken::errors::Error> {
     encode(
@@ -20,7 +20,7 @@ pub(super) fn generate_token(user_id: i64) -> Result<String, jsonwebtoken::error
         &AuthenticatedUserClaims {
             aud: JWT_AUDIENCE.to_string(),
             sub: user_id,
-            exp: (Utc::now() + Duration::hours(1)).timestamp_millis(),
+            exp: (Utc::now() + Duration::hours(JWT_EXP_HOURS)).timestamp_millis(),
         },
         &EncodingKey::from_secret(JWT_SECRET.as_bytes()),
     )
@@ -40,7 +40,7 @@ fn read_token(
     )
 }
 
-#[derive(Debug)]
+#[derive(Debug, OpenApiFromRequest)]
 pub struct AuthenticatedUser {
     pub user_id: i64,
 }

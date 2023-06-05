@@ -1,20 +1,17 @@
 extern crate proc_macro;
 
+mod api;
+
+mod cors;
 use cors::CORS;
-use rocket::{Build, Rocket};
+
+mod db;
+mod error;
+
+mod state;
 use state::AppState;
 
-mod api;
-mod cors;
-mod error;
-mod model;
-mod proto;
-mod schema;
-mod state;
-
-fn rocket() -> Rocket<Build> {
-    rocket::build().mount("/api", api::routes())
-}
+use api::rocket;
 
 #[rocket::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
