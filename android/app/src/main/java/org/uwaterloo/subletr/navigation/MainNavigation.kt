@@ -6,7 +6,6 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import androidx.navigation.navOptions
 import org.uwaterloo.subletr.pages.account.AccountPageView
 import org.uwaterloo.subletr.pages.chat.ChatPageView
 import org.uwaterloo.subletr.pages.createaccount.CreateAccountPageView
