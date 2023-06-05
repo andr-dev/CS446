@@ -1,7 +1,7 @@
 package org.uwaterloo.subletr.pages.createaccount
 
 sealed interface CreateAccountPageUiState {
-	object NewAccount : CreateAccountPageUiState
+	object Loading : CreateAccountPageUiState
 
 	enum class Gender(val gender: String) {
 		MALE("Male"),
