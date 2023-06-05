@@ -50,6 +50,7 @@ import org.uwaterloo.subletr.theme.subletrPink
 @Composable
 fun LoginPageView(
 	modifier: Modifier = Modifier,
+	onNavigateToCreateAccount: () -> Unit,
 	viewModel: LoginPageViewModel = hiltViewModel(),
 	uiState: LoginPageUiState = viewModel.uiStateStream.subscribeAsState(
 		LoginPageUiState.Loading
@@ -215,9 +216,7 @@ fun LoginPageView(
 				)
 				Button(
 					contentPadding = PaddingValues(1.dp),
-					onClick = {
-						println("Fill")
-					},
+					onClick = onNavigateToCreateAccount,
 					colors = ButtonDefaults.buttonColors(
 						containerColor = Color.Transparent,
 						contentColor = Color.Transparent,
@@ -244,7 +243,9 @@ const val ELEMENT_WIDTH = 0.75f
 @Preview(showBackground = true)
 @Composable
 fun LoginPageViewLoadingPreview() {
-	LoginPageView()
+	LoginPageView(
+		onNavigateToCreateAccount = {},
+	)
 }
 
 @Preview(showBackground = true)
@@ -252,6 +253,7 @@ fun LoginPageViewLoadingPreview() {
 fun LoginPageViewLoadedPreview() {
 	SubletrTheme {
 		LoginPageView(
+			onNavigateToCreateAccount = {},
 			uiState = LoginPageUiState.Loaded(
 				email = "",
 				password = "",
