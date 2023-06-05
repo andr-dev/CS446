@@ -10,7 +10,11 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.imePadding
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.Visibility
@@ -36,12 +40,17 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navOptions
 import org.uwaterloo.subletr.R
+import org.uwaterloo.subletr.navigation.NavigationDestination
 import org.uwaterloo.subletr.pages.login.ELEMENT_WIDTH
 import org.uwaterloo.subletr.theme.SubletrTheme
 import org.uwaterloo.subletr.theme.SubletrTypography
@@ -53,51 +62,65 @@ import org.uwaterloo.subletr.theme.subletrPink
 @Composable
 fun CreateAccountPageView(
 	modifier: Modifier = Modifier,
-	onNavigateToLogin: () -> Unit,
+	navHostController: NavHostController,
 	viewModel: CreateAccountPageViewModel = hiltViewModel(),
 	uiState: CreateAccountPageUiState = viewModel.uiStateStream.subscribeAsState(
 		CreateAccountPageUiState.NewAccount
 	).value,
 ) {
+	val scrollState = rememberScrollState()
 	var passwordVisible by rememberSaveable { mutableStateOf(false) }
 	var expandedDropdown by remember { mutableStateOf(false) }
 	if (uiState is CreateAccountPageUiState.NewAccountInfo) {
 		Column(
 			modifier = modifier
 				.fillMaxSize(1.0f)
-				.imePadding(),
+				.imePadding()
+				.verticalScroll(scrollState),
 			horizontalAlignment = Alignment.CenterHorizontally,
 			verticalArrangement = Arrangement.Center,
 		) {
-			Column(
-				modifier = modifier,
-				horizontalAlignment = Alignment.Start,
-				verticalArrangement = Arrangement.Center,
+			Row(
+				verticalAlignment = Alignment.CenterVertically
 			) {
-				Text(
-					text = stringResource(id = R.string.welcome_to),
-					style = SubletrTypography.bodyMedium,
+
+				Spacer(
+					modifier = Modifier.width(50.dp)
 				)
-				Row {
+
+				Column(
+					modifier = modifier,
+				) {
 					Text(
-						text = stringResource(id = R.string.app_name_black_part),
-						style = MaterialTheme.typography.titleLarge,
+						text = stringResource(id = R.string.welcome_to),
+						style = SubletrTypography.bodyMedium,
 					)
-					Text(
-						text = stringResource(id = R.string.app_name_pink_part),
-						style = MaterialTheme.typography.titleLarge,
-						color = subletrPink,
-					)
+					Row {
+						Text(
+							text = stringResource(id = R.string.app_name_black_part),
+							style = MaterialTheme.typography.titleLarge,
+						)
+						Text(
+							text = stringResource(id = R.string.app_name_pink_part),
+							style = MaterialTheme.typography.titleLarge,
+							color = subletrPink,
+						)
+					}
 				}
+
+				Spacer(
+					modifier = Modifier.weight(weight = 2.0f)
+				)
 			}
 
 			Spacer(
-				modifier = Modifier.weight(weight = 1.0f)
+				modifier = Modifier.weight(weight = 2.0f)
 			)
 
 			TextField(
 				modifier = Modifier
 					.fillMaxWidth(ELEMENT_WIDTH),
+				singleLine = true,
 				shape = RoundedCornerShape(size = 100.dp),
 				colors = TextFieldDefaults.colors(
 					unfocusedContainerColor = buttonBackgroundColor,
@@ -127,12 +150,13 @@ fun CreateAccountPageView(
 			)
 
 			Spacer(
-				modifier = Modifier.weight(weight = 1.0f)
+				modifier = Modifier.weight(weight = 2.0f)
 			)
 
 			TextField(
 				modifier = Modifier
 					.fillMaxWidth(ELEMENT_WIDTH),
+				singleLine = true,
 				shape = RoundedCornerShape(size = 100.dp),
 				colors = TextFieldDefaults.colors(
 					unfocusedContainerColor = buttonBackgroundColor,
@@ -162,18 +186,23 @@ fun CreateAccountPageView(
 			)
 
 			Spacer(
-				modifier = Modifier.weight(weight = 1.0f)
+				modifier = Modifier.weight(weight = 2.0f)
 			)
 
 			TextField(
 				modifier = Modifier
 					.fillMaxWidth(ELEMENT_WIDTH),
+				singleLine = true,
 				shape = RoundedCornerShape(size = 100.dp),
 				colors = TextFieldDefaults.colors(
 					unfocusedContainerColor = buttonBackgroundColor,
 					focusedContainerColor = buttonBackgroundColor,
 					unfocusedIndicatorColor = Color.Transparent,
 					focusedIndicatorColor = Color.Transparent,
+				),
+				keyboardOptions = KeyboardOptions(
+					keyboardType = KeyboardType.Email,
+					autoCorrect = false
 				),
 				placeholder = {
 					Text(
@@ -197,12 +226,13 @@ fun CreateAccountPageView(
 			)
 
 			Spacer(
-				modifier = Modifier.weight(weight = 1.0f)
+				modifier = Modifier.weight(weight = 2.0f)
 			)
 
 			TextField(
 				modifier = Modifier
 					.fillMaxWidth(ELEMENT_WIDTH),
+				singleLine = true,
 				shape = RoundedCornerShape(size = 100.dp),
 				colors = TextFieldDefaults.colors(
 					unfocusedContainerColor = buttonBackgroundColor,
@@ -213,6 +243,10 @@ fun CreateAccountPageView(
 				visualTransformation =
 				if (passwordVisible) VisualTransformation.None
 				else PasswordVisualTransformation(),
+				keyboardOptions = KeyboardOptions(
+					keyboardType = KeyboardType.Password,
+					autoCorrect = false
+				),
 				placeholder = {
 					Text(
 						text = stringResource(id = R.string.password),
@@ -251,18 +285,24 @@ fun CreateAccountPageView(
 			)
 
 			Spacer(
-				modifier = Modifier.weight(weight = 1.0f)
+				modifier = Modifier.weight(weight = 2.0f)
 			)
 
 			TextField(
 				modifier = Modifier
 					.fillMaxWidth(ELEMENT_WIDTH),
+				singleLine = true,
 				shape = RoundedCornerShape(size = 100.dp),
 				colors = TextFieldDefaults.colors(
 					unfocusedContainerColor = buttonBackgroundColor,
 					focusedContainerColor = buttonBackgroundColor,
 					unfocusedIndicatorColor = Color.Transparent,
 					focusedIndicatorColor = Color.Transparent,
+				),
+				visualTransformation = PasswordVisualTransformation(),
+				keyboardOptions = KeyboardOptions(
+					keyboardType = KeyboardType.Password,
+					autoCorrect = false
 				),
 				placeholder = {
 					Text(
@@ -275,7 +315,7 @@ fun CreateAccountPageView(
 					viewModel.updateUiState(
 						CreateAccountPageUiState.NewAccountInfo(
 							firstName = uiState.firstName,
-							lastName = uiState.confirmPassword,
+							lastName = uiState.lastName,
 							email = uiState.email,
 							password = uiState.password,
 							confirmPassword = it,
@@ -286,7 +326,7 @@ fun CreateAccountPageView(
 			)
 
 			Spacer(
-				modifier = Modifier.weight(weight = 1.0f)
+				modifier = Modifier.weight(weight = 2.0f)
 			)
 
 			Box {
@@ -307,7 +347,6 @@ fun CreateAccountPageView(
 					) {
 						Text(
 							text = uiState.gender.gender,
-							color = secondaryTextColor,
 						)
 
 						Spacer(modifier = Modifier.weight(1.0f))
@@ -348,7 +387,7 @@ fun CreateAccountPageView(
 			}
 
 			Spacer(
-				modifier = Modifier.weight(weight = 1.0f)
+				modifier = Modifier.weight(weight = 2.0f)
 			)
 
 			Button(
@@ -368,17 +407,26 @@ fun CreateAccountPageView(
 			}
 
 			Spacer(
-				modifier = Modifier.weight(weight = 1.0f)
+				modifier = Modifier.weight(weight = 2.0f)
 			)
 
-			Row(verticalAlignment = Alignment.CenterVertically) {
+			Row(
+				verticalAlignment = Alignment.CenterVertically
+			) {
 				Text(
 					text = stringResource(id = R.string.already_have_an_account),
 					color = secondaryTextColor,
 				)
 				Button(
 					contentPadding = PaddingValues(1.dp),
-					onClick = onNavigateToLogin,
+					onClick = {
+						navHostController.navigate(
+							NavigationDestination.LOGIN.rootNavPath,
+							navOptions = navOptions {
+								popUpTo(navHostController.graph.id)
+							}
+						)
+					},
 					colors = ButtonDefaults.buttonColors(
 						containerColor = Color.Transparent,
 						contentColor = Color.Transparent,
@@ -405,7 +453,7 @@ fun CreateAccountPageView(
 fun CreateAccountPagePreview() {
 	SubletrTheme {
 		CreateAccountPageView(
-			onNavigateToLogin = {},
+			navHostController = rememberNavController(),
 			uiState = CreateAccountPageUiState.NewAccountInfo(
 				firstName = "",
 				lastName = "",
