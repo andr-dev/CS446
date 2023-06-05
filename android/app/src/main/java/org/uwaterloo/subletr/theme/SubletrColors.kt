@@ -12,6 +12,8 @@ val Purple500 = Color(0xFF9C27B0)
 
 val subletrPink = Color(0xFFF4717F)
 
+val unselectedGray = Color(0xFF808080)
+
 val secondaryTextColor = Color((0xFF808080))
 val buttonBackgroundColor = Color((0xFFD9D9D9))
 

@@ -9,8 +9,11 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.compose.currentBackStackEntryAsState
 import org.uwaterloo.subletr.components.bottombar.BottomBarView
 import org.uwaterloo.subletr.navigation.MainNavigation
+import org.uwaterloo.subletr.navigation.NavigationDestination
+import org.uwaterloo.subletr.navigation.isTopLevelDestinationInHierarchy
 
 @Composable
 fun MainScaffoldView(
@@ -20,14 +23,30 @@ fun MainScaffoldView(
 	mainAppState: MainAppState = rememberMainAppState(),
 ) {
 	val snackbarHostState: SnackbarHostState = remember { SnackbarHostState() }
+	var currentDestination: NavigationDestination = NavigationDestination.LOGIN
+	NavigationDestination.values().forEach {
+		if (
+			mainAppState
+				.navHostController
+				.currentBackStackEntryAsState()
+				.value
+				?.destination
+				.isTopLevelDestinationInHierarchy(it)
+		) {
+			currentDestination = it
+		}
+	}
 
 	Scaffold(
 		modifier = modifier,
 		bottomBar = {
-			BottomBarView(
-				modifier = Modifier,
-				navHostController = mainAppState.navHostController,
-			)
+			if (currentDestination.showBottomBar) {
+				BottomBarView(
+					modifier = Modifier,
+					navHostController = mainAppState.navHostController,
+					currentDestination = currentDestination,
+				)
+			}
 		},
 		snackbarHost = {
 			SnackbarHost(
