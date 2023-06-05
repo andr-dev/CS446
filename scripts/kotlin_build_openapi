@@ -1,0 +1,61 @@
+#!/usr/bin/env bash
+
+set -e
+
+PROJECT_DIR=$(git rev-parse --show-toplevel)
+
+# Create temp dir and register exit trap
+
+TMP_DIR=$(mktemp -d)
+
+function cleanup {
+  if [ ! -z "${SERVER_PID}" ]; then
+    kill ${SERVER_PID}
+    printf "Killed server with PID ${SERVER_PID}\n"
+  fi
+
+  rm -rf "${TMP_DIR}"
+  printf "Deleted temp working directory ${TMP_DIR}\n"
+}
+
+trap cleanup EXIT
+
+# Run server and extract openapi.json
+
+cd "${PROJECT_DIR}/server"
+
+cargo build
+
+DATABASE_URL="db/store.db" ./target/debug/server 2>&1 1>/dev/null &
+
+SERVER_PID=$!
+
+printf "Started server with PID ${SERVER_PID}, extracting openapi.json ... "
+
+sleep 1
+
+curl http://localhost:3030/api/openapi.json > "${TMP_DIR}/openapi.json" 2>/dev/null
+
+printf "done!\n\n"
+
+kill ${SERVER_PID}
+SERVER_PID=""
+
+# Build openapi client
+
+cd ${TMP_DIR}
+
+openapi-generator generate -i openapi.json -g kotlin --package-name org.uwaterloo.subletr.api
+
+# Store openapi kotlin client to android source
+
+JAVA_DIR="android/app/src/main/java/org/uwaterloo/subletr/"
+
+cd ${PROJECT_DIR}
+
+rm -rf "${JAVA_DIR}/api"
+
+mkdir -p "${JAVA_DIR}/api"
+
+mv "${TMP_DIR}/src/main/kotlin/org/uwaterloo/subletr/api" ${JAVA_DIR}
+
