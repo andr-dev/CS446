@@ -16,7 +16,7 @@ class ConcavePentagon : androidx.compose.ui.graphics.Shape {
 			moveTo(0f, 0f)
 			lineTo(size.width, 0f)
 			lineTo(size.width, size.height)
-			lineTo(size.width / 2f, size.height / 6 * 5)
+			lineTo(size.width / 2f, size.height / 4 * 3)
 			lineTo(0f, size.height)
 			lineTo(0f, 0f)
 		}
