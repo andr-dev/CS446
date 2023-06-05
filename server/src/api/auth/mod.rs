@@ -1,23 +1,27 @@
 use diesel::{query_dsl::methods::FilterDsl, ExpressionMethods, RunQueryDsl};
-use rocket::{post, routes, serde::json::Json, Route, State};
+use okapi::openapi3::OpenApi;
+use rocket::{post, serde::json::Json, Route, State};
+use rocket_okapi::{openapi, openapi_get_routes_spec};
 
 use crate::{
     api::{token::generate_token, utils::hash_password},
+    db::model::users::User,
     error::{ServiceError, ServiceResult},
-    model::users::User,
-    proto::auth::{UserLoginRequest, UserLoginResponse},
     state::AppState,
 };
 
-#[post("/auth/login", format = "json", data = "<login_request>")]
+use super::model::auth::{UserLoginRequest, UserLoginResponse};
+
+#[openapi]
+#[post("/login", format = "json", data = "<login_request>")]
 fn login(
     state: &State<AppState>,
     login_request: Json<UserLoginRequest>,
 ) -> ServiceResult<UserLoginResponse> {
     let mut dbcon = state.pool.get()?;
 
-    let users: Vec<User> = crate::schema::users::dsl::users
-        .filter(crate::schema::users::email.eq(&login_request.email))
+    let users: Vec<User> = crate::db::schema::users::dsl::users
+        .filter(crate::db::schema::users::email.eq(&login_request.email))
         .load(&mut dbcon)?;
 
     println!("got users: {:?}", users);
@@ -40,8 +44,6 @@ fn login(
     }
 }
 
-pub(super) fn routes() -> Vec<Route> {
-    let routes = routes![login];
-
-    routes
+pub fn routes() -> (Vec<Route>, OpenApi) {
+    openapi_get_routes_spec![login]
 }

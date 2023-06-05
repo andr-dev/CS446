@@ -1,6 +1,6 @@
 use diesel::{Insertable, Queryable};
 
-use crate::schema::users;
+use crate::db::schema::users;
 
 #[derive(Queryable, Debug)]
 pub struct User {

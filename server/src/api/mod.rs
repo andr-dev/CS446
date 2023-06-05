@@ -1,28 +1,44 @@
-use chrono::{DateTime, Utc};
-use rocket::{get, routes, serde::json::Json, Route};
+use chrono::Utc;
+use rocket::{get, serde::json::Json, Build, Rocket};
+use rocket_okapi::{
+    mount_endpoints_and_merged_docs, openapi, openapi_get_routes_spec, settings::OpenApiSettings,
+};
 
 use crate::error::ServiceResult;
 
 mod auth;
+mod constants;
+mod model;
 mod token;
 mod user;
 mod utils;
 
+#[openapi]
 #[get("/ping")]
-fn ping() -> ServiceResult<&'static str> {
-    Ok(Json("pong"))
+fn ping() -> Json<&'static str> {
+    Json("pong")
 }
 
+#[openapi]
 #[get("/time")]
-fn time() -> ServiceResult<DateTime<Utc>> {
-    Ok(Json(Utc::now()))
+fn time() -> ServiceResult<i64> {
+    Ok(Json(Utc::now().timestamp_millis()))
 }
 
-pub(super) fn routes() -> Vec<Route> {
-    let mut routes = routes![ping, time];
+pub fn rocket() -> Rocket<Build> {
+    let mut rocket_builder = rocket::build();
 
-    routes.extend(auth::routes());
-    routes.extend(user::routes());
+    let openapi_settings = OpenApiSettings::default();
 
-    routes
+    mount_endpoints_and_merged_docs! {
+        rocket_builder,
+        "/api",
+        openapi_settings,
+
+        "" => openapi_get_routes_spec![ping, time],
+        "/auth" => auth::routes(),
+        "/user" => user::routes(),
+    };
+
+    rocket_builder
 }
