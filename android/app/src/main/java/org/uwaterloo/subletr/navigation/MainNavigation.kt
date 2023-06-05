@@ -32,6 +32,7 @@ fun MainNavigation(
 		composable(NavigationDestination.CREATE_ACCOUNT.rootNavPath) {
 			CreateAccountPageView(
 				modifier = modifier,
+				onNavigateToLogin = { navHostController.navigate("login") },
 			)
 		}
 		composable(NavigationDestination.VERIFY_EMAIL.rootNavPath) {

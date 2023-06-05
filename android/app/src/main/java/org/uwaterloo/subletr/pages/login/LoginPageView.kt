@@ -171,7 +171,7 @@ fun LoginPageView(
 				Button(
 					contentPadding = PaddingValues(dimensionResource(id = R.dimen.xxxxs)),
 					onClick = {
-						println("Fill")
+						navHostController.navigate(NavigationDestination.CREATE_ACCOUNT.rootNavPath)
 					},
 					colors = ButtonDefaults.buttonColors(
 						containerColor = Color.Transparent,
@@ -184,7 +184,7 @@ fun LoginPageView(
 					)
 				}
 			}
-			
+
 			Spacer(
 				modifier = Modifier
 					.weight(weight = 5.0f)
