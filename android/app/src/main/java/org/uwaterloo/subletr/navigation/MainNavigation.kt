@@ -24,6 +24,7 @@ fun MainNavigation(
 		composable(NavigationDestination.LOGIN.rootNavPath) {
 			LoginPageView(
 				modifier = modifier,
+				navHostController = navHostController,
 			)
 		}
 		composable(NavigationDestination.CREATE_ACCOUNT.rootNavPath) {

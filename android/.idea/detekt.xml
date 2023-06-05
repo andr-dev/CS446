@@ -3,7 +3,7 @@
   <component name="DetektPluginSettings">
     <option name="configurationFiles">
       <list>
-        <option value="$PROJECT_DIR$/../../../personal-private/Your-Daily-Word/Android/config/detekt-config.yml" />
+        <option value="$PROJECT_DIR$/config/detekt-config.yml" />
       </list>
     </option>
   </component>

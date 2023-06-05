@@ -10,24 +10,13 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.imePadding
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Visibility
-import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
-import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.rxjava3.subscribeAsState
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -35,28 +24,31 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.input.PasswordVisualTransformation
-import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.rememberNavController
 import org.uwaterloo.subletr.R
+import org.uwaterloo.subletr.components.button.PrimaryButton
+import org.uwaterloo.subletr.components.textfield.RoundedPasswordTextField
+import org.uwaterloo.subletr.components.textfield.RoundedTextField
 import org.uwaterloo.subletr.models.ConcavePentagon
+import org.uwaterloo.subletr.navigation.NavigationDestination
 import org.uwaterloo.subletr.theme.SubletrTheme
-import org.uwaterloo.subletr.theme.buttonBackgroundColor
 import org.uwaterloo.subletr.theme.secondaryTextColor
 import org.uwaterloo.subletr.theme.subletrPink
+import org.uwaterloo.subletr.theme.textOnSubletrPink
 
 @Composable
 fun LoginPageView(
 	modifier: Modifier = Modifier,
 	viewModel: LoginPageViewModel = hiltViewModel(),
+	navHostController: NavHostController,
 	uiState: LoginPageUiState = viewModel.uiStateStream.subscribeAsState(
 		LoginPageUiState.Loading
 	).value,
 ) {
-	var passwordVisible by rememberSaveable { mutableStateOf(false) }
-
 	if (uiState is LoginPageUiState.Loading) {
 		Column(
 			modifier = modifier
@@ -65,9 +57,7 @@ fun LoginPageView(
 			horizontalAlignment = Alignment.CenterHorizontally,
 			verticalArrangement = Arrangement.Center,
 		) {
-			Text(
-				text = stringResource(id = R.string.loading)
-			)
+			CircularProgressIndicator()
 		}
 	} else if (uiState is LoginPageUiState.Loaded) {
 		Column(
@@ -107,16 +97,9 @@ fun LoginPageView(
 				modifier = Modifier.weight(weight = 10.0f)
 			)
 
-			TextField(
+			RoundedTextField(
 				modifier = Modifier
 					.fillMaxWidth(ELEMENT_WIDTH),
-				shape = RoundedCornerShape(size = 100.dp),
-				colors = TextFieldDefaults.colors(
-					unfocusedContainerColor = buttonBackgroundColor,
-					focusedContainerColor = buttonBackgroundColor,
-					unfocusedIndicatorColor = Color.Transparent,
-					focusedIndicatorColor = Color.Transparent,
-				),
 				placeholder = {
 					Text(
 						text = stringResource(id = R.string.email),
@@ -138,40 +121,14 @@ fun LoginPageView(
 				modifier = Modifier.weight(weight = 2.0f)
 			)
 
-			TextField(
+			RoundedPasswordTextField(
 				modifier = Modifier
 					.fillMaxWidth(ELEMENT_WIDTH),
-				shape = RoundedCornerShape(size = 100.dp),
-				colors = TextFieldDefaults.colors(
-					unfocusedContainerColor = buttonBackgroundColor,
-					focusedContainerColor = buttonBackgroundColor,
-					unfocusedIndicatorColor = Color.Transparent,
-					focusedIndicatorColor = Color.Transparent,
-				),
-				visualTransformation =
-				if (passwordVisible) VisualTransformation.None
-				else PasswordVisualTransformation(),
 				placeholder = {
 					Text(
 						text = stringResource(id = R.string.password),
 						color = secondaryTextColor,
 					)
-				},
-				trailingIcon = {
-		  			IconButton(onClick = { passwordVisible = !passwordVisible }) {
-						Icon(
-							imageVector =
-							if (passwordVisible) Icons.Filled.Visibility
-							else Icons.Filled.VisibilityOff,
-							contentDescription =
-							if (passwordVisible) stringResource(
-								id = R.string.hide_password
-							)
-							else stringResource(
-								id = R.string.show_password
-							),
-						)
-					}
 				},
 				value = uiState.password,
 				onValueChange = {
@@ -188,19 +145,17 @@ fun LoginPageView(
 				modifier = Modifier.weight(weight = 2.0f)
 			)
 
-			Button(
+			PrimaryButton(
 				modifier = Modifier
 					.fillMaxWidth(ELEMENT_WIDTH)
 					.height(50.dp),
-				onClick = {},
-				colors = ButtonDefaults.buttonColors(
-					containerColor = subletrPink,
-					contentColor = Color.White,
-				)
+				onClick = {
+					navHostController.navigate(NavigationDestination.HOME.rootNavPath)
+				},
 			) {
 				Text(
 					text = stringResource(id = R.string.log_in),
-					color = Color.White,
+					color = textOnSubletrPink,
 				)
 			}
 
@@ -244,7 +199,9 @@ const val ELEMENT_WIDTH = 0.75f
 @Preview(showBackground = true)
 @Composable
 fun LoginPageViewLoadingPreview() {
-	LoginPageView()
+	LoginPageView(
+		navHostController = rememberNavController(),
+	)
 }
 
 @Preview(showBackground = true)
@@ -255,7 +212,8 @@ fun LoginPageViewLoadedPreview() {
 			uiState = LoginPageUiState.Loaded(
 				email = "",
 				password = "",
-			)
+			),
+			navHostController = rememberNavController(),
 		)
 	}
 }
