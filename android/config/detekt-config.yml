@@ -146,6 +146,7 @@ complexity:
     NestedBlockDepth:
         active: true
         threshold: 4
+        excludes: ['**/api/**']
     NestedScopeFunctions:
         active: false
         threshold: 1
@@ -166,7 +167,7 @@ complexity:
         ignoreStringsRegex: '$^'
     TooManyFunctions:
         active: true
-        excludes: ['**/test/**', '**/androidTest/**', '**/commonTest/**', '**/jvmTest/**', '**/androidUnitTest/**', '**/androidInstrumentedTest/**', '**/jsTest/**', '**/iosTest/**']
+        excludes: ['**/test/**', '**/androidTest/**', '**/commonTest/**', '**/jvmTest/**', '**/androidUnitTest/**', '**/androidInstrumentedTest/**', '**/jsTest/**', '**/iosTest/**', '**/api/**']
         thresholdInFiles: 11
         thresholdInClasses: 11
         thresholdInInterfaces: 11
@@ -576,6 +577,7 @@ style:
             - 'TODO:'
         allowedPatterns: ''
         customMessage: ''
+        excludes: ['**/api/**']
     ForbiddenImport:
         active: false
         imports: []
@@ -632,6 +634,7 @@ style:
         excludeImportStatements: true
         excludeCommentStatements: false
         excludeRawStrings: true
+        excludes: ['**/api/**']
     MayBeConst:
         active: true
     ModifierOrder:
@@ -675,6 +678,7 @@ style:
         excludeLabeled: false
         excludeReturnFromLambda: true
         excludeGuardClauses: false
+        excludes: ['**/api/**']
     SafeCast:
         active: true
     SerialVersionUIDInSerializableClass:
@@ -689,6 +693,7 @@ style:
         active: true
         max: 2
         excludeGuardClauses: false
+        excludes: ['**/api/**']
     TrailingWhitespace:
         active: false
     TrimMultilineRawString:
@@ -731,6 +736,7 @@ style:
     UnusedPrivateProperty:
         active: true
         allowedNames: '_|ignored|expected|serialVersionUID'
+        excludes: ['**/api/**']
     UseAnyOrNoneInsteadOfFind:
         active: true
     UseArrayLiteralsInAnnotations:
@@ -739,6 +745,7 @@ style:
         active: true
     UseCheckOrError:
         active: true
+        excludes: ['**/api/**']
     UseDataClass:
         active: false
         allowVars: false
