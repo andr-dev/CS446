@@ -65,7 +65,7 @@ fun CreateAccountPageView(
 	navHostController: NavHostController,
 	viewModel: CreateAccountPageViewModel = hiltViewModel(),
 	uiState: CreateAccountPageUiState = viewModel.uiStateStream.subscribeAsState(
-		CreateAccountPageUiState.NewAccount
+		CreateAccountPageUiState.Loading
 	).value,
 ) {
 	val scrollState = rememberScrollState()
