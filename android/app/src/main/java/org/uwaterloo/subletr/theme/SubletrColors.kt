@@ -20,6 +20,17 @@ val subletrPink
 private val subletrPinkLight = Color(0xFFF4717F)
 private val subletrPinkDark = Color(0xFFF4717F)
 
+val textOnSubletrPink
+	@Composable
+	get() = if (isSystemInDarkTheme()) {
+		textOnSubletrPinkDark
+	}
+	else {
+		textOnSubletrPinkLight
+	}
+private val textOnSubletrPinkLight = Color((0xFFFFFFFF))
+private val textOnSubletrPinkDark = Color((0xFFFFFFFF))
+
 val unselectedGray
 	@Composable
 	get() = if (isSystemInDarkTheme()) {
@@ -28,8 +39,8 @@ val unselectedGray
 	else {
 		unselectedGrayLight
 	}
-val unselectedGrayLight = Color(0xFF808080)
-val unselectedGrayDark = Color(0xFF808080)
+private val unselectedGrayLight = Color(0xFF808080)
+private val unselectedGrayDark = Color(0xFF808080)
 
 val secondaryTextColor
 	@Composable
@@ -39,19 +50,31 @@ val secondaryTextColor
 	else {
 		secondaryTextColorLight
 	}
-val secondaryTextColorLight = Color((0xFF808080))
-val secondaryTextColorDark = Color((0xFF808080))
+private val secondaryTextColorLight = Color((0xFF808080))
+private val secondaryTextColorDark = Color((0xFF808080))
 
-val buttonBackgroundColor
+val secondaryButtonBackgroundColor
 	@Composable
 	get() = if (isSystemInDarkTheme()) {
-		buttonBackgroundColorDark
+		secondaryButtonBackgroundColorDark
 	}
 	else {
-		buttonBackgroundColorLight
+		secondaryButtonBackgroundColorLight
 	}
-val buttonBackgroundColorLight = Color((0xFFD9D9D9))
-val buttonBackgroundColorDark = Color((0xFFD9D9D9))
+private val secondaryButtonBackgroundColorLight = Color((0xFFF0F0F0))
+private val secondaryButtonBackgroundColorDark = Color((0xFFF0F0F0))
+
+val textFieldBackgroundColor
+	@Composable
+	get() = if (isSystemInDarkTheme()) {
+		textFieldBackgroundColorDark
+	}
+	else {
+		textFieldBackgroundColorLight
+	}
+private val textFieldBackgroundColorLight = Color((0xFFD9D9D9))
+private val textFieldBackgroundColorDark = Color((0xFFD9D9D9))
+
 
 val Purple900 = Color(0xFF4A148C)
 val Purple500 = Color(0xFF9C27B0)
