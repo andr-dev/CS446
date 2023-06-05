@@ -6,6 +6,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navOptions
 import org.uwaterloo.subletr.pages.account.AccountPageView
 import org.uwaterloo.subletr.pages.chat.ChatPageView
 import org.uwaterloo.subletr.pages.createaccount.CreateAccountPageView
@@ -27,10 +28,17 @@ fun MainNavigation(
 				onNavigateToCreateAccount = { navHostController.navigate("createaccount") },
 			)
 		}
-		composable(NavigationDestination.CREATE_ACCOUNT.rootNavPath) {
+		composable("createaccount") {
 			CreateAccountPageView(
 				modifier = modifier,
-				onNavigateToLogin = { navHostController.navigate("login") },
+				onNavigateToLogin = {
+					navHostController.navigate(
+						"login",
+						navOptions = navOptions {
+							popUpTo("login")
+						}
+					)
+				},
 			)
 		}
 		composable(NavigationDestination.HOME.rootNavPath) {

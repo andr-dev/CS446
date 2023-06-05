@@ -15,7 +15,7 @@ class CreateAccountPageViewModel @Inject constructor() : ViewModel() {
 			email = "",
 			password = "",
 			confirmPassword = "",
-			gender = CreateAccountPageUiState.Gender.OTHER
+			gender = CreateAccountPageUiState.Gender.OTHER,
 		)
 	)
 
