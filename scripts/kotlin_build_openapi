@@ -57,5 +57,7 @@ rm -rf "${JAVA_DIR}/api"
 
 mkdir -p "${JAVA_DIR}/api"
 
-mv "${TMP_DIR}/src/main/kotlin/org/uwaterloo/subletr/api" ${JAVA_DIR}
+mv -v "${TMP_DIR}/src/main/kotlin/org/uwaterloo/subletr/api" ${JAVA_DIR}
+
+printf "\nFinished building openapi kotlin client!\n"
 
