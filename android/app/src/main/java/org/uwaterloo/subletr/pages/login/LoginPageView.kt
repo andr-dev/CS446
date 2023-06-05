@@ -40,8 +40,12 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navOptions
 import org.uwaterloo.subletr.R
 import org.uwaterloo.subletr.models.ConcavePentagon
+import org.uwaterloo.subletr.navigation.NavigationDestination
 import org.uwaterloo.subletr.theme.SubletrTheme
 import org.uwaterloo.subletr.theme.buttonBackgroundColor
 import org.uwaterloo.subletr.theme.secondaryTextColor
@@ -50,7 +54,7 @@ import org.uwaterloo.subletr.theme.subletrPink
 @Composable
 fun LoginPageView(
 	modifier: Modifier = Modifier,
-	onNavigateToCreateAccount: () -> Unit,
+	navHostController: NavHostController,
 	viewModel: LoginPageViewModel = hiltViewModel(),
 	uiState: LoginPageUiState = viewModel.uiStateStream.subscribeAsState(
 		LoginPageUiState.Loading
@@ -216,7 +220,9 @@ fun LoginPageView(
 				)
 				Button(
 					contentPadding = PaddingValues(1.dp),
-					onClick = onNavigateToCreateAccount,
+					onClick = {
+						navHostController.navigate(NavigationDestination.CREATE_ACCOUNT.rootNavPath)
+					},
 					colors = ButtonDefaults.buttonColors(
 						containerColor = Color.Transparent,
 						contentColor = Color.Transparent,
@@ -228,7 +234,7 @@ fun LoginPageView(
 					)
 				}
 			}
-			
+
 			Spacer(
 				modifier = Modifier
 					.weight(weight = 5.0f)
@@ -244,7 +250,7 @@ const val ELEMENT_WIDTH = 0.75f
 @Composable
 fun LoginPageViewLoadingPreview() {
 	LoginPageView(
-		onNavigateToCreateAccount = {},
+		navHostController = rememberNavController(),
 	)
 }
 
@@ -253,7 +259,7 @@ fun LoginPageViewLoadingPreview() {
 fun LoginPageViewLoadedPreview() {
 	SubletrTheme {
 		LoginPageView(
-			onNavigateToCreateAccount = {},
+			navHostController = rememberNavController(),
 			uiState = LoginPageUiState.Loaded(
 				email = "",
 				password = "",

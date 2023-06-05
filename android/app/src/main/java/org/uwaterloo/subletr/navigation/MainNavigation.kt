@@ -25,20 +25,13 @@ fun MainNavigation(
 		composable(NavigationDestination.LOGIN.rootNavPath) {
 			LoginPageView(
 				modifier = modifier,
-				onNavigateToCreateAccount = { navHostController.navigate("createaccount") },
+				navHostController = navHostController,
 			)
 		}
-		composable("createaccount") {
+		composable(NavigationDestination.CREATE_ACCOUNT.rootNavPath) {
 			CreateAccountPageView(
 				modifier = modifier,
-				onNavigateToLogin = {
-					navHostController.navigate(
-						"login",
-						navOptions = navOptions {
-							popUpTo("login")
-						}
-					)
-				},
+				navHostController = navHostController,
 			)
 		}
 		composable(NavigationDestination.HOME.rootNavPath) {
