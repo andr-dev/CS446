@@ -1,6 +1,6 @@
 <resources>
-    <string name="app_name">Subletr</string>
-    <string name="app_name_black_part">Sublet</string>
+    <string name="app_name">subletr</string>
+    <string name="app_name_black_part">sublet</string>
     <string name="app_name_pink_part">r</string>
     <string name="email">Email</string>
     <string name="password">Password</string>

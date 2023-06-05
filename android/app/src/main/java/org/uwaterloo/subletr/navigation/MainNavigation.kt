@@ -19,29 +19,29 @@ fun MainNavigation(
 ) {
 	NavHost(
 		navController = navHostController,
-		startDestination = "login",
+		startDestination = NavigationDestination.LOGIN.rootNavPath,
 	) {
-		composable("login") {
+		composable(NavigationDestination.LOGIN.rootNavPath) {
 			LoginPageView(
 				modifier = modifier,
 			)
 		}
-		composable("createaccount") {
+		composable(NavigationDestination.CREATE_ACCOUNT.rootNavPath) {
 			CreateAccountPageView(
 				modifier = modifier,
 			)
 		}
-		composable("home") {
+		composable(NavigationDestination.HOME.rootNavPath) {
 			HomePageView(
 				modifier = modifier,
 			)
 		}
-		composable("account") {
+		composable(NavigationDestination.ACCOUNT.rootNavPath) {
 			AccountPageView(
 				modifier = modifier,
 			)
 		}
-		composable("chat") {
+		composable(NavigationDestination.CHAT.rootNavPath) {
 			ChatPageView(
 				modifier = modifier,
 			)
