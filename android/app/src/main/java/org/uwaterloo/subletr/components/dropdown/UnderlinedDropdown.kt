@@ -24,6 +24,7 @@ import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
+import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -49,12 +50,13 @@ fun <T> UnderlinedDropdown(
 		.fillMaxWidth(1.0f)
 	) {
 		val subletrPink = subletrPink
+		val strokeWidthDp = dimensionResource(id = R.dimen.xxxxs)
 		Button(
 			modifier = Modifier
 				.fillMaxWidth(1.0f)
-				.height(50.dp)
+				.height(dimensionResource(id = R.dimen.xl))
 				.drawBehind {
-					val strokeWidth = 1.dp.toPx()
+					val strokeWidth = strokeWidthDp.toPx()
 					val y = size.height - strokeWidth / 2
 
 					drawLine(

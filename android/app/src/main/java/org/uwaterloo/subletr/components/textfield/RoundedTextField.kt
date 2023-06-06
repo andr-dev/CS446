@@ -13,10 +13,11 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
+import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
+import org.uwaterloo.subletr.R
 import org.uwaterloo.subletr.theme.textFieldBackgroundColor
 
 @Composable
@@ -43,7 +44,7 @@ fun RoundedTextField(
 	maxLines: Int = if (singleLine) 1 else Int.MAX_VALUE,
 	minLines: Int = 1,
 	interactionSource: MutableInteractionSource = remember { MutableInteractionSource() },
-	shape: Shape = RoundedCornerShape(100.dp),
+	shape: Shape = RoundedCornerShape(dimensionResource(id = R.dimen.xxxxl)),
 	colors: TextFieldColors = TextFieldDefaults.colors(
 		unfocusedContainerColor = textFieldBackgroundColor,
 		focusedContainerColor = textFieldBackgroundColor,

@@ -22,10 +22,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
@@ -148,7 +148,7 @@ fun LoginPageView(
 			PrimaryButton(
 				modifier = Modifier
 					.fillMaxWidth(ELEMENT_WIDTH)
-					.height(50.dp),
+					.height(dimensionResource(id = R.dimen.xl)),
 				onClick = {
 					navHostController.navigate(NavigationDestination.HOME.rootNavPath)
 				},
@@ -169,7 +169,7 @@ fun LoginPageView(
 					color = secondaryTextColor,
 				)
 				Button(
-					contentPadding = PaddingValues(1.dp),
+					contentPadding = PaddingValues(dimensionResource(id = R.dimen.xxxxs)),
 					onClick = {
 						println("Fill")
 					},
