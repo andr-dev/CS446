@@ -24,9 +24,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import org.uwaterloo.subletr.R
 import org.uwaterloo.subletr.components.button.PrimaryButton
@@ -67,13 +67,13 @@ fun AccountPageView(
 			item {
 				Box(
 					modifier = Modifier
-						.padding(32.dp)
+						.padding(dimensionResource(id = R.dimen.l))
 						.clip(CircleShape),
 				) {
 					Box(
 						modifier = Modifier
-							.width(64.dp)
-							.height(64.dp)
+							.width(dimensionResource(id = R.dimen.xxl))
+							.height(dimensionResource(id = R.dimen.xxl))
 							.background(Color.Gray),
 					)
 				}
@@ -108,7 +108,7 @@ fun AccountPageView(
 						)
 					},
 				)
-				Spacer(modifier = Modifier.height(30.dp))
+				Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.l)))
 			}
 			item {
 				Row(
@@ -142,7 +142,7 @@ fun AccountPageView(
 				)
 			}
 			item {
-				Spacer(modifier = Modifier.height(30.dp))
+				Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.l)))
 			}
 			item {
 				Row(
@@ -175,13 +175,13 @@ fun AccountPageView(
 				)
 			}
 			item {
-				Spacer(modifier = Modifier.height(30.dp))
+				Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.l)))
 			}
 			item {
 				SecondaryButton(
 					modifier = Modifier
 						.fillMaxWidth(ELEMENT_WIDTH)
-						.height(50.dp),
+						.height(dimensionResource(id = R.dimen.xl)),
 					onClick = {},
 				) {
 					Text(
@@ -190,13 +190,13 @@ fun AccountPageView(
 				}
 			}
 			item {
-				Spacer(modifier = Modifier.height(30.dp))
+				Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.l)))
 			}
 			item {
 				PrimaryButton(
 					modifier = Modifier
 						.fillMaxWidth(ELEMENT_WIDTH)
-						.height(50.dp),
+						.height(dimensionResource(id = R.dimen.xl)),
 					onClick = {},
 				) {
 					Text(
@@ -206,7 +206,7 @@ fun AccountPageView(
 				}
 			}
 			item {
-				Spacer(modifier = Modifier.height(30.dp))
+				Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.l)))
 			}
 			item {
 				Row(
@@ -219,7 +219,7 @@ fun AccountPageView(
 				}
 			}
 			item {
-				Spacer(modifier = Modifier.height(20.dp))
+				Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.m)))
 			}
 			itemsIndexed(
 				items = uiState.settings,
