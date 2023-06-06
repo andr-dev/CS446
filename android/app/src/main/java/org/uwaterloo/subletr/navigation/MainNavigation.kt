@@ -23,6 +23,7 @@ fun MainNavigation(
 		startDestination = NavigationDestination.LOGIN.rootNavPath,
 	) {
 		composable(NavigationDestination.LOGIN.rootNavPath) {
+
 			LoginPageView(
 				modifier = modifier,
 				navHostController = navHostController,
@@ -36,6 +37,8 @@ fun MainNavigation(
 		composable(NavigationDestination.VERIFY_EMAIL.rootNavPath) {
 			EmailVerificationPageView(
 				modifier = modifier,
+				onNavigateToHome = { navHostController.navigate("home")},
+
 			)
 		}
 		composable(NavigationDestination.HOME.rootNavPath) {
