@@ -9,12 +9,12 @@ import javax.inject.Inject
 
 @HiltViewModel
 class EmailVerificationPageViewModel @Inject constructor() : ViewModel() {
-	val uiStateStream: BehaviorSubject<EmailVerificationPageUiState> = BehaviorSubject.createDefault(
-		EmailVerificationPageUiState.Loaded(
-			verificationCode = immutableListOf("","","","","")
+	val uiStateStream: BehaviorSubject<EmailVerificationPageUiState> =
+		BehaviorSubject.createDefault(
+			EmailVerificationPageUiState.Loaded(
+				verificationCode = immutableListOf("", "", "", "", "")
+			)
 		)
-	)
-
 	fun updateUiState(uiState: EmailVerificationPageUiState) {
 		uiStateStream.onNext(uiState)
 	}
