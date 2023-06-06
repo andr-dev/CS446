@@ -42,7 +42,6 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
-import androidx.navigation.navOptions
 import org.uwaterloo.subletr.R
 import org.uwaterloo.subletr.models.ConcavePentagon
 import org.uwaterloo.subletr.navigation.NavigationDestination

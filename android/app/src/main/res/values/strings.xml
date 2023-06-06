@@ -20,6 +20,9 @@
     <string name="last_name">Last name</string>
     <string name="confirm_password">Confirm password</string>
     <string name="gender">Gender</string>
+    <string name="male">Male</string>
+    <string name="female">Female</string>
+    <string name="other">Other</string>
     <string name="already_have_an_account">Already have an account?</string>
     <string name="hide_password">Hide Password</string>
     <string name="show_password">Show Password</string>
