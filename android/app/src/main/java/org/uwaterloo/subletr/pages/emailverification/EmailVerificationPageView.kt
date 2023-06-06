@@ -39,16 +39,19 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
+import androidx.navigation.compose.rememberNavController
+import okhttp3.internal.immutableListOf
 import org.uwaterloo.subletr.R
-import org.uwaterloo.subletr.pages.emailverification.EmailVerificationPageViewModel
 import org.uwaterloo.subletr.pages.login.ELEMENT_WIDTH
-import org.uwaterloo.subletr.pages.login.LoginPageUiState
-import org.uwaterloo.subletr.theme.buttonBackgroundColor
+import org.uwaterloo.subletr.theme.SubletrTheme
+import org.uwaterloo.subletr.theme.secondaryButtonBackgroundColor
 import org.uwaterloo.subletr.theme.subletrPink
+import org.uwaterloo.subletr.theme.textFieldBackgroundColor
 
 @Composable
 fun EmailVerificationPageView(
@@ -99,13 +102,16 @@ fun EmailVerificationPageView(
 				text = stringResource(id = R.string.email_verification),
 				style = MaterialTheme.typography.titleMedium,
 			)
+			Spacer(
+				modifier = Modifier.height(5.dp)
+			)
 			Text(
 				text = stringResource(id = R.string.email_verification_instruction),
 				style = MaterialTheme.typography.bodyMedium,
 				modifier = Modifier.fillMaxWidth(0.77f),
 			)
 			Spacer(
-				modifier = Modifier.weight(weight = 13.0f)
+				modifier = Modifier.weight(weight = 20.0f)
 			)
 			VerificationCodeTextField(uiState.verificationCode, ::onTextViewValueChange)
 			Spacer(
@@ -137,7 +143,7 @@ fun EmailVerificationPageView(
 					.height(40.dp),
 				onClick = {},
 				colors = ButtonDefaults.buttonColors(
-					containerColor = buttonBackgroundColor,
+					containerColor = secondaryButtonBackgroundColor,
 					contentColor = Color.White,
 				)
 			) {
@@ -162,10 +168,10 @@ fun TextFieldBox(
 	verificationCodeValue: List<String>,
 	onTextViewValueChange: (Int, String) -> Unit,
 ) {
-	val btnGrey = buttonBackgroundColor
+	val textFieldColor = textFieldBackgroundColor
 	val sublrPink = subletrPink
-	var backgroundColor by remember { mutableStateOf(btnGrey) }
-	var borderColor by remember { mutableStateOf(btnGrey) }
+	var backgroundColor by remember { mutableStateOf(textFieldColor) }
+	var borderColor by remember { mutableStateOf(textFieldColor) }
 
 	TextField(
 		modifier = Modifier
@@ -225,3 +231,26 @@ fun VerificationCodeTextField(
 		}
 	}
 }
+
+@Preview(showBackground = true)
+@Composable
+fun EmailVerificationPageViewLoadingPreview() {
+	EmailVerificationPageView(
+		navHostController = rememberNavController(),
+	)
+}
+
+@Preview(showBackground = true)
+@Composable
+fun EmailVerificationPageViewLoadedPreview() {
+	SubletrTheme {
+		EmailVerificationPageView(
+			uiState = EmailVerificationPageUiState.Loaded(
+				verificationCode = immutableListOf("", "", "", "", "")
+			),
+			navHostController = rememberNavController(),
+		)
+
+	}
+}
+

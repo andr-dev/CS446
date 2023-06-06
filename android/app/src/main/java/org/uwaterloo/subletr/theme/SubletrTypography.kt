@@ -24,6 +24,14 @@ val SubletrTypography = Typography(
 		lineHeight = 28.sp,
 		letterSpacing = 0.sp
 	),
+	titleMedium = TextStyle(
+		color = Color.Black,
+		fontFamily = FontFamily.Default,
+		fontWeight = FontWeight.Bold,
+		fontSize = 38.sp,
+		lineHeight = 28.sp,
+		letterSpacing = 0.sp
+	),
 	titleSmall = TextStyle(
 		color = Color.Black,
 		fontFamily = FontFamily.Default,
@@ -32,12 +40,28 @@ val SubletrTypography = Typography(
 		lineHeight = 28.sp,
 		letterSpacing = 0.sp
 	),
+	bodyMedium = TextStyle(
+		color = Color.Gray,
+		fontFamily = FontFamily.Default,
+		fontWeight = FontWeight.Light,
+		fontSize = 20.sp,
+		lineHeight = 24.sp,
+		letterSpacing = 0.5.sp
+	),
 	labelSmall = TextStyle(
 		color = Color.Gray,
 		fontFamily = FontFamily.Default,
 		fontWeight = FontWeight.Medium,
 		fontSize = 11.sp,
 		lineHeight = 16.sp,
+		letterSpacing = 0.5.sp
+	),
+	labelMedium = TextStyle(
+
+		fontFamily = FontFamily.Default,
+		fontWeight = FontWeight.Light,
+		fontSize = 20.sp,
+		lineHeight = 24.sp,
 		letterSpacing = 0.5.sp
 	),
 )
