@@ -54,6 +54,7 @@ import org.uwaterloo.subletr.theme.subletrPink
 @Composable
 fun EmailVerificationPageView(
     modifier: Modifier = Modifier,
+    onNavigateToHome: () -> Unit,
     viewModel: EmailVerificationPageViewModel = hiltViewModel(),
     uiState: EmailVerificationPageUiState = viewModel.uiStateStream.subscribeAsState(
             EmailVerificationPageUiState.Loading
@@ -103,7 +104,7 @@ fun EmailVerificationPageView(
             modifier = Modifier
                 .fillMaxWidth(ELEMENT_WIDTH)
                 .height(40.dp),
-            onClick = {},
+            onClick = {onNavigateToHome()},
             colors = ButtonDefaults.buttonColors(
                 containerColor = subletrPink,
                 contentColor = Color.White,
@@ -205,7 +206,7 @@ fun TextFieldBox(index:Int, focusManager:FocusManager,viewModel: EmailVerificati
                    )
                )
            }
-            if (text.text != " " && text.text != "" ){
+            if (it != " " && it != "" ){
                 focusManager.moveFocus(FocusDirection.Right)
             }
 
