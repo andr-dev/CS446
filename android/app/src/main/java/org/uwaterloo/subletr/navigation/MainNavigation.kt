@@ -9,7 +9,7 @@ import androidx.navigation.compose.rememberNavController
 import org.uwaterloo.subletr.pages.account.AccountPageView
 import org.uwaterloo.subletr.pages.chat.ChatPageView
 import org.uwaterloo.subletr.pages.createaccount.CreateAccountPageView
-import org.uwaterloo.subletr.pages.home.EmailVerificationPage
+import org.uwaterloo.subletr.pages.home.EmailVerificationPageView
 import org.uwaterloo.subletr.pages.home.HomePageView
 import org.uwaterloo.subletr.pages.login.LoginPageView
 
@@ -20,7 +20,7 @@ fun MainNavigation(
 ) {
 	NavHost(
 		navController = navHostController,
-		startDestination = NavigationDestination.VERIFY_EMAIL.rootNavPath,
+		startDestination = NavigationDestination.LOGIN.rootNavPath,
 	) {
 		composable(NavigationDestination.LOGIN.rootNavPath) {
 			LoginPageView(
@@ -34,7 +34,7 @@ fun MainNavigation(
 			)
 		}
 		composable(NavigationDestination.VERIFY_EMAIL.rootNavPath) {
-			EmailVerificationPage(
+			EmailVerificationPageView(
 				modifier = modifier,
 			)
 		}
