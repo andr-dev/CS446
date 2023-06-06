@@ -1,7 +1,19 @@
 package org.uwaterloo.subletr.enums
 
-enum class Gender(val gender: String) {
-	MALE("Male"),
-	FEMALE("Female"),
-	OTHER("Other"),
+import androidx.annotation.StringRes
+import org.uwaterloo.subletr.R
+
+enum class Gender {
+	MALE,
+	FEMALE,
+	OTHER;
+
+	@StringRes
+	fun getStringRes(): Int {
+		return when (this) {
+			MALE -> R.string.male
+			FEMALE -> R.string.female
+			OTHER -> R.string.other
+		}
+	}
 }
