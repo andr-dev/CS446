@@ -50,6 +50,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navOptions
 import org.uwaterloo.subletr.R
+import org.uwaterloo.subletr.enums.Gender
 import org.uwaterloo.subletr.navigation.NavigationDestination
 import org.uwaterloo.subletr.pages.login.ELEMENT_WIDTH
 import org.uwaterloo.subletr.theme.SubletrTheme
@@ -71,7 +72,18 @@ fun CreateAccountPageView(
 	val scrollState = rememberScrollState()
 	var passwordVisible by rememberSaveable { mutableStateOf(false) }
 	var expandedDropdown by remember { mutableStateOf(false) }
-	if (uiState is CreateAccountPageUiState.NewAccountInfo) {
+	if (uiState is CreateAccountPageUiState.Loading) {
+		Column(
+			modifier = modifier
+				.fillMaxSize(1.0f),
+			horizontalAlignment = Alignment.CenterHorizontally,
+			verticalArrangement = Arrangement.Center,
+		) {
+			Text(
+				text = stringResource(id = R.string.loading)
+			)
+		}
+	} else if (uiState is CreateAccountPageUiState.Loaded) {
 		Column(
 			modifier = modifier
 				.fillMaxSize(1.0f)
@@ -137,7 +149,7 @@ fun CreateAccountPageView(
 				value = uiState.firstName,
 				onValueChange = {
 					viewModel.updateUiState(
-						CreateAccountPageUiState.NewAccountInfo(
+						CreateAccountPageUiState.Loaded(
 							firstName = it,
 							lastName = uiState.lastName,
 							email = uiState.email,
@@ -173,7 +185,7 @@ fun CreateAccountPageView(
 				value = uiState.lastName,
 				onValueChange = {
 					viewModel.updateUiState(
-						CreateAccountPageUiState.NewAccountInfo(
+						CreateAccountPageUiState.Loaded(
 							firstName = uiState.firstName,
 							lastName = it,
 							email = uiState.email,
@@ -202,7 +214,7 @@ fun CreateAccountPageView(
 				),
 				keyboardOptions = KeyboardOptions(
 					keyboardType = KeyboardType.Email,
-					autoCorrect = false
+					autoCorrect = false,
 				),
 				placeholder = {
 					Text(
@@ -213,7 +225,7 @@ fun CreateAccountPageView(
 				value = uiState.email,
 				onValueChange = {
 					viewModel.updateUiState(
-						CreateAccountPageUiState.NewAccountInfo(
+						CreateAccountPageUiState.Loaded(
 							firstName = uiState.firstName,
 							lastName = uiState.lastName,
 							email = it,
@@ -245,7 +257,7 @@ fun CreateAccountPageView(
 				else PasswordVisualTransformation(),
 				keyboardOptions = KeyboardOptions(
 					keyboardType = KeyboardType.Password,
-					autoCorrect = false
+					autoCorrect = false,
 				),
 				placeholder = {
 					Text(
@@ -272,7 +284,7 @@ fun CreateAccountPageView(
 				value = uiState.password,
 				onValueChange = {
 					viewModel.updateUiState(
-						CreateAccountPageUiState.NewAccountInfo(
+						CreateAccountPageUiState.Loaded(
 							firstName = uiState.firstName,
 							lastName = uiState.lastName,
 							email = uiState.email,
@@ -313,7 +325,7 @@ fun CreateAccountPageView(
 				value = uiState.confirmPassword,
 				onValueChange = {
 					viewModel.updateUiState(
-						CreateAccountPageUiState.NewAccountInfo(
+						CreateAccountPageUiState.Loaded(
 							firstName = uiState.firstName,
 							lastName = uiState.lastName,
 							email = uiState.email,
@@ -363,14 +375,14 @@ fun CreateAccountPageView(
 					modifier = Modifier
 						.fillMaxWidth(ELEMENT_WIDTH)
 				) {
-					enumValues<CreateAccountPageUiState.Gender>().forEach { choice ->
+					enumValues<Gender>().forEach { choice ->
 						DropdownMenuItem(
 							text = {
 								Text(text = choice.gender)
 							},
 							onClick = {
 								viewModel.updateUiState(
-									CreateAccountPageUiState.NewAccountInfo(
+									CreateAccountPageUiState.Loaded(
 										firstName = uiState.firstName,
 										lastName = uiState.lastName,
 										email = uiState.email,
@@ -454,13 +466,13 @@ fun CreateAccountPagePreview() {
 	SubletrTheme {
 		CreateAccountPageView(
 			navHostController = rememberNavController(),
-			uiState = CreateAccountPageUiState.NewAccountInfo(
+			uiState = CreateAccountPageUiState.Loaded(
 				firstName = "",
 				lastName = "",
 				email = "",
 				password = "",
 				confirmPassword = "",
-				gender = CreateAccountPageUiState.Gender.OTHER,
+				gender = Gender.OTHER,
 			)
 		)
 	}
