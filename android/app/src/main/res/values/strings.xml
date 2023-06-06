@@ -26,4 +26,8 @@
     <string name="drop_down_arrow">Drop Down Arrow</string>
     <string name="drop_up_arrow">Drop Up Arrow</string>
     <string name="setting_1">Setting 1</string>
+    <string name="verify">Verify</string>
+    <string name="resend_code">Resend code</string>
+    <string name="email_verification">Email Verification</string>
+    <string name="email_verification_instruction">Please enter the code we sent to your email address to finish creating your account</string>
 </resources>
