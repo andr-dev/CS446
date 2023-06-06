@@ -15,6 +15,10 @@ enum class NavigationDestination(
 		rootNavPath = "createaccount",
 		bottomBarNavigationItems = null,
 	),
+	VERIFY_EMAIL(
+		rootNavPath = "verifyemail",
+		bottomBarNavigationItems = null,
+	),
 	HOME(
 		rootNavPath = "home",
 		bottomBarNavigationItems = BottomBarNavigationItems(
