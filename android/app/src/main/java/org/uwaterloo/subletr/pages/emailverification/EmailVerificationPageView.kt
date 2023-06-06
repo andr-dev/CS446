@@ -1,4 +1,4 @@
-package org.uwaterloo.subletr.pages.home
+package org.uwaterloo.subletr.pages.emailverification
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.border
@@ -38,13 +38,12 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavHostController
 import org.uwaterloo.subletr.R
-import org.uwaterloo.subletr.pages.emailverification.EmailVerificationPageUiState
 import org.uwaterloo.subletr.pages.emailverification.EmailVerificationPageViewModel
 import org.uwaterloo.subletr.pages.login.ELEMENT_WIDTH
 import org.uwaterloo.subletr.pages.login.LoginPageUiState
@@ -53,177 +52,176 @@ import org.uwaterloo.subletr.theme.subletrPink
 
 @Composable
 fun EmailVerificationPageView(
-    modifier: Modifier = Modifier,
-    onNavigateToHome: () -> Unit,
-    viewModel: EmailVerificationPageViewModel = hiltViewModel(),
-    uiState: EmailVerificationPageUiState = viewModel.uiStateStream.subscribeAsState(
-            EmailVerificationPageUiState.Loading
-        ).value
+	modifier: Modifier = Modifier,
+	navHostController: NavHostController,
+	viewModel: EmailVerificationPageViewModel = hiltViewModel(),
+	uiState: EmailVerificationPageUiState = viewModel.uiStateStream.subscribeAsState(
+		EmailVerificationPageUiState.Loading
+	).value,
 ) {
 
-    if (uiState is EmailVerificationPageUiState.Loading) {
-        Column(
-            modifier = modifier
-                .fillMaxSize(1.0f)
-                .imePadding(),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center,
-        ) {
-            Text(
-                text = stringResource(id = R.string.loading)
-            )
-        }
-    } else if (uiState is EmailVerificationPageUiState.Loaded)
-    {Column(
-        modifier = modifier.fillMaxSize(1.0f),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Top,
+	if (uiState is EmailVerificationPageUiState.Loading) {
+		Column(
+			modifier = modifier
+				.fillMaxSize(1.0f)
+				.imePadding(),
+			horizontalAlignment = Alignment.CenterHorizontally,
+			verticalArrangement = Arrangement.Center,
+		) {
+			Text(
+				text = stringResource(id = R.string.loading)
+			)
+		}
+	} else if (uiState is EmailVerificationPageUiState.Loaded) {
+		fun onTextViewValueChange(index: Int, value: String) {
+			val newCode = uiState.verificationCode.mapIndexed { i, element ->
+				if (i == index) {
+					value
+				} else {
+					element
+				}
+			}
+			viewModel.updateUiState(
+				EmailVerificationPageUiState.Loaded(
+					verificationCode = newCode
+				)
+			)
+		}
+		Column(
+			modifier = modifier.fillMaxSize(1.0f),
+			horizontalAlignment = Alignment.CenterHorizontally,
+			verticalArrangement = Arrangement.Top,
+		) {
+			Spacer(
+				modifier = Modifier.weight(weight = 8.0f)
+			)
+			Text(
+				text = stringResource(id = R.string.email_verification),
+				style = MaterialTheme.typography.titleMedium,
+			)
+			Text(
+				text = stringResource(id = R.string.email_verification_instruction),
+				style = MaterialTheme.typography.bodyMedium,
+				modifier = Modifier.fillMaxWidth(0.77f),
+			)
+			Spacer(
+				modifier = Modifier.weight(weight = 13.0f)
+			)
+			VerificationCodeTextField(uiState.verificationCode, ::onTextViewValueChange)
+			Spacer(
+				modifier = Modifier.weight(weight = 20.0f)
+			)
+			Button(
+				modifier = Modifier
+					.fillMaxWidth(ELEMENT_WIDTH)
+					.height(40.dp),
+				onClick = { navHostController.navigate("home") },
+				colors = ButtonDefaults.buttonColors(
+					containerColor = subletrPink,
+					contentColor = Color.White,
+				)
+			) {
+				Text(
+					text = stringResource(id = R.string.verify),
+					color = Color.White,
+					style = MaterialTheme.typography.labelMedium,
+					textAlign = TextAlign.Justify,
+				)
+			}
+			Spacer(
+				modifier = Modifier.height(20.dp)
+			)
+			Button(
+				modifier = Modifier
+					.fillMaxWidth(ELEMENT_WIDTH)
+					.height(40.dp),
+				onClick = {},
+				colors = ButtonDefaults.buttonColors(
+					containerColor = buttonBackgroundColor,
+					contentColor = Color.White,
+				)
+			) {
+				Text(
+					text = stringResource(id = R.string.resend_code),
+					color = Color.Gray,
+					style = MaterialTheme.typography.labelMedium,
 
-
-    ){
-        Spacer(
-            modifier = Modifier.weight(weight = 8.0f)
-        )
-        Text(
-            text = stringResource(id = R.string.email_verification),
-            style = MaterialTheme.typography.titleMedium,
-        )
-        Text(
-            text = stringResource(id = R.string.email_verification_instruction),
-            style = MaterialTheme.typography.bodyMedium,
-            modifier = modifier.fillMaxWidth(0.77f) ,
-        )
-        Spacer(
-            modifier = Modifier.weight(weight = 13.0f)
-        )
-        VerificationCodeTextField(viewModel)
-        Spacer(
-            modifier = Modifier.weight(weight = 20.0f)
-        )
-        Button(
-            modifier = Modifier
-                .fillMaxWidth(ELEMENT_WIDTH)
-                .height(40.dp),
-            onClick = {onNavigateToHome()},
-            colors = ButtonDefaults.buttonColors(
-                containerColor = subletrPink,
-                contentColor = Color.White,
-            )
-        ) {
-            Text(
-                text = stringResource(id = R.string.verify),
-                color = Color.White,
-                style = MaterialTheme.typography.labelMedium,
-                textAlign = TextAlign.Justify
-            )
-        }
-        Spacer(
-            modifier = Modifier.height(20.dp)
-        )
-        Button(
-            modifier = Modifier
-                .fillMaxWidth(ELEMENT_WIDTH)
-                .height(40.dp),
-            onClick = {},
-            colors = ButtonDefaults.buttonColors(
-                containerColor = buttonBackgroundColor,
-                contentColor = Color.White,
-            )
-        ) {
-            Text(
-                text = stringResource(id = R.string.resend_code),
-                color = Color.Gray,
-                style = MaterialTheme.typography.labelMedium,
-
-            )
-        }
-        Spacer(
-            modifier = Modifier.weight(weight = 13.0f)
-        )
-
-    }}
-
+					)
+			}
+			Spacer(
+				modifier = Modifier.weight(weight = 13.0f)
+			)
+		}
+	}
 }
 
-
 @Composable
-fun TextFieldBox(index:Int, focusManager:FocusManager,viewModel: EmailVerificationPageViewModel,uiState: EmailVerificationPageUiState = viewModel.uiStateStream.subscribeAsState(
-    EmailVerificationPageUiState.Loading
-).value) {
-    var text by remember { mutableStateOf(TextFieldValue("")) }
-    var btnGrey = buttonBackgroundColor
-    var sublrPink = subletrPink
+fun TextFieldBox(
+	index: Int,
+	focusManager: FocusManager,
+	verificationCodeValue: List<String>,
+	onTextViewValueChange: (Int, String) -> Unit,
+) {
+	val btnGrey = buttonBackgroundColor
+	val sublrPink = subletrPink
+	var backgroundColor by remember { mutableStateOf(btnGrey) }
+	var borderColor by remember { mutableStateOf(btnGrey) }
 
-    var backgroundColor by remember { mutableStateOf(btnGrey) }
-    var borderColor by remember { mutableStateOf(btnGrey) }
-    if (uiState is EmailVerificationPageUiState.Loaded){
-
-
-    TextField(
-        modifier = Modifier
-            .width(54.dp)
-            .height(56.dp)
-            .wrapContentSize(align = Alignment.Center)
-            .border(BorderStroke(2.dp, borderColor), shape = RoundedCornerShape(5.dp))
-            .onFocusChanged {
-                if (it.isFocused) {
-                    borderColor = sublrPink
-                    backgroundColor = Color.White
-                }
-
-            },
-
-        shape = RoundedCornerShape(size = 5.dp),
-        colors = TextFieldDefaults.colors(
-            unfocusedContainerColor = backgroundColor,
-            focusedContainerColor = backgroundColor,
-            unfocusedIndicatorColor = Color.Transparent,
-            focusedIndicatorColor = Color.Transparent,
-
-
-            ),
-        singleLine = true,
-        textStyle = TextStyle(
-            color = Color.Black,
-            fontFamily = FontFamily.Default,
-            fontWeight = FontWeight.Bold,
-            fontSize = 19.sp,
-            letterSpacing = 0.sp,
-            textAlign = TextAlign.Center
-
-        ),
-        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-
-        value = uiState.verificationCode[index],
-
-        onValueChange = {
-           if (it.length <= 1 ) {
-               val newCode = uiState.verificationCode.toMutableList()
-               newCode[index] = it
-               viewModel.updateUiState(
-                   EmailVerificationPageUiState.Loaded(
-                       verificationCode = newCode.toList()
-                   )
-               )
-           }
-            if (it != " " && it != "" ){
-                focusManager.moveFocus(FocusDirection.Right)
-            }
-
-        }
-    )}
+	TextField(
+		modifier = Modifier
+			.width(54.dp)
+			.height(54.dp)
+			.wrapContentSize(align = Alignment.Center)
+			.border(BorderStroke(2.dp, borderColor), shape = RoundedCornerShape(5.dp))
+			.onFocusChanged {
+				if (it.isFocused) {
+					borderColor = sublrPink
+					backgroundColor = Color.White
+				}
+			},
+		shape = RoundedCornerShape(size = 5.dp),
+		colors = TextFieldDefaults.colors(
+			unfocusedContainerColor = backgroundColor,
+			focusedContainerColor = backgroundColor,
+			unfocusedIndicatorColor = Color.Transparent,
+			focusedIndicatorColor = Color.Transparent,
+		),
+		singleLine = true,
+		textStyle = TextStyle(
+			color = Color.Black,
+			fontFamily = FontFamily.Default,
+			fontWeight = FontWeight.Bold,
+			fontSize = 19.sp,
+			letterSpacing = 0.sp,
+			textAlign = TextAlign.Center
+		),
+		keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+		value = verificationCodeValue[index],
+		onValueChange = {
+			if (it.length <= 1) {
+				onTextViewValueChange(index, it)
+				if (it != " " && it != "") {
+					focusManager.moveFocus(FocusDirection.Right)
+				}
+			}
+		}
+	)
 }
-@Composable
-fun VerificationCodeTextField( viewModel: EmailVerificationPageViewModel) {
-    val focusManager = LocalFocusManager.current
-    Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-        (0 until 5).forEach {
-            TextFieldBox(
-                index = it,
-                focusManager,
-                viewModel
-            )
-        }
 
-    }
+@Composable
+fun VerificationCodeTextField(
+	verificationCodeValue: List<String>,
+	onTextViewValueChange: (Int, String) -> Unit,
+) {
+	val focusManager = LocalFocusManager.current
+	Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+		for (i in 0..4) {
+			TextFieldBox(
+				index = i,
+				focusManager,
+				verificationCodeValue,
+				onTextViewValueChange
+			)
+		}
+	}
 }
