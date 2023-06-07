@@ -45,7 +45,12 @@ SERVER_PID=""
 
 cd ${TMP_DIR}
 
-openapi-generator generate -i openapi.json -g kotlin --package-name org.uwaterloo.subletr.api
+openapi-generator generate \
+  -i openapi.json \
+  -g kotlin \
+  --package-name org.uwaterloo.subletr.api \
+  --additional-properties=useCoroutines=true \
+  --additional-properties=useRxJava3=true
 
 # Store openapi kotlin client to android source
 

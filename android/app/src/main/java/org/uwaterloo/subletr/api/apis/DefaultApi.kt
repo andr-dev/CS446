@@ -26,6 +26,8 @@ import org.uwaterloo.subletr.api.models.UserLoginResponse
 
 import com.squareup.moshi.Json
 
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import org.uwaterloo.subletr.api.infrastructure.ApiClient
 import org.uwaterloo.subletr.api.infrastructure.ApiResponse
 import org.uwaterloo.subletr.api.infrastructure.ClientException
@@ -61,10 +63,10 @@ class DefaultApi(basePath: kotlin.String = defaultBasePath, client: OkHttpClient
      */
     @Suppress("UNCHECKED_CAST")
     @Throws(IllegalStateException::class, IOException::class, UnsupportedOperationException::class, ClientException::class, ServerException::class)
-    fun create(createUserRequest: CreateUserRequest) : CreateUserResponse {
+    suspend fun create(createUserRequest: CreateUserRequest) : CreateUserResponse = withContext(Dispatchers.IO) {
         val localVarResponse = createWithHttpInfo(createUserRequest = createUserRequest)
 
-        return when (localVarResponse.responseType) {
+        return@withContext when (localVarResponse.responseType) {
             ResponseType.Success -> (localVarResponse as Success<*>).data as CreateUserResponse
             ResponseType.Informational -> throw UnsupportedOperationException("Client does not support Informational responses.")
             ResponseType.Redirection -> throw UnsupportedOperationException("Client does not support Redirection responses.")
@@ -89,10 +91,10 @@ class DefaultApi(basePath: kotlin.String = defaultBasePath, client: OkHttpClient
      */
     @Suppress("UNCHECKED_CAST")
     @Throws(IllegalStateException::class, IOException::class)
-    fun createWithHttpInfo(createUserRequest: CreateUserRequest) : ApiResponse<CreateUserResponse?> {
+    suspend fun createWithHttpInfo(createUserRequest: CreateUserRequest) : ApiResponse<CreateUserResponse?> = withContext(Dispatchers.IO) {
         val localVariableConfig = createRequestConfig(createUserRequest = createUserRequest)
 
-        return request<CreateUserRequest, CreateUserResponse>(
+        return@withContext request<CreateUserRequest, CreateUserResponse>(
             localVariableConfig
         )
     }
@@ -132,10 +134,10 @@ class DefaultApi(basePath: kotlin.String = defaultBasePath, client: OkHttpClient
      */
     @Suppress("UNCHECKED_CAST")
     @Throws(IllegalStateException::class, IOException::class, UnsupportedOperationException::class, ClientException::class, ServerException::class)
-    fun email() : kotlin.String {
+    suspend fun email() : kotlin.String = withContext(Dispatchers.IO) {
         val localVarResponse = emailWithHttpInfo()
 
-        return when (localVarResponse.responseType) {
+        return@withContext when (localVarResponse.responseType) {
             ResponseType.Success -> (localVarResponse as Success<*>).data as kotlin.String
             ResponseType.Informational -> throw UnsupportedOperationException("Client does not support Informational responses.")
             ResponseType.Redirection -> throw UnsupportedOperationException("Client does not support Redirection responses.")
@@ -159,10 +161,10 @@ class DefaultApi(basePath: kotlin.String = defaultBasePath, client: OkHttpClient
      */
     @Suppress("UNCHECKED_CAST")
     @Throws(IllegalStateException::class, IOException::class)
-    fun emailWithHttpInfo() : ApiResponse<kotlin.String?> {
+    suspend fun emailWithHttpInfo() : ApiResponse<kotlin.String?> = withContext(Dispatchers.IO) {
         val localVariableConfig = emailRequestConfig()
 
-        return request<Unit, kotlin.String>(
+        return@withContext request<Unit, kotlin.String>(
             localVariableConfig
         )
     }
@@ -201,10 +203,10 @@ class DefaultApi(basePath: kotlin.String = defaultBasePath, client: OkHttpClient
      */
     @Suppress("UNCHECKED_CAST")
     @Throws(IllegalStateException::class, IOException::class, UnsupportedOperationException::class, ClientException::class, ServerException::class)
-    fun login(userLoginRequest: UserLoginRequest) : UserLoginResponse {
+    suspend fun login(userLoginRequest: UserLoginRequest) : UserLoginResponse = withContext(Dispatchers.IO) {
         val localVarResponse = loginWithHttpInfo(userLoginRequest = userLoginRequest)
 
-        return when (localVarResponse.responseType) {
+        return@withContext when (localVarResponse.responseType) {
             ResponseType.Success -> (localVarResponse as Success<*>).data as UserLoginResponse
             ResponseType.Informational -> throw UnsupportedOperationException("Client does not support Informational responses.")
             ResponseType.Redirection -> throw UnsupportedOperationException("Client does not support Redirection responses.")
@@ -229,10 +231,10 @@ class DefaultApi(basePath: kotlin.String = defaultBasePath, client: OkHttpClient
      */
     @Suppress("UNCHECKED_CAST")
     @Throws(IllegalStateException::class, IOException::class)
-    fun loginWithHttpInfo(userLoginRequest: UserLoginRequest) : ApiResponse<UserLoginResponse?> {
+    suspend fun loginWithHttpInfo(userLoginRequest: UserLoginRequest) : ApiResponse<UserLoginResponse?> = withContext(Dispatchers.IO) {
         val localVariableConfig = loginRequestConfig(userLoginRequest = userLoginRequest)
 
-        return request<UserLoginRequest, UserLoginResponse>(
+        return@withContext request<UserLoginRequest, UserLoginResponse>(
             localVariableConfig
         )
     }
@@ -272,10 +274,10 @@ class DefaultApi(basePath: kotlin.String = defaultBasePath, client: OkHttpClient
      */
     @Suppress("UNCHECKED_CAST")
     @Throws(IllegalStateException::class, IOException::class, UnsupportedOperationException::class, ClientException::class, ServerException::class)
-    fun ping() : kotlin.String {
+    suspend fun ping() : kotlin.String = withContext(Dispatchers.IO) {
         val localVarResponse = pingWithHttpInfo()
 
-        return when (localVarResponse.responseType) {
+        return@withContext when (localVarResponse.responseType) {
             ResponseType.Success -> (localVarResponse as Success<*>).data as kotlin.String
             ResponseType.Informational -> throw UnsupportedOperationException("Client does not support Informational responses.")
             ResponseType.Redirection -> throw UnsupportedOperationException("Client does not support Redirection responses.")
@@ -299,10 +301,10 @@ class DefaultApi(basePath: kotlin.String = defaultBasePath, client: OkHttpClient
      */
     @Suppress("UNCHECKED_CAST")
     @Throws(IllegalStateException::class, IOException::class)
-    fun pingWithHttpInfo() : ApiResponse<kotlin.String?> {
+    suspend fun pingWithHttpInfo() : ApiResponse<kotlin.String?> = withContext(Dispatchers.IO) {
         val localVariableConfig = pingRequestConfig()
 
-        return request<Unit, kotlin.String>(
+        return@withContext request<Unit, kotlin.String>(
             localVariableConfig
         )
     }
@@ -340,10 +342,10 @@ class DefaultApi(basePath: kotlin.String = defaultBasePath, client: OkHttpClient
      */
     @Suppress("UNCHECKED_CAST")
     @Throws(IllegalStateException::class, IOException::class, UnsupportedOperationException::class, ClientException::class, ServerException::class)
-    fun time() : kotlin.Long {
+    suspend fun time() : kotlin.Long = withContext(Dispatchers.IO) {
         val localVarResponse = timeWithHttpInfo()
 
-        return when (localVarResponse.responseType) {
+        return@withContext when (localVarResponse.responseType) {
             ResponseType.Success -> (localVarResponse as Success<*>).data as kotlin.Long
             ResponseType.Informational -> throw UnsupportedOperationException("Client does not support Informational responses.")
             ResponseType.Redirection -> throw UnsupportedOperationException("Client does not support Redirection responses.")
@@ -367,10 +369,10 @@ class DefaultApi(basePath: kotlin.String = defaultBasePath, client: OkHttpClient
      */
     @Suppress("UNCHECKED_CAST")
     @Throws(IllegalStateException::class, IOException::class)
-    fun timeWithHttpInfo() : ApiResponse<kotlin.Long?> {
+    suspend fun timeWithHttpInfo() : ApiResponse<kotlin.Long?> = withContext(Dispatchers.IO) {
         val localVariableConfig = timeRequestConfig()
 
-        return request<Unit, kotlin.Long>(
+        return@withContext request<Unit, kotlin.Long>(
             localVariableConfig
         )
     }

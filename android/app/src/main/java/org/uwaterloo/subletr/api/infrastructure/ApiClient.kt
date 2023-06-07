@@ -27,6 +27,9 @@ import java.time.LocalTime
 import java.time.OffsetDateTime
 import java.time.OffsetTime
 import java.util.Locale
+import kotlin.coroutines.resume
+import kotlin.coroutines.resumeWithException
+import kotlinx.coroutines.suspendCancellableCoroutine
 import com.squareup.moshi.adapter
 
 open class ApiClient(val baseUrl: String, val client: OkHttpClient = defaultClient) {
@@ -144,7 +147,7 @@ open class ApiClient(val baseUrl: String, val client: OkHttpClient = defaultClie
     }
 
 
-    protected inline fun <reified I, reified T: Any?> request(requestConfig: RequestConfig<I>): ApiResponse<T?> {
+    protected suspend inline fun <reified I, reified T: Any?> request(requestConfig: RequestConfig<I>): ApiResponse<T?> {
         val httpUrl = baseUrl.toHttpUrlOrNull() ?: throw IllegalStateException("baseUrl is invalid.")
 
         val url = httpUrl.newBuilder()
@@ -189,7 +192,18 @@ open class ApiClient(val baseUrl: String, val client: OkHttpClient = defaultClie
             headers.forEach { header -> addHeader(header.key, header.value) }
         }.build()
 
-        val response = client.newCall(request).execute()
+        val response: Response = suspendCancellableCoroutine { continuation ->
+            val call = client.newCall(request)
+            continuation.invokeOnCancellation { call.cancel() }
+            call.enqueue(object : Callback {
+                override fun onFailure(call: Call, e: IOException) {
+                    continuation.resumeWithException(e)
+                }
+                override fun onResponse(call: Call, response: Response) {
+                    continuation.resume(response)
+                }
+            })
+        }
 
         val accept = response.header(ContentType)?.substringBefore(";")?.lowercase(Locale.US)
 
