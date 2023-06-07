@@ -359,7 +359,7 @@ fun CreateAccountPageView(
 						verticalAlignment = Alignment.CenterVertically
 					) {
 						Text(
-							text = stringResource(id = uiState.gender.gender),
+							text = stringResource(id = uiState.gender.stringId),
 						)
 
 						Spacer(modifier = Modifier.weight(1.0f))
@@ -379,7 +379,7 @@ fun CreateAccountPageView(
 					enumValues<Gender>().forEach { choice ->
 						DropdownMenuItem(
 							text = {
-								Text(text = stringResource(id = choice.gender))
+								Text(text = stringResource(id = choice.stringId))
 							},
 							onClick = {
 								viewModel.updateUiState(
