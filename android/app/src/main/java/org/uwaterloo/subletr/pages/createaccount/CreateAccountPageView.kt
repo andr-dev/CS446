@@ -58,6 +58,7 @@ import org.uwaterloo.subletr.theme.SubletrTypography
 import org.uwaterloo.subletr.theme.buttonBackgroundColor
 import org.uwaterloo.subletr.theme.secondaryTextColor
 import org.uwaterloo.subletr.theme.subletrPink
+import org.uwaterloo.subletr.theme.textOnSubletrPink
 
 
 @Composable
@@ -365,7 +366,7 @@ fun CreateAccountPageView(
 
 						Icon(
 							imageVector = Icons.Filled.KeyboardArrowDown,
-							contentDescription = "genders"
+							contentDescription = stringResource(R.string.gender)
 						)
 					}
 				}
@@ -409,12 +410,12 @@ fun CreateAccountPageView(
 				onClick = {},
 				colors = ButtonDefaults.buttonColors(
 					containerColor = subletrPink,
-					contentColor = Color.White,
+					contentColor = textOnSubletrPink,
 				)
 			) {
 				Text(
 					text = stringResource(id = R.string.create_account),
-					color = Color.White,
+					color = textOnSubletrPink,
 				)
 			}
 
