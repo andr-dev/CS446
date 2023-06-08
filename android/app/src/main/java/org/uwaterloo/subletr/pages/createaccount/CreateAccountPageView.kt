@@ -12,37 +12,28 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.KeyboardArrowDown
-import androidx.compose.material.icons.filled.Visibility
-import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
-import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rxjava3.subscribeAsState
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.text.input.PasswordVisualTransformation
-import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -50,14 +41,17 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navOptions
 import org.uwaterloo.subletr.R
+import org.uwaterloo.subletr.components.button.SecondaryButton
+import org.uwaterloo.subletr.components.textfield.RoundedPasswordTextField
+import org.uwaterloo.subletr.components.textfield.RoundedTextField
 import org.uwaterloo.subletr.enums.Gender
 import org.uwaterloo.subletr.navigation.NavigationDestination
 import org.uwaterloo.subletr.pages.login.ELEMENT_WIDTH
 import org.uwaterloo.subletr.theme.SubletrTheme
 import org.uwaterloo.subletr.theme.SubletrTypography
-import org.uwaterloo.subletr.theme.buttonBackgroundColor
 import org.uwaterloo.subletr.theme.secondaryTextColor
 import org.uwaterloo.subletr.theme.subletrPink
+import org.uwaterloo.subletr.theme.textFieldBackgroundColor
 import org.uwaterloo.subletr.theme.textOnSubletrPink
 
 
@@ -71,7 +65,6 @@ fun CreateAccountPageView(
 	).value,
 ) {
 	val scrollState = rememberScrollState()
-	var passwordVisible by rememberSaveable { mutableStateOf(false) }
 	var expandedDropdown by remember { mutableStateOf(false) }
 	if (uiState is CreateAccountPageUiState.Loading) {
 		Column(
@@ -130,17 +123,9 @@ fun CreateAccountPageView(
 				modifier = Modifier.weight(weight = 2.0f)
 			)
 
-			TextField(
+			RoundedTextField(
 				modifier = Modifier
 					.fillMaxWidth(ELEMENT_WIDTH),
-				singleLine = true,
-				shape = RoundedCornerShape(size = 100.dp),
-				colors = TextFieldDefaults.colors(
-					unfocusedContainerColor = buttonBackgroundColor,
-					focusedContainerColor = buttonBackgroundColor,
-					unfocusedIndicatorColor = Color.Transparent,
-					focusedIndicatorColor = Color.Transparent,
-				),
 				placeholder = {
 					Text(
 						text = stringResource(id = R.string.first_name),
@@ -166,17 +151,9 @@ fun CreateAccountPageView(
 				modifier = Modifier.weight(weight = 2.0f)
 			)
 
-			TextField(
+			RoundedTextField(
 				modifier = Modifier
 					.fillMaxWidth(ELEMENT_WIDTH),
-				singleLine = true,
-				shape = RoundedCornerShape(size = 100.dp),
-				colors = TextFieldDefaults.colors(
-					unfocusedContainerColor = buttonBackgroundColor,
-					focusedContainerColor = buttonBackgroundColor,
-					unfocusedIndicatorColor = Color.Transparent,
-					focusedIndicatorColor = Color.Transparent,
-				),
 				placeholder = {
 					Text(
 						text = stringResource(id = R.string.last_name),
@@ -202,17 +179,9 @@ fun CreateAccountPageView(
 				modifier = Modifier.weight(weight = 2.0f)
 			)
 
-			TextField(
+			RoundedTextField(
 				modifier = Modifier
 					.fillMaxWidth(ELEMENT_WIDTH),
-				singleLine = true,
-				shape = RoundedCornerShape(size = 100.dp),
-				colors = TextFieldDefaults.colors(
-					unfocusedContainerColor = buttonBackgroundColor,
-					focusedContainerColor = buttonBackgroundColor,
-					unfocusedIndicatorColor = Color.Transparent,
-					focusedIndicatorColor = Color.Transparent,
-				),
 				keyboardOptions = KeyboardOptions(
 					keyboardType = KeyboardType.Email,
 					autoCorrect = false,
@@ -242,45 +211,14 @@ fun CreateAccountPageView(
 				modifier = Modifier.weight(weight = 2.0f)
 			)
 
-			TextField(
+			RoundedPasswordTextField(
 				modifier = Modifier
 					.fillMaxWidth(ELEMENT_WIDTH),
-				singleLine = true,
-				shape = RoundedCornerShape(size = 100.dp),
-				colors = TextFieldDefaults.colors(
-					unfocusedContainerColor = buttonBackgroundColor,
-					focusedContainerColor = buttonBackgroundColor,
-					unfocusedIndicatorColor = Color.Transparent,
-					focusedIndicatorColor = Color.Transparent,
-				),
-				visualTransformation =
-				if (passwordVisible) VisualTransformation.None
-				else PasswordVisualTransformation(),
-				keyboardOptions = KeyboardOptions(
-					keyboardType = KeyboardType.Password,
-					autoCorrect = false,
-				),
 				placeholder = {
 					Text(
 						text = stringResource(id = R.string.password),
 						color = secondaryTextColor,
 					)
-				},
-				trailingIcon = {
-					IconButton(onClick = { passwordVisible = !passwordVisible }) {
-						Icon(
-							imageVector =
-							if (passwordVisible) Icons.Filled.Visibility
-							else Icons.Filled.VisibilityOff,
-							contentDescription =
-							if (passwordVisible) stringResource(
-								id = R.string.hide_password
-							)
-							else stringResource(
-								id = R.string.show_password
-							),
-						)
-					}
 				},
 				value = uiState.password,
 				onValueChange = {
@@ -301,22 +239,9 @@ fun CreateAccountPageView(
 				modifier = Modifier.weight(weight = 2.0f)
 			)
 
-			TextField(
+			RoundedPasswordTextField(
 				modifier = Modifier
 					.fillMaxWidth(ELEMENT_WIDTH),
-				singleLine = true,
-				shape = RoundedCornerShape(size = 100.dp),
-				colors = TextFieldDefaults.colors(
-					unfocusedContainerColor = buttonBackgroundColor,
-					focusedContainerColor = buttonBackgroundColor,
-					unfocusedIndicatorColor = Color.Transparent,
-					focusedIndicatorColor = Color.Transparent,
-				),
-				visualTransformation = PasswordVisualTransformation(),
-				keyboardOptions = KeyboardOptions(
-					keyboardType = KeyboardType.Password,
-					autoCorrect = false
-				),
 				placeholder = {
 					Text(
 						text = stringResource(id = R.string.confirm_password),
@@ -343,17 +268,17 @@ fun CreateAccountPageView(
 			)
 
 			Box {
-				Button(
+				SecondaryButton(
 					modifier = Modifier
 						.fillMaxWidth(ELEMENT_WIDTH)
 						.height(50.dp),
+					colors = ButtonDefaults.buttonColors(
+						containerColor = textFieldBackgroundColor,
+						contentColor = secondaryTextColor,
+					),
 					onClick = {
 						expandedDropdown = true
 					},
-					colors = ButtonDefaults.buttonColors(
-						containerColor = buttonBackgroundColor,
-						contentColor = secondaryTextColor,
-					)
 				) {
 					Row(
 						verticalAlignment = Alignment.CenterVertically
