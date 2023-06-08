@@ -26,9 +26,6 @@
     <string name="already_have_an_account">Already have an account?</string>
     <string name="hide_password">Hide Password</string>
     <string name="show_password">Show Password</string>
-    <string name="last_name">Last Name</string>
-    <string name="first_name">First Name</string>
-    <string name="gender">Gender</string>
     <string name="change_password">Change Password</string>
     <string name="manage_by_sublet">Manage by Sublet</string>
     <string name="other_settings">Other Settings</string>
