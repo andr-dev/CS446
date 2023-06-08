@@ -2,7 +2,8 @@
 
 | Date | Time Spent | Notes |
 |------|------|-------|
-| May 15th | 3 hours (14:30 - 17:30) | Proposal document writing              |
-| May 23rd | 2 hours (14:30 - 16:30) | Creating low-fidelity Figma mocks      |
-| Jun 5th | 4.5 hours (14:30 - 17:30) | Setting up email verification page UI              |
-| May 23rd | 45 min (14:30 - 16:30) | Setting up email verification page VM and state, and navigate      |
+| May 15th | 3 hours| Proposal document writing              |
+| May 23rd | 2 hours | Creating low-fidelity Figma mocks      |
+| Jun 5th | 4.5 hours| Setting up email verification page UI              |
+| Jun 6th | 1.5 h| Setting up email verification page VM and state, and navigate and update reviews      |
+| Jun 8th | 20 min | Change length to use dimension file      |

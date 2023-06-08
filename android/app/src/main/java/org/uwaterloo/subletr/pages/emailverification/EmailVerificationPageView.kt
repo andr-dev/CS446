@@ -1,5 +1,4 @@
 package org.uwaterloo.subletr.pages.emailverification
-
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
@@ -33,15 +32,12 @@ import androidx.compose.ui.focus.FocusManager
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.FontFamily
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
@@ -103,7 +99,7 @@ fun EmailVerificationPageView(
 				style = MaterialTheme.typography.titleMedium,
 			)
 			Spacer(
-				modifier = Modifier.height(5.dp)
+				modifier = Modifier.height(dimensionResource(id = R.dimen.xxs))
 			)
 			Text(
 				text = stringResource(id = R.string.email_verification_instruction),
@@ -120,7 +116,7 @@ fun EmailVerificationPageView(
 			Button(
 				modifier = Modifier
 					.fillMaxWidth(ELEMENT_WIDTH)
-					.height(40.dp),
+					.height(dimensionResource(id = R.dimen.xl)),
 				onClick = { navHostController.navigate("home") },
 				colors = ButtonDefaults.buttonColors(
 					containerColor = subletrPink,
@@ -135,12 +131,12 @@ fun EmailVerificationPageView(
 				)
 			}
 			Spacer(
-				modifier = Modifier.height(20.dp)
+				modifier = Modifier.height(dimensionResource(id = R.dimen.s))
 			)
 			Button(
 				modifier = Modifier
 					.fillMaxWidth(ELEMENT_WIDTH)
-					.height(40.dp),
+					.height(dimensionResource(id = R.dimen.xl)),
 				onClick = {},
 				colors = ButtonDefaults.buttonColors(
 					containerColor = secondaryButtonBackgroundColor,
@@ -175,17 +171,17 @@ fun TextFieldBox(
 
 	TextField(
 		modifier = Modifier
-			.width(54.dp)
-			.height(54.dp)
+			.width(56.dp)
+			.height(56.dp)
 			.wrapContentSize(align = Alignment.Center)
-			.border(BorderStroke(2.dp, borderColor), shape = RoundedCornerShape(5.dp))
+			.border(BorderStroke(dimensionResource(id = R.dimen.xxxs), borderColor), shape = RoundedCornerShape(dimensionResource(id = R.dimen.xxs)))
 			.onFocusChanged {
 				if (it.isFocused) {
 					borderColor = sublrPink
 					backgroundColor = Color.White
 				}
 			},
-		shape = RoundedCornerShape(size = 5.dp),
+		shape = RoundedCornerShape(size = dimensionResource(id = R.dimen.xs)),
 		colors = TextFieldDefaults.colors(
 			unfocusedContainerColor = backgroundColor,
 			focusedContainerColor = backgroundColor,
@@ -193,14 +189,8 @@ fun TextFieldBox(
 			focusedIndicatorColor = Color.Transparent,
 		),
 		singleLine = true,
-		textStyle = TextStyle(
-			color = Color.Black,
-			fontFamily = FontFamily.Default,
-			fontWeight = FontWeight.Bold,
-			fontSize = 19.sp,
-			letterSpacing = 0.sp,
-			textAlign = TextAlign.Center
-		),
+		textStyle = MaterialTheme.typography.displayMedium,
+
 		keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
 		value = verificationCodeValue[index],
 		onValueChange = {
@@ -220,7 +210,7 @@ fun VerificationCodeTextField(
 	onTextViewValueChange: (Int, String) -> Unit,
 ) {
 	val focusManager = LocalFocusManager.current
-	Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+	Row(horizontalArrangement = Arrangement.spacedBy(dimensionResource(id = R.dimen.xs))) {
 		for (i in 0..4) {
 			TextFieldBox(
 				index = i,
