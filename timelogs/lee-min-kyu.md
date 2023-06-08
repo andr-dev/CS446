@@ -9,4 +9,5 @@
 | 2023-05-29 | 3 hour(s) | Worked on creating Google Slides |
 | 2023-05-31 | 1 hour(s) | Researched Android libraries and other APIs |
 | 2023-06-01 | 3 hour(s) | Updated Login Page to Reflect Figma |
-| 2023-06-05 | 6 hour(s) | Fix navigation, color system, and create profile page as well as common components  |
+| 2023-06-05 | 6 hour(s) | Fix navigation, color system, and create profile page as well as common components |
+| 2023-06-07 | 3 hour(s) | Worked on Deliverable 2 Document |
