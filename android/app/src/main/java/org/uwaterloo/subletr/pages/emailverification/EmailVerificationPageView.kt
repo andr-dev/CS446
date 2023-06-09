@@ -174,7 +174,8 @@ fun TextFieldBox(
 			.width(56.dp)
 			.height(56.dp)
 			.wrapContentSize(align = Alignment.Center)
-			.border(BorderStroke(dimensionResource(id = R.dimen.xxxs), borderColor), shape = RoundedCornerShape(dimensionResource(id = R.dimen.xxs)))
+			.border(BorderStroke(dimensionResource(id = R.dimen.xxxs), borderColor),
+				shape = RoundedCornerShape(dimensionResource(id = R.dimen.xxs)))
 			.onFocusChanged {
 				if (it.isFocused) {
 					borderColor = sublrPink
