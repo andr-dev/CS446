@@ -44,6 +44,7 @@ import org.uwaterloo.subletr.theme.textOnSubletrPink
 fun LoginPageView(
 	modifier: Modifier = Modifier,
 	viewModel: LoginPageViewModel = hiltViewModel(),
+	navHostController: NavHostController,
 	uiState: LoginPageUiState = viewModel.uiStateStream.subscribeAsState(
 		LoginPageUiState.Loading
 	).value,
@@ -212,6 +213,7 @@ fun LoginPageViewLoadedPreview() {
 				email = "",
 				password = "",
 			),
+			navHostController = rememberNavController(),
 		)
 	}
 }
