@@ -49,7 +49,7 @@ impl<'r> FromRequest<'r> for AuthenticatedUser {
     type Error = ServiceError;
 
     async fn from_request(request: &'r Request<'_>) -> Outcome<Self, Self::Error> {
-        let keys: Vec<_> = request.headers().get("Authentication").collect();
+        let keys: Vec<_> = request.headers().get("Authorization").collect();
 
         if keys.len() != 1 {
             return Outcome::Failure((Status::Unauthorized, ServiceError::AuthenticationError));
