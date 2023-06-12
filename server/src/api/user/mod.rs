@@ -4,6 +4,10 @@ use rand::Rng;
 use rocket::{get, post, serde::json::Json, Route, State};
 use rocket_okapi::{openapi, openapi_get_routes_spec};
 
+use super::{
+    model::user::{CreateUserRequest, CreateUserResponse},
+    utils::hash_password,
+};
 use crate::{
     api::token::AuthenticatedUser,
     db::model::users::{NewUser, User},
@@ -11,17 +15,9 @@ use crate::{
     state::AppState,
 };
 
-use super::{
-    model::user::{CreateUserRequest, CreateUserResponse},
-    utils::hash_password,
-};
-
 #[openapi]
 #[post("/create", format = "json", data = "<create_user_request>")]
-fn create(
-    state: &State<AppState>,
-    create_user_request: Json<CreateUserRequest>,
-) -> ServiceResult<CreateUserResponse> {
+fn create(state: &State<AppState>, create_user_request: Json<CreateUserRequest>) -> ServiceResult<CreateUserResponse> {
     let mut dbcon = state.pool.get()?;
 
     if !create_user_request.email.ends_with("@uwaterloo.ca") {

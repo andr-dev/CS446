@@ -1,7 +1,5 @@
 use rocket::{http::Status, response::Responder, serde::json::Json, Request};
-use rocket_okapi::{
-    okapi::schemars::schema_for, response::OpenApiResponderInner, util::add_schema_response,
-};
+use rocket_okapi::{okapi::schemars::schema_for, response::OpenApiResponderInner, util::add_schema_response};
 use thiserror::Error;
 
 #[derive(Error, Debug)]

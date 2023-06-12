@@ -5,19 +5,19 @@ use okapi::openapi3::OpenApi;
 use rocket::{get, serde::json::Json, Route, State};
 use rocket_okapi::{openapi, openapi_get_routes_spec};
 
-use crate::{error::ServiceResult, state::AppState};
-
 use super::model::listing::{
-    GetListingDetailsRequest, GetListingDetailsResponse, GetListingsRequest, GetListingsResponse,
-    ListingDetails, ResidenceType,
+    GetListingDetailsRequest,
+    GetListingDetailsResponse,
+    GetListingsRequest,
+    GetListingsResponse,
+    ListingDetails,
+    ResidenceType,
 };
+use crate::{error::ServiceResult, state::AppState};
 
 #[openapi]
 #[get("/list?<listings_request..>")]
-fn list(
-    state: &State<AppState>,
-    listings_request: GetListingsRequest,
-) -> ServiceResult<GetListingsResponse> {
+fn list(state: &State<AppState>, listings_request: GetListingsRequest) -> ServiceResult<GetListingsResponse> {
     Ok(Json(GetListingsResponse {
         listings: vec![],
         liked: HashSet::default(),

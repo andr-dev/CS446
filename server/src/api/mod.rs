@@ -1,8 +1,6 @@
 use chrono::Utc;
 use rocket::{get, serde::json::Json, Build, Rocket};
-use rocket_okapi::{
-    mount_endpoints_and_merged_docs, openapi, openapi_get_routes_spec, settings::OpenApiSettings,
-};
+use rocket_okapi::{mount_endpoints_and_merged_docs, openapi, openapi_get_routes_spec, settings::OpenApiSettings};
 
 use crate::error::ServiceResult;
 

@@ -1,7 +1,5 @@
 use chrono::{Duration, Utc};
-use jsonwebtoken::{
-    decode, encode, Algorithm, DecodingKey, EncodingKey, Header, TokenData, Validation,
-};
+use jsonwebtoken::{decode, encode, Algorithm, DecodingKey, EncodingKey, Header, TokenData, Validation};
 use rocket::{
     http::Status,
     request::{FromRequest, Outcome},
@@ -10,9 +8,8 @@ use rocket::{
 use rocket_okapi::OpenApiFromRequest;
 use serde_derive::{Deserialize, Serialize};
 
-use crate::error::ServiceError;
-
 use super::constants::{JWT_AUDIENCE, JWT_EXP_HOURS, JWT_SECRET};
+use crate::error::ServiceError;
 
 pub(super) fn generate_token(user_id: i64) -> Result<String, jsonwebtoken::errors::Error> {
     encode(
@@ -26,18 +23,12 @@ pub(super) fn generate_token(user_id: i64) -> Result<String, jsonwebtoken::error
     )
 }
 
-fn read_token(
-    token: &str,
-) -> Result<TokenData<AuthenticatedUserClaims>, jsonwebtoken::errors::Error> {
+fn read_token(token: &str) -> Result<TokenData<AuthenticatedUserClaims>, jsonwebtoken::errors::Error> {
     let mut val = Validation::new(Algorithm::HS512);
 
     val.set_audience(&[JWT_AUDIENCE]);
 
-    decode::<AuthenticatedUserClaims>(
-        token,
-        &DecodingKey::from_secret(JWT_SECRET.as_bytes()),
-        &val,
-    )
+    decode::<AuthenticatedUserClaims>(token, &DecodingKey::from_secret(JWT_SECRET.as_bytes()), &val)
 }
 
 #[derive(Debug, OpenApiFromRequest)]

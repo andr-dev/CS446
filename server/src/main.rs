@@ -10,9 +10,8 @@ mod db;
 mod error;
 
 mod state;
-use state::AppState;
-
 use rocket::fs::FileServer;
+use state::AppState;
 
 #[rocket::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
