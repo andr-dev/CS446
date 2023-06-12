@@ -15,6 +15,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
@@ -43,7 +44,6 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import okhttp3.internal.immutableListOf
 import org.uwaterloo.subletr.R
-import org.uwaterloo.subletr.pages.login.ELEMENT_WIDTH
 import org.uwaterloo.subletr.theme.SubletrTheme
 import org.uwaterloo.subletr.theme.secondaryButtonBackgroundColor
 import org.uwaterloo.subletr.theme.subletrPink
@@ -67,9 +67,7 @@ fun EmailVerificationPageView(
 			horizontalAlignment = Alignment.CenterHorizontally,
 			verticalArrangement = Arrangement.Center,
 		) {
-			Text(
-				text = stringResource(id = R.string.loading)
-			)
+			CircularProgressIndicator()
 		}
 	} else if (uiState is EmailVerificationPageUiState.Loaded) {
 		fun onTextViewValueChange(index: Int, value: String) {
@@ -104,7 +102,7 @@ fun EmailVerificationPageView(
 			Text(
 				text = stringResource(id = R.string.email_verification_instruction),
 				style = MaterialTheme.typography.bodyMedium,
-				modifier = Modifier.fillMaxWidth(0.77f),
+				modifier = Modifier.fillMaxWidth(ELEMENT_WIDTH),
 			)
 			Spacer(
 				modifier = Modifier.weight(weight = 20.0f)
@@ -156,6 +154,8 @@ fun EmailVerificationPageView(
 		}
 	}
 }
+
+private const val ELEMENT_WIDTH = 0.75f
 
 @Composable
 fun TextFieldBox(

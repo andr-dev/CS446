@@ -194,7 +194,7 @@ fun LoginPageView(
 	}
 }
 
-const val ELEMENT_WIDTH = 0.75f
+private const val ELEMENT_WIDTH = 0.75f
 
 @Preview(showBackground = true)
 @Composable

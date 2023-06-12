@@ -16,6 +16,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navOptions
 import org.uwaterloo.subletr.navigation.NavigationDestination
+import org.uwaterloo.subletr.theme.bottomBarItemText
 import org.uwaterloo.subletr.theme.subletrPink
 import org.uwaterloo.subletr.theme.unselectedGray
 
@@ -51,7 +52,8 @@ fun BottomBarView(
 						Text(
 							text = stringResource(
 								id = it.bottomBarNavigationItems.bottomBarNavigationTextId,
-							)
+							),
+							style = bottomBarItemText,
 						)
 					},
 					onClick = {
@@ -69,7 +71,7 @@ fun BottomBarView(
 					colors = NavigationBarItemDefaults.colors(
 						selectedIconColor = subletrPink,
 						unselectedIconColor = unselectedGray,
-					)
+					),
 				)
 			}
 		}

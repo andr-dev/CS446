@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.reactivex.rxjava3.subjects.BehaviorSubject
 import org.uwaterloo.subletr.R
+import org.uwaterloo.subletr.enums.Gender
 import javax.inject.Inject
 
 @HiltViewModel
@@ -12,7 +13,7 @@ class AccountPageViewModel @Inject constructor(): ViewModel() {
 		AccountPageUiState.Loaded(
 			lastName = "",
 			firstName = "",
-			gender = AccountPageUiState.Gender.OTHER,
+			gender = Gender.OTHER,
 			settings = listOf(
 				AccountPageUiState.Setting(
 					textStringId = R.string.setting_1,

@@ -1,7 +1,6 @@
 package org.uwaterloo.subletr.pages.createaccount
 
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -14,44 +13,34 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.DropdownMenu
-import androidx.compose.material3.DropdownMenuItem
-import androidx.compose.material3.Icon
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.rxjava3.subscribeAsState
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navOptions
 import org.uwaterloo.subletr.R
-import org.uwaterloo.subletr.components.button.SecondaryButton
+import org.uwaterloo.subletr.components.dropdown.RoundedDropdown
 import org.uwaterloo.subletr.components.textfield.RoundedPasswordTextField
 import org.uwaterloo.subletr.components.textfield.RoundedTextField
 import org.uwaterloo.subletr.enums.Gender
 import org.uwaterloo.subletr.navigation.NavigationDestination
-import org.uwaterloo.subletr.pages.login.ELEMENT_WIDTH
 import org.uwaterloo.subletr.theme.SubletrTheme
 import org.uwaterloo.subletr.theme.SubletrTypography
 import org.uwaterloo.subletr.theme.secondaryTextColor
 import org.uwaterloo.subletr.theme.subletrPink
-import org.uwaterloo.subletr.theme.textFieldBackgroundColor
 import org.uwaterloo.subletr.theme.textOnSubletrPink
 
 
@@ -65,7 +54,6 @@ fun CreateAccountPageView(
 	).value,
 ) {
 	val scrollState = rememberScrollState()
-	var expandedDropdown by remember { mutableStateOf(false) }
 	if (uiState is CreateAccountPageUiState.Loading) {
 		Column(
 			modifier = modifier
@@ -73,9 +61,7 @@ fun CreateAccountPageView(
 			horizontalAlignment = Alignment.CenterHorizontally,
 			verticalArrangement = Arrangement.Center,
 		) {
-			Text(
-				text = stringResource(id = R.string.loading)
-			)
+			CircularProgressIndicator()
 		}
 	} else if (uiState is CreateAccountPageUiState.Loaded) {
 		Column(
@@ -91,7 +77,7 @@ fun CreateAccountPageView(
 			) {
 
 				Spacer(
-					modifier = Modifier.width(50.dp)
+					modifier = Modifier.width(dimensionResource(id = R.dimen.xl))
 				)
 
 				Column(
@@ -267,62 +253,25 @@ fun CreateAccountPageView(
 				modifier = Modifier.weight(weight = 2.0f)
 			)
 
-			Box {
-				SecondaryButton(
-					modifier = Modifier
-						.fillMaxWidth(ELEMENT_WIDTH)
-						.height(50.dp),
-					colors = ButtonDefaults.buttonColors(
-						containerColor = textFieldBackgroundColor,
-						contentColor = secondaryTextColor,
-					),
-					onClick = {
-						expandedDropdown = true
-					},
-				) {
-					Row(
-						verticalAlignment = Alignment.CenterVertically
-					) {
-						Text(
-							text = stringResource(id = uiState.gender.stringId),
+			RoundedDropdown(
+				modifier = Modifier
+					.fillMaxWidth(ELEMENT_WIDTH),
+				dropdownItems = Gender.values(),
+				selectedDropdownItem = uiState.gender,
+				dropdownItemToString = { stringResource(id = it.stringId)},
+				setSelectedDropdownItem = {
+					viewModel.updateUiState(
+						CreateAccountPageUiState.Loaded(
+							firstName = uiState.firstName,
+							lastName = uiState.lastName,
+							email = uiState.email,
+							password = uiState.password,
+							confirmPassword = uiState.confirmPassword,
+							gender = it,
 						)
-
-						Spacer(modifier = Modifier.weight(1.0f))
-
-						Icon(
-							imageVector = Icons.Filled.KeyboardArrowDown,
-							contentDescription = stringResource(R.string.gender)
-						)
-					}
-				}
-				DropdownMenu(
-					expanded = expandedDropdown,
-					onDismissRequest = { expandedDropdown = false },
-					modifier = Modifier
-						.fillMaxWidth(ELEMENT_WIDTH)
-				) {
-					enumValues<Gender>().forEach { choice ->
-						DropdownMenuItem(
-							text = {
-								Text(text = stringResource(id = choice.stringId))
-							},
-							onClick = {
-								viewModel.updateUiState(
-									CreateAccountPageUiState.Loaded(
-										firstName = uiState.firstName,
-										lastName = uiState.lastName,
-										email = uiState.email,
-										password = uiState.password,
-										confirmPassword = uiState.confirmPassword,
-										gender = choice,
-									)
-								)
-								expandedDropdown = false
-							}
-						)
-					}
-				}
-			}
+					)
+				},
+			)
 
 			Spacer(
 				modifier = Modifier.weight(weight = 2.0f)
@@ -331,7 +280,7 @@ fun CreateAccountPageView(
 			Button(
 				modifier = Modifier
 					.fillMaxWidth(ELEMENT_WIDTH)
-					.height(50.dp),
+					.height(dimensionResource(id = R.dimen.xl)),
 				onClick = {},
 				colors = ButtonDefaults.buttonColors(
 					containerColor = subletrPink,
@@ -356,7 +305,7 @@ fun CreateAccountPageView(
 					color = secondaryTextColor,
 				)
 				Button(
-					contentPadding = PaddingValues(1.dp),
+					contentPadding = PaddingValues(dimensionResource(id = R.dimen.xxxxs)),
 					onClick = {
 						navHostController.navigate(
 							NavigationDestination.LOGIN.rootNavPath,
@@ -385,6 +334,8 @@ fun CreateAccountPageView(
 		}
 	}
 }
+
+private const val ELEMENT_WIDTH = 0.75f
 
 @Preview(showBackground = true)
 @Composable

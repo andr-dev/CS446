@@ -1,6 +1,7 @@
 package org.uwaterloo.subletr.pages.account
 
 import androidx.annotation.StringRes
+import org.uwaterloo.subletr.enums.Gender
 
 sealed interface AccountPageUiState {
 	object Loading : AccountPageUiState
@@ -11,12 +12,6 @@ sealed interface AccountPageUiState {
 		val gender: Gender,
 		val settings: List<Setting>,
 	) : AccountPageUiState
-
-	enum class Gender(val gender: String) {
-		MALE("Male"),
-		FEMALE("Female"),
-		OTHER("Other"),
-	}
 
 	data class Setting(
 		@StringRes

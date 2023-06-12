@@ -34,6 +34,7 @@ import org.uwaterloo.subletr.components.button.SecondaryButton
 import org.uwaterloo.subletr.components.dropdown.UnderlinedDropdown
 import org.uwaterloo.subletr.components.switch.PrimarySwitch
 import org.uwaterloo.subletr.components.textfield.UnderlinedTextField
+import org.uwaterloo.subletr.enums.Gender
 import org.uwaterloo.subletr.theme.SubletrTheme
 import org.uwaterloo.subletr.theme.secondaryTextColor
 import org.uwaterloo.subletr.theme.textOnSubletrPink
@@ -157,9 +158,9 @@ fun AccountPageView(
 				UnderlinedDropdown(
 					modifier = Modifier
 						.fillMaxWidth(ELEMENT_WIDTH),
-					dropdownItems = AccountPageUiState.Gender.values(),
+					dropdownItems = Gender.values(),
 					dropdownItemToString = {
-				        it.name
+				        stringResource(id = it.stringId)
 					},
 					selectedDropdownItem = uiState.gender,
 					setSelectedDropdownItem = {
@@ -262,7 +263,7 @@ fun AccountPageView(
 	}
 }
 
-const val ELEMENT_WIDTH = 0.75f
+private const val ELEMENT_WIDTH = 0.75f
 
 @Preview(showBackground = true)
 @Composable
@@ -278,7 +279,7 @@ fun AccountPageViewLoadedPreview() {
 			uiState = AccountPageUiState.Loaded(
 				lastName = "",
 				firstName = "",
-				gender = AccountPageUiState.Gender.OTHER,
+				gender = Gender.OTHER,
 				settings = listOf(
 					AccountPageUiState.Setting(
 						textStringId = R.string.setting_1,
