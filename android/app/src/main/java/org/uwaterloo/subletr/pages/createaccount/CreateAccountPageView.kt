@@ -28,8 +28,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.navigation.NavHostController
-import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navOptions
 import org.uwaterloo.subletr.R
 import org.uwaterloo.subletr.components.dropdown.RoundedDropdown
@@ -47,7 +45,6 @@ import org.uwaterloo.subletr.theme.textOnSubletrPink
 @Composable
 fun CreateAccountPageView(
 	modifier: Modifier = Modifier,
-	navHostController: NavHostController,
 	viewModel: CreateAccountPageViewModel = hiltViewModel(),
 	uiState: CreateAccountPageUiState = viewModel.uiStateStream.subscribeAsState(
 		CreateAccountPageUiState.Loading
@@ -307,10 +304,10 @@ fun CreateAccountPageView(
 				Button(
 					contentPadding = PaddingValues(dimensionResource(id = R.dimen.xxxxs)),
 					onClick = {
-						navHostController.navigate(
+						viewModel.navHostController.navigate(
 							NavigationDestination.LOGIN.rootNavPath,
 							navOptions = navOptions {
-								popUpTo(navHostController.graph.id)
+								popUpTo(viewModel.navHostController.graph.id)
 							}
 						)
 					},
@@ -342,7 +339,6 @@ private const val ELEMENT_WIDTH = 0.75f
 fun CreateAccountPagePreview() {
 	SubletrTheme {
 		CreateAccountPageView(
-			navHostController = rememberNavController(),
 			uiState = CreateAccountPageUiState.Loaded(
 				firstName = "",
 				lastName = "",

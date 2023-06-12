@@ -23,22 +23,18 @@ fun MainNavigation(
 		startDestination = NavigationDestination.LOGIN.rootNavPath,
 	) {
 		composable(NavigationDestination.LOGIN.rootNavPath) {
-
 			LoginPageView(
 				modifier = modifier,
-				navHostController = navHostController,
 			)
 		}
 		composable(NavigationDestination.CREATE_ACCOUNT.rootNavPath) {
 			CreateAccountPageView(
 				modifier = modifier,
-				navHostController = navHostController,
 			)
 		}
 		composable(NavigationDestination.VERIFY_EMAIL.rootNavPath) {
 			EmailVerificationPageView(
 				modifier = modifier,
-				navHostController = navHostController,
 			)
 		}
 		composable(NavigationDestination.HOME.rootNavPath) {
