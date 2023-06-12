@@ -8,7 +8,7 @@ edition = "2021"
 okapi = { version = "=0.7.0-rc.1" }
 rocket = { version = "=0.5.0-rc.2", features = [ "json" ] }
 rocket_okapi = "=0.8.0-rc.2"
-schemars = "=0.8.10"
+schemars = { version = "=0.8.10", features = ["chrono"] }
 
 chrono = { version = "=0.4.22", features = ["serde"] }
 data-encoding = { version = "=2.3.2" }

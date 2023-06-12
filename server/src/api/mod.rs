@@ -8,6 +8,7 @@ use crate::error::ServiceResult;
 
 mod auth;
 mod constants;
+mod listings;
 mod model;
 mod token;
 mod user;
@@ -38,6 +39,7 @@ pub fn rocket() -> Rocket<Build> {
         "" => openapi_get_routes_spec![ping, time],
         "/auth" => auth::routes(),
         "/user" => user::routes(),
+        "/listings" => listings::routes(),
     };
 
     rocket_builder
