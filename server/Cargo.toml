@@ -24,3 +24,6 @@ serde_json = { version = "=1.0.92" }
 thiserror = { version = "=1.0.40" }
 tokio = { version = "=1.25.0" }
 
+[target.'cfg(windows)'.dependencies]
+libsqlite3-sys = { version = "=0.24.2", features = ["bundled"] }
+
