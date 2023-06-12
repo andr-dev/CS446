@@ -1,15 +1,23 @@
 use chrono::{Duration, Utc};
 use jsonwebtoken::{decode, encode, Algorithm, DecodingKey, EncodingKey, Header, TokenData, Validation};
+use okapi::openapi3::{Object, SecurityRequirement, SecurityScheme, SecuritySchemeData};
 use rocket::{
     http::Status,
     request::{FromRequest, Outcome},
     Request,
 };
-use rocket_okapi::OpenApiFromRequest;
+use rocket_okapi::request::{OpenApiFromRequest, RequestHeaderInput};
 use serde_derive::{Deserialize, Serialize};
 
 use super::constants::{JWT_AUDIENCE, JWT_EXP_HOURS, JWT_SECRET};
 use crate::error::ServiceError;
+
+#[derive(Debug, Serialize, Deserialize)]
+struct AuthenticatedUserClaims {
+    aud: String,
+    sub: i64,
+    exp: i64,
+}
 
 pub(super) fn generate_token(user_id: i64) -> Result<String, jsonwebtoken::errors::Error> {
     encode(
@@ -31,16 +39,9 @@ fn read_token(token: &str) -> Result<TokenData<AuthenticatedUserClaims>, jsonweb
     decode::<AuthenticatedUserClaims>(token, &DecodingKey::from_secret(JWT_SECRET.as_bytes()), &val)
 }
 
-#[derive(Debug, OpenApiFromRequest)]
+#[derive(Debug)]
 pub struct AuthenticatedUser {
     pub user_id: i64,
-}
-
-#[derive(Debug, Serialize, Deserialize)]
-struct AuthenticatedUserClaims {
-    aud: String,
-    sub: i64,
-    exp: i64,
 }
 
 #[rocket::async_trait]
@@ -60,5 +61,32 @@ impl<'r> FromRequest<'r> for AuthenticatedUser {
             }),
             Err(_) => Outcome::Failure((Status::Unauthorized, ServiceError::AuthenticationError)),
         }
+    }
+}
+
+impl<'a> OpenApiFromRequest<'a> for AuthenticatedUser {
+    fn from_request_input(
+        _gen: &mut rocket_okapi::gen::OpenApiGenerator,
+        _name: String,
+        _required: bool,
+    ) -> rocket_okapi::Result<rocket_okapi::request::RequestHeaderInput> {
+        // Setup global requirement for Security scheme
+        let security_scheme = SecurityScheme {
+            description: Some("Requires a JWT token to access.".to_owned()),
+            data: SecuritySchemeData::Http {
+                scheme: "bearer".to_string(),
+                bearer_format: Some("JWT".to_string()),
+            },
+            extensions: Object::default(),
+        };
+
+        let mut security_req = SecurityRequirement::new();
+        security_req.insert("HttpAuth".to_owned(), Vec::new());
+
+        Ok(RequestHeaderInput::Security(
+            "HttpAuth".to_owned(),
+            security_scheme,
+            security_req,
+        ))
     }
 }

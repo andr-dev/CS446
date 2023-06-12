@@ -261,7 +261,7 @@ class DefaultApi(basePath: kotlin.String = defaultBasePath, client: OkHttpClient
             path = "/user/email",
             query = localVariableQuery,
             headers = localVariableHeaders,
-            requiresAuthentication = false,
+            requiresAuthentication = true,
             body = localVariableBody
         )
     }
