@@ -18,12 +18,14 @@ import org.uwaterloo.subletr.navigation.isTopLevelDestinationInHierarchy
 @Composable
 fun MainScaffoldView(
 	modifier: Modifier = Modifier,
-	@Suppress("UnusedParameter")
-	viewModel: MainScaffoldViewModel = hiltViewModel(),
 	mainAppState: MainAppState = rememberMainAppState(),
+	viewModel: MainScaffoldViewModel = hiltViewModel(),
 ) {
 	val snackbarHostState: SnackbarHostState = remember { SnackbarHostState() }
 	var currentDestination: NavigationDestination = NavigationDestination.LOGIN
+
+	viewModel.setNavHostController(mainAppState.navHostController)
+
 	NavigationDestination.values().forEach {
 		if (
 			mainAppState
@@ -43,7 +45,6 @@ fun MainScaffoldView(
 			if (currentDestination.showBottomBar) {
 				BottomBarView(
 					modifier = Modifier,
-					navHostController = mainAppState.navHostController,
 					currentDestination = currentDestination,
 				)
 			}

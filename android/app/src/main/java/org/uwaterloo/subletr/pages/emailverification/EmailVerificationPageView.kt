@@ -40,8 +40,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.navigation.NavHostController
-import androidx.navigation.compose.rememberNavController
 import okhttp3.internal.immutableListOf
 import org.uwaterloo.subletr.R
 import org.uwaterloo.subletr.theme.SubletrTheme
@@ -52,7 +50,6 @@ import org.uwaterloo.subletr.theme.textFieldBackgroundColor
 @Composable
 fun EmailVerificationPageView(
 	modifier: Modifier = Modifier,
-	navHostController: NavHostController,
 	viewModel: EmailVerificationPageViewModel = hiltViewModel(),
 	uiState: EmailVerificationPageUiState = viewModel.uiStateStream.subscribeAsState(
 		EmailVerificationPageUiState.Loading
@@ -115,7 +112,7 @@ fun EmailVerificationPageView(
 				modifier = Modifier
 					.fillMaxWidth(ELEMENT_WIDTH)
 					.height(dimensionResource(id = R.dimen.xl)),
-				onClick = { navHostController.navigate("home") },
+				onClick = { viewModel.navHostController.navigate("home") },
 				colors = ButtonDefaults.buttonColors(
 					containerColor = subletrPink,
 					contentColor = Color.White,
@@ -226,9 +223,7 @@ fun VerificationCodeTextField(
 @Preview(showBackground = true)
 @Composable
 fun EmailVerificationPageViewLoadingPreview() {
-	EmailVerificationPageView(
-		navHostController = rememberNavController(),
-	)
+	EmailVerificationPageView()
 }
 
 @Preview(showBackground = true)
@@ -239,7 +234,6 @@ fun EmailVerificationPageViewLoadedPreview() {
 			uiState = EmailVerificationPageUiState.Loaded(
 				verificationCode = immutableListOf("", "", "", "", "")
 			),
-			navHostController = rememberNavController(),
 		)
 
 	}

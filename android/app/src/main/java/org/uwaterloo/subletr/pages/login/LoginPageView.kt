@@ -27,8 +27,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.navigation.NavHostController
-import androidx.navigation.compose.rememberNavController
 import org.uwaterloo.subletr.R
 import org.uwaterloo.subletr.components.button.PrimaryButton
 import org.uwaterloo.subletr.components.textfield.RoundedPasswordTextField
@@ -44,7 +42,6 @@ import org.uwaterloo.subletr.theme.textOnSubletrPink
 fun LoginPageView(
 	modifier: Modifier = Modifier,
 	viewModel: LoginPageViewModel = hiltViewModel(),
-	navHostController: NavHostController,
 	uiState: LoginPageUiState = viewModel.uiStateStream.subscribeAsState(
 		LoginPageUiState.Loading
 	).value,
@@ -141,7 +138,6 @@ fun LoginPageView(
 					.height(dimensionResource(id = R.dimen.xl)),
 				onClick = {
 			        viewModel.loginStream.onNext(uiState)
-//					navHostController.navigate(NavigationDestination.HOME.rootNavPath)
 				},
 			) {
 				Text(
@@ -168,7 +164,7 @@ fun LoginPageView(
 				Button(
 					contentPadding = PaddingValues(dimensionResource(id = R.dimen.xxxxs)),
 					onClick = {
-						navHostController.navigate(NavigationDestination.CREATE_ACCOUNT.rootNavPath)
+						viewModel.navHostController.navigate(NavigationDestination.CREATE_ACCOUNT.rootNavPath)
 					},
 					colors = ButtonDefaults.buttonColors(
 						containerColor = Color.Transparent,
@@ -196,9 +192,7 @@ private const val ELEMENT_WIDTH = 0.75f
 @Preview(showBackground = true)
 @Composable
 fun LoginPageViewLoadingPreview() {
-	LoginPageView(
-		navHostController = rememberNavController(),
-	)
+	LoginPageView()
 }
 
 @Preview(showBackground = true)
@@ -211,7 +205,6 @@ fun LoginPageViewLoadedPreview() {
 				password = "",
 				infoTextStringId = null,
 			),
-			navHostController = rememberNavController(),
 		)
 	}
 }

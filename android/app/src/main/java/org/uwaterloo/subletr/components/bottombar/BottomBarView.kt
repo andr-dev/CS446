@@ -12,8 +12,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavGraph.Companion.findStartDestination
-import androidx.navigation.NavHostController
-import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navOptions
 import org.uwaterloo.subletr.navigation.NavigationDestination
 import org.uwaterloo.subletr.theme.bottomBarItemText
@@ -23,9 +21,7 @@ import org.uwaterloo.subletr.theme.unselectedGray
 @Composable
 fun BottomBarView(
 	modifier: Modifier = Modifier,
-	navHostController: NavHostController,
 	currentDestination: NavigationDestination,
-	@Suppress("UnusedParameter")
 	viewModel: BottomBarViewModel = hiltViewModel(),
 ) {
 	NavigationBar(
@@ -57,10 +53,10 @@ fun BottomBarView(
 						)
 					},
 					onClick = {
-						navHostController.navigate(
+						viewModel.navHostController.navigate(
 							it.name,
 							navOptions {
-								popUpTo(navHostController.graph.findStartDestination().id) {
+								popUpTo(viewModel.navHostController.graph.findStartDestination().id) {
 									saveState = true
 								}
 								launchSingleTop = true
@@ -83,7 +79,6 @@ fun BottomBarView(
 @Suppress("UnusedPrivateMember")
 fun BottomBarViewPreview() {
 	BottomBarView(
-		navHostController = rememberNavController(),
 		currentDestination = NavigationDestination.ACCOUNT,
 	)
 }

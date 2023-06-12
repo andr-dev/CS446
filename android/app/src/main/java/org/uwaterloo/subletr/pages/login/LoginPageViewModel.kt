@@ -10,6 +10,8 @@ import kotlinx.coroutines.runBlocking
 import org.uwaterloo.subletr.R
 import org.uwaterloo.subletr.api.apis.DefaultApi
 import org.uwaterloo.subletr.api.models.UserLoginRequest
+import org.uwaterloo.subletr.navigation.NavigationDestination
+import org.uwaterloo.subletr.services.INavigationService
 import java.util.Optional
 import javax.inject.Inject
 import kotlin.jvm.optionals.getOrNull
@@ -17,7 +19,10 @@ import kotlin.jvm.optionals.getOrNull
 @HiltViewModel
 class LoginPageViewModel @Inject constructor(
 	val api: DefaultApi,
+	val navigationService: INavigationService,
 ) : ViewModel() {
+	val navHostController get() = navigationService.getNavHostController()
+
 	val emailStream: BehaviorSubject<String> = BehaviorSubject.createDefault("")
 	val passwordStream: BehaviorSubject<String> = BehaviorSubject.createDefault("")
 	val infoTextStringIdStream: BehaviorSubject<Optional<Int>> = BehaviorSubject.createDefault(Optional.empty())
@@ -27,11 +32,11 @@ class LoginPageViewModel @Inject constructor(
 		passwordStream,
 		infoTextStringIdStream,
 	) {
-		email, password, c ->
+		email, password, infoTextStringId ->
 		LoginPageUiState.Loaded(
 			email = email,
 			password = password,
-			infoTextStringId = c.getOrNull(),
+			infoTextStringId = infoTextStringId.getOrNull(),
 		)
 	}
 
@@ -49,7 +54,7 @@ class LoginPageViewModel @Inject constructor(
 			}
 		}
 			.map {
-
+				navHostController.navigate(NavigationDestination.HOME.rootNavPath)
 			}
 			.doOnError {
 				infoTextStringIdStream.onNext(
