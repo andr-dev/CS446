@@ -108,12 +108,7 @@ fun LoginPageView(
 				},
 				value = uiState.email,
 				onValueChange = {
-					viewModel.updateUiState(
-						LoginPageUiState.Loaded(
-							email = it,
-							password = uiState.password,
-						)
-					)
+					viewModel.emailStream.onNext(it)
 				}
 			)
 
@@ -132,12 +127,7 @@ fun LoginPageView(
 				},
 				value = uiState.password,
 				onValueChange = {
-					viewModel.updateUiState(
-						LoginPageUiState.Loaded(
-							email = uiState.email,
-							password = it,
-						)
-					)
+					viewModel.passwordStream.onNext(it)
 				}
 			)
 
@@ -150,12 +140,19 @@ fun LoginPageView(
 					.fillMaxWidth(ELEMENT_WIDTH)
 					.height(dimensionResource(id = R.dimen.xl)),
 				onClick = {
-					navHostController.navigate(NavigationDestination.HOME.rootNavPath)
+			        viewModel.loginStream.onNext(uiState)
+//					navHostController.navigate(NavigationDestination.HOME.rootNavPath)
 				},
 			) {
 				Text(
 					text = stringResource(id = R.string.log_in),
 					color = textOnSubletrPink,
+				)
+			}
+
+			if (uiState.infoTextStringId != null) {
+				Text(
+					text = stringResource(id = uiState.infoTextStringId)
 				)
 			}
 
@@ -212,6 +209,7 @@ fun LoginPageViewLoadedPreview() {
 			uiState = LoginPageUiState.Loaded(
 				email = "",
 				password = "",
+				infoTextStringId = null,
 			),
 			navHostController = rememberNavController(),
 		)
