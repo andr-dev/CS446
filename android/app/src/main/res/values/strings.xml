@@ -33,6 +33,8 @@
     <string name="drop_down_arrow">Drop Down Arrow</string>
     <string name="drop_up_arrow">Drop Up Arrow</string>
     <string name="back_arrow">Back Arrow</string>
+    <string name="next_arrow">Next Arrow</string>
+    <string name="prev_arrow">Prev Arrow</string>
     <string name="change_your_password">Change Your Password</string>
     <string name="setting_1">Setting 1</string>
     <string name="verify">Verify</string>
@@ -79,4 +81,17 @@
     <string name="view_sublets">View Sublets</string>
     <string name="plus_sign">+</string>
     <string name="view_details">View Details</string>
+    <string name="listing_image">Listing image</string>
+    <string name="message_sublet_owner">Message sublet owner</string>
+    <string name="favourite">Favourite</string>
+    <string name="unfavourite">Unfavourite</string>
+    <string name="dollar_sign">$</string>
+    <string name="start_date">Start date</string>
+    <string name="end_date">End date</string>
+    <string name="ensuite_bathroom">Ensuite bathroom</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
+    <string name="total_rooms_in_house">Total rooms in house</string>
+    <string name="total_bathrooms_in_house">Total bathrooms in house</string>
+    <string name="description">Description</string>
 </resources>

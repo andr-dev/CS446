@@ -113,7 +113,7 @@ val SubletrTypography = Typography(
 		letterSpacing = 0.5.sp
 	),
 	labelMedium = TextStyle(
-
+		color = Color.Gray,
 		fontFamily = FontFamily.Default,
 		fontWeight = FontWeight.Light,
 		fontSize = 20.sp,
@@ -127,5 +127,13 @@ val SubletrTypography = Typography(
 		fontSize = 19.sp,
 		letterSpacing = 0.sp,
 		textAlign = TextAlign.Center
+	),
+	displaySmall = TextStyle(
+		color = Color.Gray,
+		fontFamily = FontFamily.Default,
+		fontWeight = FontWeight.Medium,
+		fontSize = 15.sp,
+		lineHeight = 16.sp,
+		letterSpacing = 0.5.sp
 	),
 )
