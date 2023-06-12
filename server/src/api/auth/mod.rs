@@ -3,6 +3,7 @@ use okapi::openapi3::OpenApi;
 use rocket::{post, serde::json::Json, Route, State};
 use rocket_okapi::{openapi, openapi_get_routes_spec};
 
+use super::model::auth::{UserLoginRequest, UserLoginResponse};
 use crate::{
     api::{token::generate_token, utils::hash_password},
     db::model::users::User,
@@ -10,14 +11,9 @@ use crate::{
     state::AppState,
 };
 
-use super::model::auth::{UserLoginRequest, UserLoginResponse};
-
 #[openapi]
 #[post("/login", format = "json", data = "<login_request>")]
-fn login(
-    state: &State<AppState>,
-    login_request: Json<UserLoginRequest>,
-) -> ServiceResult<UserLoginResponse> {
+fn login(state: &State<AppState>, login_request: Json<UserLoginRequest>) -> ServiceResult<UserLoginResponse> {
     let mut dbcon = state.pool.get()?;
 
     let users: Vec<User> = crate::db::schema::users::dsl::users
@@ -30,10 +26,7 @@ fn login(
 
     let user = users.get(0).ok_or(ServiceError::AuthenticationError)?;
 
-    if !user
-        .password_hash
-        .eq(&hash_password(&login_request.password))
-    {
+    if !user.password_hash.eq(&hash_password(&login_request.password)) {
         return Err(ServiceError::AuthenticationError);
     }
 
