@@ -36,4 +36,5 @@
     <string name="resend_code">Resend code</string>
     <string name="email_verification">Email Verification</string>
     <string name="email_verification_instruction">Please enter the code we sent to your email address to finish creating your account</string>
+    <string name="invalid_login_credentials_try_again">Invalid login credentials. Please try again.</string>
 </resources>
