@@ -51,16 +51,17 @@ impl<'r> FromRequest<'r> for AuthenticatedUser {
     async fn from_request(request: &'r Request<'_>) -> Outcome<Self, Self::Error> {
         let keys: Vec<_> = request.headers().get("Authorization").collect();
 
-        if keys.len() != 1 {
-            return Outcome::Failure((Status::Unauthorized, ServiceError::AuthenticationError));
+        if keys.len() == 1 {
+            if let ("Bearer ", token) = keys[0].split_at(7) {
+                if let Ok(claim) = read_token(token) {
+                    return Outcome::Success(AuthenticatedUser {
+                        user_id: claim.claims.sub,
+                    });
+                }
+            }
         }
 
-        match read_token(keys[0]) {
-            Ok(claim) => Outcome::Success(AuthenticatedUser {
-                user_id: claim.claims.sub,
-            }),
-            Err(_) => Outcome::Failure((Status::Unauthorized, ServiceError::AuthenticationError)),
-        }
+        Outcome::Failure((Status::Unauthorized, ServiceError::AuthenticationError))
     }
 }
 
@@ -70,7 +71,6 @@ impl<'a> OpenApiFromRequest<'a> for AuthenticatedUser {
         _name: String,
         _required: bool,
     ) -> rocket_okapi::Result<rocket_okapi::request::RequestHeaderInput> {
-        // Setup global requirement for Security scheme
         let security_scheme = SecurityScheme {
             description: Some("Requires a JWT token to access.".to_owned()),
             data: SecuritySchemeData::Http {
