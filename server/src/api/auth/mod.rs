@@ -20,8 +20,6 @@ fn login(state: &State<AppState>, login_request: Json<UserLoginRequest>) -> Serv
         .filter(crate::db::schema::users::email.eq(&login_request.email))
         .load(&mut dbcon)?;
 
-    println!("got users: {:?}", users);
-
     debug_assert!(users.len() <= 1);
 
     let user = users.get(0).ok_or(ServiceError::AuthenticationError)?;
