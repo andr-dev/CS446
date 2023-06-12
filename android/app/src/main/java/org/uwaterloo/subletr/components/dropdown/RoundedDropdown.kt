@@ -20,20 +20,17 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.drawBehind
-import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import org.uwaterloo.subletr.R
 import org.uwaterloo.subletr.theme.secondaryTextColor
-import org.uwaterloo.subletr.theme.subletrPink
+import org.uwaterloo.subletr.theme.textFieldBackgroundColor
 
 @Composable
-fun <T> UnderlinedDropdown(
+fun <T> RoundedDropdown(
 	modifier: Modifier = Modifier,
 	dropdownItems: Array<T>,
 	selectedDropdownItem: T,
@@ -49,41 +46,28 @@ fun <T> UnderlinedDropdown(
 			.wrapContentSize(Alignment.TopEnd)
 			.fillMaxWidth(1.0f)
 	) {
-		val subletrPink = subletrPink
-		val strokeWidthDp = dimensionResource(id = R.dimen.xxxxs)
 		Button(
 			modifier = Modifier
 				.fillMaxWidth(1.0f)
-				.height(dimensionResource(id = R.dimen.xl))
-				.drawBehind {
-					val strokeWidth = strokeWidthDp.toPx()
-					val y = size.height - strokeWidth / 2
-
-					drawLine(
-						subletrPink,
-						Offset(0f, y),
-						Offset(size.width, y),
-						strokeWidth
-					)
-				},
-			onClick = { expanded = true },
-			shape = RectangleShape,
+				.height(dimensionResource(id = R.dimen.xl)),
 			colors = ButtonDefaults.buttonColors(
-				containerColor = Color.Transparent,
-				disabledContainerColor = Color.Transparent,
+				containerColor = textFieldBackgroundColor,
 				contentColor = secondaryTextColor,
-				disabledContentColor = secondaryTextColor,
 			),
+			onClick = {
+				expanded = !expanded
+			},
 		) {
 			Row(
 				modifier = Modifier.fillMaxWidth(1.0f),
-				horizontalArrangement = Arrangement.SpaceBetween,
 				verticalAlignment = Alignment.CenterVertically,
+				horizontalArrangement = Arrangement.SpaceBetween,
 			) {
 				Text(
 					text = dropdownItemToString(selectedDropdownItem),
 					color = secondaryTextColor,
 				)
+
 				Icon(
 					painter = painterResource(
 						id =
@@ -116,13 +100,13 @@ fun <T> UnderlinedDropdown(
 			}
 		}
 	}
+
 }
 
 @Preview(showBackground = true)
 @Composable
-@Suppress("UnusedPrivateMember")
-private fun UnderlinedDropdownPreview() {
-	UnderlinedDropdown(
+fun RoundedDropdownPreview() {
+	RoundedDropdown(
 		dropdownItems = arrayOf("Test 1", "Test 2"),
 		selectedDropdownItem = "Test 1",
 		dropdownItemToString = {it},
