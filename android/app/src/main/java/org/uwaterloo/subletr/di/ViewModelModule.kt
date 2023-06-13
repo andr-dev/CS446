@@ -7,3 +7,7 @@ import dagger.hilt.android.components.ViewModelComponent
 @Module
 @InstallIn(ViewModelComponent::class)
 object ViewModelModule
+
+@Module
+@InstallIn(ViewModelComponent::class)
+abstract class SimpleViewModelModule

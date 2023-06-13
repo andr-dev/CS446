@@ -11,6 +11,7 @@ import org.uwaterloo.subletr.R
 import org.uwaterloo.subletr.api.apis.DefaultApi
 import org.uwaterloo.subletr.api.models.UserLoginRequest
 import org.uwaterloo.subletr.navigation.NavigationDestination
+import org.uwaterloo.subletr.services.IAuthenticationService
 import org.uwaterloo.subletr.services.INavigationService
 import java.util.Optional
 import javax.inject.Inject
@@ -18,14 +19,15 @@ import kotlin.jvm.optionals.getOrNull
 
 @HiltViewModel
 class LoginPageViewModel @Inject constructor(
-	val api: DefaultApi,
-	val navigationService: INavigationService,
+	private val api: DefaultApi,
+	private val navigationService: INavigationService,
+	private val authenticationService: IAuthenticationService,
 ) : ViewModel() {
 	val navHostController get() = navigationService.getNavHostController()
 
 	val emailStream: BehaviorSubject<String> = BehaviorSubject.createDefault("")
 	val passwordStream: BehaviorSubject<String> = BehaviorSubject.createDefault("")
-	val infoTextStringIdStream: BehaviorSubject<Optional<Int>> = BehaviorSubject.createDefault(Optional.empty())
+	private val infoTextStringIdStream: BehaviorSubject<Optional<Int>> = BehaviorSubject.createDefault(Optional.empty())
 
 	val uiStateStream: Observable<LoginPageUiState> = Observable.combineLatest(
 		emailStream,
@@ -54,12 +56,14 @@ class LoginPageViewModel @Inject constructor(
 			}
 		}
 			.map {
+				authenticationService.setAccessToken(it.token)
 				navHostController.navigate(NavigationDestination.HOME.rootNavPath)
 			}
 			.doOnError {
 				infoTextStringIdStream.onNext(
 					Optional.of(R.string.invalid_login_credentials_try_again)
 				)
+				authenticationService.deleteAccessToken()
 			}
 			.subscribeOn(Schedulers.io())
 			.onErrorResumeWith(Observable.never())

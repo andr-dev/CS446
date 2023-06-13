@@ -259,6 +259,30 @@ fun AccountPageView(
 					)
 				}
 			}
+
+			item {
+				Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.l)))
+			}
+
+			item {
+				PrimaryButton(
+					modifier = Modifier
+						.fillMaxWidth(ELEMENT_WIDTH)
+						.height(dimensionResource(id = R.dimen.xl)),
+					onClick = {
+						viewModel.logout()
+					},
+				) {
+					Text(
+						text = stringResource(id = R.string.log_out),
+						color = textOnSubletrPink,
+					)
+				}
+			}
+
+			item {
+				Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.l)))
+			}
 		}
 	}
 }

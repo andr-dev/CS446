@@ -6,6 +6,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import org.uwaterloo.subletr.api.infrastructure.ApiClient
 import org.uwaterloo.subletr.pages.account.AccountPageView
 import org.uwaterloo.subletr.pages.chat.ChatPageView
 import org.uwaterloo.subletr.pages.createaccount.CreateAccountPageView
@@ -18,9 +19,13 @@ fun MainNavigation(
 	modifier: Modifier = Modifier,
 	navHostController: NavHostController = rememberNavController(),
 ) {
+	val startingDestination =
+		if (ApiClient.accessToken == null) NavigationDestination.LOGIN.rootNavPath
+		else NavigationDestination.HOME.rootNavPath
+
 	NavHost(
 		navController = navHostController,
-		startDestination = NavigationDestination.LOGIN.rootNavPath,
+		startDestination = startingDestination,
 	) {
 		composable(NavigationDestination.LOGIN.rootNavPath) {
 			LoginPageView(
