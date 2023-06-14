@@ -137,7 +137,7 @@ class DefaultApi(basePath: kotlin.String = defaultBasePath, client: OkHttpClient
      */
     @Suppress("UNCHECKED_CAST")
     @Throws(IllegalStateException::class, IOException::class, UnsupportedOperationException::class, ClientException::class, ServerException::class)
-    suspend fun details(listingId: kotlin.String) : GetListingDetailsResponse = withContext(Dispatchers.IO) {
+    suspend fun details(listingId: kotlin.Long) : GetListingDetailsResponse = withContext(Dispatchers.IO) {
         val localVarResponse = detailsWithHttpInfo(listingId = listingId)
 
         return@withContext when (localVarResponse.responseType) {
@@ -165,7 +165,7 @@ class DefaultApi(basePath: kotlin.String = defaultBasePath, client: OkHttpClient
      */
     @Suppress("UNCHECKED_CAST")
     @Throws(IllegalStateException::class, IOException::class)
-    suspend fun detailsWithHttpInfo(listingId: kotlin.String) : ApiResponse<GetListingDetailsResponse?> = withContext(Dispatchers.IO) {
+    suspend fun detailsWithHttpInfo(listingId: kotlin.Long) : ApiResponse<GetListingDetailsResponse?> = withContext(Dispatchers.IO) {
         val localVariableConfig = detailsRequestConfig(listingId = listingId)
 
         return@withContext request<Unit, GetListingDetailsResponse>(
@@ -179,7 +179,7 @@ class DefaultApi(basePath: kotlin.String = defaultBasePath, client: OkHttpClient
      * @param listingId 
      * @return RequestConfig
      */
-    fun detailsRequestConfig(listingId: kotlin.String) : RequestConfig<Unit> {
+    fun detailsRequestConfig(listingId: kotlin.Long) : RequestConfig<Unit> {
         val localVariableBody = null
         val localVariableQuery: MultiValueMap = mutableMapOf<kotlin.String, kotlin.collections.List<kotlin.String>>()
             .apply {
