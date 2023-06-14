@@ -29,7 +29,13 @@ fun BottomBarView(
 	) {
 		NavigationDestination.values().forEach {
 			if (it.bottomBarNavigationItems != null) {
-				val selected: Boolean = it == currentDestination
+				val elementAndParents = mutableSetOf<NavigationDestination>()
+				var currentDestinationCursor: NavigationDestination? = currentDestination
+				while (currentDestinationCursor != null) {
+					elementAndParents.add(currentDestinationCursor)
+					currentDestinationCursor = currentDestinationCursor.parent
+				}
+				val selected: Boolean = elementAndParents.contains(it)
 
 				NavigationBarItem(
 					selected = selected,

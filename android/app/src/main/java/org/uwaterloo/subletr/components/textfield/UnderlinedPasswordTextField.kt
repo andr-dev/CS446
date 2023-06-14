@@ -1,7 +1,6 @@
 package org.uwaterloo.subletr.components.textfield
 
 import androidx.compose.foundation.interaction.MutableInteractionSource
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
@@ -22,7 +21,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
-import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.KeyboardType
@@ -30,11 +28,11 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import org.uwaterloo.subletr.R
-import org.uwaterloo.subletr.theme.textFieldBackgroundColor
+import org.uwaterloo.subletr.theme.subletrPink
 
 @Composable
 @Suppress("LongParameterList")
-fun RoundedPasswordTextField(
+fun UnderlinedPasswordTextField(
 	value: String,
 	onValueChange: (String) -> Unit,
 	modifier: Modifier = Modifier,
@@ -56,12 +54,12 @@ fun RoundedPasswordTextField(
 	maxLines: Int = if (singleLine) 1 else Int.MAX_VALUE,
 	minLines: Int = 1,
 	interactionSource: MutableInteractionSource = remember { MutableInteractionSource() },
-	shape: Shape = RoundedCornerShape(dimensionResource(id = R.dimen.xxxxl)),
+	shape: Shape = TextFieldDefaults.shape,
 	colors: TextFieldColors = TextFieldDefaults.colors(
-		unfocusedContainerColor = textFieldBackgroundColor,
-		focusedContainerColor = textFieldBackgroundColor,
-		unfocusedIndicatorColor = Color.Transparent,
-		focusedIndicatorColor = Color.Transparent,
+		unfocusedContainerColor = Color.Transparent,
+		focusedContainerColor = Color.Transparent,
+		unfocusedIndicatorColor = subletrPink,
+		focusedIndicatorColor = subletrPink,
 	),
 ) {
 	var passwordVisible by rememberSaveable { mutableStateOf(false) }
@@ -113,9 +111,9 @@ fun RoundedPasswordTextField(
 @Preview(showBackground = true)
 @Composable
 @Suppress("UnusedPrivateMember")
-private fun RoundedPasswordTextFieldPreview() {
-	RoundedTextField(
-		value = "Test Password",
+private fun UnderlinedPasswordTextFieldPreview() {
+	UnderlinedPasswordTextField(
+		value = "Test TextField Value",
 		onValueChange = {},
 	)
 }

@@ -20,6 +20,17 @@ val bottomBarItemText
 		letterSpacing = 0.sp,
 	)
 
+val changePasswordTopBarTitle
+	@Composable
+	get() = TextStyle(
+		color = primaryTextColor,
+		fontFamily = FontFamily.SansSerif,
+		fontWeight = FontWeight.Bold,
+		fontSize = 24.sp,
+		lineHeight = 40.sp,
+		letterSpacing = 0.sp,
+	)
+
 val SubletrTypography = Typography(
 	bodyLarge = TextStyle(
 		color = Color.Black,

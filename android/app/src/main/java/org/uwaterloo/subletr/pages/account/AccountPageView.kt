@@ -35,6 +35,7 @@ import org.uwaterloo.subletr.components.dropdown.UnderlinedDropdown
 import org.uwaterloo.subletr.components.switch.PrimarySwitch
 import org.uwaterloo.subletr.components.textfield.UnderlinedTextField
 import org.uwaterloo.subletr.enums.Gender
+import org.uwaterloo.subletr.navigation.NavigationDestination
 import org.uwaterloo.subletr.theme.SubletrTheme
 import org.uwaterloo.subletr.theme.secondaryTextColor
 import org.uwaterloo.subletr.theme.textOnSubletrPink
@@ -183,7 +184,11 @@ fun AccountPageView(
 					modifier = Modifier
 						.fillMaxWidth(ELEMENT_WIDTH)
 						.height(dimensionResource(id = R.dimen.xl)),
-					onClick = {},
+					onClick = {
+					  	viewModel.navHostController.navigate(
+							NavigationDestination.CHANGE_PASSWORD.rootNavPath,
+						)
+					},
 				) {
 					Text(
 						text = stringResource(id = R.string.change_password),
