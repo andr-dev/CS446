@@ -22,7 +22,7 @@ import com.squareup.moshi.JsonClass
 /**
  * 
  *
- * Values: apartment,house,townHouse
+ * Values: apartment,house,townHouse,other
  */
 
 @JsonClass(generateAdapter = false)
@@ -35,7 +35,10 @@ enum class ResidenceType(val value: kotlin.String) {
     house("House"),
 
     @Json(name = "TownHouse")
-    townHouse("TownHouse");
+    townHouse("TownHouse"),
+
+    @Json(name = "Other")
+    other("Other");
 
     /**
      * Override [toString()] to avoid using the enum variable name as the value, and instead use

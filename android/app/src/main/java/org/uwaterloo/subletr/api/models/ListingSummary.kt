@@ -36,7 +36,7 @@ import com.squareup.moshi.JsonClass
 data class ListingSummary (
 
     @Json(name = "listing_id")
-    val listingId: kotlin.String,
+    val listingId: kotlin.Long,
 
     @Json(name = "address")
     val address: kotlin.String,
