@@ -8,6 +8,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import org.uwaterloo.subletr.api.infrastructure.ApiClient
 import org.uwaterloo.subletr.pages.account.AccountPageView
+import org.uwaterloo.subletr.pages.changepassword.ChangePasswordPageView
 import org.uwaterloo.subletr.pages.chat.ChatPageView
 import org.uwaterloo.subletr.pages.createaccount.CreateAccountPageView
 import org.uwaterloo.subletr.pages.emailverification.EmailVerificationPageView
@@ -49,6 +50,11 @@ fun MainNavigation(
 		}
 		composable(NavigationDestination.ACCOUNT.rootNavPath) {
 			AccountPageView(
+				modifier = modifier,
+			)
+		}
+		composable(NavigationDestination.CHANGE_PASSWORD.rootNavPath) {
+			ChangePasswordPageView(
 				modifier = modifier,
 			)
 		}

@@ -15,6 +15,8 @@ class AccountPageViewModel @Inject constructor(
 	val authenticationService: IAuthenticationService,
 	val navigationService: INavigationService,
 ): ViewModel() {
+	val navHostController get() = navigationService.getNavHostController()
+
 	val uiStateStream: BehaviorSubject<AccountPageUiState> = BehaviorSubject.createDefault(
 		AccountPageUiState.Loaded(
 			lastName = "",

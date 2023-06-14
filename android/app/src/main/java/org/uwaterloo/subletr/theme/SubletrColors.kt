@@ -42,6 +42,17 @@ val unselectedGray
 private val unselectedGrayLight = Color(0xFF808080)
 private val unselectedGrayDark = Color(0xFF808080)
 
+val primaryTextColor
+	@Composable
+	get() = if (isSystemInDarkTheme()) {
+		primaryTextColorDark
+	}
+	else {
+		primaryTextColorLight
+	}
+private val primaryTextColorLight = Color((0xFF000000))
+private val primaryTextColorDark = Color((0xFFFFFFFF))
+
 val secondaryTextColor
 	@Composable
 	get() = if (isSystemInDarkTheme()) {

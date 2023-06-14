@@ -3,6 +3,7 @@ package org.uwaterloo.subletr.pages.login
 import androidx.lifecycle.ViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.reactivex.rxjava3.core.Observable
+import io.reactivex.rxjava3.disposables.Disposable
 import io.reactivex.rxjava3.schedulers.Schedulers
 import io.reactivex.rxjava3.subjects.BehaviorSubject
 import io.reactivex.rxjava3.subjects.PublishSubject
@@ -23,6 +24,8 @@ class LoginPageViewModel @Inject constructor(
 	private val navigationService: INavigationService,
 	private val authenticationService: IAuthenticationService,
 ) : ViewModel() {
+	private val disposables: MutableList<Disposable> = mutableListOf()
+
 	val navHostController get() = navigationService.getNavHostController()
 
 	val emailStream: BehaviorSubject<String> = BehaviorSubject.createDefault("")
@@ -45,28 +48,37 @@ class LoginPageViewModel @Inject constructor(
 	val loginStream: PublishSubject<LoginPageUiState.Loaded> = PublishSubject.create()
 
 	init {
-		loginStream.map {
-			runBlocking {
-				api.login(
-					UserLoginRequest(
-						email = it.email,
-						password = it.password,
+		disposables.add(
+			loginStream.map {
+				runBlocking {
+					api.login(
+						UserLoginRequest(
+							email = it.email,
+							password = it.password,
+						)
 					)
-				)
+				}
 			}
+				.map {
+					authenticationService.setAccessToken(it.token)
+					navHostController.navigate(NavigationDestination.HOME.rootNavPath)
+				}
+				.doOnError {
+					infoTextStringIdStream.onNext(
+						Optional.of(R.string.invalid_login_credentials_try_again)
+					)
+					authenticationService.deleteAccessToken()
+				}
+				.subscribeOn(Schedulers.io())
+				.onErrorResumeWith(Observable.never())
+				.subscribe()
+		)
+	}
+
+	override fun onCleared() {
+		super.onCleared()
+		disposables.forEach {
+			it.dispose()
 		}
-			.map {
-				authenticationService.setAccessToken(it.token)
-				navHostController.navigate(NavigationDestination.HOME.rootNavPath)
-			}
-			.doOnError {
-				infoTextStringIdStream.onNext(
-					Optional.of(R.string.invalid_login_credentials_try_again)
-				)
-				authenticationService.deleteAccessToken()
-			}
-			.subscribeOn(Schedulers.io())
-			.onErrorResumeWith(Observable.never())
-			.subscribe()
 	}
 }

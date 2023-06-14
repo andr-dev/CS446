@@ -32,10 +32,17 @@
     <string name="other_settings">Other Settings</string>
     <string name="drop_down_arrow">Drop Down Arrow</string>
     <string name="drop_up_arrow">Drop Up Arrow</string>
+    <string name="back_arrow">Back Arrow</string>
+    <string name="change_your_password">Change Your Password</string>
     <string name="setting_1">Setting 1</string>
     <string name="verify">Verify</string>
     <string name="resend_code">Resend code</string>
     <string name="email_verification">Email Verification</string>
     <string name="email_verification_instruction">Please enter the code we sent to your email address to finish creating your account</string>
     <string name="invalid_login_credentials_try_again">Invalid login credentials. Please try again.</string>
+    <string name="old_password">Old Password</string>
+    <string name="new_password">New Password</string>
+    <string name="confirm_new_password">Confirm New Password</string>
+    <string name="same_old_new_password_error">The old and new passwords are the same.</string>
+    <string name="password_not_match_error">The passwords do not match.</string>
 </resources>
