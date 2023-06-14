@@ -12,7 +12,7 @@ schemars = { version = "=0.8.10", features = ["chrono"] }
 
 chrono = { version = "=0.4.22", features = ["serde"] }
 data-encoding = { version = "=2.3.2" }
-diesel = { version = "=2.0.4", features = ["r2d2", "sqlite"] }
+diesel = { version = "=2.0.4", features = ["chrono", "r2d2", "sqlite"] }
 jsonwebtoken = { version = "=8.2.0" }
 log = { version = "=0.4.17" }
 rand = { version = "=0.8.5" }
