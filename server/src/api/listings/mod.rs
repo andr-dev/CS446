@@ -1,6 +1,6 @@
 use std::collections::HashSet;
 
-use chrono::{DateTime, Utc};
+use diesel::{ExpressionMethods, QueryDsl, RunQueryDsl};
 use okapi::openapi3::OpenApi;
 use rocket::{get, serde::json::Json, Route, State};
 use rocket_okapi::{openapi, openapi_get_routes_spec};
@@ -11,15 +11,31 @@ use super::model::listing::{
     GetListingsRequest,
     GetListingsResponse,
     ListingDetails,
-    ResidenceType,
+    ListingSummary,
 };
-use crate::{error::ServiceResult, state::AppState};
+use crate::{
+    db::{model::listings::Listing, schema::listings},
+    error::{ServiceError, ServiceResult},
+    state::AppState,
+};
 
 #[openapi]
 #[get("/list?<listings_request..>")]
 fn list(state: &State<AppState>, listings_request: GetListingsRequest) -> ServiceResult<GetListingsResponse> {
+    let mut dbcon = state.pool.get()?;
+
+    let fetched_listings: Vec<Listing> = listings::dsl::listings
+        .filter(listings::price.ge(listings_request.price_min.map(|x| x as i64).unwrap_or(i64::MIN)))
+        .filter(listings::price.le(listings_request.price_max.map(|x| x as i64).unwrap_or(i64::MAX)))
+        .filter(listings::rooms.ge(listings_request.rooms_min.map(|x| x as i64).unwrap_or(i64::MIN)))
+        .filter(listings::rooms.le(listings_request.rooms_max.map(|x| x as i64).unwrap_or(i64::MAX)))
+        .load(&mut dbcon)?;
+
     Ok(Json(GetListingsResponse {
-        listings: vec![],
+        listings: fetched_listings
+            .into_iter()
+            .map(|l| l.try_into())
+            .collect::<Result<Vec<ListingSummary>, ServiceError>>()?,
         liked: HashSet::default(),
     }))
 }
@@ -30,20 +46,19 @@ fn details(
     state: &State<AppState>,
     details_request: GetListingDetailsRequest,
 ) -> ServiceResult<GetListingDetailsResponse> {
-    Ok(Json(GetListingDetailsResponse {
-        details: ListingDetails {
-            address: "Address".to_string(),
-            price: 123,
-            rooms: 2,
-            lease_start: DateTime::<Utc>::MIN_UTC,
-            lease_end: DateTime::<Utc>::MAX_UTC,
-            description: "Description".to_string(),
-            img_ids: vec![],
-            residence_type: ResidenceType::Apartment,
-            owner_id: "owner_id".to_string(),
-        },
-        favourited: false,
-    }))
+    let mut dbcon = state.pool.get()?;
+
+    if let Ok(l) = listings::dsl::listings
+        .find(details_request.listing_id)
+        .first::<Listing>(&mut dbcon)
+    {
+        Ok(Json(GetListingDetailsResponse {
+            details: ListingDetails::try_from(l)?,
+            favourited: false,
+        }))
+    } else {
+        Err(ServiceError::NotFound)
+    }
 }
 
 pub fn routes() -> (Vec<Route>, OpenApi) {

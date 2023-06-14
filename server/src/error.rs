@@ -27,6 +27,9 @@ pub enum ServiceError {
 
     #[error("Authentication Error")]
     AuthenticationError,
+
+    #[error("Not Found Error")]
+    NotFound,
 }
 
 impl rocket_okapi::JsonSchema for ServiceError {
