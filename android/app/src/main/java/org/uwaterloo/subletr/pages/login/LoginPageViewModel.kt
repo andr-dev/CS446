@@ -51,7 +51,7 @@ class LoginPageViewModel @Inject constructor(
 		disposables.add(
 			loginStream.map {
 				runBlocking {
-					api.login(
+					api.authLogin(
 						UserLoginRequest(
 							email = it.email,
 							password = it.password,
