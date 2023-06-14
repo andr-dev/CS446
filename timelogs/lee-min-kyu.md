@@ -13,3 +13,4 @@
 | 2023-06-07 | 3 hour(s) | Worked on Deliverable 2 Document |
 | 2023-06-11 | 1 hour(s) | Fix Small Issues (Font Problems, Standard Components, etc.) |
 | 2023-06-12 | 5 hour(s) | Add Network Call to Login Page and Store Token in Internal Storage |
+| 2023-06-14 | 4 hour(s) | Add Change Password Page and Catch Some Memory Leaks |
