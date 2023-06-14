@@ -17,7 +17,10 @@ use crate::{
 
 #[openapi]
 #[post("/create", format = "json", data = "<create_user_request>")]
-fn create(state: &State<AppState>, create_user_request: Json<CreateUserRequest>) -> ServiceResult<CreateUserResponse> {
+fn user_create(
+    state: &State<AppState>,
+    create_user_request: Json<CreateUserRequest>,
+) -> ServiceResult<CreateUserResponse> {
     let mut dbcon = state.pool.get()?;
 
     if !create_user_request.email.ends_with("@uwaterloo.ca") {
@@ -42,7 +45,7 @@ fn create(state: &State<AppState>, create_user_request: Json<CreateUserRequest>)
 
 #[openapi]
 #[get("/email")]
-fn email(state: &State<AppState>, user: AuthenticatedUser) -> ServiceResult<String> {
+fn user_email(state: &State<AppState>, user: AuthenticatedUser) -> ServiceResult<String> {
     let mut dbcon = state.pool.get()?;
 
     let user: User = crate::db::schema::users::dsl::users
@@ -54,5 +57,5 @@ fn email(state: &State<AppState>, user: AuthenticatedUser) -> ServiceResult<Stri
 }
 
 pub fn routes() -> (Vec<Route>, OpenApi) {
-    openapi_get_routes_spec![create, email]
+    openapi_get_routes_spec![user_create, user_email]
 }

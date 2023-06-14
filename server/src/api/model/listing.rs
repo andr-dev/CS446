@@ -1,11 +1,14 @@
 use std::collections::HashSet;
 
-use chrono::{DateTime, Utc};
+use chrono::{DateTime, NaiveDateTime, Utc};
 use rocket::FromForm;
 use rocket_okapi::JsonSchema;
-use serde::Serialize;
+use serde::{Deserialize, Serialize};
 
-use crate::{db::model::listings::Listing, error::ServiceError};
+use crate::{
+    db::model::listings::{Listing, NewListing},
+    error::ServiceError,
+};
 
 #[derive(JsonSchema, FromForm, Clone, PartialEq)]
 pub struct GetListingsRequest {
@@ -59,12 +62,13 @@ impl TryFrom<Listing> for ListingSummary {
     }
 }
 
-#[derive(JsonSchema, Serialize, Clone, PartialEq)]
-pub enum ResidenceType {
-    Apartment,
-    House,
-    TownHouse,
-    Other,
+enum_str! {
+    pub enum ResidenceType {
+        Apartment,
+        House,
+        TownHouse,
+        Other,
+    }
 }
 
 #[derive(JsonSchema, FromForm, Clone, PartialEq)]
@@ -105,8 +109,46 @@ impl TryFrom<Listing> for ListingDetails {
             lease_end: ls.lease_end,
             description: l.listing_description,
             img_ids: vec![],
-            residence_type: ResidenceType::Other,
+            residence_type: ResidenceType::from_string(&l.residence_type).ok_or(ServiceError::InternalError)?,
             owner_user_id: l.owner_user_id,
         })
     }
+}
+
+#[derive(JsonSchema, Deserialize, Clone, PartialEq)]
+pub struct CreateListingRequest {
+    pub address_line: String,
+    pub address_city: String,
+    pub address_postalcode: String,
+    pub address_country: String,
+    pub price: u16,
+    pub rooms: u16,
+    pub lease_start: NaiveDateTime,
+    pub lease_end: NaiveDateTime,
+    pub description: String,
+    pub residence_type: ResidenceType,
+}
+
+impl CreateListingRequest {
+    pub fn try_into_new_listing<'a>(&'a self, listing_id: i64, user_id: i64) -> Result<NewListing<'a>, ServiceError> {
+        Ok(NewListing {
+            listing_id,
+            address_line: &self.address_line,
+            address_city: &self.address_city,
+            address_postalcode: &self.address_postalcode,
+            address_country: &self.address_country,
+            price: self.price.try_into().map_err(|_| ServiceError::InternalError)?,
+            rooms: self.rooms.try_into().map_err(|_| ServiceError::InternalError)?,
+            lease_start: self.lease_start,
+            lease_end: self.lease_end,
+            listing_description: &self.description,
+            residence_type: self.residence_type.name(),
+            owner_user_id: user_id,
+        })
+    }
+}
+
+#[derive(JsonSchema, Serialize, Clone, PartialEq)]
+pub struct CreateListingResponse {
+    pub listing_id: i64,
 }

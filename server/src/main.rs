@@ -1,5 +1,10 @@
 extern crate proc_macro;
 
+#[macro_use]
+mod macros;
+
+use rocket::fs::FileServer;
+
 mod api;
 use api::rocket;
 
@@ -10,7 +15,6 @@ mod db;
 mod error;
 
 mod state;
-use rocket::fs::FileServer;
 use state::AppState;
 
 #[rocket::main]

@@ -1,5 +1,7 @@
 use chrono::NaiveDateTime;
-use diesel::Queryable;
+use diesel::{Insertable, Queryable};
+
+use crate::db::schema::listings;
 
 #[derive(Queryable, Debug, Clone)]
 #[diesel(table_name = listings)]
@@ -15,5 +17,22 @@ pub struct Listing {
     pub lease_end: NaiveDateTime,
     pub listing_description: String,
     pub residence_type: String,
+    pub owner_user_id: i64,
+}
+
+#[derive(Insertable)]
+#[diesel(table_name = listings)]
+pub struct NewListing<'a> {
+    pub listing_id: i64,
+    pub address_line: &'a str,
+    pub address_city: &'a str,
+    pub address_postalcode: &'a str,
+    pub address_country: &'a str,
+    pub price: i64,
+    pub rooms: i64,
+    pub lease_start: NaiveDateTime,
+    pub lease_end: NaiveDateTime,
+    pub listing_description: &'a str,
+    pub residence_type: &'a str,
     pub owner_user_id: i64,
 }

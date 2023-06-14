@@ -13,7 +13,7 @@ use crate::{
 
 #[openapi]
 #[post("/login", format = "json", data = "<login_request>")]
-fn login(state: &State<AppState>, login_request: Json<UserLoginRequest>) -> ServiceResult<UserLoginResponse> {
+fn auth_login(state: &State<AppState>, login_request: Json<UserLoginRequest>) -> ServiceResult<UserLoginResponse> {
     let mut dbcon = state.pool.get()?;
 
     let users: Vec<User> = crate::db::schema::users::dsl::users
@@ -36,5 +36,5 @@ fn login(state: &State<AppState>, login_request: Json<UserLoginRequest>) -> Serv
 }
 
 pub fn routes() -> (Vec<Route>, OpenApi) {
-    openapi_get_routes_spec![login]
+    openapi_get_routes_spec![auth_login]
 }
