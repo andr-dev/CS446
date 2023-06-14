@@ -11,3 +11,4 @@
 | June 6th  | 30 minutes (9:00 - 9:30)           | Address review comments on account creation screen                        |
 | June 7th  | 1 hour (13:00 - 14:00)             | Delivery 2 work and pull request clean up                                 |
 | June 12th | 3 hours (14:00 - 17:00)            | Delivery 2 work, architectural styles planning and listing details screen |
+| June 14th | 4 hours (12:30 - 16:30)            | Listing details screen UI, trying navigation, api and components styling  |
