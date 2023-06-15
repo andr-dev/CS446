@@ -117,17 +117,15 @@ fun CreateAccountPageView(
 				},
 				value = uiState.firstName,
 				onValueChange = {
-					viewModel.updateUiState(
-						CreateAccountPageUiState.Loaded(
-							firstName = it,
-							lastName = uiState.lastName,
-							email = uiState.email,
-							password = uiState.password,
-							confirmPassword = uiState.confirmPassword,
-							gender = uiState.gender,
+					viewModel.firstNameStream.onNext(it)
+				},
+				supportingText = {
+					if (uiState.firstNameInfoTextStringId != null) {
+						Text(
+							text = stringResource(id = uiState.firstNameInfoTextStringId)
 						)
-					)
-				}
+					}
+				},
 			)
 
 			Spacer(
@@ -145,17 +143,15 @@ fun CreateAccountPageView(
 				},
 				value = uiState.lastName,
 				onValueChange = {
-					viewModel.updateUiState(
-						CreateAccountPageUiState.Loaded(
-							firstName = uiState.firstName,
-							lastName = it,
-							email = uiState.email,
-							password = uiState.password,
-							confirmPassword = uiState.confirmPassword,
-							gender = uiState.gender,
+					viewModel.lastNameStream.onNext(it)
+				},
+				supportingText = {
+					if (uiState.lastNameInfoTextStringId != null) {
+						Text(
+							text = stringResource(id = uiState.lastNameInfoTextStringId)
 						)
-					)
-				}
+					}
+				},
 			)
 
 			Spacer(
@@ -177,17 +173,15 @@ fun CreateAccountPageView(
 				},
 				value = uiState.email,
 				onValueChange = {
-					viewModel.updateUiState(
-						CreateAccountPageUiState.Loaded(
-							firstName = uiState.firstName,
-							lastName = uiState.lastName,
-							email = it,
-							password = uiState.password,
-							confirmPassword = uiState.confirmPassword,
-							gender = uiState.gender,
+					viewModel.emailStream.onNext(it)
+				},
+				supportingText = {
+					if (uiState.emailInfoTextStringId != null) {
+						Text(
+							text = stringResource(id = uiState.emailInfoTextStringId)
 						)
-					)
-				}
+					}
+				},
 			)
 
 			Spacer(
@@ -205,17 +199,15 @@ fun CreateAccountPageView(
 				},
 				value = uiState.password,
 				onValueChange = {
-					viewModel.updateUiState(
-						CreateAccountPageUiState.Loaded(
-							firstName = uiState.firstName,
-							lastName = uiState.lastName,
-							email = uiState.email,
-							password = it,
-							confirmPassword = uiState.confirmPassword,
-							gender = uiState.gender,
+					viewModel.passwordStream.onNext(it)
+				},
+				supportingText = {
+					if (uiState.passwordInfoTextStringId != null) {
+						Text(
+							text = stringResource(id = uiState.passwordInfoTextStringId)
 						)
-					)
-				}
+					}
+				},
 			)
 
 			Spacer(
@@ -233,17 +225,15 @@ fun CreateAccountPageView(
 				},
 				value = uiState.confirmPassword,
 				onValueChange = {
-					viewModel.updateUiState(
-						CreateAccountPageUiState.Loaded(
-							firstName = uiState.firstName,
-							lastName = uiState.lastName,
-							email = uiState.email,
-							password = uiState.password,
-							confirmPassword = it,
-							gender = uiState.gender,
+					viewModel.confirmPasswordStream.onNext(it)
+				},
+				supportingText = {
+					if (uiState.confirmPasswordInfoTextStringId != null) {
+						Text(
+							text = stringResource(id = uiState.confirmPasswordInfoTextStringId)
 						)
-					)
-				}
+					}
+				},
 			)
 
 			Spacer(
@@ -257,16 +247,7 @@ fun CreateAccountPageView(
 				selectedDropdownItem = uiState.gender,
 				dropdownItemToString = { stringResource(id = it.stringId)},
 				setSelectedDropdownItem = {
-					viewModel.updateUiState(
-						CreateAccountPageUiState.Loaded(
-							firstName = uiState.firstName,
-							lastName = uiState.lastName,
-							email = uiState.email,
-							password = uiState.password,
-							confirmPassword = uiState.confirmPassword,
-							gender = it,
-						)
-					)
+					viewModel.genderStream.onNext(it)
 				},
 			)
 
@@ -278,7 +259,9 @@ fun CreateAccountPageView(
 				modifier = Modifier
 					.fillMaxWidth(ELEMENT_WIDTH)
 					.height(dimensionResource(id = R.dimen.xl)),
-				onClick = {},
+				onClick = {
+					viewModel.verifyUserInfoStream.onNext(uiState)
+				},
 				colors = ButtonDefaults.buttonColors(
 					containerColor = subletrPink,
 					contentColor = textOnSubletrPink,
@@ -346,6 +329,11 @@ fun CreateAccountPagePreview() {
 				password = "",
 				confirmPassword = "",
 				gender = Gender.OTHER,
+				firstNameInfoTextStringId = null,
+				lastNameInfoTextStringId = null,
+				emailInfoTextStringId = null,
+				passwordInfoTextStringId = null,
+				confirmPasswordInfoTextStringId = null,
 			)
 		)
 	}
