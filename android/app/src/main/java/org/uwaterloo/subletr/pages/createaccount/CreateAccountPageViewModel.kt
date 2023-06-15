@@ -5,14 +5,11 @@ import androidx.lifecycle.ViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.disposables.Disposable
-import io.reactivex.rxjava3.internal.util.HalfSerializer.onNext
 import io.reactivex.rxjava3.schedulers.Schedulers
 import io.reactivex.rxjava3.subjects.BehaviorSubject
 import io.reactivex.rxjava3.subjects.PublishSubject
 import org.uwaterloo.subletr.R
-import org.uwaterloo.subletr.api.infrastructure.ApiClient.Companion.password
 import org.uwaterloo.subletr.enums.Gender
-import org.uwaterloo.subletr.pages.changepassword.ChangePasswordPageUiState
 import org.uwaterloo.subletr.services.INavigationService
 import java.util.Optional
 import javax.inject.Inject
@@ -79,23 +76,18 @@ class CreateAccountPageViewModel @Inject constructor(
 		disposables.add(
 			verifyUserInfoStream.map {
 				if (it.firstName.isBlank()) {
-					println("first name is blank")
 					firstNameInfoTextStringIdStream.onNext(Optional.of(R.string.first_name_blank_error))
 				}
 				if (it.lastName.isBlank()) {
-					println("last name is blank")
 					lastNameInfoTextStringIdStream.onNext(Optional.of(R.string.last_name_blank_error))
 				}
 				if (it.email.isBlank() || Patterns.EMAIL_ADDRESS.matcher(it.email).matches()) {
-					println("invalid email")
 					emailInfoTextStringIdStream.onNext(Optional.of(R.string.email_format_error))
 				}
 				if (it.password.isBlank()) {
-					println("password is blank")
 					passwordInfoTextStringIdStream.onNext(Optional.of(R.string.password_blank_error))
 				}
 				if (it.password != it.confirmPassword) {
-					println("passwords do not match")
 					confirmPasswordInfoTextStringIdStream.onNext(Optional.of(R.string.password_not_match_error))
 				}
 			}
