@@ -29,7 +29,7 @@ import com.squareup.moshi.JsonClass
 data class CreateListingResponse (
 
     @Json(name = "listing_id")
-    val listingId: kotlin.Long
+    val listingId: kotlin.Int
 
 )
 

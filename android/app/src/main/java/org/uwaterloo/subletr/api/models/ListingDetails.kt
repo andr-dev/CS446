@@ -62,7 +62,7 @@ data class ListingDetails (
     val residenceType: ResidenceType,
 
     @Json(name = "owner_user_id")
-    val ownerUserId: kotlin.Long
+    val ownerUserId: kotlin.Int
 
 )
 
