@@ -12,5 +12,5 @@ pub struct CreateUserRequest {
 
 #[derive(JsonSchema, Serialize, Deserialize, Clone, PartialEq)]
 pub struct CreateUserResponse {
-    pub user_id: i64,
+    pub user_id: i32,
 }

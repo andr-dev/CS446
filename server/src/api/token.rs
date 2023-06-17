@@ -15,11 +15,11 @@ use crate::error::ServiceError;
 #[derive(Debug, Serialize, Deserialize)]
 struct AuthenticatedUserClaims {
     aud: String,
-    sub: i64,
+    sub: i32,
     exp: i64,
 }
 
-pub(super) fn generate_token(user_id: i64) -> Result<String, jsonwebtoken::errors::Error> {
+pub(super) fn generate_token(user_id: i32) -> Result<String, jsonwebtoken::errors::Error> {
     encode(
         &Header::new(Algorithm::HS512),
         &AuthenticatedUserClaims {
@@ -41,7 +41,7 @@ fn read_token(token: &str) -> Result<TokenData<AuthenticatedUserClaims>, jsonweb
 
 #[derive(Debug)]
 pub struct AuthenticatedUser {
-    pub user_id: i64,
+    pub user_id: i32,
 }
 
 #[rocket::async_trait]

@@ -3,8 +3,9 @@ use diesel::{Insertable, Queryable};
 use crate::db::schema::users;
 
 #[derive(Queryable, Debug)]
+#[diesel(table_name = users)]
 pub struct User {
-    pub user_id: i64,
+    pub user_id: i32,
     pub first_name: String,
     pub last_name: String,
     pub email: String,
@@ -15,7 +16,7 @@ pub struct User {
 #[derive(Insertable)]
 #[diesel(table_name = users)]
 pub struct NewUser<'a> {
-    pub user_id: i64,
+    pub user_id: i32,
     pub first_name: &'a str,
     pub last_name: &'a str,
     pub email: &'a str,

@@ -34,7 +34,7 @@ fn listings_create(
 ) -> ServiceResult<CreateListingResponse> {
     let mut dbcon = state.pool.get()?;
 
-    let listing_id: i64 = rand::thread_rng().gen();
+    let listing_id: i32 = rand::thread_rng().gen();
 
     diesel::insert_into(listings::table)
         .values(&listing_request.try_into_new_listing(listing_id, user.user_id)?)
@@ -49,10 +49,10 @@ fn listings_list(state: &State<AppState>, listings_request: GetListingsRequest) 
     let mut dbcon = state.pool.get()?;
 
     let fetched_listings: Vec<Listing> = listings::dsl::listings
-        .filter(listings::price.ge(listings_request.price_min.map(|x| x as i64).unwrap_or(i64::MIN)))
-        .filter(listings::price.le(listings_request.price_max.map(|x| x as i64).unwrap_or(i64::MAX)))
-        .filter(listings::rooms.ge(listings_request.rooms_min.map(|x| x as i64).unwrap_or(i64::MIN)))
-        .filter(listings::rooms.le(listings_request.rooms_max.map(|x| x as i64).unwrap_or(i64::MAX)))
+        .filter(listings::price.ge(listings_request.price_min.map(|x| x as i32).unwrap_or(i32::MIN)))
+        .filter(listings::price.le(listings_request.price_max.map(|x| x as i32).unwrap_or(i32::MAX)))
+        .filter(listings::rooms.ge(listings_request.rooms_min.map(|x| x as i32).unwrap_or(i32::MIN)))
+        .filter(listings::rooms.le(listings_request.rooms_max.map(|x| x as i32).unwrap_or(i32::MAX)))
         .load(&mut dbcon)?;
 
     Ok(Json(GetListingsResponse {

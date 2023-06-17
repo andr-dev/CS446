@@ -27,7 +27,7 @@ fn user_create(
         return Err(ServiceError::InternalError);
     }
 
-    let user_id: i64 = rand::thread_rng().gen();
+    let user_id: i32 = rand::thread_rng().gen();
 
     diesel::insert_into(crate::db::schema::users::table)
         .values(&NewUser {
