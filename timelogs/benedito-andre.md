@@ -13,3 +13,5 @@
 | Jun 7th  | 4 hours (13:00 - 17:00) | Api Coroutines + RxJava + Swagger UI    |
 | Jun 12th | 2 hours (13:00 - 15:00) | Add OpenAPI Kotlin Client singleton     |
 | Jun 12th | 3 hours (15:00 - 18:00) | Create list + details listings endpoint |
+| Jun 14th | 5 hours (11:00 - 16:00) | Implemented listings + db + redeploy    |
+
