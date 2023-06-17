@@ -2,24 +2,24 @@
 
 diesel::table! {
     listings (listing_id) {
-        listing_id -> BigInt,
+        listing_id -> Integer,
         address_line -> Text,
         address_city -> Text,
         address_postalcode -> Text,
         address_country -> Text,
-        price -> BigInt,
-        rooms -> BigInt,
+        price -> Integer,
+        rooms -> Integer,
         lease_start -> Timestamp,
         lease_end -> Timestamp,
         listing_description -> Text,
         residence_type -> Text,
-        owner_user_id -> BigInt,
+        owner_user_id -> Integer,
     }
 }
 
 diesel::table! {
     users (user_id) {
-        user_id -> BigInt,
+        user_id -> Integer,
         first_name -> Text,
         last_name -> Text,
         email -> Text,

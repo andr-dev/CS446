@@ -26,7 +26,7 @@ pub struct GetListingsResponse {
 
 #[derive(JsonSchema, Serialize, Clone, PartialEq)]
 pub struct ListingSummary {
-    pub listing_id: i64,
+    pub listing_id: i32,
     pub address: String,
     pub price: u16,
     pub rooms: u16,
@@ -73,7 +73,7 @@ enum_str! {
 
 #[derive(JsonSchema, FromForm, Clone, PartialEq)]
 pub struct GetListingDetailsRequest {
-    pub listing_id: i64,
+    pub listing_id: i32,
 }
 
 #[derive(JsonSchema, Serialize, Clone, PartialEq)]
@@ -92,7 +92,7 @@ pub struct ListingDetails {
     pub description: String,
     pub img_ids: Vec<String>,
     pub residence_type: ResidenceType,
-    pub owner_user_id: i64,
+    pub owner_user_id: i32,
 }
 
 impl TryFrom<Listing> for ListingDetails {
@@ -130,7 +130,7 @@ pub struct CreateListingRequest {
 }
 
 impl CreateListingRequest {
-    pub fn try_into_new_listing<'a>(&'a self, listing_id: i64, user_id: i64) -> Result<NewListing<'a>, ServiceError> {
+    pub fn try_into_new_listing<'a>(&'a self, listing_id: i32, user_id: i32) -> Result<NewListing<'a>, ServiceError> {
         Ok(NewListing {
             listing_id,
             address_line: &self.address_line,
@@ -150,5 +150,5 @@ impl CreateListingRequest {
 
 #[derive(JsonSchema, Serialize, Clone, PartialEq)]
 pub struct CreateListingResponse {
-    pub listing_id: i64,
+    pub listing_id: i32,
 }
