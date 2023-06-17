@@ -29,7 +29,7 @@ import com.squareup.moshi.JsonClass
 data class CreateUserResponse (
 
     @Json(name = "user_id")
-    val userId: kotlin.Long
+    val userId: kotlin.Int
 
 )
 
