@@ -77,18 +77,28 @@ class CreateAccountPageViewModel @Inject constructor(
 			verifyUserInfoStream.map {
 				if (it.firstName.isBlank()) {
 					firstNameInfoTextStringIdStream.onNext(Optional.of(R.string.first_name_blank_error))
+				} else {
+					firstNameInfoTextStringIdStream.onNext(Optional.empty())
 				}
 				if (it.lastName.isBlank()) {
 					lastNameInfoTextStringIdStream.onNext(Optional.of(R.string.last_name_blank_error))
+				} else {
+					lastNameInfoTextStringIdStream.onNext(Optional.empty())
 				}
-				if (it.email.isBlank() || Patterns.EMAIL_ADDRESS.matcher(it.email).matches()) {
+				if (it.email.isBlank() || !Patterns.EMAIL_ADDRESS.matcher(it.email).matches()) {
 					emailInfoTextStringIdStream.onNext(Optional.of(R.string.email_format_error))
+				} else {
+					emailInfoTextStringIdStream.onNext(Optional.empty())
 				}
 				if (it.password.isBlank()) {
 					passwordInfoTextStringIdStream.onNext(Optional.of(R.string.password_blank_error))
+				} else {
+					passwordInfoTextStringIdStream.onNext(Optional.empty())
 				}
 				if (it.password != it.confirmPassword) {
 					confirmPasswordInfoTextStringIdStream.onNext(Optional.of(R.string.password_not_match_error))
+				} else {
+					confirmPasswordInfoTextStringIdStream.onNext(Optional.empty())
 				}
 			}
 				.subscribeOn(Schedulers.io())

@@ -30,6 +30,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.navOptions
 import org.uwaterloo.subletr.R
+import org.uwaterloo.subletr.components.button.PrimaryButton
 import org.uwaterloo.subletr.components.dropdown.RoundedDropdown
 import org.uwaterloo.subletr.components.textfield.RoundedPasswordTextField
 import org.uwaterloo.subletr.components.textfield.RoundedTextField
@@ -255,17 +256,13 @@ fun CreateAccountPageView(
 				modifier = Modifier.weight(weight = 2.0f)
 			)
 
-			Button(
+			PrimaryButton(
 				modifier = Modifier
 					.fillMaxWidth(ELEMENT_WIDTH)
 					.height(dimensionResource(id = R.dimen.xl)),
 				onClick = {
 					viewModel.verifyUserInfoStream.onNext(uiState)
 				},
-				colors = ButtonDefaults.buttonColors(
-					containerColor = subletrPink,
-					contentColor = textOnSubletrPink,
-				)
 			) {
 				Text(
 					text = stringResource(id = R.string.create_account),
