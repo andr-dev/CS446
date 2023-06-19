@@ -97,6 +97,12 @@
     <string name="total_rooms_in_house">Total rooms in house</string>
     <string name="total_bathrooms_in_house">Total bathrooms in house</string>
     <string name="description">Description</string>
+    <string name="suite">Suite</string>
+    <string name="house">House</string>
+    <string name="studio">Studio</string>
+    <string name="basement">Basement</string>
+    <string name="dorm">Dorm</string>
+    <string name="create_new_listing">Create a new listing</string>
     <string name="dollar_sign_n">$%d</string>
     <string name="short_for_all_date_range">%s – %s</string>
 </resources>

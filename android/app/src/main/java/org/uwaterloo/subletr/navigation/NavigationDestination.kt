@@ -56,4 +56,7 @@ enum class NavigationDestination(
 		bottomBarNavigationItems = null,
 		showBottomBar = true,
 	),
+	CREATE_LISTING(
+		rootNavPath = "createlisting",
+	),
 }
