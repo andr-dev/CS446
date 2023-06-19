@@ -9,11 +9,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 
 val subletrPink
-@Composable
+	@Composable
 	get() = if (isSystemInDarkTheme()) {
 		subletrPinkDark
-	}
-	else {
+	} else {
 		subletrPinkLight
 	}
 
@@ -24,8 +23,7 @@ val textOnSubletrPink
 	@Composable
 	get() = if (isSystemInDarkTheme()) {
 		textOnSubletrPinkDark
-	}
-	else {
+	} else {
 		textOnSubletrPinkLight
 	}
 private val textOnSubletrPinkLight = Color((0xFFFFFFFF))
@@ -35,8 +33,7 @@ val unselectedGray
 	@Composable
 	get() = if (isSystemInDarkTheme()) {
 		unselectedGrayDark
-	}
-	else {
+	} else {
 		unselectedGrayLight
 	}
 private val unselectedGrayLight = Color(0xFF808080)
@@ -46,8 +43,7 @@ val primaryTextColor
 	@Composable
 	get() = if (isSystemInDarkTheme()) {
 		primaryTextColorDark
-	}
-	else {
+	} else {
 		primaryTextColorLight
 	}
 private val primaryTextColorLight = Color((0xFF000000))
@@ -57,19 +53,17 @@ val secondaryTextColor
 	@Composable
 	get() = if (isSystemInDarkTheme()) {
 		secondaryTextColorDark
-	}
-	else {
+	} else {
 		secondaryTextColorLight
 	}
 private val secondaryTextColorLight = Color((0xFF808080))
 private val secondaryTextColorDark = Color((0xFF808080))
-
+val darkerGrayButtonColor = Color((0xFFE5E5E5))
 val secondaryButtonBackgroundColor
 	@Composable
 	get() = if (isSystemInDarkTheme()) {
 		secondaryButtonBackgroundColorDark
-	}
-	else {
+	} else {
 		secondaryButtonBackgroundColorLight
 	}
 private val secondaryButtonBackgroundColorLight = Color((0xFFF0F0F0))
@@ -79,8 +73,7 @@ val textFieldBackgroundColor
 	@Composable
 	get() = if (isSystemInDarkTheme()) {
 		textFieldBackgroundColorDark
-	}
-	else {
+	} else {
 		textFieldBackgroundColorLight
 	}
 private val textFieldBackgroundColorLight = Color((0xFFD9D9D9))
