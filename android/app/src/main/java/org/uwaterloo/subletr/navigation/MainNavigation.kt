@@ -3,9 +3,11 @@ package org.uwaterloo.subletr.navigation
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import org.uwaterloo.subletr.api.infrastructure.ApiClient
 import org.uwaterloo.subletr.pages.account.AccountPageView
 import org.uwaterloo.subletr.pages.changepassword.ChangePasswordPageView
@@ -21,44 +23,48 @@ fun MainNavigation(
 	navHostController: NavHostController = rememberNavController(),
 ) {
 	val startingDestination =
-		if (ApiClient.accessToken == null) NavigationDestination.LOGIN.rootNavPath
-		else NavigationDestination.HOME.rootNavPath
+		if (ApiClient.accessToken == null) NavigationDestination.LOGIN.fullNavPath
+		else NavigationDestination.HOME.fullNavPath
 
 	NavHost(
 		navController = navHostController,
 		startDestination = startingDestination,
 	) {
-		composable(NavigationDestination.LOGIN.rootNavPath) {
+		composable(NavigationDestination.LOGIN.fullNavPath) {
 			LoginPageView(
 				modifier = modifier,
 			)
 		}
-		composable(NavigationDestination.CREATE_ACCOUNT.rootNavPath) {
+		composable(NavigationDestination.CREATE_ACCOUNT.fullNavPath) {
 			CreateAccountPageView(
 				modifier = modifier,
 			)
 		}
-		composable(NavigationDestination.VERIFY_EMAIL.rootNavPath) {
+		composable(
+			route = NavigationDestination.VERIFY_EMAIL.fullNavPath,
+			arguments = listOf(navArgument("userId") { type = NavType.IntType }),
+		) {
 			EmailVerificationPageView(
 				modifier = modifier,
+				userId = it.arguments?.getInt("userId"),
 			)
 		}
-		composable(NavigationDestination.HOME.rootNavPath) {
+		composable(NavigationDestination.HOME.fullNavPath) {
 			HomePageView(
 				modifier = modifier,
 			)
 		}
-		composable(NavigationDestination.ACCOUNT.rootNavPath) {
+		composable(NavigationDestination.ACCOUNT.fullNavPath) {
 			AccountPageView(
 				modifier = modifier,
 			)
 		}
-		composable(NavigationDestination.CHANGE_PASSWORD.rootNavPath) {
+		composable(NavigationDestination.CHANGE_PASSWORD.fullNavPath) {
 			ChangePasswordPageView(
 				modifier = modifier,
 			)
 		}
-		composable(NavigationDestination.CHAT.rootNavPath) {
+		composable(NavigationDestination.CHAT.fullNavPath) {
 			ChatPageView(
 				modifier = modifier,
 			)

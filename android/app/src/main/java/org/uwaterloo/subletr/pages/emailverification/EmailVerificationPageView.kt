@@ -50,12 +50,13 @@ import org.uwaterloo.subletr.theme.textFieldBackgroundColor
 @Composable
 fun EmailVerificationPageView(
 	modifier: Modifier = Modifier,
+	@Suppress("UnusedParameter")
+	userId: Int?,
 	viewModel: EmailVerificationPageViewModel = hiltViewModel(),
 	uiState: EmailVerificationPageUiState = viewModel.uiStateStream.subscribeAsState(
 		EmailVerificationPageUiState.Loading
 	).value,
 ) {
-
 	if (uiState is EmailVerificationPageUiState.Loading) {
 		Column(
 			modifier = modifier
@@ -223,7 +224,9 @@ fun VerificationCodeTextField(
 @Preview(showBackground = true)
 @Composable
 fun EmailVerificationPageViewLoadingPreview() {
-	EmailVerificationPageView()
+	EmailVerificationPageView(
+		userId = 0,
+	)
 }
 
 @Preview(showBackground = true)
@@ -234,8 +237,8 @@ fun EmailVerificationPageViewLoadedPreview() {
 			uiState = EmailVerificationPageUiState.Loaded(
 				verificationCode = immutableListOf("", "", "", "", "")
 			),
+			userId = 0,
 		)
-
 	}
 }
 

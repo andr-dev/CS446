@@ -29,13 +29,8 @@ fun BottomBarView(
 	) {
 		NavigationDestination.values().forEach {
 			if (it.bottomBarNavigationItems != null) {
-				val elementAndParents = mutableSetOf<NavigationDestination>()
-				var currentDestinationCursor: NavigationDestination? = currentDestination
-				while (currentDestinationCursor != null) {
-					elementAndParents.add(currentDestinationCursor)
-					currentDestinationCursor = currentDestinationCursor.parent
-				}
-				val selected: Boolean = elementAndParents.contains(it)
+				val selected: Boolean =
+					currentDestination.rootNavPath.substringBefore("/") == it.rootNavPath
 
 				NavigationBarItem(
 					selected = selected,
@@ -62,7 +57,9 @@ fun BottomBarView(
 						viewModel.navHostController.navigate(
 							it.name,
 							navOptions {
-								popUpTo(viewModel.navHostController.graph.findStartDestination().id) {
+								popUpTo(
+									id = viewModel.navHostController.graph.findStartDestination().id
+								) {
 									saveState = true
 								}
 								launchSingleTop = true
