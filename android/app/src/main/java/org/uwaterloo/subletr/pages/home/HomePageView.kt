@@ -37,6 +37,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -50,6 +51,7 @@ import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
@@ -87,7 +89,6 @@ fun HomePageView(
 		HomePageUiState.Loading
 	).value,
 ) {
-
 	if (uiState is HomePageUiState.Loading) {
 		Column(
 			modifier = modifier
@@ -99,15 +100,20 @@ fun HomePageView(
 			CircularProgressIndicator()
 		}
 	} else if (uiState is HomePageUiState.Loaded) {
+		LaunchedEffect(Unit) {
+			// Perform API call here
+			viewModel.getListingStream.onNext(uiState)
+
+		}
 		val listState = rememberLazyListState()
 		Scaffold(
 			modifier = Modifier
 				.padding(
-
 					dimensionResource(id = R.dimen.s),
 					ZERO_DP,
 					dimensionResource(id = R.dimen.s),
-					dimensionResource(id = R.dimen.xxxl)
+					ZERO_DP
+
 				)
 				.imePadding(),
 			topBar = {
@@ -129,12 +135,12 @@ fun HomePageView(
 				}
 			},
 			content = { padding ->
-
 				LazyColumn(
 					modifier = Modifier
 						.padding(padding)
 						.fillMaxWidth(1.0f)
-						.wrapContentHeight(),
+						.wrapContentHeight()
+						.imePadding(),
 					state = listState,
 					verticalArrangement = Arrangement.spacedBy(dimensionResource(id = R.dimen.s)),
 					horizontalAlignment = Alignment.CenterHorizontally,
@@ -157,7 +163,7 @@ fun HomePageView(
 								onClick = {},
 								contentDescription = "filter menu",
 							)
-							filterDropDown(
+							FilterDropDown(
 								filterName = "Location",
 								dropDownItems = LocationRange.values().map { it.stringId }
 									.toTypedArray(),
@@ -167,9 +173,9 @@ fun HomePageView(
 									)
 								},
 								selectedValue = uiState.locationRange.stringId,
-								width = 100.dp
+								width = dimensionResource(id = R.dimen.xxxxl)
 							)
-							filterDropDown(
+							FilterDropDown(
 								filterName = "Price",
 								dropDownItems = PriceRange.values().map { it.stringId }
 									.toTypedArray(),
@@ -179,9 +185,9 @@ fun HomePageView(
 									)
 								},
 								selectedValue = uiState.priceRange.stringId,
-								width = 76.dp
+								width = dimensionResource(id = R.dimen.xxxl)
 							)
-							filterDropDown(
+							FilterDropDown(
 								filterName = "Rooms",
 								dropDownItems = RoomRange.values().map { it.stringId }
 									.toTypedArray(),
@@ -191,14 +197,15 @@ fun HomePageView(
 									)
 								},
 								selectedValue = uiState.roomRange.stringId,
-								width = 86.dp
+								width = dimensionResource(id = R.dimen.xxxxl)
 							)
 						}
 
 					}
 					items(uiState.listings.listings.size) {
-						listingPost(listingSummary = uiState.listings.listings[it])
+						ListingPost(listingSummary = uiState.listings.listings[it])
 					}
+
 				}
 			},
 			floatingActionButtonPosition = FabPosition.End,
@@ -223,7 +230,7 @@ fun HomePageView(
 }
 
 fun dateTimeFormater(offsetDateTime: OffsetDateTime): String {
-	var formatter = DateTimeFormatter.ofPattern("MMM. yyyy", Locale.ENGLISH)
+	val formatter = DateTimeFormatter.ofPattern("MMM. yyyy", Locale.ENGLISH)
 	return offsetDateTime.format(formatter)
 }
 
@@ -235,9 +242,9 @@ fun bedroomStringFormater(numOfBedroom: Int): String {
 }
 
 @Composable
-fun listingPost(modifier: Modifier = Modifier, listingSummary: ListingSummary) {
+fun ListingPost(modifier: Modifier = Modifier, listingSummary: ListingSummary) {
 	Box(
-		modifier = Modifier
+		modifier = modifier
 			.height(180.dp)
 			.fillMaxWidth(1.0f)
 			.clip(
@@ -246,7 +253,6 @@ fun listingPost(modifier: Modifier = Modifier, listingSummary: ListingSummary) {
 				)
 			)
 			.background(secondaryButtonBackgroundColor)
-
 	) {
 		Column(
 			modifier = Modifier
@@ -279,7 +285,9 @@ fun listingPost(modifier: Modifier = Modifier, listingSummary: ListingSummary) {
 					Text(
 						listingSummary.address,
 						style = listingTitleFont,
-						overflow = TextOverflow.Ellipsis
+						overflow = TextOverflow.Clip,
+						textAlign = TextAlign.Start,
+						maxLines = 1
 					)
 					Text("$${listingSummary.price}", style = listingTitleFont)
 					Text(
@@ -295,7 +303,6 @@ fun listingPost(modifier: Modifier = Modifier, listingSummary: ListingSummary) {
 			Row(
 				modifier = Modifier
 					.fillMaxWidth(1.0f),
-
 				horizontalArrangement = Arrangement.spacedBy(dimensionResource(id = R.dimen.xs)),
 				verticalAlignment = Alignment.CenterVertically
 			) {
@@ -312,6 +319,8 @@ fun listingPost(modifier: Modifier = Modifier, listingSummary: ListingSummary) {
 						id =
 						if (listingSummary.residenceType == ResidenceType.apartment)
 							R.drawable.apartment_solid_gray_16
+						else if (listingSummary.residenceType == ResidenceType.other)
+							R.drawable.other_houses_solid_gray_16
 						else
 							R.drawable.home_outline_gray_16
 
@@ -368,12 +377,10 @@ fun listingPost(modifier: Modifier = Modifier, listingSummary: ListingSummary) {
 		}
 
 	}
-
-
 }
 
 @Composable
-fun filterDropDown(
+fun FilterDropDown(
 	modifier: Modifier = Modifier,
 	filterName: String,
 	dropDownItems: Array<Int>,
@@ -429,7 +436,6 @@ fun filterDropDown(
 				)
 			}
 		}
-
 		DropdownMenu(
 			modifier = modifier
 
@@ -456,8 +462,6 @@ fun filterDropDown(
 			}
 		}
 	}
-
-
 }
 
 @Composable
@@ -485,11 +489,9 @@ fun ButtonWithIcon(
 			)
 		})
 }
-
-
 @Composable
 fun ViewSwitch(modifier: Modifier = Modifier) {
-	var isListView = remember { mutableStateOf(true) }
+	val isListView = remember { mutableStateOf(true) }
 	Row(
 		modifier = modifier
 			.wrapContentWidth(),
@@ -537,10 +539,7 @@ fun ViewSwitch(modifier: Modifier = Modifier) {
 					contentDescription = stringResource(id = R.string.list_icon),
 					tint = if (isListView.value) subletrPink else secondaryTextColor
 				)
-
 			}
-
-
 		)
 		Box(
 			modifier = Modifier
@@ -588,9 +587,7 @@ fun ViewSwitch(modifier: Modifier = Modifier) {
 			}
 		)
 	}
-
 }
-
 
 @Preview(showBackground = true)
 @Composable
@@ -607,7 +604,7 @@ fun LoginPageViewLoadedPreview() {
 				locationRange = LocationRange.NOFILTER,
 				priceRange = PriceRange.NOFILTER,
 				roomRange = RoomRange.NOFILTER,
-				listings = GetListingsResponse(listOf<ListingSummary>(), setOf()),
+				listings = GetListingsResponse(listOf(), setOf()),
 				infoTextStringId = null,
 			),
 		)
