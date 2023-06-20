@@ -8,8 +8,12 @@ import io.reactivex.rxjava3.disposables.Disposable
 import io.reactivex.rxjava3.schedulers.Schedulers
 import io.reactivex.rxjava3.subjects.BehaviorSubject
 import io.reactivex.rxjava3.subjects.PublishSubject
+import kotlinx.coroutines.runBlocking
 import org.uwaterloo.subletr.R
+import org.uwaterloo.subletr.api.apis.DefaultApi
+import org.uwaterloo.subletr.api.models.CreateUserRequest
 import org.uwaterloo.subletr.enums.Gender
+import org.uwaterloo.subletr.navigation.NavigationDestination
 import org.uwaterloo.subletr.services.INavigationService
 import java.util.Optional
 import javax.inject.Inject
@@ -19,6 +23,7 @@ import kotlin.jvm.optionals.getOrNull
 @HiltViewModel
 class CreateAccountPageViewModel @Inject constructor(
 	navigationService: INavigationService,
+	defaultApi: DefaultApi,
 ) : ViewModel() {
 	private val disposables: MutableList<Disposable> = mutableListOf()
 	val navHostController = navigationService.getNavHostController()
@@ -31,11 +36,16 @@ class CreateAccountPageViewModel @Inject constructor(
 	val confirmPasswordStream: BehaviorSubject<String> = BehaviorSubject.createDefault("")
 	val genderStream: BehaviorSubject<Gender> = BehaviorSubject.createDefault(Gender.OTHER)
 
-	private val firstNameInfoTextStringIdStream: BehaviorSubject<Optional<Int>> = BehaviorSubject.createDefault(Optional.empty())
-	private val lastNameInfoTextStringIdStream: BehaviorSubject<Optional<Int>> = BehaviorSubject.createDefault(Optional.empty())
-	private val emailInfoTextStringIdStream: BehaviorSubject<Optional<Int>> = BehaviorSubject.createDefault(Optional.empty())
-	private val passwordInfoTextStringIdStream: BehaviorSubject<Optional<Int>> = BehaviorSubject.createDefault(Optional.empty())
-	private val confirmPasswordInfoTextStringIdStream: BehaviorSubject<Optional<Int>> = BehaviorSubject.createDefault(Optional.empty())
+	private val firstNameInfoTextStringIdStream: BehaviorSubject<Optional<Int>> =
+		BehaviorSubject.createDefault(Optional.empty())
+	private val lastNameInfoTextStringIdStream: BehaviorSubject<Optional<Int>> =
+		BehaviorSubject.createDefault(Optional.empty())
+	private val emailInfoTextStringIdStream: BehaviorSubject<Optional<Int>> =
+		BehaviorSubject.createDefault(Optional.empty())
+	private val passwordInfoTextStringIdStream: BehaviorSubject<Optional<Int>> =
+		BehaviorSubject.createDefault(Optional.empty())
+	private val confirmPasswordInfoTextStringIdStream: BehaviorSubject<Optional<Int>> =
+		BehaviorSubject.createDefault(Optional.empty())
 
 	private val observables: List<Observable<*>> = listOf(
 		firstNameStream,
@@ -55,6 +65,7 @@ class CreateAccountPageViewModel @Inject constructor(
 		observables
 	) {
 		observing ->
+		@Suppress("UNCHECKED_CAST")
 		CreateAccountPageUiState.Loaded(
 			firstName = observing[0] as String,
 			lastName = observing[1] as String,
@@ -75,30 +86,55 @@ class CreateAccountPageViewModel @Inject constructor(
 	init {
 		disposables.add(
 			verifyUserInfoStream.map {
+				var validInput = true
+
 				if (it.firstName.isBlank()) {
 					firstNameInfoTextStringIdStream.onNext(Optional.of(R.string.first_name_blank_error))
+					validInput = false
 				} else {
 					firstNameInfoTextStringIdStream.onNext(Optional.empty())
 				}
 				if (it.lastName.isBlank()) {
 					lastNameInfoTextStringIdStream.onNext(Optional.of(R.string.last_name_blank_error))
+					validInput = false
 				} else {
 					lastNameInfoTextStringIdStream.onNext(Optional.empty())
 				}
 				if (it.email.isBlank() || !Patterns.EMAIL_ADDRESS.matcher(it.email).matches()) {
 					emailInfoTextStringIdStream.onNext(Optional.of(R.string.email_format_error))
+					validInput = false
 				} else {
 					emailInfoTextStringIdStream.onNext(Optional.empty())
 				}
 				if (it.password.isBlank()) {
 					passwordInfoTextStringIdStream.onNext(Optional.of(R.string.password_blank_error))
+					validInput = false
 				} else {
 					passwordInfoTextStringIdStream.onNext(Optional.empty())
 				}
 				if (it.password != it.confirmPassword) {
 					confirmPasswordInfoTextStringIdStream.onNext(Optional.of(R.string.password_not_match_error))
+					validInput = false
 				} else {
 					confirmPasswordInfoTextStringIdStream.onNext(Optional.empty())
+				}
+
+				if (validInput) {
+					runBlocking {
+						defaultApi.userCreate(
+							CreateUserRequest(
+								firstName = it.firstName,
+								lastName = it.lastName,
+								email = it.email,
+								gender = it.gender.name,
+								password = it.password,
+							)
+						)
+					}.apply {
+						navHostController.navigate(
+							route = "${NavigationDestination.VERIFY_EMAIL.rootNavPath}/${this.userId}"
+						)
+					}
 				}
 			}
 				.subscribeOn(Schedulers.io())

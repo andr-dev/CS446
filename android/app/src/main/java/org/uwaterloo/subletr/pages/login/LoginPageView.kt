@@ -164,7 +164,9 @@ fun LoginPageView(
 				Button(
 					contentPadding = PaddingValues(dimensionResource(id = R.dimen.xxxxs)),
 					onClick = {
-						viewModel.navHostController.navigate(NavigationDestination.CREATE_ACCOUNT.rootNavPath)
+						viewModel.navHostController.navigate(
+							route = NavigationDestination.CREATE_ACCOUNT.rootNavPath,
+						)
 					},
 					colors = ButtonDefaults.buttonColors(
 						containerColor = Color.Transparent,

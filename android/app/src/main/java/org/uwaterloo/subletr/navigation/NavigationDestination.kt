@@ -4,9 +4,9 @@ import org.uwaterloo.subletr.R
 
 enum class NavigationDestination(
 	val rootNavPath: String,
+	val fullNavPath: String = rootNavPath,
 	val bottomBarNavigationItems: BottomBarNavigationItems? = null,
 	val showBottomBar: Boolean = false,
-	val parent: NavigationDestination? = null,
 ) {
 	LOGIN(
 		rootNavPath = "login",
@@ -16,7 +16,7 @@ enum class NavigationDestination(
 	),
 	VERIFY_EMAIL(
 		rootNavPath = "verifyemail",
-		parent = CREATE_ACCOUNT,
+		fullNavPath = "verifyemail/{userId}",
 	),
 	HOME(
 		rootNavPath = "home",
@@ -40,7 +40,6 @@ enum class NavigationDestination(
 		rootNavPath = "account/change-password",
 		bottomBarNavigationItems = null,
 		showBottomBar = true,
-		parent = ACCOUNT,
 	),
 	CHAT(
 		rootNavPath = "chat",
