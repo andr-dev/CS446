@@ -403,7 +403,8 @@ class DefaultApi(basePath: kotlin.String = defaultBasePath, client: OkHttpClient
         val localVariableBody = null
         val localVariableQuery: MultiValueMap = mutableMapOf()
         val localVariableHeaders: MutableMap<String, String> = mutableMapOf()
-        
+        localVariableHeaders["Accept"] = "application/json"
+
         return RequestConfig(
             method = RequestMethod.GET,
             path = "/listings/images/{image_id}".replace("{"+"image_id"+"}", encodeURIComponent(imageId.toString())),
