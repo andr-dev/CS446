@@ -7,6 +7,7 @@ sealed interface ChatPageUiState {
 	object Loading : ChatPageUiState
 
 	data class Loaded(
-		val users : MutableList<String>
+		val users : MutableList<String>,
+		val messageHistory : MutableMap<String, MutableList<String>>
 	):ChatPageUiState
 }
