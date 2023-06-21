@@ -1,4 +1,4 @@
-use std::path::{Path, PathBuf};
+use std::path::Path;
 
 use diesel::{QueryDsl, RunQueryDsl};
 use rocket::{data::ToByteUnit, fs::NamedFile, get, post, serde::json::Json, Data, State};
@@ -14,16 +14,24 @@ use crate::{
 };
 
 #[openapi]
-#[get("/images/<image_id..>")]
+#[get("/images/<image_id>")]
 pub async fn listings_images_get(
     state: &State<AppState>,
     _user: AuthenticatedUser,
-    image_id: PathBuf,
+    image_id: String,
 ) -> Option<NamedFile> {
+    if image_id.chars().any(|c| !c.is_ascii_alphanumeric() || c != '-') {
+        return None;
+    }
+
+    if Uuid::try_parse(&image_id).is_err() {
+        return None;
+    }
+
     let mut dbcon = state.pool.get().ok()?;
 
     let listing_image: ListingImage = crate::db::schema::listings_images::dsl::listings_images
-        .find(image_id.to_str()?)
+        .find(image_id)
         .first(&mut dbcon)
         .ok()?;
 
