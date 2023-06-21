@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -28,37 +29,64 @@ import androidx.compose.ui.modifier.modifierLocalConsumer
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.recyclerview.widget.RecyclerView
 import org.uwaterloo.subletr.R
+import org.uwaterloo.subletr.theme.subletrPink
 
 @Composable
 fun ChatPageView(
 	modifier: Modifier = Modifier
 
 ){
-		ListItem(name = "1")
+	//RecyclerView()
+	Column {
+		Box(
+			modifier = Modifier
+				.fillMaxWidth()
+				.height(60.dp)
+				.background(subletrPink),
+			contentAlignment = Alignment.BottomCenter
+		) {
+			Text(
+				text = "Chat",
+				color = Color.White,
+				fontSize = 16.sp,
+				fontWeight = FontWeight.Bold,
+				modifier = Modifier.padding(vertical = 8.dp) // Adjust vertical padding as needed
+			)
+		}
+		displayEntries()
 
+	}
 
 }
 
 
 @Composable
-fun ListItem(name : String) {
+fun ListItem(name : String, last_msg : String) {
 	Surface(color = Color.White,
 		modifier = Modifier.padding(vertical = 2.dp, horizontal = 2.dp),
 		border = BorderStroke(2.dp, Color.Black)
 	) {
 
-		Icon("1")
+
 
 		Column(modifier = Modifier
-			.padding(24.dp)
+			.padding(7.dp)
 			.fillMaxWidth()) {
+
 			Row() {
+				Icon(name)
 				Column(modifier = Modifier
-					.weight(1f)){
-					//Text(text = "test1")
-					//Text(text = "test2", style = MaterialTheme.typography.bodyMedium)
+					.weight(1f)
+					.padding(vertical = 40.dp),
+					horizontalAlignment = Alignment.CenterHorizontally,
+					verticalArrangement = Arrangement.Center,)
+
+				{
+					Text(text = "$name :")
+					Text(text = last_msg, style = MaterialTheme.typography.bodyMedium)
 				}
 			}
 		}
@@ -80,24 +108,27 @@ fun Icon(name : String) {
 						.width(dimensionResource(id = R.dimen.xxl))
 						.height(dimensionResource(id = R.dimen.xxl))
 						.border(BorderStroke(1.dp, Color.Black))
-						.background(Color.Blue),
-				)
-				Text(text = "H", color = Color.Black)
+						.background(subletrPink),
+					contentAlignment = Alignment.Center
+				) {
+					Text(
+						text = name[0].toString(),
+						color = Color.White,
+						fontSize = 32.sp,
+						fontWeight = FontWeight.Bold
+					)
+				}
 
 			}
-
-
-
 		}
 	}
 }
 
-/*
 @Composable
-fun RecyclerView(names : List<String> = List(1000){"$it"}) {
-	LazyColumn(modifier = Modifier.padding(vertical = 4.dp)) {
-		items(items = names) { names ->
-			ListItem(name = name)
-		}
+fun displayEntries(names : List<String> = List(2){"Alex Lin"},
+					msg : List<String> = List(2){"This is test dialog"}) {
+	assert(names.size == msg.size)
+	(names.indices).forEach { i ->
+		ListItem(name = names[i], last_msg = msg[i]) // Call your helper function for each entry
 	}
-}*/
+}
