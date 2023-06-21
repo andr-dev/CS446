@@ -348,7 +348,7 @@ class DefaultApi(basePath: kotlin.String = defaultBasePath, client: OkHttpClient
      * 
      * 
      * @param imageId 
-     * @return kotlin.collections.List<kotlin.Int>
+     * @return kotlin.String
      * @throws IllegalStateException If the request is not correctly configured
      * @throws IOException Rethrows the OkHttp execute method exception
      * @throws UnsupportedOperationException If the API returns an informational or redirection response
@@ -357,11 +357,11 @@ class DefaultApi(basePath: kotlin.String = defaultBasePath, client: OkHttpClient
      */
     @Suppress("UNCHECKED_CAST")
     @Throws(IllegalStateException::class, IOException::class, UnsupportedOperationException::class, ClientException::class, ServerException::class)
-    suspend fun listingsImagesGet(imageId: kotlin.String) : kotlin.collections.List<kotlin.Int> = withContext(Dispatchers.IO) {
+    suspend fun listingsImagesGet(imageId: kotlin.String) : kotlin.String = withContext(Dispatchers.IO) {
         val localVarResponse = listingsImagesGetWithHttpInfo(imageId = imageId)
 
         return@withContext when (localVarResponse.responseType) {
-            ResponseType.Success -> (localVarResponse as Success<*>).data as kotlin.collections.List<kotlin.Int>
+            ResponseType.Success -> (localVarResponse as Success<*>).data as kotlin.String
             ResponseType.Informational -> throw UnsupportedOperationException("Client does not support Informational responses.")
             ResponseType.Redirection -> throw UnsupportedOperationException("Client does not support Redirection responses.")
             ResponseType.ClientError -> {
@@ -379,16 +379,16 @@ class DefaultApi(basePath: kotlin.String = defaultBasePath, client: OkHttpClient
      * 
      * 
      * @param imageId 
-     * @return ApiResponse<kotlin.collections.List<kotlin.Int>?>
+     * @return ApiResponse<kotlin.String?>
      * @throws IllegalStateException If the request is not correctly configured
      * @throws IOException Rethrows the OkHttp execute method exception
      */
     @Suppress("UNCHECKED_CAST")
     @Throws(IllegalStateException::class, IOException::class)
-    suspend fun listingsImagesGetWithHttpInfo(imageId: kotlin.String) : ApiResponse<kotlin.collections.List<kotlin.Int>?> = withContext(Dispatchers.IO) {
+    suspend fun listingsImagesGetWithHttpInfo(imageId: kotlin.String) : ApiResponse<kotlin.String?> = withContext(Dispatchers.IO) {
         val localVariableConfig = listingsImagesGetRequestConfig(imageId = imageId)
 
-        return@withContext request<Unit, kotlin.collections.List<kotlin.Int>>(
+        return@withContext request<Unit, kotlin.String>(
             localVariableConfig
         )
     }
