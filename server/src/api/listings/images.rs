@@ -1,9 +1,9 @@
 use std::path::Path;
 
 use diesel::{QueryDsl, RunQueryDsl};
-use rocket::{data::ToByteUnit, fs::NamedFile, get, post, serde::json::Json, Data, State};
+use rocket::{data::ToByteUnit, get, post, serde::json::Json, Data, State};
 use rocket_okapi::openapi;
-use tokio::fs::write;
+use tokio::fs::{read_to_string, write};
 use uuid::Uuid;
 
 use crate::{
@@ -19,7 +19,7 @@ pub async fn listings_images_get(
     state: &State<AppState>,
     _user: AuthenticatedUser,
     image_id: String,
-) -> Option<NamedFile> {
+) -> Option<String> {
     if image_id.chars().any(|c| !c.is_ascii_alphanumeric() && c != '-') {
         return None;
     }
@@ -35,7 +35,7 @@ pub async fn listings_images_get(
         .first(&mut dbcon)
         .ok()?;
 
-    NamedFile::open(Path::new(&state.media_dir).join(format!("{}.{}", listing_image.image_id, listing_image.extension)))
+    read_to_string(Path::new(&state.media_dir).join(format!("{}.{}", listing_image.image_id, listing_image.extension)))
         .await
         .ok()
 }
