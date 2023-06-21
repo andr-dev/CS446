@@ -22,7 +22,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let app_state = AppState::new().await?;
 
     let _ = rocket()
-        .mount("/", FileServer::from("../docs"))
+        .mount("/", FileServer::from("../docs/swaggerui"))
         .manage::<AppState>(app_state)
         .attach(CORS)
         .launch()
