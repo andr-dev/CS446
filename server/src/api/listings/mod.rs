@@ -28,7 +28,10 @@ use super::{
     token::AuthenticatedUser,
 };
 use crate::{
-    db::{model::listings::Listing, schema::listings},
+    db::{
+        model::listings::{Listing, ListingImage},
+        schema::listings,
+    },
     error::{ServiceError, ServiceResult},
     state::AppState,
 };
@@ -84,8 +87,12 @@ fn listings_details(
         .find(details_request.listing_id)
         .first::<Listing>(&mut dbcon)
     {
+        let listing_images: Vec<ListingImage> = crate::db::schema::listings_images::dsl::listings_images
+            .filter(crate::db::schema::listings_images::listing_id.eq(l.listing_id))
+            .load(&mut dbcon)?;
+
         Ok(Json(GetListingDetailsResponse {
-            details: ListingDetails::try_from(l)?,
+            details: ListingDetails::try_from_db(l, listing_images.into_iter().map(|li| li.image_id).collect())?,
             favourited: false,
         }))
     } else {

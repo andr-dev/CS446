@@ -20,7 +20,7 @@ pub async fn listings_images_get(
     _user: AuthenticatedUser,
     image_id: String,
 ) -> Option<NamedFile> {
-    if image_id.chars().any(|c| !c.is_ascii_alphanumeric() || c != '-') {
+    if image_id.chars().any(|c| !c.is_ascii_alphanumeric() && c != '-') {
         return None;
     }
 
