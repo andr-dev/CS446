@@ -6,5 +6,7 @@ cd $(git rev-parse --show-toplevel)/server
 
 cargo build
 
-DATABASE_URL="db/store.db" MEDIA_DIR="/tmp/cs446" ./target/debug/server
+mkdir -p "/cs446"
+
+DATABASE_URL="db/store.db" MEDIA_DIR="/cs446" ./target/debug/server
 

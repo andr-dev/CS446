@@ -6,6 +6,14 @@ use rand::Rng;
 use rocket::{get, post, serde::json::Json, Route, State};
 use rocket_okapi::{openapi, openapi_get_routes_spec};
 
+mod images;
+use images::{
+    listings_images_create,
+    listings_images_get,
+    okapi_add_operation_for_listings_images_create_,
+    okapi_add_operation_for_listings_images_get_,
+};
+
 use super::{
     model::listing::{
         CreateListingRequest,
@@ -86,5 +94,11 @@ fn listings_details(
 }
 
 pub fn routes() -> (Vec<Route>, OpenApi) {
-    openapi_get_routes_spec![listings_create, listings_list, listings_details]
+    openapi_get_routes_spec![
+        listings_create,
+        listings_list,
+        listings_details,
+        listings_images_get,
+        listings_images_create
+    ]
 }

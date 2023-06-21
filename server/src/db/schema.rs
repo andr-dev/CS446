@@ -18,6 +18,15 @@ diesel::table! {
 }
 
 diesel::table! {
+    listings_images (image_id) {
+        image_id -> Text,
+        extension -> Text,
+        user_id -> Integer,
+        listing_id -> Nullable<Integer>,
+    }
+}
+
+diesel::table! {
     users (user_id) {
         user_id -> Integer,
         first_name -> Text,
@@ -29,8 +38,11 @@ diesel::table! {
 }
 
 diesel::joinable!(listings -> users (owner_user_id));
+diesel::joinable!(listings_images -> listings (listing_id));
+diesel::joinable!(listings_images -> users (user_id));
 
 diesel::allow_tables_to_appear_in_same_query!(
     listings,
+    listings_images,
     users,
 );
