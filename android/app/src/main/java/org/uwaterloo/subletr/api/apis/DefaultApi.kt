@@ -25,6 +25,7 @@ import org.uwaterloo.subletr.api.models.CreateUserRequest
 import org.uwaterloo.subletr.api.models.CreateUserResponse
 import org.uwaterloo.subletr.api.models.GetListingDetailsResponse
 import org.uwaterloo.subletr.api.models.GetListingsResponse
+import org.uwaterloo.subletr.api.models.ListingsImagesCreateResponse
 import org.uwaterloo.subletr.api.models.UserLoginRequest
 import org.uwaterloo.subletr.api.models.UserLoginResponse
 
@@ -268,6 +269,147 @@ class DefaultApi(basePath: kotlin.String = defaultBasePath, client: OkHttpClient
             query = localVariableQuery,
             headers = localVariableHeaders,
             requiresAuthentication = false,
+            body = localVariableBody
+        )
+    }
+
+    /**
+     * 
+     * 
+     * @param requestBody 
+     * @return ListingsImagesCreateResponse
+     * @throws IllegalStateException If the request is not correctly configured
+     * @throws IOException Rethrows the OkHttp execute method exception
+     * @throws UnsupportedOperationException If the API returns an informational or redirection response
+     * @throws ClientException If the API returns a client error response
+     * @throws ServerException If the API returns a server error response
+     */
+    @Suppress("UNCHECKED_CAST")
+    @Throws(IllegalStateException::class, IOException::class, UnsupportedOperationException::class, ClientException::class, ServerException::class)
+    suspend fun listingsImagesCreate(requestBody: kotlin.collections.List<kotlin.Int>) : ListingsImagesCreateResponse = withContext(Dispatchers.IO) {
+        val localVarResponse = listingsImagesCreateWithHttpInfo(requestBody = requestBody)
+
+        return@withContext when (localVarResponse.responseType) {
+            ResponseType.Success -> (localVarResponse as Success<*>).data as ListingsImagesCreateResponse
+            ResponseType.Informational -> throw UnsupportedOperationException("Client does not support Informational responses.")
+            ResponseType.Redirection -> throw UnsupportedOperationException("Client does not support Redirection responses.")
+            ResponseType.ClientError -> {
+                val localVarError = localVarResponse as ClientError<*>
+                throw ClientException("Client error : ${localVarError.statusCode} ${localVarError.message.orEmpty()}", localVarError.statusCode, localVarResponse)
+            }
+            ResponseType.ServerError -> {
+                val localVarError = localVarResponse as ServerError<*>
+                throw ServerException("Server error : ${localVarError.statusCode} ${localVarError.message.orEmpty()}", localVarError.statusCode, localVarResponse)
+            }
+        }
+    }
+
+    /**
+     * 
+     * 
+     * @param requestBody 
+     * @return ApiResponse<ListingsImagesCreateResponse?>
+     * @throws IllegalStateException If the request is not correctly configured
+     * @throws IOException Rethrows the OkHttp execute method exception
+     */
+    @Suppress("UNCHECKED_CAST")
+    @Throws(IllegalStateException::class, IOException::class)
+    suspend fun listingsImagesCreateWithHttpInfo(requestBody: kotlin.collections.List<kotlin.Int>) : ApiResponse<ListingsImagesCreateResponse?> = withContext(Dispatchers.IO) {
+        val localVariableConfig = listingsImagesCreateRequestConfig(requestBody = requestBody)
+
+        return@withContext request<kotlin.collections.List<kotlin.Int>, ListingsImagesCreateResponse>(
+            localVariableConfig
+        )
+    }
+
+    /**
+     * To obtain the request config of the operation listingsImagesCreate
+     *
+     * @param requestBody 
+     * @return RequestConfig
+     */
+    fun listingsImagesCreateRequestConfig(requestBody: kotlin.collections.List<kotlin.Int>) : RequestConfig<kotlin.collections.List<kotlin.Int>> {
+        val localVariableBody = requestBody
+        val localVariableQuery: MultiValueMap = mutableMapOf()
+        val localVariableHeaders: MutableMap<String, String> = mutableMapOf()
+        localVariableHeaders["Accept"] = "application/json"
+
+        return RequestConfig(
+            method = RequestMethod.POST,
+            path = "/listings/images/create",
+            query = localVariableQuery,
+            headers = localVariableHeaders,
+            requiresAuthentication = true,
+            body = localVariableBody
+        )
+    }
+
+    /**
+     * 
+     * 
+     * @param imageId 
+     * @return kotlin.collections.List<kotlin.Int>
+     * @throws IllegalStateException If the request is not correctly configured
+     * @throws IOException Rethrows the OkHttp execute method exception
+     * @throws UnsupportedOperationException If the API returns an informational or redirection response
+     * @throws ClientException If the API returns a client error response
+     * @throws ServerException If the API returns a server error response
+     */
+    @Suppress("UNCHECKED_CAST")
+    @Throws(IllegalStateException::class, IOException::class, UnsupportedOperationException::class, ClientException::class, ServerException::class)
+    suspend fun listingsImagesGet(imageId: kotlin.String) : kotlin.collections.List<kotlin.Int> = withContext(Dispatchers.IO) {
+        val localVarResponse = listingsImagesGetWithHttpInfo(imageId = imageId)
+
+        return@withContext when (localVarResponse.responseType) {
+            ResponseType.Success -> (localVarResponse as Success<*>).data as kotlin.collections.List<kotlin.Int>
+            ResponseType.Informational -> throw UnsupportedOperationException("Client does not support Informational responses.")
+            ResponseType.Redirection -> throw UnsupportedOperationException("Client does not support Redirection responses.")
+            ResponseType.ClientError -> {
+                val localVarError = localVarResponse as ClientError<*>
+                throw ClientException("Client error : ${localVarError.statusCode} ${localVarError.message.orEmpty()}", localVarError.statusCode, localVarResponse)
+            }
+            ResponseType.ServerError -> {
+                val localVarError = localVarResponse as ServerError<*>
+                throw ServerException("Server error : ${localVarError.statusCode} ${localVarError.message.orEmpty()}", localVarError.statusCode, localVarResponse)
+            }
+        }
+    }
+
+    /**
+     * 
+     * 
+     * @param imageId 
+     * @return ApiResponse<kotlin.collections.List<kotlin.Int>?>
+     * @throws IllegalStateException If the request is not correctly configured
+     * @throws IOException Rethrows the OkHttp execute method exception
+     */
+    @Suppress("UNCHECKED_CAST")
+    @Throws(IllegalStateException::class, IOException::class)
+    suspend fun listingsImagesGetWithHttpInfo(imageId: kotlin.String) : ApiResponse<kotlin.collections.List<kotlin.Int>?> = withContext(Dispatchers.IO) {
+        val localVariableConfig = listingsImagesGetRequestConfig(imageId = imageId)
+
+        return@withContext request<Unit, kotlin.collections.List<kotlin.Int>>(
+            localVariableConfig
+        )
+    }
+
+    /**
+     * To obtain the request config of the operation listingsImagesGet
+     *
+     * @param imageId 
+     * @return RequestConfig
+     */
+    fun listingsImagesGetRequestConfig(imageId: kotlin.String) : RequestConfig<Unit> {
+        val localVariableBody = null
+        val localVariableQuery: MultiValueMap = mutableMapOf()
+        val localVariableHeaders: MutableMap<String, String> = mutableMapOf()
+        
+        return RequestConfig(
+            method = RequestMethod.GET,
+            path = "/listings/images/{image_id}".replace("{"+"image_id"+"}", encodeURIComponent(imageId.toString())),
+            query = localVariableQuery,
+            headers = localVariableHeaders,
+            requiresAuthentication = true,
             body = localVariableBody
         )
     }
