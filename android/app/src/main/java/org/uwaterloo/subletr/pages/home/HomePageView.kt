@@ -1,5 +1,6 @@
 package org.uwaterloo.subletr.pages.home
 
+import androidx.annotation.StringRes
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -38,6 +39,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -89,6 +91,7 @@ fun HomePageView(
 		HomePageUiState.Loading
 	).value,
 ) {
+
 	if (uiState is HomePageUiState.Loading) {
 		Column(
 			modifier = modifier
@@ -100,12 +103,9 @@ fun HomePageView(
 			CircularProgressIndicator()
 		}
 	} else if (uiState is HomePageUiState.Loaded) {
-		LaunchedEffect(Unit) {
-			// Perform API call here
-			viewModel.getListingStream.onNext(uiState)
-
-		}
 		val listState = rememberLazyListState()
+		val isListView = remember { mutableStateOf(true) }
+
 		Scaffold(
 			modifier = Modifier
 				.padding(
@@ -130,8 +130,11 @@ fun HomePageView(
 					horizontalArrangement = Arrangement.SpaceBetween,
 
 					) {
-					Text(text = "View Sublets", style = MaterialTheme.typography.titleMedium)
-					ViewSwitch()
+					Text(
+						text = stringResource(id = R.string.view_sublets),
+						style = MaterialTheme.typography.titleMedium
+					)
+					ViewSwitch(isListView = isListView)
 				}
 			},
 			content = { padding ->
@@ -161,10 +164,10 @@ fun HomePageView(
 
 								iconId = R.drawable.tune_round_black_24,
 								onClick = {},
-								contentDescription = "filter menu",
+								contentDescription = stringResource(id = R.string.filter_menu),
 							)
 							FilterDropDown(
-								filterName = "Location",
+								filterName = stringResource(id = R.string.location),
 								dropDownItems = LocationRange.values().map { it.stringId }
 									.toTypedArray(),
 								updateState = { newVal ->
@@ -173,10 +176,11 @@ fun HomePageView(
 									)
 								},
 								selectedValue = uiState.locationRange.stringId,
-								width = dimensionResource(id = R.dimen.xxxxl)
-							)
+								width = dimensionResource(id = R.dimen.xxxxl),
+
+								)
 							FilterDropDown(
-								filterName = "Price",
+								filterName = stringResource(id = R.string.price),
 								dropDownItems = PriceRange.values().map { it.stringId }
 									.toTypedArray(),
 								updateState = { newVal ->
@@ -185,10 +189,11 @@ fun HomePageView(
 									)
 								},
 								selectedValue = uiState.priceRange.stringId,
-								width = dimensionResource(id = R.dimen.xxxl)
-							)
+								width = dimensionResource(id = R.dimen.xxxl),
+
+								)
 							FilterDropDown(
-								filterName = "Rooms",
+								filterName = stringResource(id = R.string.rooms),
 								dropDownItems = RoomRange.values().map { it.stringId }
 									.toTypedArray(),
 								updateState = { newVal ->
@@ -219,7 +224,7 @@ fun HomePageView(
 
 				) {
 					Text(
-						"+", style = TextStyle(
+						stringResource(id = R.string.plus_sign), style = TextStyle(
 							fontSize = 24.sp
 						)
 					)
@@ -230,15 +235,16 @@ fun HomePageView(
 }
 
 fun dateTimeFormater(offsetDateTime: OffsetDateTime): String {
-	val formatter = DateTimeFormatter.ofPattern("MMM. yyyy", Locale.ENGLISH)
+	val formatter = DateTimeFormatter.ofPattern("MMM. yyyy")
 	return offsetDateTime.format(formatter)
 }
 
+@Composable
 fun bedroomStringFormater(numOfBedroom: Int): String {
 	if (numOfBedroom == 1) {
-		return "1 Bedroom"
+		return stringResource(id = R.string.one_bedroom)
 	}
-	return "$numOfBedroom Bedrooms"
+	return "$numOfBedroom ${stringResource(id = R.string.bedrooms)}"
 }
 
 @Composable
@@ -311,6 +317,7 @@ fun ListingPost(modifier: Modifier = Modifier, listingSummary: ListingSummary) {
 						id = R.drawable.bed_solid_gray_16
 					),
 					contentDescription = stringResource(id = R.string.bed_icon),
+					tint = secondaryTextColor
 				)
 				Text(bedroomStringFormater(listingSummary.rooms), style = listingDescriptionFont)
 				Spacer(modifier = Modifier.width(dimensionResource(id = R.dimen.xs)))
@@ -326,6 +333,7 @@ fun ListingPost(modifier: Modifier = Modifier, listingSummary: ListingSummary) {
 
 					),
 					contentDescription = stringResource(R.string.home_icon),
+					tint = secondaryTextColor
 				)
 				Text(listingSummary.residenceType.value, style = listingDescriptionFont)
 			}
@@ -344,7 +352,10 @@ fun ListingPost(modifier: Modifier = Modifier, listingSummary: ListingSummary) {
 					),
 					onClick = { /*TODO*/ }) {
 
-					Text("View Details", style = MaterialTheme.typography.bodyLarge)
+					Text(
+						stringResource(id = R.string.view_details),
+						style = MaterialTheme.typography.bodyLarge
+					)
 
 				}
 				ButtonWithIcon(
@@ -357,7 +368,7 @@ fun ListingPost(modifier: Modifier = Modifier, listingSummary: ListingSummary) {
 					),
 					iconId = R.drawable.chat_bubble_outline_gray_24,
 					onClick = { /*TODO*/ },
-					contentDescription = "chat icon"
+					contentDescription = stringResource(id = R.string.chat_icon)
 				)
 				ButtonWithIcon(
 					modifier = Modifier
@@ -385,7 +396,7 @@ fun FilterDropDown(
 	filterName: String,
 	dropDownItems: Array<Int>,
 	updateState: (Int) -> Unit,
-	selectedValue: Int,
+	@StringRes selectedValue: Int,
 	width: Dp,
 ) {
 	var expanded by remember { mutableStateOf(false) }
@@ -450,7 +461,7 @@ fun FilterDropDown(
 						Text(
 							text = stringResource(it),
 							style = filterTextFont,
-							color = if (it == selectedValue && stringResource(it) != "Clear") subletrPink else Color.Black
+							color = if (it == selectedValue && it != R.string.clear) subletrPink else Color.Black
 						)
 					},
 					contentPadding = PaddingValues(dimensionResource(id = R.dimen.s), ZERO_DP),
@@ -489,9 +500,9 @@ fun ButtonWithIcon(
 			)
 		})
 }
+
 @Composable
-fun ViewSwitch(modifier: Modifier = Modifier) {
-	val isListView = remember { mutableStateOf(true) }
+fun ViewSwitch(modifier: Modifier = Modifier, isListView: MutableState<Boolean>) {
 	Row(
 		modifier = modifier
 			.wrapContentWidth(),

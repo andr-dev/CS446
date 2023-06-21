@@ -73,4 +73,10 @@
     <string name="bed_icon">Bed Icon</string>
     <string name="home_icon">Home Icon</string>
     <string name="favour_icon">favour Icon</string>
+    <string name="one_bedroom">1 Bedroom</string>
+    <string name="bedrooms"> Bedrooms</string>
+    <string name="filter_menu">filter menu</string>
+    <string name="view_sublets">View Sublets</string>
+    <string name="plus_sign">+</string>
+    <string name="view_details">View Details</string>
 </resources>

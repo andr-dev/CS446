@@ -16,6 +16,7 @@ import org.uwaterloo.subletr.api.models.GetListingsResponse
 import org.uwaterloo.subletr.enums.LocationRange
 import org.uwaterloo.subletr.enums.PriceRange
 import org.uwaterloo.subletr.enums.RoomRange
+import org.uwaterloo.subletr.navigation.NavigationDestination
 import org.uwaterloo.subletr.services.IAuthenticationService
 import org.uwaterloo.subletr.services.INavigationService
 import java.util.Optional
@@ -27,7 +28,6 @@ import kotlin.jvm.optionals.getOrNull
 class HomePageViewModel @Inject constructor(
 	private val api: DefaultApi,
 	private val navigationService: INavigationService,
-	private val authenticationService: IAuthenticationService,
 ) : ViewModel() {
 	private val disposables: MutableList<Disposable> = mutableListOf()
 
@@ -65,9 +65,17 @@ class HomePageViewModel @Inject constructor(
 	}
 
 	val getListingStream: PublishSubject<HomePageUiState.Loaded> = PublishSubject.create()
-	val loadingState: MutableState<Boolean> = mutableStateOf(false)
 
 	init {
+
+		api.lis
+
+		listingsStream.onNext(runBlocking {
+			api.listingsList(null, null, null, null)
+		}
+		)
+
+
 		disposables.add(
 			getListingStream.map {
 				runBlocking {
@@ -78,15 +86,14 @@ class HomePageViewModel @Inject constructor(
 					listingsStream.onNext(it)
 				}
 				.doOnError {
-					infoTextStringIdStream.onNext(
-						Optional.of(R.string.invalid_login_credentials_try_again)
-					)
-					authenticationService.deleteAccessToken()
+					navHostController.navigate(NavigationDestination.LOGIN.rootNavPath)
 				}
 				.subscribeOn(Schedulers.io())
 				.onErrorResumeWith(Observable.never())
 				.subscribe()
 		)
+
+
 	}
 
 	override fun onCleared() {
