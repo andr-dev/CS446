@@ -95,10 +95,8 @@ pub struct ListingDetails {
     pub owner_user_id: i32,
 }
 
-impl TryFrom<Listing> for ListingDetails {
-    type Error = ServiceError;
-
-    fn try_from(l: Listing) -> Result<Self, Self::Error> {
+impl ListingDetails {
+    pub fn try_from_db(l: Listing, img_ids: Vec<String>) -> Result<Self, ServiceError> {
         let ls = ListingSummary::try_from(l.clone())?;
 
         Ok(ListingDetails {
@@ -108,7 +106,7 @@ impl TryFrom<Listing> for ListingDetails {
             lease_start: ls.lease_start,
             lease_end: ls.lease_end,
             description: l.listing_description,
-            img_ids: vec![],
+            img_ids,
             residence_type: ResidenceType::from_string(&l.residence_type).ok_or(ServiceError::InternalError)?,
             owner_user_id: l.owner_user_id,
         })
