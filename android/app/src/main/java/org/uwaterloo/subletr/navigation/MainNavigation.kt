@@ -11,7 +11,7 @@ import androidx.navigation.navArgument
 import org.uwaterloo.subletr.api.infrastructure.ApiClient
 import org.uwaterloo.subletr.pages.account.AccountPageView
 import org.uwaterloo.subletr.pages.changepassword.ChangePasswordPageView
-import org.uwaterloo.subletr.pages.chat.ChatPageView
+import org.uwaterloo.subletr.pages.chat.ChatListingPageView
 import org.uwaterloo.subletr.pages.createaccount.CreateAccountPageView
 import org.uwaterloo.subletr.pages.createlisting.CreateListingPageView
 import org.uwaterloo.subletr.pages.emailverification.EmailVerificationPageView
@@ -69,7 +69,7 @@ fun MainNavigation(
 			)
 		}
 		composable(NavigationDestination.CHAT.fullNavPath) {
-			ChatPageView(
+			ChatListingPageView(
 				modifier = modifier,
 			)
 		}
