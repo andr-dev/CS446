@@ -15,3 +15,4 @@
 | 2023-06-12 | 5 hour(s) | Add Network Call to Login Page and Store Token in Internal Storage |
 | 2023-06-14 | 4 hour(s) | Add Change Password Page and Catch Some Memory Leaks |
 | 2023-06-20 | 2 hour(s) | Add parameter support for navigation and change navigation logic |
+| 2023-06-21 | 3 hour(s) | Created Frontend Part of Component Diagram and explained RxJava logic |
