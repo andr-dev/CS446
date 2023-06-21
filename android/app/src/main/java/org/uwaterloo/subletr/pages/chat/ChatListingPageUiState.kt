@@ -1,13 +1,11 @@
 package org.uwaterloo.subletr.pages.chat
 
-import org.uwaterloo.subletr.pages.account.AccountPageUiState
+sealed interface ChatListingPageUiState {
 
-sealed interface ChatPageUiState {
-
-	object Loading : ChatPageUiState
+	object Loading : ChatListingPageUiState
 
 	data class Loaded(
 		val users : MutableList<String>,
 		val messageHistory : MutableMap<String, MutableList<String>>
-	):ChatPageUiState
+	):ChatListingPageUiState
 }
