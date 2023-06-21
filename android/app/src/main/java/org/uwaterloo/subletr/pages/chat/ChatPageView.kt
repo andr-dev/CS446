@@ -30,14 +30,15 @@ import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.recyclerview.widget.RecyclerView
 import org.uwaterloo.subletr.R
 import org.uwaterloo.subletr.theme.subletrPink
 
 @Composable
 fun ChatPageView(
-	modifier: Modifier = Modifier
-
+	modifier: Modifier = Modifier,
+	viewModel : ChatPageViewModel = hiltViewModel()
 ){
 	//RecyclerView()
 	Column {
