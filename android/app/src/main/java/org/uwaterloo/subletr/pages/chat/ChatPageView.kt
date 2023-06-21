@@ -125,8 +125,10 @@ fun Icon(name : String) {
 }
 
 @Composable
-fun displayEntries(names : List<String> = List(2){"Alex Lin"}) {
-	names.forEach { name ->
-		ListItem(name = name, last_msg = "This is a test dialog") // Call your helper function for each entry
+fun displayEntries(names : List<String> = List(2){"Alex Lin"},
+					msg : List<String> = List(2){"This is test dialog"}) {
+	assert(names.size == msg.size)
+	(names.indices).forEach { i ->
+		ListItem(name = names[i], last_msg = msg[i]) // Call your helper function for each entry
 	}
 }
