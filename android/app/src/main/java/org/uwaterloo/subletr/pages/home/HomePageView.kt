@@ -38,7 +38,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -176,7 +175,7 @@ fun HomePageView(
 									)
 								},
 								selectedValue = uiState.locationRange.stringId,
-								width = dimensionResource(id = R.dimen.xxxxl),
+								width = 100.dp,
 
 								)
 							FilterDropDown(
@@ -251,7 +250,7 @@ fun bedroomStringFormater(numOfBedroom: Int): String {
 fun ListingPost(modifier: Modifier = Modifier, listingSummary: ListingSummary) {
 	Box(
 		modifier = modifier
-			.height(180.dp)
+			.wrapContentHeight()
 			.fillMaxWidth(1.0f)
 			.clip(
 				RoundedCornerShape(
@@ -265,6 +264,9 @@ fun ListingPost(modifier: Modifier = Modifier, listingSummary: ListingSummary) {
 				.fillMaxWidth(1.0f)
 				.padding(
 					dimensionResource(id = R.dimen.s),
+					dimensionResource(id = R.dimen.s),
+					dimensionResource(id = R.dimen.s),
+					dimensionResource(id = R.dimen.xs),
 				),
 			verticalArrangement = Arrangement.spacedBy(dimensionResource(id = R.dimen.xs))
 
@@ -339,7 +341,7 @@ fun ListingPost(modifier: Modifier = Modifier, listingSummary: ListingSummary) {
 			}
 			Row(
 				modifier = Modifier
-					.fillMaxWidth(1.0f),
+					.height(40.dp),
 				horizontalArrangement = Arrangement.SpaceBetween
 			) {
 				SecondaryButton(
