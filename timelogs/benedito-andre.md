@@ -14,4 +14,6 @@
 | Jun 12th | 2 hours (13:00 - 15:00) | Add OpenAPI Kotlin Client singleton     |
 | Jun 12th | 3 hours (15:00 - 18:00) | Create list + details listings endpoint |
 | Jun 14th | 5 hours (11:00 - 16:00) | Implemented listings + db + redeploy    |
+| Jun 20th | 3 hours (16:00 - 19:00) | Start implementing listings images      |
+| Jun 21th | 3 hours (12:00 - 15:00) | Finish implementing listings images     |
 
