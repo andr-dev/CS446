@@ -23,12 +23,19 @@ import java.util.Optional
 import javax.inject.Inject
 import kotlin.jvm.optionals.getOrNull
 
-
 @HiltViewModel
 class HomePageViewModel @Inject constructor(
 	private val api: DefaultApi,
 	private val navigationService: INavigationService,
 ) : ViewModel() {
+
+	data class FilterVals(
+		var locationRange: LocationRange,
+		var priceRange: PriceRange,
+		var roomRange: RoomRange,
+
+		)
+
 	private val disposables: MutableList<Disposable> = mutableListOf()
 
 	val navHostController get() = navigationService.getNavHostController()
@@ -48,6 +55,17 @@ class HomePageViewModel @Inject constructor(
 	private val infoTextStringIdStream: BehaviorSubject<Optional<Int>> =
 		BehaviorSubject.createDefault(Optional.empty())
 
+	private val filterStream: Observable<FilterVals> = Observable.combineLatest(
+		locationRangeFilterStream,
+		priceRangeFilterStream,
+		roomRangeFilterStream,
+	) { locationRange, priceRange, roomRange ->
+		FilterVals(
+			locationRange = locationRange,
+			priceRange = priceRange,
+			roomRange = roomRange
+		)
+	}
 	val uiStateStream: Observable<HomePageUiState> = Observable.combineLatest(
 		locationRangeFilterStream,
 		priceRangeFilterStream,
@@ -64,20 +82,9 @@ class HomePageViewModel @Inject constructor(
 		)
 	}
 
-	val getListingStream: PublishSubject<HomePageUiState.Loaded> = PublishSubject.create()
-
 	init {
-
-		api.lis
-
-		listingsStream.onNext(runBlocking {
-			api.listingsList(null, null, null, null)
-		}
-		)
-
-
 		disposables.add(
-			getListingStream.map {
+			filterStream.map {
 				runBlocking {
 					api.listingsList(null, null, null, null)
 				}
@@ -92,8 +99,6 @@ class HomePageViewModel @Inject constructor(
 				.onErrorResumeWith(Observable.never())
 				.subscribe()
 		)
-
-
 	}
 
 	override fun onCleared() {
