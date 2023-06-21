@@ -19,26 +19,25 @@ pub async fn listings_images_get(
     state: &State<AppState>,
     _user: AuthenticatedUser,
     image_id: String,
-) -> Option<String> {
+) -> ServiceResult<String> {
     if image_id.chars().any(|c| !c.is_ascii_alphanumeric() && c != '-') {
-        return None;
+        return Err(ServiceError::InternalError);
     }
 
     if Uuid::try_parse(&image_id).is_err() {
-        return None;
+        return Err(ServiceError::InternalError);
     }
 
-    let mut dbcon = state.pool.get().ok()?;
+    let mut dbcon = state.pool.get()?;
 
     let listing_image: ListingImage = crate::db::schema::listings_images::dsl::listings_images
         .find(image_id)
-        .first(&mut dbcon)
-        .ok()?;
+        .first(&mut dbcon)?;
 
     read(Path::new(&state.media_dir).join(format!("{}.{}", listing_image.image_id, listing_image.extension)))
         .await
-        .ok()
-        .map(|stream| base64::encode(stream))
+        .map(|stream| Json(base64::encode(stream)))
+        .map_err(|_| ServiceError::InternalError)
 }
 
 #[openapi]
