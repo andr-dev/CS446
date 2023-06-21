@@ -152,3 +152,8 @@ impl CreateListingRequest {
 pub struct CreateListingResponse {
     pub listing_id: i32,
 }
+
+#[derive(JsonSchema, Serialize, Clone, PartialEq)]
+pub struct ListingsImagesCreateResponse {
+    pub image_id: String,
+}
