@@ -1,23 +1,18 @@
 package org.uwaterloo.subletr.pages.home
 
-import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.disposables.Disposable
 import io.reactivex.rxjava3.schedulers.Schedulers
 import io.reactivex.rxjava3.subjects.BehaviorSubject
-import io.reactivex.rxjava3.subjects.PublishSubject
 import kotlinx.coroutines.runBlocking
-import org.uwaterloo.subletr.R
 import org.uwaterloo.subletr.api.apis.DefaultApi
 import org.uwaterloo.subletr.api.models.GetListingsResponse
 import org.uwaterloo.subletr.enums.LocationRange
 import org.uwaterloo.subletr.enums.PriceRange
 import org.uwaterloo.subletr.enums.RoomRange
 import org.uwaterloo.subletr.navigation.NavigationDestination
-import org.uwaterloo.subletr.services.IAuthenticationService
 import org.uwaterloo.subletr.services.INavigationService
 import java.util.Optional
 import javax.inject.Inject
@@ -47,7 +42,7 @@ class HomePageViewModel @Inject constructor(
 	)
 	val roomRangeFilterStream: BehaviorSubject<RoomRange> =
 		BehaviorSubject.createDefault(RoomRange.NOFILTER)
-	val listingsStream: BehaviorSubject<GetListingsResponse> = BehaviorSubject.createDefault(
+	private val listingsStream: BehaviorSubject<GetListingsResponse> = BehaviorSubject.createDefault(
 		GetListingsResponse(
 			listOf(), setOf()
 		)
