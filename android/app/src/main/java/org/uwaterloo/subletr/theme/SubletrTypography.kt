@@ -33,7 +33,7 @@ val changePasswordTopBarTitle
 val filterTextFont
 	@Composable
 	get() = TextStyle(
-		color = Color.Black,
+		color = primaryTextColor,
 		fontFamily = FontFamily.Default,
 		fontWeight = FontWeight.Medium,
 		fontSize = 14.sp,
@@ -43,7 +43,7 @@ val filterTextFont
 val listingTitleFont
 	@Composable
 	get() = TextStyle(
-		color = Color.Black,
+		color = primaryTextColor,
 		fontFamily = FontFamily.Default,
 		fontWeight = FontWeight.Bold,
 		fontSize = 18.sp,
