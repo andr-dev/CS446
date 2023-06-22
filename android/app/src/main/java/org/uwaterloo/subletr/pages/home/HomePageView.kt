@@ -2,6 +2,7 @@ package org.uwaterloo.subletr.pages.home
 
 import androidx.annotation.StringRes
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -48,6 +49,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -77,7 +79,6 @@ import org.uwaterloo.subletr.theme.secondaryTextColor
 import org.uwaterloo.subletr.theme.subletrPink
 import java.time.OffsetDateTime
 import java.time.format.DateTimeFormatter
-import java.util.Locale
 
 // todo update all string value to string file
 val ZERO_DP = 0.dp
@@ -276,11 +277,13 @@ fun ListingPost(modifier: Modifier = Modifier, listingSummary: ListingSummary) {
 					.fillMaxWidth(1.0f)
 
 			) {
-				Box(
+				Image(
 					modifier = Modifier
 						.height(dimensionResource(id = R.dimen.xxxl))
-						.width(dimensionResource(id = R.dimen.xxxl))
-						.background(Color.Black)
+						.width(dimensionResource(id = R.dimen.xxxl)),
+					painter = painterResource(id = R.drawable.room),
+					contentDescription = "room",
+					contentScale = ContentScale.Crop
 				)
 				Spacer(modifier = Modifier.width(dimensionResource(id = R.dimen.s)))
 				Column(
