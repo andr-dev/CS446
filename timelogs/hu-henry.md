@@ -13,5 +13,7 @@
 | June 12th | 3 hours (14:00 - 17:00)            | Delivery 2 work, architectural styles planning and listing details screen |
 | June 14th | 4 hours (12:30 - 16:30)            | Listing details screen UI, trying navigation, api and components styling  |
 | June 14th | 3 hours (19:00 - 22:00)            | Checking fields when creating new account                                 |
-| June 19th | 6 hours 30 minutes (4:00 - 20:30)  | Populating listing details with API return data and layouting             |
+| June 19th | 6 hours 30 minutes (14:00 - 20:30) | Populating listing details with API return data and layouting             |
+| June 21st | 3 hours (14:00 - 17:00) | Addressing listing details review comments             |
+| June 24th | 1 hour (11:00 - 12:00)  | Addressing listing details review comments             |
 
