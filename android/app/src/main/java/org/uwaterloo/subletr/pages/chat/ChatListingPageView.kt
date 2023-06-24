@@ -1,8 +1,6 @@
 package org.uwaterloo.subletr.pages.chat
 
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -13,7 +11,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material3.MaterialTheme
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -34,21 +32,21 @@ fun ChatListingPageView(
 	modifier: Modifier = Modifier,
 	viewModel : ChatListingPageViewModel = hiltViewModel()
 ){
-	//RecyclerView()
 	Column {
 		Box(
 			modifier = Modifier
 				.fillMaxWidth()
-				.height(60.dp)
-				.background(subletrPink),
-			contentAlignment = Alignment.BottomCenter
+				.height(100.dp)
+				.padding(10.dp)
+				.background(Color.Transparent),
+			contentAlignment = Alignment.BottomStart
 		) {
 			Text(
-				text = "Chat",
-				color = Color.White,
-				fontSize = 16.sp,
+				text = "Messages",
+				color = Color.Black,
+				fontSize = 40.sp,
 				fontWeight = FontWeight.Bold,
-				modifier = Modifier.padding(vertical = 8.dp) // Adjust vertical padding as needed
+				modifier = Modifier.padding(vertical = 8.dp)
 			)
 		}
 		displayEntries()
@@ -60,29 +58,34 @@ fun ChatListingPageView(
 
 @Composable
 fun ListItem(name : String, last_msg : String) {
-	Surface(color = Color.White,
-		modifier = Modifier.padding(vertical = 2.dp, horizontal = 2.dp),
-		border = BorderStroke(2.dp, Color.Black)
-	) {
+	Surface(color = Color.LightGray,
+		modifier = Modifier
+			.padding(vertical = 5.dp, horizontal = 10.dp)
+			.clip(RoundedCornerShape(40.dp)),
+		) {
 
 
 
 		Column(modifier = Modifier
-			.padding(7.dp)
 			.fillMaxWidth()) {
 
-			Row() {
+			Row(verticalAlignment = Alignment.CenterVertically) {
 				Icon(name)
 				Column(modifier = Modifier
 					.weight(1f)
 					.padding(vertical = 40.dp),
-					horizontalAlignment = Alignment.CenterHorizontally,
+					//horizontalAlignment = Alignment.CenterHorizontally,
 					verticalArrangement = Arrangement.Center,)
 
 				{
-					Text(text = "$name :")
-					Text(text = last_msg, style = MaterialTheme.typography.bodyMedium)
+					Text(text = "$name :",
+						fontSize = 20.sp,
+						fontWeight = FontWeight.Bold)
+					Text(text = last_msg,
+						fontSize = 15.sp,
+						color = Color.DarkGray)
 				}
+				notification()
 			}
 		}
 	}
@@ -102,7 +105,6 @@ fun Icon(name : String) {
 					modifier = Modifier
 						.width(dimensionResource(id = R.dimen.xxl))
 						.height(dimensionResource(id = R.dimen.xxl))
-						.border(BorderStroke(1.dp, Color.Black))
 						.background(subletrPink),
 					contentAlignment = Alignment.Center
 				) {
@@ -120,10 +122,39 @@ fun Icon(name : String) {
 }
 
 @Composable
+fun notification(n : Int = 1) {
+	LazyColumn(
+	) {
+		item {
+			Box(
+				modifier = Modifier
+					.padding(dimensionResource(id = R.dimen.s))
+					.clip(CircleShape),
+			) {
+				Box(
+					modifier = Modifier
+						.width(dimensionResource(id = R.dimen.l))
+						.height(dimensionResource(id = R.dimen.l))
+						.background(Color(0xFF6ABC95)),
+					contentAlignment = Alignment.Center
+				) {
+					Text(
+						text = n.toString(),
+						color = Color.White,
+						fontSize = 20.sp,
+						fontWeight = FontWeight.Bold
+					)
+				}
+
+			}
+		}
+	}
+}
+@Composable
 fun displayEntries(names : List<String> = List(2){"Alex Lin"},
 					msg : List<String> = List(2){"This is test dialog"}) {
 	assert(names.size == msg.size)
 	(names.indices).forEach { i ->
-		ListItem(name = names[i], last_msg = msg[i]) // Call your helper function for each entry
+		ListItem(name = names[i], last_msg = msg[i])
 	}
 }
