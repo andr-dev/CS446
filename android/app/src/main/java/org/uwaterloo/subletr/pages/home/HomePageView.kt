@@ -69,6 +69,7 @@ import org.uwaterloo.subletr.components.button.SecondaryButton
 import org.uwaterloo.subletr.enums.LocationRange
 import org.uwaterloo.subletr.enums.PriceRange
 import org.uwaterloo.subletr.enums.RoomRange
+import org.uwaterloo.subletr.navigation.NavigationDestination
 import org.uwaterloo.subletr.theme.SubletrTheme
 import org.uwaterloo.subletr.theme.darkerGrayButtonColor
 import org.uwaterloo.subletr.theme.filterTextFont
@@ -208,7 +209,15 @@ fun HomePageView(
 
 					}
 					items(uiState.listings.listings.size) {
-						ListingPost(listingSummary = uiState.listings.listings[it])
+						val listingSummary = uiState.listings.listings[it]
+						ListingPost(
+							listingSummary = listingSummary,
+							detailsNavigation = {
+								viewModel.navHostController.navigate(
+									route = "${NavigationDestination.LISTING_DETAILS.rootNavPath}/${listingSummary.listingId}"
+								)
+							},
+						)
 					}
 
 				}
@@ -248,7 +257,11 @@ fun bedroomStringFormater(numOfBedroom: Int): String {
 }
 
 @Composable
-fun ListingPost(modifier: Modifier = Modifier, listingSummary: ListingSummary) {
+fun ListingPost(
+	modifier: Modifier = Modifier,
+	listingSummary: ListingSummary,
+	detailsNavigation: () -> Unit,
+) {
 	Box(
 		modifier = modifier
 			.wrapContentHeight()
@@ -355,7 +368,8 @@ fun ListingPost(modifier: Modifier = Modifier, listingSummary: ListingSummary) {
 						containerColor = darkerGrayButtonColor,
 						contentColor = Color.Black
 					),
-					onClick = { /*TODO*/ }) {
+					onClick = detailsNavigation,
+				) {
 
 					Text(
 						stringResource(id = R.string.view_details),
