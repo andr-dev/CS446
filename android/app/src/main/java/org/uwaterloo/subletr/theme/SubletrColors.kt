@@ -58,7 +58,17 @@ val secondaryTextColor
 	}
 private val secondaryTextColorLight = Color((0xFF808080))
 private val secondaryTextColorDark = Color((0xFF808080))
-val darkerGrayButtonColor = Color((0xFFE5E5E5))
+
+val darkerGrayButtonColor
+	@Composable
+	get() = if (isSystemInDarkTheme()) {
+		darkerGrayButtonColorDark
+	}
+	else {
+		darkerGrayButtonColorLight
+	}
+private val darkerGrayButtonColorLight = Color((0xFFE5E5E5))
+private val darkerGrayButtonColorDark = Color((0xFFE5E5E5))
 val secondaryButtonBackgroundColor
 	@Composable
 	get() = if (isSystemInDarkTheme()) {
