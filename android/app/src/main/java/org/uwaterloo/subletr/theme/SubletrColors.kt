@@ -86,9 +86,19 @@ val textFieldBackgroundColor
 	} else {
 		textFieldBackgroundColorLight
 	}
-private val textFieldBackgroundColorLight = Color((0xFFD9D9D9))
-private val textFieldBackgroundColorDark = Color((0xFFD9D9D9))
+private val textFieldBackgroundColorLight = Color((0xFFF0F0F0))
+private val textFieldBackgroundColorDark = Color((0xFFF0F0F0))
 
+val textFieldBorderColor
+	@Composable
+	get() = if (isSystemInDarkTheme()) {
+		textFieldBorderColorDark
+	}
+	else {
+		textFieldBorderColorLight
+	}
+private val textFieldBorderColorLight = Color((0xFFE5E5E5))
+private val textFieldBorderColorDark = Color((0xFFE5E5E5))
 
 val Purple900 = Color(0xFF4A148C)
 val Purple500 = Color(0xFF9C27B0)

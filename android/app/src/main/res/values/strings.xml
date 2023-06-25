@@ -102,7 +102,11 @@
     <string name="studio">Studio</string>
     <string name="basement">Basement</string>
     <string name="dorm">Dorm</string>
-    <string name="create_new_listing">Create a new listing</string>
+    <string name="create_new_listing">Create New Listing</string>
+    <string name="address">Address</string>
+    <string name="num_bedrooms"># of bedrooms</string>
+    <string name="create_post">Create Post</string>
+    <string name="upload_images">Upload Images</string>
     <string name="dollar_sign_n">$%d</string>
     <string name="short_for_all_date_range">%s – %s</string>
 </resources>

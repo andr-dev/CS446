@@ -136,4 +136,12 @@ val SubletrTypography = Typography(
 		lineHeight = 16.sp,
 		letterSpacing = 0.5.sp
 	),
+	displayLarge = TextStyle(
+		color = Color.Black,
+		fontFamily = FontFamily.Default,
+		fontWeight = FontWeight.Bold,
+		fontSize = 22.sp,
+		letterSpacing = 0.sp,
+		textAlign = TextAlign.Center
+	),
 )

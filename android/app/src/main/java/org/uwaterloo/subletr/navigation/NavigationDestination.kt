@@ -57,6 +57,6 @@ enum class NavigationDestination(
 		showBottomBar = true,
 	),
 	CREATE_LISTING(
-		rootNavPath = "createlisting",
+		rootNavPath = "home/createlisting",
 	),
 }

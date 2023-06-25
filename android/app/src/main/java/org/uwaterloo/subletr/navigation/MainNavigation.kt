@@ -25,7 +25,7 @@ fun MainNavigation(
 	navHostController: NavHostController = rememberNavController(),
 ) {
 	val startingDestination =
-		if (ApiClient.accessToken == null) NavigationDestination.LOGIN.fullNavPath
+		if (ApiClient.accessToken == null) NavigationDestination.CREATE_LISTING.fullNavPath
 		else NavigationDestination.HOME.fullNavPath
 
 	NavHost(
@@ -79,7 +79,7 @@ fun MainNavigation(
 				modifier = modifier,
 			)
 		}
-		composable(NavigationDestination.CREATE_LISTING.rootNavPath) {
+		composable(NavigationDestination.CREATE_LISTING.fullNavPath) {
 			CreateListingPageView(
 				modifier = modifier,
 			)
