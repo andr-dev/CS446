@@ -60,10 +60,11 @@
     <string name="one_k_to_two_k">$1000-$2000</string>
     <string name="greater_than_two_k">&gt; $2000</string>
     <string name="one">1</string>
-    <string name="two_to_three">2-3</string>
-    <string name="four_to_five">4-5</string>
+    <string name="two_to_three">2–3</string>
+    <string name="four_to_five">4–5</string>
     <string name="greater_than_five">&gt; 5</string>
     <string name="price">Price</string>
+    <string name="room">Room</string>
     <string name="rooms">Rooms</string>
     <string name="location">Location</string>
     <string name="failed_to_get_listings_data">Failed to get listing data</string>
@@ -75,8 +76,10 @@
     <string name="bed_icon">Bed Icon</string>
     <string name="home_icon">Home Icon</string>
     <string name="favour_icon">favour Icon</string>
-    <string name="one_bedroom">1 Bedroom</string>
-    <string name="bedrooms"> Bedrooms</string>
+    <plurals name="n_bedrooms">
+        <item quantity="one">%d Bedroom</item>
+        <item quantity="other">%d Bedrooms</item>
+    </plurals>
     <string name="filter_menu">filter menu</string>
     <string name="view_sublets">View Sublets</string>
     <string name="plus_sign">+</string>
@@ -94,4 +97,6 @@
     <string name="total_rooms_in_house">Total rooms in house</string>
     <string name="total_bathrooms_in_house">Total bathrooms in house</string>
     <string name="description">Description</string>
+    <string name="dollar_sign_n">$%d</string>
+    <string name="short_for_all_date_range">%s – %s</string>
 </resources>

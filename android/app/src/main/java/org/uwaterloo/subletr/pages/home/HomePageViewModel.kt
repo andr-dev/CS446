@@ -28,8 +28,7 @@ class HomePageViewModel @Inject constructor(
 		var locationRange: LocationRange,
 		var priceRange: PriceRange,
 		var roomRange: RoomRange,
-
-		)
+	)
 
 	private val disposables: MutableList<Disposable> = mutableListOf()
 
@@ -37,16 +36,11 @@ class HomePageViewModel @Inject constructor(
 
 	val locationRangeFilterStream: BehaviorSubject<LocationRange> =
 		BehaviorSubject.createDefault(LocationRange.NOFILTER)
-	val priceRangeFilterStream: BehaviorSubject<PriceRange> = BehaviorSubject.createDefault(
-		PriceRange.NOFILTER
-	)
+	val priceRangeFilterStream: BehaviorSubject<PriceRange> =
+		BehaviorSubject.createDefault(PriceRange.NOFILTER)
 	val roomRangeFilterStream: BehaviorSubject<RoomRange> =
 		BehaviorSubject.createDefault(RoomRange.NOFILTER)
-	private val listingsStream: BehaviorSubject<GetListingsResponse> = BehaviorSubject.createDefault(
-		GetListingsResponse(
-			listOf(), setOf()
-		)
-	)
+
 	private val infoTextStringIdStream: BehaviorSubject<Optional<Int>> =
 		BehaviorSubject.createDefault(Optional.empty())
 
@@ -58,44 +52,47 @@ class HomePageViewModel @Inject constructor(
 		FilterVals(
 			locationRange = locationRange,
 			priceRange = priceRange,
-			roomRange = roomRange
+			roomRange = roomRange,
 		)
 	}
+
+	private val listingsStream: Observable<Result<GetListingsResponse>> = filterStream.map {
+		runCatching {
+			runBlocking {
+				// TODO: Change to use filter values
+				api.listingsList(
+					priceMin = null,
+					priceMax = null,
+					roomsMin = null,
+					roomsMax = null,
+				)
+			}
+		}
+	}
+		.doOnError {
+			navHostController.navigate(NavigationDestination.LOGIN.rootNavPath)
+		}
+		.onErrorResumeWith(Observable.never())
+		.subscribeOn(Schedulers.io())
+
 	val uiStateStream: Observable<HomePageUiState> = Observable.combineLatest(
 		locationRangeFilterStream,
 		priceRangeFilterStream,
 		roomRangeFilterStream,
 		listingsStream,
-		infoTextStringIdStream
+		infoTextStringIdStream,
 	) { locationRange, priceRange, roomRange, listings, infoTextStringId ->
-		HomePageUiState.Loaded(
-			locationRange = locationRange,
-			priceRange = priceRange,
-			roomRange = roomRange,
-			listings = listings,
-			infoTextStringId = infoTextStringId.getOrNull()
-		)
-	}
+		listings.onSuccess {
+			return@combineLatest HomePageUiState.Loaded(
+				locationRange = locationRange,
+				priceRange = priceRange,
+				roomRange = roomRange,
+				listings = it,
+				infoTextStringId = infoTextStringId.getOrNull()
+			)
+		}
 
-	init {
-		disposables.add(
-			filterStream.map {
-				runCatching {
-					runBlocking {
-						api.listingsList(null, null, null, null)
-					}
-				}
-					.onSuccess {
-						listingsStream.onNext(it)
-					}
-					.onFailure {
-						navHostController.navigate(NavigationDestination.LOGIN.rootNavPath)
-					}
-			}
-				.subscribeOn(Schedulers.io())
-				.onErrorResumeWith(Observable.never())
-				.subscribe()
-		)
+		return@combineLatest HomePageUiState.Loading
 	}
 
 	override fun onCleared() {

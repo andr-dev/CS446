@@ -6,7 +6,6 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -17,6 +16,7 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
@@ -52,6 +52,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
@@ -81,9 +82,6 @@ import org.uwaterloo.subletr.theme.subletrPink
 import java.time.OffsetDateTime
 import java.time.format.DateTimeFormatter
 
-// todo update all string value to string file
-val ZERO_DP = 0.dp
-
 @Composable
 fun HomePageView(
 	modifier: Modifier = Modifier,
@@ -111,10 +109,9 @@ fun HomePageView(
 			modifier = Modifier
 				.padding(
 					dimensionResource(id = R.dimen.s),
-					ZERO_DP,
+					dimensionResource(id = R.dimen.zero),
 					dimensionResource(id = R.dimen.s),
-					ZERO_DP
-
+					dimensionResource(id = R.dimen.zero),
 				)
 				.imePadding(),
 			topBar = {
@@ -122,10 +119,10 @@ fun HomePageView(
 					modifier = Modifier
 						.fillMaxWidth(1.0f)
 						.padding(
-							ZERO_DP,
-							dimensionResource(id = R.dimen.xl),
-							ZERO_DP,
-							dimensionResource(id = R.dimen.m)
+							start = dimensionResource(id = R.dimen.zero),
+							top = dimensionResource(id = R.dimen.xl),
+							end = dimensionResource(id = R.dimen.zero),
+							bottom = dimensionResource(id = R.dimen.m)
 						),
 					verticalAlignment = Alignment.CenterVertically,
 					horizontalArrangement = Arrangement.SpaceBetween,
@@ -133,7 +130,7 @@ fun HomePageView(
 					) {
 					Text(
 						text = stringResource(id = R.string.view_sublets),
-						style = MaterialTheme.typography.titleMedium
+						style = MaterialTheme.typography.titleMedium,
 					)
 					ViewSwitch(isListView = isListView)
 				}
@@ -155,8 +152,7 @@ fun HomePageView(
 							modifier = Modifier
 								.fillMaxWidth(1.0f),
 							verticalAlignment = Alignment.CenterVertically,
-							horizontalArrangement = Arrangement.SpaceBetween
-
+							horizontalArrangement = Arrangement.SpaceBetween,
 						) {
 							ButtonWithIcon(
 								modifier = Modifier
@@ -177,9 +173,8 @@ fun HomePageView(
 									)
 								},
 								selectedValue = uiState.locationRange.stringId,
-								width = 100.dp,
-
-								)
+								width = dimensionResource(id = R.dimen.xxxxl),
+							)
 							FilterDropDown(
 								filterName = stringResource(id = R.string.price),
 								dropDownItems = PriceRange.values().map { it.stringId }
@@ -225,12 +220,13 @@ fun HomePageView(
 			floatingActionButtonPosition = FabPosition.End,
 			floatingActionButton = {
 				FloatingActionButton(
-					modifier = modifier.padding(ZERO_DP, ZERO_DP),
+					modifier = modifier.padding(
+						all = dimensionResource(id = R.dimen.zero),
+					),
 					onClick = {},
 					shape = CircleShape,
 					containerColor = subletrPink,
-					contentColor = Color.White
-
+					contentColor = Color.White,
 				) {
 					Text(
 						stringResource(id = R.string.plus_sign), style = TextStyle(
@@ -244,16 +240,9 @@ fun HomePageView(
 }
 
 fun dateTimeFormater(offsetDateTime: OffsetDateTime): String {
+	// TODO: Localize this
 	val formatter = DateTimeFormatter.ofPattern("MMM. yyyy")
 	return offsetDateTime.format(formatter)
-}
-
-@Composable
-fun bedroomStringFormater(numOfBedroom: Int): String {
-	if (numOfBedroom == 1) {
-		return stringResource(id = R.string.one_bedroom)
-	}
-	return "$numOfBedroom ${stringResource(id = R.string.bedrooms)}"
 }
 
 @Composable
@@ -295,7 +284,7 @@ fun ListingPost(
 						.height(dimensionResource(id = R.dimen.xxxl))
 						.width(dimensionResource(id = R.dimen.xxxl)),
 					painter = painterResource(id = R.drawable.room),
-					contentDescription = "room",
+					contentDescription = stringResource(id = R.string.room),
 					contentScale = ContentScale.Crop
 				)
 				Spacer(modifier = Modifier.width(dimensionResource(id = R.dimen.s)))
@@ -313,14 +302,20 @@ fun ListingPost(
 						textAlign = TextAlign.Start,
 						maxLines = 1
 					)
-					Text("$${listingSummary.price}", style = listingTitleFont)
 					Text(
-						"${dateTimeFormater(listingSummary.leaseStart)} - ${
-							dateTimeFormater(
-								listingSummary.leaseEnd
-							)
-						}",
-						style = MaterialTheme.typography.bodyLarge
+						stringResource(
+							id = R.string.dollar_sign_n,
+							listingSummary.price,
+						),
+						style = listingTitleFont,
+					)
+					Text(
+						text = stringResource(
+							id = R.string.short_for_all_date_range,
+							dateTimeFormater(listingSummary.leaseStart),
+							dateTimeFormater(offsetDateTime = listingSummary.leaseEnd),
+						),
+						style = MaterialTheme.typography.bodyLarge,
 					)
 				}
 			}
@@ -332,12 +327,19 @@ fun ListingPost(
 			) {
 				Icon(
 					painter = painterResource(
-						id = R.drawable.bed_solid_gray_16
+						id = R.drawable.bed_solid_gray_16,
 					),
 					contentDescription = stringResource(id = R.string.bed_icon),
 					tint = secondaryTextColor
 				)
-				Text(bedroomStringFormater(listingSummary.rooms), style = listingDescriptionFont)
+				Text(
+					pluralStringResource(
+						id = R.plurals.n_bedrooms,
+						count = listingSummary.rooms,
+						listingSummary.rooms,
+					),
+					style = listingDescriptionFont,
+				)
 				Spacer(modifier = Modifier.width(dimensionResource(id = R.dimen.xs)))
 				Icon(
 					painter = painterResource(
@@ -353,7 +355,10 @@ fun ListingPost(
 					contentDescription = stringResource(R.string.home_icon),
 					tint = secondaryTextColor
 				)
-				Text(listingSummary.residenceType.value, style = listingDescriptionFont)
+				Text(
+					text = listingSummary.residenceType.value,
+					style = listingDescriptionFont,
+				)
 			}
 			Row(
 				modifier = Modifier
@@ -402,10 +407,7 @@ fun ListingPost(
 					contentDescription = stringResource(id = R.string.chat_icon)
 				)
 			}
-
-
 		}
-
 	}
 }
 
@@ -424,32 +426,35 @@ fun FilterDropDown(
 		modifier = modifier
 			.width(width)
 			.height(dimensionResource(id = R.dimen.l))
-			.fillMaxWidth(1.0f)
+			.fillMaxWidth(1.0f),
 	) {
 		Button(
 			modifier = Modifier
 				.fillMaxWidth(1.0f)
 				.fillMaxHeight(1.0f),
-			contentPadding = PaddingValues(dimensionResource(id = R.dimen.s), ZERO_DP),
+			contentPadding = PaddingValues(
+				horizontal = dimensionResource(id = R.dimen.s),
+				vertical =  dimensionResource(id = R.dimen.zero),
+			),
 			colors = ButtonDefaults.buttonColors(
 				containerColor = secondaryButtonBackgroundColor,
 				contentColor = secondaryTextColor,
 			),
 			shape = RoundedCornerShape(
-				dimensionResource(id = R.dimen.s)
+				size = dimensionResource(id = R.dimen.s),
 			),
 			onClick = {
 				expanded = !expanded
 			},
 		) {
 			Row(
-				modifier = Modifier.fillMaxWidth(1.0f),
+				modifier = Modifier.fillMaxWidth(fraction = 1.0f),
 				verticalAlignment = Alignment.CenterVertically,
 				horizontalArrangement = Arrangement.SpaceBetween,
 			) {
 				Text(
 					text = filterName,
-					style = filterTextFont
+					style = filterTextFont,
 				)
 
 				Icon(
@@ -468,8 +473,7 @@ fun FilterDropDown(
 		}
 		DropdownMenu(
 			modifier = modifier
-
-				.background(Color.White),
+				.background(color = Color.White),
 			expanded = expanded,
 			onDismissRequest = { expanded = false },
 		) {
@@ -483,7 +487,10 @@ fun FilterDropDown(
 							color = if (it == selectedValue && it != R.string.clear) subletrPink else Color.Black
 						)
 					},
-					contentPadding = PaddingValues(dimensionResource(id = R.dimen.s), ZERO_DP),
+					contentPadding = PaddingValues(
+						horizontal = dimensionResource(id = R.dimen.s),
+						vertical = dimensionResource(id = R.dimen.zero),
+					),
 					onClick = {
 						updateState(it)
 						expanded = false
@@ -508,7 +515,7 @@ fun ButtonWithIcon(
 	SecondaryButton(onClick = onClick,
 		modifier = modifier
 			.wrapContentSize(align = Alignment.Center),
-		contentPadding = PaddingValues(ZERO_DP),
+		contentPadding = PaddingValues(all = dimensionResource(id = R.dimen.zero)),
 		colors = colors,
 		content = {
 			Icon(
@@ -537,17 +544,17 @@ fun ViewSwitch(modifier: Modifier = Modifier, isListView: MutableState<Boolean>)
 					),
 					shape = RoundedCornerShape(
 						topStart = dimensionResource(id = R.dimen.s),
-						topEnd = ZERO_DP,
+						topEnd = dimensionResource(id = R.dimen.zero),
 						bottomStart = dimensionResource(id = R.dimen.s),
-						bottomEnd = ZERO_DP,
+						bottomEnd = dimensionResource(id = R.dimen.zero),
 					),
 				)
 				.clip(
 					RoundedCornerShape(
 						topStart = dimensionResource(id = R.dimen.s),
-						topEnd = ZERO_DP,
+						topEnd = dimensionResource(id = R.dimen.zero),
 						bottomStart = dimensionResource(id = R.dimen.s),
-						bottomEnd = ZERO_DP,
+						bottomEnd = dimensionResource(id = R.dimen.zero),
 					)
 				)
 				.background(if (isListView.value) Color.White else secondaryButtonBackgroundColor)
@@ -581,26 +588,26 @@ fun ViewSwitch(modifier: Modifier = Modifier, isListView: MutableState<Boolean>)
 						color = if (!isListView.value) subletrPink else secondaryButtonBackgroundColor
 					),
 					shape = RoundedCornerShape(
-						topStart = ZERO_DP,
+						topStart = dimensionResource(id = R.dimen.zero),
 						topEnd = dimensionResource(id = R.dimen.s),
-						bottomStart = ZERO_DP,
+						bottomStart = dimensionResource(id = R.dimen.zero),
 						bottomEnd = dimensionResource(id = R.dimen.s)
 					),
 				)
 				.clip(
 					RoundedCornerShape(
-						topStart = ZERO_DP,
+						topStart = dimensionResource(id = R.dimen.zero),
 						topEnd = dimensionResource(id = R.dimen.s),
-						bottomStart = ZERO_DP,
+						bottomStart = dimensionResource(id = R.dimen.zero),
 						bottomEnd = dimensionResource(id = R.dimen.s)
 					)
 				)
 				.background(if (!isListView.value) Color.White else secondaryButtonBackgroundColor)
 				.padding(
-					dimensionResource(id = R.dimen.xs),
-					dimensionResource(id = R.dimen.xxs),
-					dimensionResource(id = R.dimen.xs),
-					dimensionResource(id = R.dimen.xxs)
+					start = dimensionResource(id = R.dimen.xs),
+					top = dimensionResource(id = R.dimen.xxs),
+					end = dimensionResource(id = R.dimen.xs),
+					bottom = dimensionResource(id = R.dimen.xxs)
 				)
 				.clickable {
 					isListView.value = false
