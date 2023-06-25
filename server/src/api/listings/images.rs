@@ -8,7 +8,10 @@ use uuid::Uuid;
 
 use crate::{
     api::{model::listing::ListingsImagesCreateResponse, token::AuthenticatedUser},
-    db::model::listings::{ListingImage, NewListingImage},
+    db::{
+        model::listings::{ListingImage, NewListingImage},
+        schema::listings_images,
+    },
     error::{ServiceError, ServiceResult},
     state::AppState,
 };
@@ -30,9 +33,7 @@ pub async fn listings_images_get(
 
     let mut dbcon = state.pool.get()?;
 
-    let listing_image: ListingImage = crate::db::schema::listings_images::dsl::listings_images
-        .find(image_id)
-        .first(&mut dbcon)?;
+    let listing_image: ListingImage = listings_images::dsl::listings_images.find(image_id).first(&mut dbcon)?;
 
     read(Path::new(&state.media_dir).join(format!("{}.{}", listing_image.image_id, listing_image.extension)))
         .await
@@ -77,7 +78,7 @@ pub async fn listings_images_create(
 
     let mut dbcon = state.pool.get()?;
 
-    diesel::insert_into(crate::db::schema::listings_images::table)
+    diesel::insert_into(listings_images::table)
         .values(&NewListingImage {
             image_id: &image_id,
             extension: data_type.extension(),

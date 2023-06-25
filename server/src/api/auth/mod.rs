@@ -6,7 +6,7 @@ use rocket_okapi::{openapi, openapi_get_routes_spec};
 use super::model::auth::{UserLoginRequest, UserLoginResponse};
 use crate::{
     api::{token::generate_token, utils::hash_password},
-    db::model::users::User,
+    db::{model::users::User, schema::users},
     error::{ServiceError, ServiceResult},
     state::AppState,
 };
@@ -16,8 +16,8 @@ use crate::{
 fn auth_login(state: &State<AppState>, login_request: Json<UserLoginRequest>) -> ServiceResult<UserLoginResponse> {
     let mut dbcon = state.pool.get()?;
 
-    let users: Vec<User> = crate::db::schema::users::dsl::users
-        .filter(crate::db::schema::users::email.eq(&login_request.email))
+    let users: Vec<User> = users::dsl::users
+        .filter(users::email.eq(&login_request.email))
         .load(&mut dbcon)?;
 
     debug_assert!(users.len() <= 1);

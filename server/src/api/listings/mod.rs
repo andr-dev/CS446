@@ -30,7 +30,7 @@ use super::{
 use crate::{
     db::{
         model::listings::{Listing, ListingImage},
-        schema::listings,
+        schema::{listings, listings_images},
     },
     error::{ServiceError, ServiceResult},
     state::AppState,
@@ -45,7 +45,22 @@ fn listings_create(
 ) -> ServiceResult<CreateListingResponse> {
     let mut dbcon = state.pool.get()?;
 
+    for img_id in &listing_request.img_ids {
+        let listing_image: ListingImage = listings_images::dsl::listings_images.find(img_id).first(&mut dbcon)?;
+
+        if listing_image.user_id != user.user_id || listing_image.listing_id.is_some() {
+            return Err(ServiceError::InternalError);
+        }
+    }
+
     let listing_id: i32 = rand::thread_rng().gen();
+
+    for img_id in &listing_request.img_ids {
+        diesel::update(listings_images::dsl::listings_images)
+            .filter(listings_images::image_id.eq(img_id))
+            .set(listings_images::listing_id.eq(listing_id))
+            .execute(&mut dbcon)?;
+    }
 
     diesel::insert_into(listings::table)
         .values(&listing_request.try_into_new_listing(listing_id, user.user_id)?)
@@ -87,8 +102,8 @@ fn listings_details(
         .find(details_request.listing_id)
         .first::<Listing>(&mut dbcon)
     {
-        let listing_images: Vec<ListingImage> = crate::db::schema::listings_images::dsl::listings_images
-            .filter(crate::db::schema::listings_images::listing_id.eq(l.listing_id))
+        let listing_images: Vec<ListingImage> = listings_images::dsl::listings_images
+            .filter(listings_images::listing_id.eq(l.listing_id))
             .load(&mut dbcon)?;
 
         Ok(Json(GetListingDetailsResponse {

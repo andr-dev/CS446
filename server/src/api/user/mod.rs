@@ -10,7 +10,10 @@ use super::{
 };
 use crate::{
     api::token::AuthenticatedUser,
-    db::model::users::{NewUser, User},
+    db::{
+        model::users::{NewUser, User},
+        schema::users,
+    },
     error::{ServiceError, ServiceResult},
     state::AppState,
 };
@@ -29,7 +32,7 @@ fn user_create(
 
     let user_id: i32 = rand::thread_rng().gen();
 
-    diesel::insert_into(crate::db::schema::users::table)
+    diesel::insert_into(users::table)
         .values(&NewUser {
             user_id,
             first_name: &create_user_request.first_name,
@@ -48,10 +51,7 @@ fn user_create(
 fn user_email(state: &State<AppState>, user: AuthenticatedUser) -> ServiceResult<String> {
     let mut dbcon = state.pool.get()?;
 
-    let user: User = crate::db::schema::users::dsl::users
-        .find(user.user_id)
-        .first(&mut dbcon)
-        .unwrap();
+    let user: User = users::dsl::users.find(user.user_id).first(&mut dbcon).unwrap();
 
     Ok(Json(user.email))
 }

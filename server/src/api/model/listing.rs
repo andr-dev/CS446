@@ -124,6 +124,7 @@ pub struct CreateListingRequest {
     pub lease_start: NaiveDateTime,
     pub lease_end: NaiveDateTime,
     pub description: String,
+    pub img_ids: Vec<String>,
     pub residence_type: ResidenceType,
 }
 
