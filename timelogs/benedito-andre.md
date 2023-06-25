@@ -16,4 +16,5 @@
 | Jun 14th | 5 hours (11:00 - 16:00) | Implemented listings + db + redeploy    |
 | Jun 20th | 3 hours (16:00 - 19:00) | Start implementing listings images      |
 | Jun 21th | 3 hours (12:00 - 15:00) | Finish implementing listings images     |
-
+| Jun 24th | 3 hours (15:00 - 18:00) | Setup nginx reverse proxy + duckdns     |
+| Jun 25th | 1 hour  (14:00 - 15:00) | Attach listing\_id to listings create   |
