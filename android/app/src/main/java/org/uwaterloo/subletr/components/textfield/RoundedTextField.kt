@@ -5,6 +5,8 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.LocalTextStyle
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldColors
 import androidx.compose.material3.TextFieldDefaults
@@ -18,7 +20,9 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import org.uwaterloo.subletr.R
+import org.uwaterloo.subletr.theme.subletrPink
 import org.uwaterloo.subletr.theme.textFieldBackgroundColor
+import org.uwaterloo.subletr.theme.textFieldBorderColor
 
 @Composable
 @Suppress("LongParameterList")

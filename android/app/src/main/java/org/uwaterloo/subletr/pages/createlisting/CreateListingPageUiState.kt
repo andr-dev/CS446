@@ -7,11 +7,11 @@ sealed interface CreateListingPageUiState {
 
 	data class Loaded(
 		val address: String,
-		val description : String,
-		val price : String,
-		val numBedrooms : String,
-		val startDate : String,
-		val endDate : String,
-		val housingType : HousingType,
+		val description: String,
+		val price: String,
+		val numBedrooms: String,
+		val startDate: String,
+		val endDate: String,
+		val housingType: HousingType,
 	) : CreateListingPageUiState
 }
