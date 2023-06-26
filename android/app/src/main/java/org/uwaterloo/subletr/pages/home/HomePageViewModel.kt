@@ -80,16 +80,18 @@ class HomePageViewModel @Inject constructor(
 	init {
 		disposables.add(
 			filterStream.map {
-				runBlocking {
-					api.listingsList(null, null, null, null)
+				runCatching {
+					runBlocking {
+						api.listingsList(null, null, null, null)
+					}
 				}
+					.onSuccess {
+						listingsStream.onNext(it)
+					}
+					.onFailure {
+						navHostController.navigate(NavigationDestination.LOGIN.rootNavPath)
+					}
 			}
-				.map {
-					listingsStream.onNext(it)
-				}
-				.doOnError {
-					navHostController.navigate(NavigationDestination.LOGIN.rootNavPath)
-				}
 				.subscribeOn(Schedulers.io())
 				.onErrorResumeWith(Observable.never())
 				.subscribe()
