@@ -9,10 +9,12 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Surface
+import androidx.compose.material3.MaterialTheme
+import org.uwaterloo.subletr.theme.textOnSubletrPink
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -20,11 +22,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.dimensionResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import org.uwaterloo.subletr.R
+import org.uwaterloo.subletr.theme.secondaryButtonBackgroundColor
 import org.uwaterloo.subletr.theme.subletrPink
 
 @Composable
@@ -36,17 +40,14 @@ fun ChatListingPageView(
 		Box(
 			modifier = Modifier
 				.fillMaxWidth()
-				.height(100.dp)
-				.padding(10.dp)
+				.height(dimensionResource(id = R.dimen.xxxxl))
+				.padding(dimensionResource(id = R.dimen.xs))
 				.background(Color.Transparent),
 			contentAlignment = Alignment.BottomStart
 		) {
 			Text(
-				text = "Messages",
-				color = Color.Black,
-				fontSize = 40.sp,
-				fontWeight = FontWeight.Bold,
-				modifier = Modifier.padding(vertical = 8.dp)
+				stringResource(id = R.string.Messages),
+				style = MaterialTheme.typography.titleMedium,
 			)
 		}
 		displayEntries()
@@ -58,36 +59,40 @@ fun ChatListingPageView(
 
 @Composable
 fun ListItem(name : String, last_msg : String) {
-	Surface(color = Color.LightGray,
+	Box(
 		modifier = Modifier
-			.padding(vertical = 5.dp, horizontal = 10.dp)
-			.clip(RoundedCornerShape(40.dp)),
+			.padding(
+				vertical = dimensionResource(id = R.dimen.xxs),
+				horizontal = dimensionResource(id = R.dimen.xs)
+			)
+			.wrapContentHeight()
+			.fillMaxWidth(1.0f)
+			.clip(
+				RoundedCornerShape(
+					dimensionResource(id = R.dimen.s)
+				)
+			)
+			.background(secondaryButtonBackgroundColor)
 		) {
-
-
-
-		Column(modifier = Modifier
-			.fillMaxWidth()) {
-
 			Row(verticalAlignment = Alignment.CenterVertically) {
 				Icon(name)
-				Column(modifier = Modifier
-					.weight(1f)
-					.padding(vertical = 40.dp),
+				Column(
+					modifier = Modifier
+						.weight(1f)
+						.padding(vertical = dimensionResource(id = R.dimen.s)),
 					//horizontalAlignment = Alignment.CenterHorizontally,
-					verticalArrangement = Arrangement.Center,)
+					verticalArrangement = Arrangement.Center,
+				)
 
 				{
-					Text(text = "$name :",
-						fontSize = 20.sp,
-						fontWeight = FontWeight.Bold)
+					Text(text = "$name",
+						style = MaterialTheme.typography.titleSmall)
 					Text(text = last_msg,
-						fontSize = 15.sp,
-						color = Color.DarkGray)
+						style = MaterialTheme.typography.bodySmall)
 				}
 				notification()
 			}
-		}
+
 	}
 }
 
@@ -98,21 +103,20 @@ fun Icon(name : String) {
 		item {
 			Box(
 				modifier = Modifier
-					.padding(dimensionResource(id = R.dimen.l))
+					.padding(dimensionResource(id = R.dimen.s))
 					.clip(CircleShape),
 			) {
 				Box(
 					modifier = Modifier
-						.width(dimensionResource(id = R.dimen.xxl))
-						.height(dimensionResource(id = R.dimen.xxl))
+						.width(dimensionResource(id = R.dimen.xxxl))
+						.height(dimensionResource(id = R.dimen.xxxl))
 						.background(subletrPink),
 					contentAlignment = Alignment.Center
 				) {
 					Text(
 						text = name[0].toString(),
-						color = Color.White,
-						fontSize = 32.sp,
-						fontWeight = FontWeight.Bold
+						style = MaterialTheme.typography.titleMedium,
+						color = textOnSubletrPink
 					)
 				}
 
@@ -140,9 +144,8 @@ fun notification(n : Int = 1) {
 				) {
 					Text(
 						text = n.toString(),
-						color = Color.White,
-						fontSize = 20.sp,
-						fontWeight = FontWeight.Bold
+						color = textOnSubletrPink,
+						style = MaterialTheme.typography.titleSmall
 					)
 				}
 

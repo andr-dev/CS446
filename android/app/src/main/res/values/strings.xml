@@ -49,4 +49,5 @@
     <string name="last_name_blank_error">Last name cannot be blank.</string>
     <string name="email_format_error">Invalid email.</string>
     <string name="password_blank_error">Password cannot be blank.</string>
+    <string name="Messages">Messages</string>
 </resources>
