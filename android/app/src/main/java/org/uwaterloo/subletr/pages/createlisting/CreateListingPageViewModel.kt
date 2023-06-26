@@ -11,6 +11,7 @@ import io.reactivex.rxjava3.subjects.PublishSubject
 import kotlinx.coroutines.runBlocking
 import org.uwaterloo.subletr.api.apis.DefaultApi
 import org.uwaterloo.subletr.api.models.CreateListingRequest
+import org.uwaterloo.subletr.api.models.ListingsImagesCreateRequest
 import org.uwaterloo.subletr.api.models.ResidenceType
 import org.uwaterloo.subletr.enums.HousingType
 import org.uwaterloo.subletr.services.INavigationService
@@ -35,7 +36,7 @@ class CreateListingPageViewModel @Inject constructor(
 	val startDateStream: BehaviorSubject<String> = BehaviorSubject.createDefault("")
 	val endDateStream: BehaviorSubject<String> = BehaviorSubject.createDefault("")
 
-	val imagesByteStream: BehaviorSubject<MutableList<List<Int>>> = BehaviorSubject.createDefault(ArrayList())
+	val imagesByteStream: BehaviorSubject<MutableList<String>> = BehaviorSubject.createDefault(ArrayList())
 
 	val uiStateStream: Observable<CreateListingPageUiState> = Observable.combineLatest(
 		addressLineStream,
@@ -69,33 +70,34 @@ class CreateListingPageViewModel @Inject constructor(
 	init {
 		disposables.add(
 			createListingStream.map {
-				val resp = runBlocking {
-					Log.d("FINALVAL", "${it.images[0][0]} ${it.images[0][1]} ${it.images[0][2]} ${it.images[0][3]}")
-
-					api.listingsImagesCreate(
-						it.images[0]
+				runBlocking {
+					val imgId = api.listingsImagesCreate(
+						ListingsImagesCreateRequest(
+							image = it.images[0]
+						)
+					).imageId
+					api.listingsCreate(
+						CreateListingRequest(
+							addressLine = it.addressLine,
+							addressCity = it.addressCity,
+							addressPostalcode = it.addressPostalCode,
+							addressCountry = it.addressCountry,
+							price = it.price,
+							rooms = it.numBedrooms,
+							leaseStart = it.startDate,
+							leaseEnd = it.endDate,
+							description = it.description,
+							residenceType = ResidenceType.house,
+							imgIds = listOf(imgId)
+						)
 					)
-//					api.listingsCreate(
-//						CreateListingRequest(
-//							addressLine = it.address,
-//							addressCity = "",
-//							addressPostalcode = "",
-//							addressCountry = "",
-//							price = it.price.toInt(),
-//							rooms = it.numBedrooms.toInt(),
-//							leaseStart = "",
-//							leaseEnd = "",
-//							description = "",
-//							residenceType = ResidenceType.house,
-//						)
-//					)
 				}
 			}
-//				.map {
-//					navHostController.popBackStack()
-//				}
+				.map {
+					navHostController.popBackStack()
+				}
 				.doOnError {
-					Log.d("meme", "I messed up")
+					Log.d("API ERROR", "Create listing failed	")
 				}
 				.subscribeOn(Schedulers.io())
 				.onErrorResumeWith(Observable.never())

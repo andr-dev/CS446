@@ -1,15 +1,12 @@
-@file:Suppress("CyclomaticComplexMethod")
+@file:Suppress("CyclomaticComplexMethod", "ForbiddenComment")
 
 package org.uwaterloo.subletr.pages.createlisting
 
-import android.annotation.SuppressLint
 import android.graphics.Bitmap
 import android.graphics.ImageDecoder
 import android.net.Uri
 import android.os.Build
 import android.provider.MediaStore
-import android.util.Base64
-import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
@@ -86,9 +83,7 @@ import org.uwaterloo.subletr.theme.subletrPink
 import org.uwaterloo.subletr.theme.textFieldBackgroundColor
 import org.uwaterloo.subletr.theme.textFieldBorderColor
 import org.uwaterloo.subletr.theme.textOnSubletrPink
-import java.io.ByteArrayOutputStream
-import java.nio.ByteBuffer
-import java.nio.ByteOrder
+import org.uwaterloo.subletr.utils.toBase64String
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -442,7 +437,6 @@ fun CreateListingPageView(
 									startButtonText =
 										displayDateFormatter.formatDate(dateRangePickerState.selectedStartDateMillis, locale = Locale.getDefault())!!
 									val startDate = SimpleDateFormat("MM/dd/yyyy").parse(startButtonText)
-
 									viewModel.startDateStream.onNext(
 										if (startDate is Date)
 											storeDateFormat.format(startDate)
@@ -468,14 +462,8 @@ fun CreateListingPageView(
 				}
 
 				if (bitmap.value != null) {
-					val btm = bitmap.value
-					val stream = ByteArrayOutputStream()
-					btm!!.compress(Bitmap.CompressFormat.PNG, 100, stream)
-					val imageByteArray = stream.toByteArray()
-					val intBuffer = ByteBuffer.wrap(imageByteArray).order(ByteOrder.LITTLE_ENDIAN).asIntBuffer()
-					val imageIntArray = IntArray(intBuffer.remaining())
-					intBuffer.get(imageIntArray)
-					val images = MutableList<List<Int>>(1) { imageIntArray.toList() }
+					val base64ImageString = bitmap.value!!.toBase64String()
+					val images = MutableList(1) { base64ImageString }
 					viewModel.imagesByteStream.onNext(images)
 				}
 
@@ -498,7 +486,7 @@ fun CreateListingPageView(
 	}
 }
 
-val storeDateFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm")
+val storeDateFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss")
 
 @OptIn(ExperimentalMaterial3Api::class)
 val displayDateFormatter = DatePickerDefaults.dateFormatter(selectedDateSkeleton = "MM/dd/yyyy")
@@ -518,7 +506,7 @@ fun DatePickerBottomSheet(
 			Box(
 				modifier = Modifier
 					.fillMaxWidth()
-					.height(550.dp)
+					.height(550.dp) // TODO: change this to not use explicit value
 					.background(Color.White)
 			) {
 				LeaseDatePicker(state, onClick)

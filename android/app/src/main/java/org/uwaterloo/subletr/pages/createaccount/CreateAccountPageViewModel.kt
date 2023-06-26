@@ -1,3 +1,5 @@
+@file:Suppress("ForbiddenComment")
+
 package org.uwaterloo.subletr.pages.createaccount
 
 import android.util.Patterns
