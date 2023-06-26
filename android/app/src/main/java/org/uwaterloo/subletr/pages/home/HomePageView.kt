@@ -39,6 +39,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -89,7 +90,8 @@ fun HomePageView(
 	uiState: HomePageUiState = viewModel.uiStateStream.subscribeAsState(
 		HomePageUiState.Loading
 	).value,
-) {
+
+	) {
 
 	if (uiState is HomePageUiState.Loading) {
 		Column(
@@ -102,6 +104,9 @@ fun HomePageView(
 			CircularProgressIndicator()
 		}
 	} else if (uiState is HomePageUiState.Loaded) {
+		LaunchedEffect(key1 = true) {
+			viewModel.priceRangeFilterStream.onNext(viewModel.priceRangeFilterStream.value!!)
+		}
 		val listState = rememberLazyListState()
 		val isListView = remember { mutableStateOf(true) }
 
@@ -141,6 +146,12 @@ fun HomePageView(
 						.padding(padding)
 						.fillMaxWidth(1.0f)
 						.wrapContentHeight()
+						.padding(
+							dimensionResource(id = R.dimen.zero),
+							dimensionResource(id = R.dimen.zero),
+							dimensionResource(id = R.dimen.zero),
+							dimensionResource(id = R.dimen.xxxxl)
+						)
 						.imePadding(),
 					state = listState,
 					verticalArrangement = Arrangement.spacedBy(dimensionResource(id = R.dimen.s)),
@@ -436,7 +447,7 @@ fun FilterDropDown(
 				.fillMaxHeight(1.0f),
 			contentPadding = PaddingValues(
 				horizontal = dimensionResource(id = R.dimen.s),
-				vertical =  dimensionResource(id = R.dimen.zero),
+				vertical = dimensionResource(id = R.dimen.zero),
 			),
 			colors = ButtonDefaults.buttonColors(
 				containerColor = secondaryButtonBackgroundColor,
