@@ -104,6 +104,7 @@ fun HomePageView(
 			CircularProgressIndicator()
 		}
 	} else if (uiState is HomePageUiState.Loaded) {
+//		might need to update the code after the demo, if it slows down the performance
 		LaunchedEffect(key1 = true) {
 			viewModel.priceRangeFilterStream.onNext(viewModel.priceRangeFilterStream.value!!)
 		}
