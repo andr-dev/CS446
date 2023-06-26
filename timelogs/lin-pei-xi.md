@@ -7,3 +7,4 @@
 |    06-12-2023  |   3h   |    Worked on delivery 2 documents   |
 |    06-22-2023  |   7h   |    Refeactored and finished creating UI for the chat listing screen   |
 |    06-24-2023  |   2h   |    Adjusted the looks of chat list  |
+|    06-26-2023  |   2h   |    Fixed some coding format and recreated some objects in the ui to make it more similar to figma mock |
