@@ -41,7 +41,7 @@ enum class NavigationDestination(
 		bottomBarNavigationItems = null,
 		showBottomBar = true,
 	),
-	CHAT(
+	CHAT_LISTING(
 		rootNavPath = "chat",
 		bottomBarNavigationItems = BottomBarNavigationItems(
 			selectedIconId = R.drawable.chat_bubble_solid_pink_24,

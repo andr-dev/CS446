@@ -9,152 +9,151 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Surface
+import androidx.compose.material3.MaterialTheme
+import org.uwaterloo.subletr.theme.textOnSubletrPink
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.rxjava3.subscribeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.dimensionResource
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
 import org.uwaterloo.subletr.R
+import org.uwaterloo.subletr.pages.account.AccountPageUiState
+import org.uwaterloo.subletr.theme.secondaryButtonBackgroundColor
 import org.uwaterloo.subletr.theme.subletrPink
 
 @Composable
 fun ChatListingPageView(
 	modifier: Modifier = Modifier,
-	viewModel : ChatListingPageViewModel = hiltViewModel()
+	viewModel : ChatListingPageViewModel = hiltViewModel(),
+	uiState: ChatListingPageUiState = viewModel.uiStateStream.subscribeAsState(
+		ChatListingPageUiState.Loading
+	).value
 ){
-	Column {
-		Box(
-			modifier = Modifier
-				.fillMaxWidth()
-				.height(100.dp)
-				.padding(10.dp)
-				.background(Color.Transparent),
-			contentAlignment = Alignment.BottomStart
-		) {
-			Text(
-				text = "Messages",
-				color = Color.Black,
-				fontSize = 40.sp,
-				fontWeight = FontWeight.Bold,
-				modifier = Modifier.padding(vertical = 8.dp)
-			)
-		}
-		displayEntries()
-
-	}
-
-}
-
-
-@Composable
-fun ListItem(name : String, last_msg : String) {
-	Surface(color = Color.LightGray,
-		modifier = Modifier
-			.padding(vertical = 5.dp, horizontal = 10.dp)
-			.clip(RoundedCornerShape(40.dp)),
-		) {
-
-
-
-		Column(modifier = Modifier
-			.fillMaxWidth()) {
-
-			Row(verticalAlignment = Alignment.CenterVertically) {
-				Icon(name)
-				Column(modifier = Modifier
-					.weight(1f)
-					.padding(vertical = 40.dp),
-					//horizontalAlignment = Alignment.CenterHorizontally,
-					verticalArrangement = Arrangement.Center,)
-
-				{
-					Text(text = "$name :",
-						fontSize = 20.sp,
-						fontWeight = FontWeight.Bold)
-					Text(text = last_msg,
-						fontSize = 15.sp,
-						color = Color.DarkGray)
-				}
-				notification()
+	LazyColumn (modifier = modifier){
+		item {
+			Box(
+				modifier = Modifier
+					.fillMaxWidth()
+					.height(dimensionResource(id = R.dimen.xxl))
+					.padding(horizontal = dimensionResource(id = R.dimen.s))
+					.background(Color.Transparent),
+				contentAlignment = Alignment.BottomStart,
+			) {
+				Text(
+					stringResource(id = R.string.messages),
+					style = MaterialTheme.typography.titleMedium,
+				)
 			}
 		}
+		item {
+			DisplayEntries(List(2){Contact()})
+		}
+	}
+}
+
+@Composable
+fun ListItem(name : String, lastMsg : String) {
+	Box(
+		modifier = Modifier
+			.padding(
+				vertical = dimensionResource(id = R.dimen.xs),
+				horizontal = dimensionResource(id = R.dimen.s),
+			)
+			.wrapContentHeight()
+			.fillMaxWidth(1.0f)
+			.clip(
+				RoundedCornerShape(
+					dimensionResource(id = R.dimen.s)
+				)
+			)
+			.background(secondaryButtonBackgroundColor),
+		) {
+			Row(verticalAlignment = Alignment.CenterVertically) {
+				Icon(name = name)
+				Column(
+					modifier = Modifier
+						.weight(1f)
+						.padding(vertical = dimensionResource(id = R.dimen.s)),
+					verticalArrangement = Arrangement.Center,
+				)
+
+				{
+					Text(text = name,
+						style = MaterialTheme.typography.titleSmall)
+					Text(text = lastMsg,
+						style = MaterialTheme.typography.bodySmall)
+				}
+				Notification()
+			}
+
 	}
 }
 
 @Composable
 fun Icon(name : String) {
-	LazyColumn(
+	Box(
+		modifier = Modifier
+			.padding(dimensionResource(id = R.dimen.s))
+			.clip(CircleShape),
 	) {
-		item {
-			Box(
-				modifier = Modifier
-					.padding(dimensionResource(id = R.dimen.l))
-					.clip(CircleShape),
-			) {
-				Box(
-					modifier = Modifier
-						.width(dimensionResource(id = R.dimen.xxl))
-						.height(dimensionResource(id = R.dimen.xxl))
-						.background(subletrPink),
-					contentAlignment = Alignment.Center
-				) {
-					Text(
-						text = name[0].toString(),
-						color = Color.White,
-						fontSize = 32.sp,
-						fontWeight = FontWeight.Bold
-					)
-				}
-
-			}
+		Box(
+			modifier = Modifier
+				.width(dimensionResource(id = R.dimen.xxl))
+				.height(dimensionResource(id = R.dimen.xxl))
+				.background(subletrPink),
+			contentAlignment = Alignment.Center,
+		) {
+			Text(
+				text = name.first().toString(),
+				style = MaterialTheme.typography.titleSmall,
+				color = textOnSubletrPink,
+			)
 		}
 	}
 }
 
 @Composable
-fun notification(n : Int = 1) {
-	LazyColumn(
+fun Notification(n : Int = 1) {
+	Box(
+		modifier = Modifier
+			.padding(dimensionResource(id = R.dimen.s))
+			.clip(CircleShape),
 	) {
-		item {
-			Box(
-				modifier = Modifier
-					.padding(dimensionResource(id = R.dimen.s))
-					.clip(CircleShape),
-			) {
-				Box(
-					modifier = Modifier
-						.width(dimensionResource(id = R.dimen.l))
-						.height(dimensionResource(id = R.dimen.l))
-						.background(Color(0xFF6ABC95)),
-					contentAlignment = Alignment.Center
-				) {
-					Text(
-						text = n.toString(),
-						color = Color.White,
-						fontSize = 20.sp,
-						fontWeight = FontWeight.Bold
-					)
-				}
-
-			}
+		Box(
+			modifier = Modifier
+				.width(dimensionResource(id = R.dimen.l))
+				.height(dimensionResource(id = R.dimen.l))
+				.background(Color(0xFF6ABC95)),
+			contentAlignment = Alignment.Center,
+		) {
+			Text(
+				text = n.toString(),
+				color = textOnSubletrPink,
+				style = MaterialTheme.typography.labelLarge,
+			)
 		}
 	}
 }
+
 @Composable
-fun displayEntries(names : List<String> = List(2){"Alex Lin"},
-					msg : List<String> = List(2){"This is test dialog"}) {
-	assert(names.size == msg.size)
-	(names.indices).forEach { i ->
-		ListItem(name = names[i], last_msg = msg[i])
+fun DisplayEntries(contacts : List<Contact>) {
+	(contacts.indices).forEach { i ->
+		ListItem(name = contacts[i].name, lastMsg = contacts[i].msg.last())
 	}
+}
+
+@Preview(showBackground = true)
+@Composable
+fun ChatListLoadingPreview() {
+	ChatListingPageView()
 }
