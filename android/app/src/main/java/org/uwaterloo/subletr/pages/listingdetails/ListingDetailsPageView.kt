@@ -108,7 +108,7 @@ fun ListingDetailsPageView(
 			val pagerState = rememberPagerState(
 				initialPage = 0,
 				initialPageOffsetFraction = 0f,
-			) { uiState.listingDetails.imgIds.size }
+			) { uiState.images.size }
 			Column(
 				modifier = Modifier
 					.padding(top = paddingValues.calculateTopPadding())
