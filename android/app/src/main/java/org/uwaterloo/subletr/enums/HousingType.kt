@@ -9,5 +9,6 @@ enum class HousingType(@StringRes val stringId: Int) {
 	STUDIO(R.string.studio),
 	BASEMENT(R.string.basement),
 	DORM(R.string.dorm),
+	Apartment(R.string.apartment),
 	OTHER(R.string.other)
 }

@@ -1,5 +1,8 @@
+@file:Suppress("CyclomaticComplexMethod")
+
 package org.uwaterloo.subletr.pages.createlisting
 
+import android.annotation.SuppressLint
 import android.graphics.Bitmap
 import android.graphics.ImageDecoder
 import android.net.Uri
@@ -148,7 +151,7 @@ fun CreateListingPageView(
 			Column(
 				modifier = Modifier
 					.padding(paddingValues = paddingValues)
-					.fillMaxSize(1.0f)
+					.fillMaxSize()
 					.imePadding(),
 				horizontalAlignment = Alignment.CenterHorizontally,
 				verticalArrangement = Arrangement.Center,
@@ -159,9 +162,12 @@ fun CreateListingPageView(
 			Column(
 				modifier = Modifier
 					.padding(top = paddingValues.calculateTopPadding())
-					.fillMaxSize(fraction = 1.0f)
+					.fillMaxSize()
 					.verticalScroll(scrollState)
-					.padding(start = 20.dp, end = 20.dp),
+					.padding(
+						start = dimensionResource(id = R.dimen.s),
+						end = dimensionResource(id = R.dimen.s)
+					),
 				verticalArrangement = Arrangement.Center,
 			) {
 
@@ -172,9 +178,9 @@ fun CreateListingPageView(
 				RoundedTextField(
 					modifier = Modifier
 						.fillMaxWidth()
-						.height(60.dp)
+						.height(dimensionResource(id = R.dimen.xxl))
 						.border(
-							2.dp,
+							dimensionResource(id = R.dimen.xxxs),
 							textFieldBorderColor,
 							RoundedCornerShape(dimensionResource(id = R.dimen.xxxxl))
 						),
@@ -214,9 +220,9 @@ fun CreateListingPageView(
 				RoundedTextField(
 					modifier = Modifier
 						.fillMaxWidth()
-						.height(60.dp)
+						.height(dimensionResource(id = R.dimen.xxl))
 						.border(
-							2.dp,
+							dimensionResource(id = R.dimen.xxxs),
 							textFieldBorderColor,
 							RoundedCornerShape(dimensionResource(id = R.dimen.xxxxl))
 						),
@@ -233,7 +239,7 @@ fun CreateListingPageView(
 						)
 					},
 					keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-					value = if (uiState.price == 0) "" else "${uiState.price}",
+					value = if (uiState.price == 0) "" else uiState.price.toString(),
 					onValueChange = {
 						if (it.isEmpty()) {
 							viewModel.priceStream.onNext(0)
@@ -247,13 +253,12 @@ fun CreateListingPageView(
 					modifier = Modifier.weight(weight = 2.0f)
 				)
 
-
 				RoundedTextField(
 					modifier = Modifier
 						.fillMaxWidth()
-						.height(60.dp)
+						.height(dimensionResource(id = R.dimen.xxl))
 						.border(
-							2.dp,
+							dimensionResource(id = R.dimen.xxxs),
 							textFieldBorderColor,
 							RoundedCornerShape(dimensionResource(id = R.dimen.xxxxl))
 						),
@@ -292,15 +297,15 @@ fun CreateListingPageView(
 					RoundedTextField(
 						modifier = Modifier
 							.fillMaxWidth(0.475f)
-							.height(60.dp)
+							.height(dimensionResource(id = R.dimen.xxl))
 							.border(
-								2.dp,
+								dimensionResource(id = R.dimen.xxxs),
 								textFieldBorderColor,
 								RoundedCornerShape(dimensionResource(id = R.dimen.xxxxl))
 							),
 						placeholder = {
 							Text(
-								text = "MM/DD/YYYY",
+								text = stringResource(id = R.string.placeholder_date),
 								color = secondaryTextColor,
 							)
 						},
@@ -322,7 +327,7 @@ fun CreateListingPageView(
 								   painter = painterResource(
 									   id = R.drawable.calendar_outline_gray_24
 								   ),
-								   contentDescription = stringResource(id = R.string.start_date),
+								   contentDescription = stringResource(id = R.string.open_date_picker),
 							   )
 						   }
 						},
@@ -334,15 +339,15 @@ fun CreateListingPageView(
 					RoundedTextField(
 						modifier = Modifier
 							.fillMaxWidth(0.475f / 0.525f)
-							.height(60.dp)
+							.height(dimensionResource(id = R.dimen.xxl))
 							.border(
-								2.dp,
+								dimensionResource(id = R.dimen.xxxs),
 								textFieldBorderColor,
 								RoundedCornerShape(dimensionResource(id = R.dimen.xxxxl))
 							),
 						placeholder = {
 							Text(
-								text = "MM/DD/YYYY",
+								text = stringResource(id = R.string.placeholder_date),
 								color = secondaryTextColor,
 							)
 						},
@@ -364,7 +369,7 @@ fun CreateListingPageView(
 									painter = painterResource(
 										id = R.drawable.calendar_outline_gray_24
 									),
-									contentDescription = stringResource(id = R.string.end_date),
+									contentDescription = stringResource(id = R.string.open_date_picker),
 								)
 							}
 						},
@@ -381,9 +386,9 @@ fun CreateListingPageView(
 				RoundedTextField(
 					modifier = Modifier
 						.fillMaxWidth()
-						.height(120.dp)
+						.height(dimensionResource(id = R.dimen.xxxxxxl))
 						.border(
-							2.dp,
+							dimensionResource(id = R.dimen.xxxs),
 							textFieldBorderColor,
 							RoundedCornerShape(dimensionResource(id = R.dimen.s))
 						),
@@ -438,7 +443,10 @@ fun CreateListingPageView(
 										displayDateFormatter.formatDate(dateRangePickerState.selectedStartDateMillis, locale = Locale.getDefault())!!
 									val startDate = SimpleDateFormat("MM/dd/yyyy").parse(startButtonText)
 
-									viewModel.startDateStream.onNext(if (startDate is Date) storeDateFormat.format(startDate) else uiState.startDate)
+									viewModel.startDateStream.onNext(
+										if (startDate is Date)
+											storeDateFormat.format(startDate)
+										else uiState.startDate)
 								} else {
 									startButtonText = ""
 									viewModel.startDateStream.onNext("")
@@ -447,7 +455,10 @@ fun CreateListingPageView(
 									endButtonText =
 										displayDateFormatter.formatDate(dateRangePickerState.selectedEndDateMillis, locale = Locale.getDefault())!!
 									val endDate = SimpleDateFormat("MM/dd/yyyy").parse(endButtonText)
-									viewModel.endDateStream.onNext(if (endDate is Date) storeDateFormat.format(endDate) else uiState.endDate)
+									viewModel.endDateStream.onNext(
+										if (endDate is Date)
+											storeDateFormat.format(endDate)
+										else uiState.endDate)
 								} else {
 									endButtonText = ""
 									viewModel.endDateStream.onNext("")
@@ -458,42 +469,21 @@ fun CreateListingPageView(
 
 				if (bitmap.value != null) {
 					val btm = bitmap.value
-
-//					val byteArrayOutputStream = ByteArrayOutputStream()
-//					btm!!.compress(Bitmap.CompressFormat.PNG, 100, byteArrayOutputStream)
-//					val byteArray = byteArrayOutputStream.toByteArray()
-//					val encoded: String = Base64.encodeToString(byteArray, Base64.DEFAULT)
-
-
-//					val bitmap = (image.getDrawable() as BitmapDrawable).getBitmap()
 					val stream = ByteArrayOutputStream()
 					btm!!.compress(Bitmap.CompressFormat.PNG, 100, stream)
-
-
-
 					val imageByteArray = stream.toByteArray()
-//					Log.d("BYTE ARRAY", "${imageByteArray[0]} ${imageByteArray[1]} ${imageByteArray[2]} ${imageByteArray[3]} ${imageByteArray[4]}")
-
 					val intBuffer = ByteBuffer.wrap(imageByteArray).order(ByteOrder.LITTLE_ENDIAN).asIntBuffer()
 					val imageIntArray = IntArray(intBuffer.remaining())
 					intBuffer.get(imageIntArray)
-
-//					Log.d("INT ARRAY", "${imageIntArray[0]} ${imageIntArray[1]} ${imageIntArray[2]} ${imageIntArray[3]} ${imageIntArray[4]}")
-
-
-//					Log.d("INT ARRAY SIZE", imageIntArray.size.toString())
-
-
 					val images = MutableList<List<Int>>(1) { imageIntArray.toList() }
 					viewModel.imagesByteStream.onNext(images)
-//					Log.d("FINALVAL", "${viewModel.imagesByteStream.value!![0][0]} ${viewModel.imagesByteStream.value!![0][1]} ${viewModel.imagesByteStream.value!![0][2]} ${viewModel.imagesByteStream.value!![0][3]}")
 				}
 
 				PrimaryButton(
 					modifier = Modifier
 						.fillMaxWidth()
-						.height(60.dp)
-						.padding(bottom = 10.dp),
+						.height(dimensionResource(id = R.dimen.xxl))
+						.padding(bottom = dimensionResource(id = R.dimen.xs)),
 					onClick = {
 						viewModel.createListingStream.onNext(uiState)
 					},
@@ -508,9 +498,6 @@ fun CreateListingPageView(
 	}
 }
 
-private const val ELEMENT_WIDTH = 0.9f
-
-/*TODO: FIX STORE DATE FORMAT TIMEZONE?*/
 val storeDateFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm")
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -542,11 +529,15 @@ fun DatePickerBottomSheet(
 					),
 					modifier = Modifier
 						.align(Alignment.BottomCenter)
-						.padding(start = 16.dp, end = 16.dp, bottom = 16.dp)
+						.padding(
+							start = dimensionResource(id = R.dimen.s),
+							end = dimensionResource(id = R.dimen.s),
+							bottom = dimensionResource(id = R.dimen.s)
+						)
 						.fillMaxWidth()
-						.height(50.dp)
+						.height(dimensionResource(id = R.dimen.xl))
 				) {
-					Text("Done", color = textOnSubletrPink)
+					Text(stringResource(id = R.string.done), color = textOnSubletrPink)
 				}
 			}
 		},
@@ -561,12 +552,15 @@ fun LeaseDatePicker(state: DateRangePickerState, onClick: () -> Unit) {
 		Row(
 			modifier = Modifier
 				.fillMaxWidth()
-				.padding(start = 12.dp, end = 12.dp),
+				.padding(
+					start = dimensionResource(id = R.dimen.xs),
+					end = dimensionResource(id = R.dimen.xs)
+				),
 			verticalAlignment = Alignment.CenterVertically,
 			horizontalArrangement = Arrangement.SpaceBetween
 		) {
 			IconButton(onClick = onClick) {
-				Icon(Icons.Filled.Close, contentDescription = "Localized description")
+				Icon(Icons.Filled.Close, contentDescription = stringResource(id = R.string.close))
 			}
 		}
 
@@ -574,9 +568,9 @@ fun LeaseDatePicker(state: DateRangePickerState, onClick: () -> Unit) {
 			modifier = Modifier.weight(1f),
 			title = {
 				Text(
-					text = "Lease Start - End dates",
+					text = stringResource(id = R.string.lease_start_end_dates),
 					modifier = Modifier
-						.padding(start = 30.dp, end = 12.dp),
+						.padding(start = dimensionResource(id = R.dimen.l), end = dimensionResource(id = R.dimen.xs)),
 					color = secondaryTextColor,
 				)
 			},
@@ -586,27 +580,27 @@ fun LeaseDatePicker(state: DateRangePickerState, onClick: () -> Unit) {
 						.clearAndSetSemantics {
 							liveRegion = LiveRegionMode.Polite
 						}
-						.padding(start = 30.dp),
+						.padding(start = dimensionResource(id = R.dimen.l)),
 					verticalAlignment = Alignment.CenterVertically,
-					horizontalArrangement = Arrangement.spacedBy(4.dp),
+					horizontalArrangement = Arrangement.spacedBy(dimensionResource(id = R.dimen.xxs)),
 				) {
 					val dateFormatter = DatePickerDefaults.dateFormatter()
 					Text(
 						text =
 							if (state.selectedStartDateMillis != null )
 								dateFormatter.formatDate(state.selectedStartDateMillis, locale = Locale.getDefault())!!
-							else "Start date",
+							else stringResource(id = R.string.start_date),
 						style = MaterialTheme.typography.displayLarge
 					)
 					Text(
-						text = "-",
+						text = stringResource(id = R.string.dash),
 						style = MaterialTheme.typography.displayLarge
 					)
 					Text(
 						text =
 							if (state.selectedEndDateMillis != null )
 								dateFormatter.formatDate(state.selectedEndDateMillis, locale = Locale.getDefault())!!
-							else "End date",
+							else stringResource(id = R.string.end_date),
 						style = MaterialTheme.typography.displayLarge
 					)
 				}
@@ -637,9 +631,9 @@ fun UploadImages(bitmap: MutableState<Bitmap?>) {
 	) {
 		Button(
 			modifier = Modifier
-				.size(120.dp)
+				.size(dimensionResource(id = R.dimen.xxxxxxl))
 				.border(
-					2.dp,
+					dimensionResource(id = R.dimen.xxxs),
 					textFieldBorderColor,
 					RoundedCornerShape(dimensionResource(id = R.dimen.s))
 				),
@@ -661,7 +655,7 @@ fun UploadImages(bitmap: MutableState<Bitmap?>) {
 			)
 		}
 
-		Spacer(modifier = Modifier.width(12.dp))
+		Spacer(modifier = Modifier.width(dimensionResource(id = R.dimen.s)))
 
 		imageUri?.let {
 			if (Build.VERSION.SDK_INT < 28) {
@@ -678,9 +672,9 @@ fun UploadImages(bitmap: MutableState<Bitmap?>) {
 				Image(bitmap = btm.asImageBitmap(),
 					contentDescription = null,
 					modifier = Modifier
-						.size(120.dp)
+						.size(dimensionResource(id = R.dimen.xxxxxxl))
 						.border(
-							2.dp,
+							dimensionResource(id = R.dimen.xxxs),
 							textFieldBorderColor,
 							RoundedCornerShape(dimensionResource(id = R.dimen.s))
 						)
@@ -707,7 +701,7 @@ fun CreateListingPageLoadedPreview() {
 				addressLine = "",
 				addressCity = "",
 				addressPostalCode = "",
-				addressCountry = "Canada",
+				addressCountry = stringResource(id = R.string.canada),
 				description = "",
 				price = 0,
 				numBedrooms = 0,

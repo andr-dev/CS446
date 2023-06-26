@@ -12,4 +12,6 @@
     <dimen name="xxl">64dp</dimen>
     <dimen name="xxxl">80dp</dimen>
     <dimen name="xxxxl">96dp</dimen>
+    <dimen name="xxxxxl">112dp</dimen>
+    <dimen name="xxxxxxl">128dp</dimen>
 </resources>
