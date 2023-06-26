@@ -152,6 +152,11 @@ pub struct CreateListingResponse {
     pub listing_id: i32,
 }
 
+#[derive(JsonSchema, Deserialize, Clone, PartialEq)]
+pub struct ListingsImagesCreateRequest {
+    pub image: String,
+}
+
 #[derive(JsonSchema, Serialize, Clone, PartialEq)]
 pub struct ListingsImagesCreateResponse {
     pub image_id: String,

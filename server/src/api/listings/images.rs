@@ -1,13 +1,16 @@
 use std::path::Path;
 
 use diesel::{QueryDsl, RunQueryDsl};
-use rocket::{data::ToByteUnit, get, post, serde::json::Json, Data, State};
+use rocket::{get, post, serde::json::Json, State};
 use rocket_okapi::openapi;
 use tokio::fs::{read, write};
 use uuid::Uuid;
 
 use crate::{
-    api::{model::listing::ListingsImagesCreateResponse, token::AuthenticatedUser},
+    api::{
+        model::listing::{ListingsImagesCreateRequest, ListingsImagesCreateResponse},
+        token::AuthenticatedUser,
+    },
     db::{
         model::listings::{ListingImage, NewListingImage},
         schema::listings_images,
@@ -42,33 +45,25 @@ pub async fn listings_images_get(
 }
 
 #[openapi]
-#[post("/images/create", data = "<image>")]
+#[post("/images/create", format = "json", data = "<create_request>")]
 pub async fn listings_images_create(
     state: &State<AppState>,
     user: AuthenticatedUser,
-    image: Data<'_>,
+    create_request: Json<ListingsImagesCreateRequest>,
 ) -> ServiceResult<ListingsImagesCreateResponse> {
-    let image_id = Uuid::new_v4().to_string();
+    let image = base64::decode(&create_request.image).map_err(|_| ServiceError::InternalError)?;
 
-    let capvec = image
-        .open(1.megabytes())
-        .into_bytes()
-        .await
-        .map_err(|_| ServiceError::InternalError)?;
-
-    if !capvec.is_complete() {
-        return Err(ServiceError::InternalError);
-    }
-
-    let data_type = infer::get(&*capvec).ok_or(ServiceError::InternalError)?;
+    let data_type = infer::get(&image).ok_or(ServiceError::InternalError)?;
 
     if data_type.mime_type() != "image/jpeg" && data_type.mime_type() != "image/png" {
         return Err(ServiceError::InternalError);
     }
 
+    let image_id = Uuid::new_v4().to_string();
+
     if write(
         Path::new(&state.media_dir).join(format!("{}.{}", image_id, data_type.extension())),
-        &*capvec,
+        &image,
     )
     .await
     .is_err()
