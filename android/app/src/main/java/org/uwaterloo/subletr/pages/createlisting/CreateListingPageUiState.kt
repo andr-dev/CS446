@@ -16,6 +16,6 @@ sealed interface CreateListingPageUiState {
 		val startDate: String,
 		val endDate: String,
 		val housingType: HousingType,
-		val images: MutableList<List<Int>>,
+		val images: MutableList<String>,
 	) : CreateListingPageUiState
 }
