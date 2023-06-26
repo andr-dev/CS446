@@ -23,7 +23,7 @@ fun MainNavigation(
 	navHostController: NavHostController = rememberNavController(),
 ) {
 	val startingDestination =
-		if (ApiClient.accessToken == null) NavigationDestination.HOME.fullNavPath
+		if (ApiClient.accessToken == null) NavigationDestination.CHAT.fullNavPath
 		else NavigationDestination.HOME.fullNavPath
 
 	NavHost(

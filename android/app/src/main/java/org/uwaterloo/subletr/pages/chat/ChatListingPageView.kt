@@ -36,14 +36,14 @@ fun ChatListingPageView(
 	modifier: Modifier = Modifier,
 	viewModel : ChatListingPageViewModel = hiltViewModel()
 ){
-	Column {
+	Column (modifier = modifier){
 		Box(
 			modifier = Modifier
 				.fillMaxWidth()
-				.height(dimensionResource(id = R.dimen.xxxxl))
+				.height(dimensionResource(id = R.dimen.xxxl))
 				.padding(dimensionResource(id = R.dimen.xs))
 				.background(Color.Transparent),
-			contentAlignment = Alignment.BottomStart
+			contentAlignment = Alignment.BottomStart,
 		) {
 			Text(
 				stringResource(id = R.string.Messages),
@@ -75,7 +75,7 @@ fun ListItem(name : String, last_msg : String) {
 			.background(secondaryButtonBackgroundColor)
 		) {
 			Row(verticalAlignment = Alignment.CenterVertically) {
-				Icon(name)
+				Icon(name = name)
 				Column(
 					modifier = Modifier
 						.weight(1f)
@@ -108,14 +108,14 @@ fun Icon(name : String) {
 			) {
 				Box(
 					modifier = Modifier
-						.width(dimensionResource(id = R.dimen.xxxl))
-						.height(dimensionResource(id = R.dimen.xxxl))
+						.width(dimensionResource(id = R.dimen.xxl))
+						.height(dimensionResource(id = R.dimen.xxl))
 						.background(subletrPink),
 					contentAlignment = Alignment.Center
 				) {
 					Text(
 						text = name[0].toString(),
-						style = MaterialTheme.typography.titleMedium,
+						style = MaterialTheme.typography.titleSmall,
 						color = textOnSubletrPink
 					)
 				}
@@ -145,7 +145,7 @@ fun notification(n : Int = 1) {
 					Text(
 						text = n.toString(),
 						color = textOnSubletrPink,
-						style = MaterialTheme.typography.titleSmall
+						style = MaterialTheme.typography.labelLarge
 					)
 				}
 
