@@ -18,7 +18,7 @@ use crate::{
     state::AppState,
 };
 
-#[openapi]
+#[openapi(tag = "User")]
 #[post("/create", format = "json", data = "<create_user_request>")]
 fn user_create(
     state: &State<AppState>,
@@ -46,7 +46,7 @@ fn user_create(
     Ok(Json(CreateUserResponse { user_id }))
 }
 
-#[openapi]
+#[openapi(tag = "User")]
 #[get("/email")]
 fn user_email(state: &State<AppState>, user: AuthenticatedUser) -> ServiceResult<String> {
     let mut dbcon = state.pool.get()?;

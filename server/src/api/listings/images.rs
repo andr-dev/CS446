@@ -19,7 +19,7 @@ use crate::{
     state::AppState,
 };
 
-#[openapi]
+#[openapi(tag = "Listings")]
 #[get("/images/<image_id>")]
 pub async fn listings_images_get(
     state: &State<AppState>,
@@ -44,7 +44,7 @@ pub async fn listings_images_get(
         .map_err(|_| ServiceError::InternalError)
 }
 
-#[openapi]
+#[openapi(tag = "Listings")]
 #[post("/images/create", format = "json", data = "<create_request>")]
 pub async fn listings_images_create(
     state: &State<AppState>,
