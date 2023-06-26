@@ -52,6 +52,7 @@
     <string name="last_name_blank_error">Last name cannot be blank.</string>
     <string name="email_format_error">Invalid email.</string>
     <string name="password_blank_error">Password cannot be blank.</string>
+    <string name="Messages">Messages</string>
     <string name="less_than_1km">&lt; 1 km</string>
     <string name="less_than_3km">&lt; 3 km</string>
     <string name="less_than_5km">&lt; 5 km</string>
@@ -81,6 +82,7 @@
         <item quantity="one">%d Bedroom</item>
         <item quantity="other">%d Bedrooms</item>
     </plurals>
+    <string name="messages">Messages</string>
     <string name="filter_menu">filter menu</string>
     <string name="view_sublets">View Sublets</string>
     <string name="plus_sign">+</string>
