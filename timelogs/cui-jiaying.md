@@ -10,3 +10,5 @@
 | Jun 17th | 1.5 hours | built listing page(Switch and filter)     |
 | Jun 18th | 6 hours | created listing page(filter and listing post), added viewmodel and state|
 | Jun 19th | 2 hours | finished UI and added endpoint api for listing page |
+| Jun 20th | 4 hours | update reviews on Listing Page |
+| Jun 26th | 1 hours | Fixing Listing page not update bug  |
