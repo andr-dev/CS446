@@ -223,7 +223,9 @@ fun HomePageView(
 					modifier = modifier.padding(
 						all = dimensionResource(id = R.dimen.zero),
 					),
-					onClick = {},
+					onClick = {
+						viewModel.navHostController.navigate(NavigationDestination.CREATE_LISTING.fullNavPath)
+					},
 					shape = CircleShape,
 					containerColor = subletrPink,
 					contentColor = Color.White,

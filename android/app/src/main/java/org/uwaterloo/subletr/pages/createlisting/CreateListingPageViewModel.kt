@@ -1,12 +1,17 @@
 package org.uwaterloo.subletr.pages.createlisting
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.disposables.Disposable
+import io.reactivex.rxjava3.schedulers.Schedulers
 import io.reactivex.rxjava3.subjects.BehaviorSubject
 import io.reactivex.rxjava3.subjects.PublishSubject
+import kotlinx.coroutines.runBlocking
 import org.uwaterloo.subletr.api.apis.DefaultApi
+import org.uwaterloo.subletr.api.models.CreateListingRequest
+import org.uwaterloo.subletr.api.models.ResidenceType
 import org.uwaterloo.subletr.enums.HousingType
 import org.uwaterloo.subletr.services.INavigationService
 import javax.inject.Inject
@@ -20,41 +25,82 @@ class CreateListingPageViewModel @Inject constructor(
 
 	val navHostController get() = navigationService.getNavHostController()
 
-	val addressStream: BehaviorSubject<String> = BehaviorSubject.createDefault("")
+	val addressLineStream: BehaviorSubject<String> = BehaviorSubject.createDefault("")
+	val addressCityStream: BehaviorSubject<String> = BehaviorSubject.createDefault("")
+	val addressPostalCodeStream: BehaviorSubject<String> = BehaviorSubject.createDefault("")
+
 	val descriptionStream: BehaviorSubject<String> = BehaviorSubject.createDefault("")
-	val priceStream: BehaviorSubject<String> = BehaviorSubject.createDefault("")
-	val numBedroomsStream: BehaviorSubject<String> = BehaviorSubject.createDefault("")
+	val priceStream: BehaviorSubject<Int> = BehaviorSubject.createDefault(0)
+	val numBedroomsStream: BehaviorSubject<Int> = BehaviorSubject.createDefault(0)
 	val startDateStream: BehaviorSubject<String> = BehaviorSubject.createDefault("")
 	val endDateStream: BehaviorSubject<String> = BehaviorSubject.createDefault("")
-	val housingTypeStream: BehaviorSubject<HousingType> = BehaviorSubject.createDefault(HousingType.OTHER)
 
+	val imagesByteStream: BehaviorSubject<MutableList<List<Int>>> = BehaviorSubject.createDefault(ArrayList())
 
 	val uiStateStream: Observable<CreateListingPageUiState> = Observable.combineLatest(
-		addressStream,
+		addressLineStream,
+		addressCityStream,
+		addressPostalCodeStream,
 		descriptionStream,
 		priceStream,
 		numBedroomsStream,
 		startDateStream,
 		endDateStream,
-		housingTypeStream,
+		imagesByteStream
 	) {
-		address, description, price, numBedrooms, startDate, endDate, housingType ->
+			addressLine, addressCity, addressPostalCode, description, price, numBedrooms, startDate, endDate, images ->
 		CreateListingPageUiState.Loaded(
-			address = "",
-			description = "",
-			price = "",
-			numBedrooms = "",
-			startDate = "",
-			endDate = "",
+			addressLine = addressLine,
+			addressCity = addressCity,
+			addressPostalCode = addressPostalCode,
+			addressCountry = "Canada",
+			description = description,
+			price = price,
+			numBedrooms = numBedrooms,
+			startDate = startDate,
+			endDate = endDate,
 			housingType = HousingType.OTHER,
+			images = images,
 		)
 	}
 
 	val createListingStream: PublishSubject<CreateListingPageUiState.Loaded> = PublishSubject.create()
 
 	init {
+		disposables.add(
+			createListingStream.map {
+				val resp = runBlocking {
+					Log.d("FINALVAL", "${it.images[0][0]} ${it.images[0][1]} ${it.images[0][2]} ${it.images[0][3]}")
 
-
+					api.listingsImagesCreate(
+						it.images[0]
+					)
+//					api.listingsCreate(
+//						CreateListingRequest(
+//							addressLine = it.address,
+//							addressCity = "",
+//							addressPostalcode = "",
+//							addressCountry = "",
+//							price = it.price.toInt(),
+//							rooms = it.numBedrooms.toInt(),
+//							leaseStart = "",
+//							leaseEnd = "",
+//							description = "",
+//							residenceType = ResidenceType.house,
+//						)
+//					)
+				}
+			}
+//				.map {
+//					navHostController.popBackStack()
+//				}
+				.doOnError {
+					Log.d("meme", "I messed up")
+				}
+				.subscribeOn(Schedulers.io())
+				.onErrorResumeWith(Observable.never())
+				.subscribe()
+		)
 	}
 	override fun onCleared() {
 		super.onCleared()
@@ -62,9 +108,5 @@ class CreateListingPageViewModel @Inject constructor(
 			it.dispose()
 		}
 	}
-
-//	fun updateUiState(uiState: CreateListingPageUiState) {
-//		uiStateStream.onNext(uiState)
-//	}
 
 }

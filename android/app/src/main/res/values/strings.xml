@@ -107,6 +107,7 @@
     <string name="num_bedrooms"># of bedrooms</string>
     <string name="create_post">Create Post</string>
     <string name="upload_images">Upload Images</string>
+    <string name="address_format_label">Street Number, City, Postal Code</string>
     <string name="dollar_sign_n">$%d</string>
     <string name="short_for_all_date_range">%s – %s</string>
 </resources>
