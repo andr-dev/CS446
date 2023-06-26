@@ -102,12 +102,20 @@
     <string name="studio">Studio</string>
     <string name="basement">Basement</string>
     <string name="dorm">Dorm</string>
+    <string name="apartment">Apartment</string>
     <string name="create_new_listing">Create New Listing</string>
     <string name="address">Address</string>
     <string name="num_bedrooms"># of bedrooms</string>
     <string name="create_post">Create Post</string>
     <string name="upload_images">Upload Images</string>
     <string name="address_format_label">Street Number, City, Postal Code</string>
+    <string name="placeholder_date">mm/dd/yyyy</string>
+    <string name="done">Done</string>
+    <string name="close">Close</string>
+    <string name="lease_start_end_dates">Lease Start - End dates</string>
+    <string name="dash">-</string>
+    <string name="canada">Canada</string>
+    <string name="open_date_picker">Open date picker</string>
     <string name="dollar_sign_n">$%d</string>
     <string name="short_for_all_date_range">%s – %s</string>
 </resources>
