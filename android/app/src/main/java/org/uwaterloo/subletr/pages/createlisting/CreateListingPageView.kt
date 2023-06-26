@@ -85,6 +85,8 @@ import org.uwaterloo.subletr.theme.textFieldBorderColor
 import org.uwaterloo.subletr.theme.textOnSubletrPink
 import org.uwaterloo.subletr.utils.toBase64String
 import java.text.SimpleDateFormat
+import java.time.ZoneOffset
+import java.time.format.DateTimeFormatter
 import java.util.Date
 import java.util.Locale
 
@@ -102,6 +104,7 @@ fun CreateListingPageView(
 	val coroutineScope = rememberCoroutineScope()
 
 	val dateRangePickerState = rememberDateRangePickerState()
+	// TODO: change to streams and add to ViewModel and uiState
 	var startButtonText by remember { mutableStateOf("") }
 	var endButtonText by remember { mutableStateOf("") }
 
@@ -173,7 +176,6 @@ fun CreateListingPageView(
 				RoundedTextField(
 					modifier = Modifier
 						.fillMaxWidth()
-						.height(dimensionResource(id = R.dimen.xxl))
 						.border(
 							dimensionResource(id = R.dimen.xxxs),
 							textFieldBorderColor,
@@ -215,7 +217,6 @@ fun CreateListingPageView(
 				RoundedTextField(
 					modifier = Modifier
 						.fillMaxWidth()
-						.height(dimensionResource(id = R.dimen.xxl))
 						.border(
 							dimensionResource(id = R.dimen.xxxs),
 							textFieldBorderColor,
@@ -251,7 +252,6 @@ fun CreateListingPageView(
 				RoundedTextField(
 					modifier = Modifier
 						.fillMaxWidth()
-						.height(dimensionResource(id = R.dimen.xxl))
 						.border(
 							dimensionResource(id = R.dimen.xxxs),
 							textFieldBorderColor,
@@ -292,7 +292,6 @@ fun CreateListingPageView(
 					RoundedTextField(
 						modifier = Modifier
 							.fillMaxWidth(0.475f)
-							.height(dimensionResource(id = R.dimen.xxl))
 							.border(
 								dimensionResource(id = R.dimen.xxxs),
 								textFieldBorderColor,
@@ -334,7 +333,6 @@ fun CreateListingPageView(
 					RoundedTextField(
 						modifier = Modifier
 							.fillMaxWidth(0.475f / 0.525f)
-							.height(dimensionResource(id = R.dimen.xxl))
 							.border(
 								dimensionResource(id = R.dimen.xxxs),
 								textFieldBorderColor,
@@ -439,7 +437,8 @@ fun CreateListingPageView(
 									val startDate = SimpleDateFormat("MM/dd/yyyy").parse(startButtonText)
 									viewModel.startDateStream.onNext(
 										if (startDate is Date)
-											storeDateFormat.format(startDate)
+											startDate.toInstant().atOffset(ZoneOffset.UTC).format(
+												storeDateFormatISO)
 										else uiState.startDate)
 								} else {
 									startButtonText = ""
@@ -451,7 +450,8 @@ fun CreateListingPageView(
 									val endDate = SimpleDateFormat("MM/dd/yyyy").parse(endButtonText)
 									viewModel.endDateStream.onNext(
 										if (endDate is Date)
-											storeDateFormat.format(endDate)
+											endDate.toInstant().atOffset(ZoneOffset.UTC).format(
+												storeDateFormatISO)
 										else uiState.endDate)
 								} else {
 									endButtonText = ""
@@ -461,6 +461,7 @@ fun CreateListingPageView(
 						})
 				}
 
+				// TODO: move to ViewModel in a Schedules.computation thread
 				if (bitmap.value != null) {
 					val base64ImageString = bitmap.value!!.toBase64String()
 					val images = MutableList(1) { base64ImageString }
@@ -486,10 +487,12 @@ fun CreateListingPageView(
 	}
 }
 
-val storeDateFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss")
 
+private val storeDateFormatISO: DateTimeFormatter = DateTimeFormatter.ISO_LOCAL_DATE_TIME
+
+// TODO: localize date format
 @OptIn(ExperimentalMaterial3Api::class)
-val displayDateFormatter = DatePickerDefaults.dateFormatter(selectedDateSkeleton = "MM/dd/yyyy")
+private val displayDateFormatter = DatePickerDefaults.dateFormatter(selectedDateSkeleton = "MM/dd/yyyy")
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
