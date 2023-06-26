@@ -1,11 +1,12 @@
 package org.uwaterloo.subletr.pages.createlisting
 
-import android.annotation.SuppressLint
 import android.graphics.Bitmap
 import android.graphics.ImageDecoder
 import android.net.Uri
 import android.os.Build
 import android.provider.MediaStore
+import android.util.Base64
+import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
@@ -46,6 +47,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.rememberDateRangePickerState
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -81,9 +83,13 @@ import org.uwaterloo.subletr.theme.subletrPink
 import org.uwaterloo.subletr.theme.textFieldBackgroundColor
 import org.uwaterloo.subletr.theme.textFieldBorderColor
 import org.uwaterloo.subletr.theme.textOnSubletrPink
+import java.io.ByteArrayOutputStream
+import java.nio.ByteBuffer
+import java.nio.ByteOrder
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
+
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -104,8 +110,11 @@ fun CreateListingPageView(
 	var openBottomSheet by rememberSaveable { mutableStateOf(false) }
 	val bottomSheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
 
+	var addressStr by remember { mutableStateOf("") }
+
 	val numberPattern = remember { Regex("^\\d+\$") }
 
+	val bitmap =  remember { mutableStateOf<Bitmap?>(null) }
 
 	Scaffold(
 		modifier = modifier,
@@ -171,7 +180,7 @@ fun CreateListingPageView(
 						),
 					placeholder = {
 						Text(
-							text = stringResource(id = R.string.address),
+							text = stringResource(id = R.string.address_format_label),
 							color = secondaryTextColor,
 						)
 					},
@@ -181,20 +190,20 @@ fun CreateListingPageView(
 							color = secondaryTextColor,
 						)
 					},
-					value = uiState.address,
+					value = addressStr,
 					onValueChange = {
-						viewModel.addressStream.onNext(it)
-//						viewModel.updateUiState(
-//							CreateListingPageUiState.Loaded(
-//								address = it,
-//								description = uiState.description,
-//								price = uiState.price,
-//								numBedrooms = uiState.numBedrooms,
-//								startDate = uiState.startDate,
-//								endDate = uiState.endDate,
-//								housingType = uiState.housingType,
-//							)
-//						)
+						addressStr = it
+
+						val splitAddress = it.split(",").toTypedArray()
+						if (splitAddress.isNotEmpty()) {
+							viewModel.addressLineStream.onNext(splitAddress[0])
+						}
+						if (splitAddress.size >= 2) {
+							viewModel.addressCityStream.onNext(splitAddress[1])
+						}
+						if (splitAddress.size >= 3) {
+							viewModel.addressPostalCodeStream.onNext(splitAddress[2])
+						}
 					}
 				)
 
@@ -224,28 +233,13 @@ fun CreateListingPageView(
 						)
 					},
 					keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-					value = uiState.price,
+					value = if (uiState.price == 0) "" else "${uiState.price}",
 					onValueChange = {
-//						if (uiState.price == 0) "" else uiState.price.toString(),
-						viewModel.priceStream.onNext("")
-//						if (it.isEmpty()) {
-//							viewModel.priceStream.onNext(0)
-//						} else if (it.matches(numberPattern)) {
-//							viewModel.priceStream.onNext(it.toInt())
-//						} else {
-//							viewModel.priceStream.onNext(0)
-//						}
-//						viewModel.updateUiState(
-//							CreateListingPageUiState.Loaded(
-//								address = uiState.address,
-//								description = uiState.description,
-//								price = it,
-//								numBedrooms = uiState.numBedrooms,
-//								startDate = uiState.startDate,
-//								endDate = uiState.endDate,
-//								housingType = uiState.housingType,
-//							)
-//						)
+						if (it.isEmpty()) {
+							viewModel.priceStream.onNext(0)
+						} else if (it.matches(numberPattern)) {
+							viewModel.priceStream.onNext(it.toInt())
+						}
 					}
 				)
 
@@ -275,20 +269,14 @@ fun CreateListingPageView(
 							color = secondaryTextColor,
 						)
 					},
-					value = uiState.numBedrooms,
+					keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+					value = if (uiState.numBedrooms == 0) "" else uiState.numBedrooms.toString(),
 					onValueChange = {
-						viewModel.numBedroomsStream.onNext(it)
-//						viewModel.updateUiState(
-//							CreateListingPageUiState.Loaded(
-//								address = uiState.address,
-//								description = uiState.description,
-//								price = uiState.price,
-//								numBedrooms = it,
-//								startDate = uiState.startDate,
-//								endDate = uiState.endDate,
-//								housingType = uiState.housingType,
-//							)
-//						)
+						if (it.isEmpty()) {
+							viewModel.numBedroomsStream.onNext(0)
+						} else if (it.matches(numberPattern)) {
+							viewModel.numBedroomsStream.onNext(it.toInt())
+						}
 					}
 				)
 
@@ -416,94 +404,8 @@ fun CreateListingPageView(
 					value = uiState.description,
 					onValueChange = {
 						viewModel.descriptionStream.onNext(it)
-//						viewModel.updateUiState(
-//							CreateListingPageUiState.Loaded(
-//								address = uiState.address,
-//								description = it,
-//								price = uiState.price,
-//								numBedrooms = uiState.numBedrooms,
-//								startDate = uiState.startDate,
-//								endDate = uiState.endDate,
-//								housingType = uiState.housingType,
-//							)
-//						)
 					}
 				)
-
-				if (openBottomSheet) {
-					DatePickerBottomSheet(bottomSheetState, dateRangePickerState, onDismissRequest = { openBottomSheet = false },
-						onClick = {
-						coroutineScope.launch { bottomSheetState.hide() }.invokeOnCompletion {
-							if (!bottomSheetState.isVisible) {
-								openBottomSheet = false
-							}
-							if (dateRangePickerState.selectedStartDateMillis != null) {
-								startButtonText =
-									displayDateFormatter.formatDate(dateRangePickerState.selectedStartDateMillis, locale = Locale.getDefault())!!
-								val startDate = SimpleDateFormat("MM/dd/yyyy").parse(startButtonText)
-
-								viewModel.startDateStream.onNext(if (startDate is Date) storeDateFormat.format(startDate) else uiState.startDate)
-//								viewModel.updateUiState(
-//									CreateListingPageUiState.Loaded(
-//										address = uiState.address,
-//										description = uiState.description,
-//										price = uiState.price,
-//										numBedrooms = uiState.numBedrooms,
-//										startDate = if (startDate is Date) storeDateFormat.format(startDate) else uiState.startDate,
-//										endDate = uiState.endDate,
-//										housingType = uiState.housingType,
-//									)
-//								)
-							} else {
-								startButtonText = ""
-								viewModel.startDateStream.onNext("")
-//								viewModel.updateUiState(
-//									CreateListingPageUiState.Loaded(
-//										address = uiState.address,
-//										description = uiState.description,
-//										price = uiState.price,
-//										numBedrooms = uiState.numBedrooms,
-//										startDate = "",
-//										endDate = uiState.endDate,
-//										housingType = uiState.housingType,
-//									)
-//								)
-							}
-							if (dateRangePickerState.selectedEndDateMillis != null) {
-								endButtonText =
-									displayDateFormatter.formatDate(dateRangePickerState.selectedEndDateMillis, locale = Locale.getDefault())!!
-								val endDate = SimpleDateFormat("MM/dd/yyyy").parse(endButtonText)
-								viewModel.endDateStream.onNext(if (endDate is Date) storeDateFormat.format(endDate) else uiState.endDate)
-
-//								viewModel.updateUiState(
-//									CreateListingPageUiState.Loaded(
-//										address = uiState.address,
-//										description = uiState.description,
-//										price = uiState.price,
-//										numBedrooms = uiState.numBedrooms,
-//										startDate = uiState.startDate,
-//										endDate = if (endDate is Date) storeDateFormat.format(endDate) else uiState.endDate,
-//										housingType = uiState.housingType,
-//									)
-//								)
-							} else {
-								endButtonText = ""
-								viewModel.endDateStream.onNext("")
-//								viewModel.updateUiState(
-//									CreateListingPageUiState.Loaded(
-//										address = uiState.address,
-//										description = uiState.description,
-//										price = uiState.price,
-//										numBedrooms = uiState.numBedrooms,
-//										startDate = uiState.startDate,
-//										endDate = "",
-//										housingType = uiState.housingType,
-//									)
-//								)
-							}
-						}
-					})
-				}
 
 				Spacer(
 					modifier = Modifier.weight(weight = 2.0f)
@@ -518,11 +420,74 @@ fun CreateListingPageView(
 					modifier = Modifier.weight(weight = 1.0f)
 				)
 
-				UploadImages()
+				UploadImages(bitmap)
 
 				Spacer(
 					modifier = Modifier.weight(weight = 2.0f)
 				)
+
+				if (openBottomSheet) {
+					DatePickerBottomSheet(bottomSheetState, dateRangePickerState, onDismissRequest = { openBottomSheet = false },
+						onClick = {
+							coroutineScope.launch { bottomSheetState.hide() }.invokeOnCompletion {
+								if (!bottomSheetState.isVisible) {
+									openBottomSheet = false
+								}
+								if (dateRangePickerState.selectedStartDateMillis != null) {
+									startButtonText =
+										displayDateFormatter.formatDate(dateRangePickerState.selectedStartDateMillis, locale = Locale.getDefault())!!
+									val startDate = SimpleDateFormat("MM/dd/yyyy").parse(startButtonText)
+
+									viewModel.startDateStream.onNext(if (startDate is Date) storeDateFormat.format(startDate) else uiState.startDate)
+								} else {
+									startButtonText = ""
+									viewModel.startDateStream.onNext("")
+								}
+								if (dateRangePickerState.selectedEndDateMillis != null) {
+									endButtonText =
+										displayDateFormatter.formatDate(dateRangePickerState.selectedEndDateMillis, locale = Locale.getDefault())!!
+									val endDate = SimpleDateFormat("MM/dd/yyyy").parse(endButtonText)
+									viewModel.endDateStream.onNext(if (endDate is Date) storeDateFormat.format(endDate) else uiState.endDate)
+								} else {
+									endButtonText = ""
+									viewModel.endDateStream.onNext("")
+								}
+							}
+						})
+				}
+
+				if (bitmap.value != null) {
+					val btm = bitmap.value
+
+//					val byteArrayOutputStream = ByteArrayOutputStream()
+//					btm!!.compress(Bitmap.CompressFormat.PNG, 100, byteArrayOutputStream)
+//					val byteArray = byteArrayOutputStream.toByteArray()
+//					val encoded: String = Base64.encodeToString(byteArray, Base64.DEFAULT)
+
+
+//					val bitmap = (image.getDrawable() as BitmapDrawable).getBitmap()
+					val stream = ByteArrayOutputStream()
+					btm!!.compress(Bitmap.CompressFormat.PNG, 100, stream)
+
+
+
+					val imageByteArray = stream.toByteArray()
+//					Log.d("BYTE ARRAY", "${imageByteArray[0]} ${imageByteArray[1]} ${imageByteArray[2]} ${imageByteArray[3]} ${imageByteArray[4]}")
+
+					val intBuffer = ByteBuffer.wrap(imageByteArray).order(ByteOrder.LITTLE_ENDIAN).asIntBuffer()
+					val imageIntArray = IntArray(intBuffer.remaining())
+					intBuffer.get(imageIntArray)
+
+//					Log.d("INT ARRAY", "${imageIntArray[0]} ${imageIntArray[1]} ${imageIntArray[2]} ${imageIntArray[3]} ${imageIntArray[4]}")
+
+
+//					Log.d("INT ARRAY SIZE", imageIntArray.size.toString())
+
+
+					val images = MutableList<List<Int>>(1) { imageIntArray.toList() }
+					viewModel.imagesByteStream.onNext(images)
+//					Log.d("FINALVAL", "${viewModel.imagesByteStream.value!![0][0]} ${viewModel.imagesByteStream.value!![0][1]} ${viewModel.imagesByteStream.value!![0][2]} ${viewModel.imagesByteStream.value!![0][3]}")
+				}
 
 				PrimaryButton(
 					modifier = Modifier
@@ -530,7 +495,6 @@ fun CreateListingPageView(
 						.height(60.dp)
 						.padding(bottom = 10.dp),
 					onClick = {
-					  /* TODO */
 						viewModel.createListingStream.onNext(uiState)
 					},
 				) {
@@ -551,82 +515,6 @@ val storeDateFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm")
 
 @OptIn(ExperimentalMaterial3Api::class)
 val displayDateFormatter = DatePickerDefaults.dateFormatter(selectedDateSkeleton = "MM/dd/yyyy")
-
-@Composable
-fun UploadImages() {
-	var imageUri by remember {
-		mutableStateOf<Uri?>(null)
-	}
-	val context = LocalContext.current
-	val bitmap =  remember {
-		mutableStateOf<Bitmap?>(null)
-	}
-
-	val launcher = rememberLauncherForActivityResult(contract =
-	ActivityResultContracts.GetContent()) { uri: Uri? ->
-		imageUri = uri
-	}
-	Row(
-		modifier = Modifier.fillMaxWidth(),
-		verticalAlignment = Alignment.CenterVertically,
-	) {
-		Button(
-			modifier = Modifier
-				.height(150.dp)
-				.width(150.dp)
-				.border(
-					2.dp,
-					textFieldBorderColor,
-					RoundedCornerShape(dimensionResource(id = R.dimen.s))
-				),
-			shape = RoundedCornerShape(dimensionResource(id = R.dimen.s)),
-			onClick = {
-				launcher.launch("image/*")
-			},
-			colors = ButtonDefaults.buttonColors(
-				containerColor = textFieldBackgroundColor,
-				contentColor = Color(0xFF808080)
-
-			),
-		) {
-			Icon(
-				painter = painterResource(
-					id = R.drawable.add_photo_solid_gray_24
-				),
-				contentDescription = stringResource(id = R.string.back_arrow),
-			)
-		}
-
-		Spacer(modifier = Modifier.width(12.dp))
-
-		imageUri?.let {
-			if (Build.VERSION.SDK_INT < 28) {
-				bitmap.value = MediaStore.Images
-					.Media.getBitmap(context.contentResolver,it)
-
-			} else {
-				val source = ImageDecoder
-					.createSource(context.contentResolver,it)
-				bitmap.value = ImageDecoder.decodeBitmap(source)
-			}
-
-			bitmap.value?.let {  btm ->
-				Image(bitmap = btm.asImageBitmap(),
-					contentDescription = null,
-					modifier = Modifier
-						.size(150.dp)
-						.border(
-							2.dp,
-							textFieldBorderColor,
-							RoundedCornerShape(dimensionResource(id = R.dimen.s))
-						)
-						.clip(RoundedCornerShape(dimensionResource(id = R.dimen.s))),
-					contentScale = ContentScale.FillBounds)
-			}
-		}
-
-	}
-}
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -732,6 +620,78 @@ fun LeaseDatePicker(state: DateRangePickerState, onClick: () -> Unit) {
 	}
 }
 
+@Composable
+fun UploadImages(bitmap: MutableState<Bitmap?>) {
+	var imageUri by remember {
+		mutableStateOf<Uri?>(null)
+	}
+	val context = LocalContext.current
+
+	val launcher = rememberLauncherForActivityResult(contract =
+	ActivityResultContracts.GetContent()) { uri: Uri? ->
+		imageUri = uri
+	}
+	Row(
+		modifier = Modifier.fillMaxWidth(),
+		verticalAlignment = Alignment.CenterVertically,
+	) {
+		Button(
+			modifier = Modifier
+				.size(120.dp)
+				.border(
+					2.dp,
+					textFieldBorderColor,
+					RoundedCornerShape(dimensionResource(id = R.dimen.s))
+				),
+			shape = RoundedCornerShape(dimensionResource(id = R.dimen.s)),
+			onClick = {
+				launcher.launch("image/*")
+			},
+			colors = ButtonDefaults.buttonColors(
+				containerColor = textFieldBackgroundColor,
+				contentColor = Color(0xFF808080)
+
+			),
+		) {
+			Icon(
+				painter = painterResource(
+					id = R.drawable.add_photo_solid_gray_24
+				),
+				contentDescription = stringResource(id = R.string.upload_images),
+			)
+		}
+
+		Spacer(modifier = Modifier.width(12.dp))
+
+		imageUri?.let {
+			if (Build.VERSION.SDK_INT < 28) {
+				bitmap.value = MediaStore.Images
+					.Media.getBitmap(context.contentResolver,it)
+
+			} else {
+				val source = ImageDecoder
+					.createSource(context.contentResolver,it)
+				bitmap.value = ImageDecoder.decodeBitmap(source)
+			}
+
+			bitmap.value?.let {  btm ->
+				Image(bitmap = btm.asImageBitmap(),
+					contentDescription = null,
+					modifier = Modifier
+						.size(120.dp)
+						.border(
+							2.dp,
+							textFieldBorderColor,
+							RoundedCornerShape(dimensionResource(id = R.dimen.s))
+						)
+						.clip(RoundedCornerShape(dimensionResource(id = R.dimen.s))),
+					contentScale = ContentScale.FillBounds)
+			}
+		}
+
+	}
+}
+
 @Preview(showBackground = true)
 @Composable
 fun CreateListingPagePreview() {
@@ -744,13 +704,17 @@ fun CreateListingPageLoadedPreview() {
 	SubletrTheme {
 		CreateListingPageView(
 			uiState = CreateListingPageUiState.Loaded(
-				address = "",
+				addressLine = "",
+				addressCity = "",
+				addressPostalCode = "",
+				addressCountry = "Canada",
 				description = "",
-				price = "",
-				numBedrooms = "",
+				price = 0,
+				numBedrooms = 0,
 				startDate = "",
 				endDate = "",
 				housingType = HousingType.OTHER,
+				images = ArrayList()
 			)
 		)
 	}
