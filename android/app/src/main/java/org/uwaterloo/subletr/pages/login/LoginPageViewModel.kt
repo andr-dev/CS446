@@ -50,27 +50,29 @@ class LoginPageViewModel @Inject constructor(
 	init {
 		disposables.add(
 			loginStream.map {
-				runBlocking {
-					api.authLogin(
-						UserLoginRequest(
-							email = it.email,
-							password = it.password,
+				runCatching {
+					runBlocking {
+						api.authLogin(
+							UserLoginRequest(
+								email = it.email,
+								password = it.password,
+							)
 						)
-					)
+					}
 				}
+					.onSuccess {
+						authenticationService.setAccessToken(it.token)
+						navHostController.navigate(NavigationDestination.HOME.rootNavPath)
+					}
+					.onFailure {
+						infoTextStringIdStream.onNext(
+							Optional.of(R.string.invalid_login_credentials_try_again)
+						)
+						authenticationService.deleteAccessToken()
+					}
 			}
-				.map {
-					authenticationService.setAccessToken(it.token)
-					navHostController.navigate(NavigationDestination.HOME.rootNavPath)
-				}
-				.doOnError {
-					infoTextStringIdStream.onNext(
-						Optional.of(R.string.invalid_login_credentials_try_again)
-					)
-					authenticationService.deleteAccessToken()
-				}
-				.subscribeOn(Schedulers.io())
 				.onErrorResumeWith(Observable.never())
+				.subscribeOn(Schedulers.io())
 				.subscribe()
 		)
 	}

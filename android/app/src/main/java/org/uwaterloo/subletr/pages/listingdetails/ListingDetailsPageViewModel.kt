@@ -1,8 +1,6 @@
 package org.uwaterloo.subletr.pages.listingdetails
 
 import android.graphics.Bitmap
-import android.graphics.BitmapFactory
-import android.util.Base64
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -27,24 +25,39 @@ class ListingDetailsPageViewModel @Inject constructor(
 		BehaviorSubject.createDefault(checkNotNull(savedStateHandle["listingId"]))
 	private val imageIdsStream: BehaviorSubject<List<String>> = BehaviorSubject.createDefault(emptyList())
 	val favouritedStream: BehaviorSubject<Boolean> = BehaviorSubject.createDefault(false)
-	private val listingDetailsStream: Observable<ListingDetails> = listingIdStream.map {
-		runBlocking {
-			val listing = defaultApi.listingsDetails(it)
-			favouritedStream.onNext(listing.favourited)
-			imageIdsStream.onNext(listing.details.imgIds)
-			listing.details
-		}
-	}
-		.subscribeOn(Schedulers.io())
-	private val imagesStream: Observable<List<Bitmap>> = imageIdsStream.map {
-		runBlocking {
-			it.map { id ->
-				val encodedImage = defaultApi.listingsImagesGet(id)
-				encodedImage.base64ToBitmap()
+	private val listingDetailsStream: Observable<Result<ListingDetails>> = listingIdStream.map {
+		runCatching {
+			runBlocking {
+				val listing = defaultApi.listingsDetails(it)
+				favouritedStream.onNext(listing.favourited)
+				imageIdsStream.onNext(listing.details.imgIds)
+				listing.details
 			}
 		}
 	}
-		.subscribeOn(Schedulers.computation())
+		.onErrorResumeWith(Observable.never())
+		.subscribeOn(Schedulers.io())
+
+	private val imagesStream: Observable<List<Bitmap>> = imageIdsStream.map {
+		runCatching {
+			runBlocking {
+				it.map { id ->
+					defaultApi.listingsImagesGet(id)
+				}
+			}
+		}
+	}
+		.filter { it.isSuccess }
+		.map {
+			it.getOrDefault(emptyList())
+		}
+		.subscribeOn(Schedulers.io())
+		.observeOn(Schedulers.computation())
+		.map { base64ImageList ->
+			base64ImageList.map { it.base64ToBitmap() }
+		}
+		.observeOn(Schedulers.io())
+		.onErrorResumeWith(Observable.never())
 
 	val uiStateStream: Observable<ListingDetailsPageUiState> = Observable.combineLatest(
 		listingDetailsStream,
@@ -52,10 +65,13 @@ class ListingDetailsPageViewModel @Inject constructor(
 		imagesStream,
 	) {
 		listingDetails, favourited, images ->
-			ListingDetailsPageUiState.Loaded(
-				listingDetails = listingDetails,
-				favourited = favourited,
-				images = images,
-			)
+			listingDetails.getOrNull()?.let {
+				return@combineLatest ListingDetailsPageUiState.Loaded(
+					it,
+					favourited,
+					images,
+				)
+			}
+		return@combineLatest ListingDetailsPageUiState.Loading
 	}
 }

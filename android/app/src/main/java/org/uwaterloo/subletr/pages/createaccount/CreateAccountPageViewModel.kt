@@ -81,38 +81,38 @@ class CreateAccountPageViewModel @Inject constructor(
 		)
 	}
 
-	val verifyUserInfoStream: PublishSubject<CreateAccountPageUiState.Loaded> = PublishSubject.create()
+	val createAccountStream: PublishSubject<CreateAccountPageUiState.Loaded> = PublishSubject.create()
 
 	init {
 		disposables.add(
-			verifyUserInfoStream.map {
+			createAccountStream.map { uiState ->
 				var validInput = true
 
-				if (it.firstName.isBlank()) {
+				if (uiState.firstName.isBlank()) {
 					firstNameInfoTextStringIdStream.onNext(Optional.of(R.string.first_name_blank_error))
 					validInput = false
 				} else {
 					firstNameInfoTextStringIdStream.onNext(Optional.empty())
 				}
-				if (it.lastName.isBlank()) {
+				if (uiState.lastName.isBlank()) {
 					lastNameInfoTextStringIdStream.onNext(Optional.of(R.string.last_name_blank_error))
 					validInput = false
 				} else {
 					lastNameInfoTextStringIdStream.onNext(Optional.empty())
 				}
-				if (it.email.isBlank() || !Patterns.EMAIL_ADDRESS.matcher(it.email).matches()) {
+				if (uiState.email.isBlank() || !Patterns.EMAIL_ADDRESS.matcher(uiState.email).matches()) {
 					emailInfoTextStringIdStream.onNext(Optional.of(R.string.email_format_error))
 					validInput = false
 				} else {
 					emailInfoTextStringIdStream.onNext(Optional.empty())
 				}
-				if (it.password.isBlank()) {
+				if (uiState.password.isBlank()) {
 					passwordInfoTextStringIdStream.onNext(Optional.of(R.string.password_blank_error))
 					validInput = false
 				} else {
 					passwordInfoTextStringIdStream.onNext(Optional.empty())
 				}
-				if (it.password != it.confirmPassword) {
+				if (uiState.password != uiState.confirmPassword) {
 					confirmPasswordInfoTextStringIdStream.onNext(Optional.of(R.string.password_not_match_error))
 					validInput = false
 				} else {
@@ -120,21 +120,27 @@ class CreateAccountPageViewModel @Inject constructor(
 				}
 
 				if (validInput) {
-					runBlocking {
-						defaultApi.userCreate(
-							CreateUserRequest(
-								firstName = it.firstName,
-								lastName = it.lastName,
-								email = it.email,
-								gender = it.gender.name,
-								password = it.password,
+					runCatching {
+						runBlocking {
+							defaultApi.userCreate(
+								CreateUserRequest(
+									firstName = uiState.firstName,
+									lastName = uiState.lastName,
+									email = uiState.email,
+									gender = uiState.gender.name,
+									password = uiState.password,
+								)
 							)
-						)
-					}.apply {
-						navHostController.navigate(
-							route = "${NavigationDestination.VERIFY_EMAIL.rootNavPath}/${this.userId}"
-						)
+						}
 					}
+						.onSuccess {
+							navHostController.navigate(
+								route = "${NavigationDestination.VERIFY_EMAIL.rootNavPath}/${it.userId}"
+							)
+						}
+						.onFailure {
+							// TODO: Do something
+						}
 				}
 			}
 				.subscribeOn(Schedulers.io())

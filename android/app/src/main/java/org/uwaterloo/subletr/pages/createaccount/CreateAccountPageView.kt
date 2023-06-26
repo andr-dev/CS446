@@ -261,7 +261,7 @@ fun CreateAccountPageView(
 					.fillMaxWidth(ELEMENT_WIDTH)
 					.height(dimensionResource(id = R.dimen.xl)),
 				onClick = {
-					viewModel.verifyUserInfoStream.onNext(uiState)
+					viewModel.createAccountStream.onNext(uiState)
 				},
 			) {
 				Text(
