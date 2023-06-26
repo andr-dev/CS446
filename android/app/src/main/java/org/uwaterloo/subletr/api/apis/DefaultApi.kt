@@ -25,6 +25,7 @@ import org.uwaterloo.subletr.api.models.CreateUserRequest
 import org.uwaterloo.subletr.api.models.CreateUserResponse
 import org.uwaterloo.subletr.api.models.GetListingDetailsResponse
 import org.uwaterloo.subletr.api.models.GetListingsResponse
+import org.uwaterloo.subletr.api.models.ListingsImagesCreateRequest
 import org.uwaterloo.subletr.api.models.ListingsImagesCreateResponse
 import org.uwaterloo.subletr.api.models.UserLoginRequest
 import org.uwaterloo.subletr.api.models.UserLoginResponse
@@ -276,7 +277,7 @@ class DefaultApi(basePath: kotlin.String = defaultBasePath, client: OkHttpClient
     /**
      * 
      * 
-     * @param requestBody 
+     * @param listingsImagesCreateRequest 
      * @return ListingsImagesCreateResponse
      * @throws IllegalStateException If the request is not correctly configured
      * @throws IOException Rethrows the OkHttp execute method exception
@@ -286,8 +287,8 @@ class DefaultApi(basePath: kotlin.String = defaultBasePath, client: OkHttpClient
      */
     @Suppress("UNCHECKED_CAST")
     @Throws(IllegalStateException::class, IOException::class, UnsupportedOperationException::class, ClientException::class, ServerException::class)
-    suspend fun listingsImagesCreate(requestBody: kotlin.collections.List<kotlin.Int>) : ListingsImagesCreateResponse = withContext(Dispatchers.IO) {
-        val localVarResponse = listingsImagesCreateWithHttpInfo(requestBody = requestBody)
+    suspend fun listingsImagesCreate(listingsImagesCreateRequest: ListingsImagesCreateRequest) : ListingsImagesCreateResponse = withContext(Dispatchers.IO) {
+        val localVarResponse = listingsImagesCreateWithHttpInfo(listingsImagesCreateRequest = listingsImagesCreateRequest)
 
         return@withContext when (localVarResponse.responseType) {
             ResponseType.Success -> (localVarResponse as Success<*>).data as ListingsImagesCreateResponse
@@ -307,17 +308,17 @@ class DefaultApi(basePath: kotlin.String = defaultBasePath, client: OkHttpClient
     /**
      * 
      * 
-     * @param requestBody 
+     * @param listingsImagesCreateRequest 
      * @return ApiResponse<ListingsImagesCreateResponse?>
      * @throws IllegalStateException If the request is not correctly configured
      * @throws IOException Rethrows the OkHttp execute method exception
      */
     @Suppress("UNCHECKED_CAST")
     @Throws(IllegalStateException::class, IOException::class)
-    suspend fun listingsImagesCreateWithHttpInfo(requestBody: kotlin.collections.List<kotlin.Int>) : ApiResponse<ListingsImagesCreateResponse?> = withContext(Dispatchers.IO) {
-        val localVariableConfig = listingsImagesCreateRequestConfig(requestBody = requestBody)
+    suspend fun listingsImagesCreateWithHttpInfo(listingsImagesCreateRequest: ListingsImagesCreateRequest) : ApiResponse<ListingsImagesCreateResponse?> = withContext(Dispatchers.IO) {
+        val localVariableConfig = listingsImagesCreateRequestConfig(listingsImagesCreateRequest = listingsImagesCreateRequest)
 
-        return@withContext request<kotlin.collections.List<kotlin.Int>, ListingsImagesCreateResponse>(
+        return@withContext request<ListingsImagesCreateRequest, ListingsImagesCreateResponse>(
             localVariableConfig
         )
     }
@@ -325,13 +326,14 @@ class DefaultApi(basePath: kotlin.String = defaultBasePath, client: OkHttpClient
     /**
      * To obtain the request config of the operation listingsImagesCreate
      *
-     * @param requestBody 
+     * @param listingsImagesCreateRequest 
      * @return RequestConfig
      */
-    fun listingsImagesCreateRequestConfig(requestBody: kotlin.collections.List<kotlin.Int>) : RequestConfig<kotlin.collections.List<kotlin.Int>> {
-        val localVariableBody = requestBody
+    fun listingsImagesCreateRequestConfig(listingsImagesCreateRequest: ListingsImagesCreateRequest) : RequestConfig<ListingsImagesCreateRequest> {
+        val localVariableBody = listingsImagesCreateRequest
         val localVariableQuery: MultiValueMap = mutableMapOf()
         val localVariableHeaders: MutableMap<String, String> = mutableMapOf()
+        localVariableHeaders["Content-Type"] = "application/json"
         localVariableHeaders["Accept"] = "application/json"
 
         return RequestConfig(
