@@ -11,7 +11,7 @@ use crate::{
     state::AppState,
 };
 
-#[openapi]
+#[openapi(tag = "Authentication")]
 #[post("/login", format = "json", data = "<login_request>")]
 fn auth_login(state: &State<AppState>, login_request: Json<UserLoginRequest>) -> ServiceResult<UserLoginResponse> {
     let mut dbcon = state.pool.get()?;

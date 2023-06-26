@@ -12,13 +12,13 @@ mod token;
 mod user;
 mod utils;
 
-#[openapi]
+#[openapi(tag = "Server")]
 #[get("/ping")]
 fn ping() -> Json<&'static str> {
     Json("pong")
 }
 
-#[openapi]
+#[openapi(tag = "Server")]
 #[get("/time")]
 fn time() -> ServiceResult<i64> {
     Ok(Json(Utc::now().timestamp_millis()))
@@ -36,8 +36,8 @@ pub fn rocket() -> Rocket<Build> {
 
         "" => openapi_get_routes_spec![ping, time],
         "/auth" => auth::routes(),
-        "/user" => user::routes(),
         "/listings" => listings::routes(),
+        "/user" => user::routes(),
     };
 
     rocket_builder

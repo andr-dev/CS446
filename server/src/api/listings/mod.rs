@@ -36,7 +36,7 @@ use crate::{
     state::AppState,
 };
 
-#[openapi]
+#[openapi(tag = "Listings")]
 #[post("/create", format = "json", data = "<listing_request>")]
 fn listings_create(
     state: &State<AppState>,
@@ -69,7 +69,7 @@ fn listings_create(
     Ok(Json(CreateListingResponse { listing_id }))
 }
 
-#[openapi]
+#[openapi(tag = "Listings")]
 #[get("/list?<listings_request..>")]
 fn listings_list(state: &State<AppState>, listings_request: GetListingsRequest) -> ServiceResult<GetListingsResponse> {
     let mut dbcon = state.pool.get()?;
@@ -90,7 +90,7 @@ fn listings_list(state: &State<AppState>, listings_request: GetListingsRequest) 
     }))
 }
 
-#[openapi]
+#[openapi(tag = "Listings")]
 #[get("/details?<details_request..>")]
 fn listings_details(
     state: &State<AppState>,
@@ -118,9 +118,9 @@ fn listings_details(
 pub fn routes() -> (Vec<Route>, OpenApi) {
     openapi_get_routes_spec![
         listings_create,
-        listings_list,
         listings_details,
         listings_images_get,
-        listings_images_create
+        listings_images_create,
+        listings_list,
     ]
 }
