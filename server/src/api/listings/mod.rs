@@ -84,7 +84,14 @@ fn listings_list(state: &State<AppState>, listings_request: GetListingsRequest) 
     Ok(Json(GetListingsResponse {
         listings: fetched_listings
             .into_iter()
-            .map(|l| l.try_into())
+            .flat_map(|l| {
+                listings_images::dsl::listings_images
+                    .filter(listings_images::listing_id.eq(l.listing_id))
+                    .load::<ListingImage>(&mut dbcon)
+                    .map(|listing_images| {
+                        ListingSummary::try_from_db(l, listing_images.into_iter().map(|li| li.image_id).collect())
+                    })
+            })
             .collect::<Result<Vec<ListingSummary>, ServiceError>>()?,
         liked: HashSet::default(),
     }))
