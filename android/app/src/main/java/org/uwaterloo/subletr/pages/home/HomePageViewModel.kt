@@ -1,5 +1,6 @@
 package org.uwaterloo.subletr.pages.home
 
+import android.graphics.Bitmap
 import androidx.lifecycle.ViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.reactivex.rxjava3.core.Observable
@@ -14,6 +15,7 @@ import org.uwaterloo.subletr.enums.PriceRange
 import org.uwaterloo.subletr.enums.RoomRange
 import org.uwaterloo.subletr.navigation.NavigationDestination
 import org.uwaterloo.subletr.services.INavigationService
+import org.uwaterloo.subletr.utils.base64ToBitmap
 import java.util.Optional
 import javax.inject.Inject
 import kotlin.jvm.optionals.getOrNull
@@ -75,19 +77,64 @@ class HomePageViewModel @Inject constructor(
 		.onErrorResumeWith(Observable.never())
 		.subscribeOn(Schedulers.io())
 
+	private val imagesStream: Observable<List<Bitmap>> = filterStream.map {
+		runCatching {
+			runBlocking {
+				// TODO: Change to use filter values
+				api.listingsList(
+					priceMin = null,
+					priceMax = null,
+					roomsMin = null,
+					roomsMax = null,
+				).listings.map { l ->
+					api.listingsImagesGet(l.imgIds[0])
+				}
+
+			}
+		}
+	}
+		.filter { it.isSuccess }
+		.map {
+			it.getOrDefault(emptyList())
+		}
+		.subscribeOn(Schedulers.io())
+		.observeOn(Schedulers.computation())
+		.map { base64ImageList ->
+			base64ImageList.map { it.base64ToBitmap() }
+		}
+		.observeOn(Schedulers.io())
+		.onErrorResumeWith(Observable.never())
+
 	val uiStateStream: Observable<HomePageUiState> = Observable.combineLatest(
 		locationRangeFilterStream,
 		priceRangeFilterStream,
 		roomRangeFilterStream,
 		listingsStream,
+		imagesStream,
 		infoTextStringIdStream,
-	) { locationRange, priceRange, roomRange, listings, infoTextStringId ->
-		listings.onSuccess {
+	) { locationRange, priceRange, roomRange, listings, listingsImages, infoTextStringId ->
+		listings.onSuccess { listingsResponse ->
+			val images = listingsResponse.listings.map { listing ->
+				runCatching {
+					runBlocking {
+						api.listingsImagesGet(listing.imgIds[0])
+					}
+				}
+			}
+				.filter { it.isSuccess }
+				.map {
+					it.getOrDefault("")
+				}
+				.map { base64Image ->
+					base64Image.base64ToBitmap()
+				}
+
 			return@combineLatest HomePageUiState.Loaded(
 				locationRange = locationRange,
 				priceRange = priceRange,
 				roomRange = roomRange,
-				listings = it,
+				listings = listingsResponse,
+				listingsImages = images,
 				infoTextStringId = infoTextStringId.getOrNull()
 			)
 		}

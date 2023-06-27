@@ -1,5 +1,6 @@
 package org.uwaterloo.subletr.pages.home
 
+import android.graphics.Bitmap
 import androidx.annotation.StringRes
 import org.uwaterloo.subletr.api.models.GetListingsResponse
 import org.uwaterloo.subletr.enums.LocationRange
@@ -14,6 +15,7 @@ sealed interface HomePageUiState {
 		val priceRange: PriceRange,
 		val roomRange: RoomRange,
 		val listings: GetListingsResponse,
+		val listingsImages: List<Bitmap>,
 		@StringRes val infoTextStringId: Int?,
 	) : HomePageUiState
 }
