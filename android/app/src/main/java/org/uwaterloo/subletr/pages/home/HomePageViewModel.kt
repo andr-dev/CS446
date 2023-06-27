@@ -77,22 +77,25 @@ class HomePageViewModel @Inject constructor(
 		.onErrorResumeWith(Observable.never())
 		.subscribeOn(Schedulers.io())
 
-	private val imagesStream: Observable<List<Bitmap>> = filterStream.map {
-		runCatching {
-			runBlocking {
-				// TODO: Change to use filter values
-				api.listingsList(
-					priceMin = null,
-					priceMax = null,
-					roomsMin = null,
-					roomsMax = null,
-				).listings.map { l ->
-					api.listingsImagesGet(l.imgIds[0])
+	// TODO: parallelize this to decrease loading time
+	private val imagesStream: Observable<List<Bitmap>> = listingsStream
+		.map {
+			it.getOrDefault(
+				GetListingsResponse(
+					listings = emptyList(),
+					liked = emptySet(),
+				)
+			)
+		}
+		.map {
+			runCatching {
+				runBlocking {
+					it.listings.map { l ->
+						api.listingsImagesGet(l.imgIds[0])
+					}
 				}
-
 			}
 		}
-	}
 		.filter { it.isSuccess }
 		.map {
 			it.getOrDefault(emptyList())
@@ -113,28 +116,13 @@ class HomePageViewModel @Inject constructor(
 		imagesStream,
 		infoTextStringIdStream,
 	) { locationRange, priceRange, roomRange, listings, listingsImages, infoTextStringId ->
-		listings.onSuccess { listingsResponse ->
-			val images = listingsResponse.listings.map { listing ->
-				runCatching {
-					runBlocking {
-						api.listingsImagesGet(listing.imgIds[0])
-					}
-				}
-			}
-				.filter { it.isSuccess }
-				.map {
-					it.getOrDefault("")
-				}
-				.map { base64Image ->
-					base64Image.base64ToBitmap()
-				}
-
+		listings.onSuccess {
 			return@combineLatest HomePageUiState.Loaded(
 				locationRange = locationRange,
 				priceRange = priceRange,
 				roomRange = roomRange,
-				listings = listingsResponse,
-				listingsImages = images,
+				listings = it,
+				listingsImages = listingsImages,
 				infoTextStringId = infoTextStringId.getOrNull()
 			)
 		}
