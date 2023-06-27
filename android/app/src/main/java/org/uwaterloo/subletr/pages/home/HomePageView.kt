@@ -1,5 +1,6 @@
 package org.uwaterloo.subletr.pages.home
 
+import android.graphics.Bitmap
 import androidx.annotation.StringRes
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
@@ -50,6 +51,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
@@ -217,8 +219,10 @@ fun HomePageView(
 					}
 					items(uiState.listings.listings.size) {
 						val listingSummary = uiState.listings.listings[it]
+						val listingImage = uiState.listingsImages[it]
 						ListingPost(
 							listingSummary = listingSummary,
+							listingImage = listingImage,
 							detailsNavigation = {
 								viewModel.navHostController.navigate(
 									route = "${NavigationDestination.LISTING_DETAILS.rootNavPath}/${listingSummary.listingId}"
@@ -263,6 +267,7 @@ fun dateTimeFormater(offsetDateTime: OffsetDateTime): String {
 fun ListingPost(
 	modifier: Modifier = Modifier,
 	listingSummary: ListingSummary,
+	listingImage: Bitmap,
 	detailsNavigation: () -> Unit,
 ) {
 	Box(
@@ -297,9 +302,9 @@ fun ListingPost(
 					modifier = Modifier
 						.height(dimensionResource(id = R.dimen.xxxl))
 						.width(dimensionResource(id = R.dimen.xxxl)),
-					painter = painterResource(id = R.drawable.room),
-					contentDescription = stringResource(id = R.string.room),
-					contentScale = ContentScale.Crop
+					bitmap = listingImage.asImageBitmap(),
+					contentDescription = stringResource(id = R.string.listing_image),
+					contentScale = ContentScale.Crop,
 				)
 				Spacer(modifier = Modifier.width(dimensionResource(id = R.dimen.s)))
 				Column(
@@ -656,6 +661,7 @@ fun LoginPageViewLoadedPreview() {
 				priceRange = PriceRange.NOFILTER,
 				roomRange = RoomRange.NOFILTER,
 				listings = GetListingsResponse(listOf(), setOf()),
+				listingsImages = emptyList(),
 				infoTextStringId = null,
 			),
 		)
