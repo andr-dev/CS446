@@ -7,6 +7,8 @@ import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.disposables.Disposable
 import io.reactivex.rxjava3.schedulers.Schedulers
 import io.reactivex.rxjava3.subjects.BehaviorSubject
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.runBlocking
 import org.uwaterloo.subletr.api.apis.DefaultApi
 import org.uwaterloo.subletr.api.models.GetListingsResponse
@@ -77,7 +79,6 @@ class HomePageViewModel @Inject constructor(
 		.onErrorResumeWith(Observable.never())
 		.subscribeOn(Schedulers.io())
 
-	// TODO: parallelize this to decrease loading time
 	private val imagesStream: Observable<List<Bitmap>> = listingsStream
 		.map {
 			it.getOrDefault(
@@ -90,13 +91,15 @@ class HomePageViewModel @Inject constructor(
 		.map {
 			runCatching {
 				runBlocking {
-					it.listings.map { l ->
-						api.listingsImagesGet(l.imgIds[0])
-					}
+					it.listings
+						.map { l ->
+							async {
+								api.listingsImagesGet(l.imgIds.first())
+							}
+						}.awaitAll()
 				}
 			}
 		}
-		.filter { it.isSuccess }
 		.map {
 			it.getOrDefault(emptyList())
 		}

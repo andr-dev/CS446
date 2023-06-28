@@ -7,6 +7,8 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.schedulers.Schedulers
 import io.reactivex.rxjava3.subjects.BehaviorSubject
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.runBlocking
 import org.uwaterloo.subletr.api.apis.DefaultApi
 import org.uwaterloo.subletr.api.models.ListingDetails
@@ -42,8 +44,10 @@ class ListingDetailsPageViewModel @Inject constructor(
 		runCatching {
 			runBlocking {
 				it.map { id ->
-					defaultApi.listingsImagesGet(id)
-				}
+					async {
+						defaultApi.listingsImagesGet(id)
+					}
+				}.awaitAll()
 			}
 		}
 	}
