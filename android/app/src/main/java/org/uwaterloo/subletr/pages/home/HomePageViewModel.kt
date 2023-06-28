@@ -2,6 +2,7 @@ package org.uwaterloo.subletr.pages.home
 
 import android.graphics.Bitmap
 import androidx.lifecycle.ViewModel
+import androidx.navigation.navOptions
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.disposables.Disposable
@@ -70,15 +71,19 @@ class HomePageViewModel @Inject constructor(
 					roomsMax = null,
 				)
 			}
+		}.onFailure {
+			navHostController.navigate(
+				route = NavigationDestination.LOGIN.rootNavPath,
+				navOptions = navOptions {
+					popUpTo(navHostController.graph.id)
+				},
+			)
 		}
 	}
-		.doOnError {
-			navHostController.navigate(NavigationDestination.LOGIN.rootNavPath)
-		}
 		.onErrorResumeWith(Observable.never())
 		.subscribeOn(Schedulers.io())
 
-	private val imagesStream: Observable<List<Bitmap>> = listingsStream
+	private val imagesStream: Observable<List<Bitmap?>> = listingsStream
 		.map {
 			it.getOrDefault(
 				GetListingsResponse(
@@ -88,24 +93,21 @@ class HomePageViewModel @Inject constructor(
 			)
 		}
 		.map {
-			runCatching {
-				runBlocking {
-					it.listings
-						.map { l ->
-							async {
+			runBlocking {
+				it.listings
+					.map { l ->
+						async {
+							runCatching {
 								listingsApi.listingsImagesGet(l.imgIds.first())
-							}
-						}.awaitAll()
-				}
+							}.getOrNull()
+						}
+					}.awaitAll()
 			}
-		}
-		.map {
-			it.getOrDefault(emptyList())
 		}
 		.subscribeOn(Schedulers.io())
 		.observeOn(Schedulers.computation())
 		.map { base64ImageList ->
-			base64ImageList.map { it.base64ToBitmap() }
+			base64ImageList.map { it?.base64ToBitmap() }
 		}
 		.observeOn(Schedulers.io())
 		.onErrorResumeWith(Observable.never())

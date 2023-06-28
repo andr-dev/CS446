@@ -257,7 +257,7 @@ fun dateTimeFormater(offsetDateTime: OffsetDateTime): String {
 fun ListingPost(
 	modifier: Modifier = Modifier,
 	listingSummary: ListingSummary,
-	listingImage: Bitmap,
+	listingImage: Bitmap?,
 	detailsNavigation: () -> Unit,
 ) {
 	Box(
@@ -288,14 +288,28 @@ fun ListingPost(
 					.fillMaxWidth(1.0f)
 
 			) {
-				Image(
-					modifier = Modifier
-						.height(dimensionResource(id = R.dimen.xxxl))
-						.width(dimensionResource(id = R.dimen.xxxl)),
-					bitmap = listingImage.asImageBitmap(),
-					contentDescription = stringResource(id = R.string.listing_image),
-					contentScale = ContentScale.Crop,
-				)
+				if (listingImage != null) {
+					Image(
+						modifier = Modifier
+							.height(dimensionResource(id = R.dimen.xxxl))
+							.width(dimensionResource(id = R.dimen.xxxl)),
+						bitmap = listingImage.asImageBitmap(),
+						contentDescription = stringResource(id = R.string.listing_image),
+						contentScale = ContentScale.Crop,
+					)
+				}
+				else {
+					Image(
+						modifier = Modifier
+							.height(dimensionResource(id = R.dimen.xxxl))
+							.width(dimensionResource(id = R.dimen.xxxl)),
+						painter = painterResource(
+							id = R.drawable.room,
+						),
+						contentDescription = stringResource(id = R.string.listing_image),
+						contentScale = ContentScale.Crop,
+					)
+				}
 				Spacer(modifier = Modifier.width(dimensionResource(id = R.dimen.s)))
 				Column(
 					modifier = Modifier
