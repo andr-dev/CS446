@@ -19,3 +19,4 @@
 | 2023-06-24 | 1.0 hour(s) | Made Small Fixes to Home Page ViewModel and View and Reviewed PRs |
 | 2023-06-25 | 1.0 hour(s) | Fix Issues on PR and Helped with RxJava and Navigation Logic |
 | 2023-06-25 | 2.5 hour(s) | Fix Observable Error Bug (Observables Don't Work After Error) |
+| 2023-06-27 | 2.5 hour(s) | Fix Various Bugs and Add Parallelization |
