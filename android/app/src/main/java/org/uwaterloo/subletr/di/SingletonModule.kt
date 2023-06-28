@@ -24,6 +24,8 @@ import javax.inject.Singleton
 @Module
 @InstallIn(SingletonComponent::class)
 object SingletonModule {
+	private const val apiBaseUrl = "https://subletr.duckdns.org/api"
+
 	@Singleton
 	@Provides
 	fun provideOkHttpClient(): OkHttpClient {
@@ -33,25 +35,25 @@ object SingletonModule {
 	@Singleton
 	@Provides
 	fun provideAuthenticationApi(httpClient: OkHttpClient): AuthenticationApi {
-		return AuthenticationApi("http://207.246.122.186/api", httpClient)
+		return AuthenticationApi(apiBaseUrl, httpClient)
 	}
 
 	@Singleton
 	@Provides
 	fun provideListingsApi(httpClient: OkHttpClient): ListingsApi {
-		return ListingsApi("http://207.246.122.186/api", httpClient)
+		return ListingsApi(apiBaseUrl, httpClient)
 	}
 
 	@Singleton
 	@Provides
 	fun provideServerApi(httpClient: OkHttpClient): ServerApi {
-		return ServerApi("http://207.246.122.186/api", httpClient)
+		return ServerApi(apiBaseUrl, httpClient)
 	}
 
 	@Singleton
 	@Provides
 	fun provideUserApi(httpClient: OkHttpClient): UserApi {
-		return UserApi("http://207.246.122.186/api", httpClient)
+		return UserApi(apiBaseUrl, httpClient)
 	}
 
 	@Singleton
