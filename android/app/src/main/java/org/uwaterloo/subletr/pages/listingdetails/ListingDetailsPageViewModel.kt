@@ -3,6 +3,7 @@ package org.uwaterloo.subletr.pages.listingdetails
 import android.graphics.Bitmap
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
+import androidx.navigation.navOptions
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.schedulers.Schedulers
@@ -12,6 +13,7 @@ import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.runBlocking
 import org.uwaterloo.subletr.api.apis.ListingsApi
 import org.uwaterloo.subletr.api.models.ListingDetails
+import org.uwaterloo.subletr.navigation.NavigationDestination
 import org.uwaterloo.subletr.services.INavigationService
 import org.uwaterloo.subletr.utils.base64ToBitmap
 import javax.inject.Inject
@@ -20,8 +22,9 @@ import javax.inject.Inject
 class ListingDetailsPageViewModel @Inject constructor(
 	private val listingsApi: ListingsApi,
 	savedStateHandle: SavedStateHandle,
-	val navigationService: INavigationService
+	private val navigationService: INavigationService
 ) : ViewModel() {
+	val navHostController get() = navigationService.getNavHostController()
 
 	private val listingIdStream: BehaviorSubject<Int> =
 		BehaviorSubject.createDefault(checkNotNull(savedStateHandle["listingId"]))
@@ -35,26 +38,30 @@ class ListingDetailsPageViewModel @Inject constructor(
 				imageIdsStream.onNext(listing.details.imgIds)
 				listing.details
 			}
+		}.onFailure {
+			navHostController.navigate(
+				route = NavigationDestination.LOGIN.rootNavPath,
+				navOptions = navOptions {
+					popUpTo(navHostController.graph.id)
+				},
+			)
 		}
 	}
 		.onErrorResumeWith(Observable.never())
 		.subscribeOn(Schedulers.io())
 
 	private val imagesStream: Observable<List<Bitmap>> = imageIdsStream.map {
-		runCatching {
-			runBlocking {
-				it.map { id ->
-					async {
+		runBlocking {
+			it.map { id ->
+				async {
+					runCatching {
 						listingsApi.listingsImagesGet(id)
-					}
-				}.awaitAll()
-			}
+					}.getOrNull()
+				}
+			}.awaitAll()
+				.filterNotNull()
 		}
 	}
-		.filter { it.isSuccess }
-		.map {
-			it.getOrDefault(emptyList())
-		}
 		.subscribeOn(Schedulers.io())
 		.observeOn(Schedulers.computation())
 		.map { base64ImageList ->

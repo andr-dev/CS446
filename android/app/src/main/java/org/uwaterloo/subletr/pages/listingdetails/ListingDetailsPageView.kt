@@ -80,7 +80,7 @@ fun ListingDetailsPageView(
 				IconButton(
 					modifier = Modifier,
 					onClick = {
-						viewModel.navigationService.getNavHostController().popBackStack()
+						viewModel.navHostController.popBackStack()
 					},
 				) {
 					Icon(
@@ -117,54 +117,69 @@ fun ListingDetailsPageView(
 				horizontalAlignment = Alignment.CenterHorizontally,
 				verticalArrangement = Arrangement.Center,
 			) {
-
 				Box(
 					modifier = Modifier
 				) {
-					HorizontalPager(
-						modifier = Modifier,
-						state = pagerState,
-						contentPadding = PaddingValues(start = dimensionResource(id = R.dimen.xxl)),
-					) { page ->
+					if (uiState.images.isNotEmpty()) {
+						HorizontalPager(
+							modifier = Modifier,
+							state = pagerState,
+							contentPadding = PaddingValues(start = dimensionResource(id = R.dimen.xxl)),
+						) { page ->
+							Image(
+								bitmap = uiState.images[page].asImageBitmap(),
+								contentDescription = stringResource(id = R.string.listing_image),
+								contentScale = ContentScale.FillWidth,
+								modifier = Modifier
+									.fillMaxWidth(SUBLET_IMAGE_WIDTH)
+									.clip(RoundedCornerShape(dimensionResource(id = R.dimen.xxs)))
+							)
+						}
+
+						IconButton(
+							modifier = Modifier.align(Alignment.CenterStart),
+							onClick = {
+								coroutineScope.launch {
+									pagerState.animateScrollToPage(pagerState.currentPage - 1)
+								}
+							},
+						) {
+							Icon(
+								painter = painterResource(
+									id = R.drawable.arrow_left_solid_black_24
+								),
+								contentDescription = stringResource(id = R.string.prev_arrow),
+							)
+						}
+
+						IconButton(
+							modifier = Modifier.align(Alignment.CenterEnd),
+							onClick = {
+								coroutineScope.launch {
+									pagerState.animateScrollToPage(pagerState.currentPage + 1)
+								}
+							},
+						) {
+							Icon(
+								painter = painterResource(
+									id = R.drawable.arrow_right_solid_black_24
+								),
+								contentDescription = stringResource(id = R.string.next_arrow),
+							)
+						}
+					}
+					else {
 						Image(
-							bitmap = uiState.images[page].asImageBitmap(),
-							contentDescription = stringResource(id = R.string.listing_image),
-							contentScale = ContentScale.FillWidth,
 							modifier = Modifier
 								.fillMaxWidth(SUBLET_IMAGE_WIDTH)
-								.clip(RoundedCornerShape(dimensionResource(id = R.dimen.xxs)))
-						)
-					}
-
-					IconButton(
-						modifier = Modifier.align(Alignment.CenterStart),
-						onClick = {
-							coroutineScope.launch {
-								pagerState.animateScrollToPage(pagerState.currentPage - 1)
-							}
-						},
-					) {
-						Icon(
+								.clip(
+									shape = RoundedCornerShape(dimensionResource(id = R.dimen.xxs))
+								),
 							painter = painterResource(
-								id = R.drawable.arrow_left_solid_black_24
+								id = R.drawable.room,
 							),
-							contentDescription = stringResource(id = R.string.prev_arrow),
-						)
-					}
-
-					IconButton(
-						modifier = Modifier.align(Alignment.CenterEnd),
-						onClick = {
-							coroutineScope.launch {
-								pagerState.animateScrollToPage(pagerState.currentPage + 1)
-							}
-						},
-					) {
-						Icon(
-							painter = painterResource(
-								id = R.drawable.arrow_right_solid_black_24
-							),
-							contentDescription = stringResource(id = R.string.next_arrow),
+							contentDescription = stringResource(id = R.string.listing_image),
+							contentScale = ContentScale.FillWidth,
 						)
 					}
 				}
@@ -233,7 +248,10 @@ fun ListingDetailsPageView(
 						style = SubletrTypography.displaySmall,
 					)
 					Text(
-						text = stringResource(R.string.dollar_sign) + uiState.listingDetails.price.toString(),
+						text = stringResource(
+							id = R.string.dollar_sign_n,
+							uiState.listingDetails.price,
+						),
 						color = primaryTextColor,
 						style = SubletrTypography.displaySmall,
 					)
