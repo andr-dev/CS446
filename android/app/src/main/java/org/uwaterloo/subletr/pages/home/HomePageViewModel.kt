@@ -10,7 +10,7 @@ import io.reactivex.rxjava3.subjects.BehaviorSubject
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.runBlocking
-import org.uwaterloo.subletr.api.apis.DefaultApi
+import org.uwaterloo.subletr.api.apis.ListingsApi
 import org.uwaterloo.subletr.api.models.GetListingsResponse
 import org.uwaterloo.subletr.enums.LocationRange
 import org.uwaterloo.subletr.enums.PriceRange
@@ -24,7 +24,7 @@ import kotlin.jvm.optionals.getOrNull
 
 @HiltViewModel
 class HomePageViewModel @Inject constructor(
-	private val api: DefaultApi,
+	private val listingsApi: ListingsApi,
 	private val navigationService: INavigationService,
 ) : ViewModel() {
 	data class FilterVals(
@@ -63,7 +63,7 @@ class HomePageViewModel @Inject constructor(
 		runCatching {
 			runBlocking {
 				// TODO: Change to use filter values
-				api.listingsList(
+				listingsApi.listingsList(
 					priceMin = null,
 					priceMax = null,
 					roomsMin = null,
@@ -93,7 +93,7 @@ class HomePageViewModel @Inject constructor(
 					it.listings
 						.map { l ->
 							async {
-								api.listingsImagesGet(l.imgIds.first())
+								listingsApi.listingsImagesGet(l.imgIds.first())
 							}
 						}.awaitAll()
 				}

@@ -9,7 +9,7 @@ import io.reactivex.rxjava3.schedulers.Schedulers
 import io.reactivex.rxjava3.subjects.BehaviorSubject
 import io.reactivex.rxjava3.subjects.PublishSubject
 import kotlinx.coroutines.runBlocking
-import org.uwaterloo.subletr.api.apis.DefaultApi
+import org.uwaterloo.subletr.api.apis.ListingsApi
 import org.uwaterloo.subletr.api.models.CreateListingRequest
 import org.uwaterloo.subletr.api.models.ListingsImagesCreateRequest
 import org.uwaterloo.subletr.api.models.ResidenceType
@@ -19,7 +19,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class CreateListingPageViewModel @Inject constructor(
-	private val api: DefaultApi,
+	private val listingsApi: ListingsApi,
 	val navigationService: INavigationService,
 ) : ViewModel() {
 	private val disposables: MutableList<Disposable> = mutableListOf()
@@ -71,12 +71,12 @@ class CreateListingPageViewModel @Inject constructor(
 		disposables.add(
 			createListingStream.map {
 				runBlocking {
-					val imgId = api.listingsImagesCreate(
+					val imgId = listingsApi.listingsImagesCreate(
 						ListingsImagesCreateRequest(
 							image = it.images[0]
 						)
 					).imageId
-					api.listingsCreate(
+					listingsApi.listingsCreate(
 						CreateListingRequest(
 							addressLine = it.addressLine,
 							addressCity = it.addressCity,
