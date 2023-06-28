@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.pager.HorizontalPager
@@ -129,10 +130,10 @@ fun ListingDetailsPageView(
 							Image(
 								bitmap = uiState.images[page].asImageBitmap(),
 								contentDescription = stringResource(id = R.string.listing_image),
-								contentScale = ContentScale.FillWidth,
+								contentScale = ContentScale.Fit,
 								modifier = Modifier
-									.fillMaxWidth(SUBLET_IMAGE_WIDTH)
-									.clip(RoundedCornerShape(dimensionResource(id = R.dimen.xxs)))
+									.size(dimensionResource(id = R.dimen.listing_details_image))
+									.clip(RoundedCornerShape(dimensionResource(id = R.dimen.xxs))),
 							)
 						}
 
@@ -171,7 +172,7 @@ fun ListingDetailsPageView(
 					else {
 						Image(
 							modifier = Modifier
-								.fillMaxWidth(SUBLET_IMAGE_WIDTH)
+								.size(dimensionResource(id = R.dimen.listing_details_image))
 								.clip(
 									shape = RoundedCornerShape(dimensionResource(id = R.dimen.xxs))
 								),
@@ -179,7 +180,7 @@ fun ListingDetailsPageView(
 								id = R.drawable.room,
 							),
 							contentDescription = stringResource(id = R.string.listing_image),
-							contentScale = ContentScale.FillWidth,
+							contentScale = ContentScale.Fit,
 						)
 					}
 				}
@@ -411,7 +412,6 @@ fun ListingDetailsPageView(
 }
 
 private const val ELEMENT_WIDTH = 0.9f
-private const val SUBLET_IMAGE_WIDTH = 0.8f
 /* TODO localize date format */
 private val dateFormat = DateTimeFormatter.ofPattern("MM/dd/yyyy")
 
