@@ -115,10 +115,10 @@ fun HomePageView(
 		Scaffold(
 			modifier = modifier
 				.padding(
-					dimensionResource(id = R.dimen.s),
-					dimensionResource(id = R.dimen.zero),
-					dimensionResource(id = R.dimen.s),
-					dimensionResource(id = R.dimen.zero),
+					start = dimensionResource(id = R.dimen.s),
+					top = dimensionResource(id = R.dimen.zero),
+					end = dimensionResource(id = R.dimen.s),
+					bottom = dimensionResource(id = R.dimen.zero),
 				)
 				.imePadding(),
 			topBar = {
@@ -133,8 +133,7 @@ fun HomePageView(
 						),
 					verticalAlignment = Alignment.CenterVertically,
 					horizontalArrangement = Arrangement.SpaceBetween,
-
-					) {
+				) {
 					Text(
 						text = stringResource(id = R.string.view_sublets),
 						style = MaterialTheme.typography.titleMedium,
@@ -143,85 +142,83 @@ fun HomePageView(
 				}
 			},
 			content = { padding ->
-				LazyColumn(
-					modifier = Modifier
-						.padding(padding)
-						.fillMaxSize(1.0f)
-						.imePadding(),
-					state = listState,
-					verticalArrangement = Arrangement.spacedBy(dimensionResource(id = R.dimen.s)),
-					horizontalAlignment = Alignment.CenterHorizontally,
-				) {
-
-					item {
-						Row(
-							modifier = Modifier
-								.fillMaxWidth(1.0f),
-							verticalAlignment = Alignment.CenterVertically,
-							horizontalArrangement = Arrangement.SpaceBetween,
-						) {
-							ButtonWithIcon(
+					LazyColumn(
+						modifier = Modifier
+							.fillMaxSize(1.0f)
+							.padding(padding),
+						state = listState,
+						verticalArrangement = Arrangement.spacedBy(dimensionResource(id = R.dimen.s)),
+						horizontalAlignment = Alignment.CenterHorizontally,
+					) {
+						item {
+							Row(
 								modifier = Modifier
-									.width(dimensionResource(id = R.dimen.xl))
-									.height(dimensionResource(id = R.dimen.l)),
-								iconId = R.drawable.tune_round_black_24,
-								onClick = {},
-								contentDescription = stringResource(id = R.string.filter_menu),
-							)
-							FilterDropDown(
-								filterName = stringResource(id = R.string.location),
-								dropDownItems = LocationRange.values().map { it.stringId }
-									.toTypedArray(),
-								updateState = { newVal ->
-									viewModel.locationRangeFilterStream.onNext(
-										LocationRange.fromInt(newVal)
-									)
-								},
-								selectedValue = uiState.locationRange.stringId,
-								width = dimensionResource(id = R.dimen.xxxxl),
-							)
-							FilterDropDown(
-								filterName = stringResource(id = R.string.price),
-								dropDownItems = PriceRange.values().map { it.stringId }
-									.toTypedArray(),
-								updateState = { newVal ->
-									viewModel.priceRangeFilterStream.onNext(
-										PriceRange.fromInt(newVal)
-									)
-								},
-								selectedValue = uiState.priceRange.stringId,
-								width = dimensionResource(id = R.dimen.xxxl),
-
+									.fillMaxWidth(1.0f),
+								verticalAlignment = Alignment.CenterVertically,
+								horizontalArrangement = Arrangement.SpaceBetween,
+							) {
+								ButtonWithIcon(
+									modifier = Modifier
+										.width(dimensionResource(id = R.dimen.xl))
+										.height(dimensionResource(id = R.dimen.l)),
+									iconId = R.drawable.tune_round_black_24,
+									onClick = {},
+									contentDescription = stringResource(id = R.string.filter_menu),
 								)
-							FilterDropDown(
-								filterName = stringResource(id = R.string.rooms),
-								dropDownItems = RoomRange.values().map { it.stringId }
-									.toTypedArray(),
-								updateState = { newVal ->
-									viewModel.roomRangeFilterStream.onNext(
-										RoomRange.fromInt(newVal)
+								FilterDropDown(
+									filterName = stringResource(id = R.string.location),
+									dropDownItems = LocationRange.values().map { it.stringId }
+										.toTypedArray(),
+									updateState = { newVal ->
+										viewModel.locationRangeFilterStream.onNext(
+											LocationRange.fromInt(newVal)
+										)
+									},
+									selectedValue = uiState.locationRange.stringId,
+									width = dimensionResource(id = R.dimen.xxxxl),
+								)
+								FilterDropDown(
+									filterName = stringResource(id = R.string.price),
+									dropDownItems = PriceRange.values().map { it.stringId }
+										.toTypedArray(),
+									updateState = { newVal ->
+										viewModel.priceRangeFilterStream.onNext(
+											PriceRange.fromInt(newVal)
+										)
+									},
+									selectedValue = uiState.priceRange.stringId,
+									width = dimensionResource(id = R.dimen.xxxl),
+
+									)
+								FilterDropDown(
+									filterName = stringResource(id = R.string.rooms),
+									dropDownItems = RoomRange.values().map { it.stringId }
+										.toTypedArray(),
+									updateState = { newVal ->
+										viewModel.roomRangeFilterStream.onNext(
+											RoomRange.fromInt(newVal)
+										)
+									},
+									selectedValue = uiState.roomRange.stringId,
+									width = dimensionResource(id = R.dimen.xxxxl)
+								)
+							}
+
+						}
+						items(uiState.listings.listings.size) {
+							val listingSummary = uiState.listings.listings[it]
+							val listingImage = uiState.listingsImages[it]
+							ListingPost(
+								listingSummary = listingSummary,
+								listingImage = listingImage,
+								detailsNavigation = {
+									viewModel.navHostController.navigate(
+										route = "${NavigationDestination.LISTING_DETAILS.rootNavPath}/${listingSummary.listingId}"
 									)
 								},
-								selectedValue = uiState.roomRange.stringId,
-								width = dimensionResource(id = R.dimen.xxxxl)
 							)
 						}
-
 					}
-					items(uiState.listings.listings.size) {
-						val listingSummary = uiState.listings.listings[it]
-						val listingImage = uiState.listingsImages[it]
-						ListingPost(
-							listingSummary = listingSummary,
-							listingImage = listingImage,
-							detailsNavigation = {
-								viewModel.navHostController.navigate(
-									route = "${NavigationDestination.LISTING_DETAILS.rootNavPath}/${listingSummary.listingId}"
-								)
-							},
-						)
-					}
-				}
 			},
 			floatingActionButtonPosition = FabPosition.End,
 			floatingActionButton = {
@@ -242,6 +239,9 @@ fun HomePageView(
 						)
 					)
 				}
+			},
+			bottomBar = {
+				Box(modifier = Modifier)
 			},
 		)
 	}
