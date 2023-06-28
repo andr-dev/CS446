@@ -16,4 +16,5 @@
 | June 19th | 6 hours 30 minutes (14:00 - 20:30) | Populating listing details with API return data and layouting             |
 | June 21st | 3 hours (14:00 - 17:00) | Addressing listing details review comments             |
 | June 24th | 1 hour (11:00 - 12:00)  | Addressing listing details review comments             |
+| June 28th | 2 hours (15:30 - 17:30) | Delivery 3 work and minor Android changes |
 
