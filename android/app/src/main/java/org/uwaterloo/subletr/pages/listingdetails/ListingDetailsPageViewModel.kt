@@ -10,7 +10,7 @@ import io.reactivex.rxjava3.subjects.BehaviorSubject
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.runBlocking
-import org.uwaterloo.subletr.api.apis.DefaultApi
+import org.uwaterloo.subletr.api.apis.ListingsApi
 import org.uwaterloo.subletr.api.models.ListingDetails
 import org.uwaterloo.subletr.services.INavigationService
 import org.uwaterloo.subletr.utils.base64ToBitmap
@@ -18,7 +18,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class ListingDetailsPageViewModel @Inject constructor(
-	private val defaultApi: DefaultApi,
+	private val listingsApi: ListingsApi,
 	savedStateHandle: SavedStateHandle,
 	val navigationService: INavigationService
 ) : ViewModel() {
@@ -30,7 +30,7 @@ class ListingDetailsPageViewModel @Inject constructor(
 	private val listingDetailsStream: Observable<Result<ListingDetails>> = listingIdStream.map {
 		runCatching {
 			runBlocking {
-				val listing = defaultApi.listingsDetails(it)
+				val listing = listingsApi.listingsDetails(it)
 				favouritedStream.onNext(listing.favourited)
 				imageIdsStream.onNext(listing.details.imgIds)
 				listing.details
@@ -45,7 +45,7 @@ class ListingDetailsPageViewModel @Inject constructor(
 			runBlocking {
 				it.map { id ->
 					async {
-						defaultApi.listingsImagesGet(id)
+						listingsApi.listingsImagesGet(id)
 					}
 				}.awaitAll()
 			}

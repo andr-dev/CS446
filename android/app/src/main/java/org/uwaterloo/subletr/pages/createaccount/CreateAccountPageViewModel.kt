@@ -12,7 +12,7 @@ import io.reactivex.rxjava3.subjects.BehaviorSubject
 import io.reactivex.rxjava3.subjects.PublishSubject
 import kotlinx.coroutines.runBlocking
 import org.uwaterloo.subletr.R
-import org.uwaterloo.subletr.api.apis.DefaultApi
+import org.uwaterloo.subletr.api.apis.UserApi
 import org.uwaterloo.subletr.api.models.CreateUserRequest
 import org.uwaterloo.subletr.enums.Gender
 import org.uwaterloo.subletr.navigation.NavigationDestination
@@ -25,7 +25,7 @@ import kotlin.jvm.optionals.getOrNull
 @HiltViewModel
 class CreateAccountPageViewModel @Inject constructor(
 	navigationService: INavigationService,
-	defaultApi: DefaultApi,
+	userApi: UserApi,
 ) : ViewModel() {
 	private val disposables: MutableList<Disposable> = mutableListOf()
 	val navHostController = navigationService.getNavHostController()
@@ -124,7 +124,7 @@ class CreateAccountPageViewModel @Inject constructor(
 				if (validInput) {
 					runCatching {
 						runBlocking {
-							defaultApi.userCreate(
+							userApi.userCreate(
 								CreateUserRequest(
 									firstName = uiState.firstName,
 									lastName = uiState.lastName,

@@ -9,7 +9,8 @@ import io.reactivex.rxjava3.subjects.BehaviorSubject
 import io.reactivex.rxjava3.subjects.PublishSubject
 import kotlinx.coroutines.runBlocking
 import org.uwaterloo.subletr.R
-import org.uwaterloo.subletr.api.apis.DefaultApi
+import org.uwaterloo.subletr.api.apis.AuthenticationApi
+import org.uwaterloo.subletr.api.apis.UserApi
 import org.uwaterloo.subletr.api.models.UserLoginRequest
 import org.uwaterloo.subletr.navigation.NavigationDestination
 import org.uwaterloo.subletr.services.IAuthenticationService
@@ -20,7 +21,7 @@ import kotlin.jvm.optionals.getOrNull
 
 @HiltViewModel
 class LoginPageViewModel @Inject constructor(
-	private val api: DefaultApi,
+	private val authenticationApi: AuthenticationApi,
 	private val navigationService: INavigationService,
 	private val authenticationService: IAuthenticationService,
 ) : ViewModel() {
@@ -52,7 +53,7 @@ class LoginPageViewModel @Inject constructor(
 			loginStream.map {
 				runCatching {
 					runBlocking {
-						api.authLogin(
+						authenticationApi.authLogin(
 							UserLoginRequest(
 								email = it.email,
 								password = it.password,
