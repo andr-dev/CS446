@@ -15,7 +15,7 @@ sealed interface HomePageUiState {
 		val priceRange: PriceRange,
 		val roomRange: RoomRange,
 		val listings: GetListingsResponse,
-		val listingsImages: List<Bitmap>,
+		val listingsImages: List<Bitmap?>,
 		@StringRes val infoTextStringId: Int?,
 	) : HomePageUiState
 }
