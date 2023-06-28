@@ -27,7 +27,6 @@ class HomePageViewModel @Inject constructor(
 	private val api: DefaultApi,
 	private val navigationService: INavigationService,
 ) : ViewModel() {
-
 	data class FilterVals(
 		var locationRange: LocationRange,
 		var priceRange: PriceRange,

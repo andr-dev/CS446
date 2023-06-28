@@ -92,9 +92,7 @@ fun HomePageView(
 	uiState: HomePageUiState = viewModel.uiStateStream.subscribeAsState(
 		HomePageUiState.Loading
 	).value,
-
-	) {
-
+) {
 	if (uiState is HomePageUiState.Loading) {
 		Column(
 			modifier = modifier
@@ -106,15 +104,16 @@ fun HomePageView(
 			CircularProgressIndicator()
 		}
 	} else if (uiState is HomePageUiState.Loaded) {
-//		might need to update the code after the demo, if it slows down the performance
-		LaunchedEffect(key1 = true) {
-			viewModel.priceRangeFilterStream.onNext(viewModel.priceRangeFilterStream.value!!)
+		// TODO: Ensure that this is the best way to refresh on reload
+		LaunchedEffect(Unit) {
+			viewModel.priceRangeFilterStream.onNext(uiState.priceRange)
 		}
+
 		val listState = rememberLazyListState()
 		val isListView = remember { mutableStateOf(true) }
 
 		Scaffold(
-			modifier = Modifier
+			modifier = modifier
 				.padding(
 					dimensionResource(id = R.dimen.s),
 					dimensionResource(id = R.dimen.zero),
@@ -128,7 +127,7 @@ fun HomePageView(
 						.fillMaxWidth(1.0f)
 						.padding(
 							start = dimensionResource(id = R.dimen.zero),
-							top = dimensionResource(id = R.dimen.xl),
+							top = dimensionResource(id = R.dimen.s),
 							end = dimensionResource(id = R.dimen.zero),
 							bottom = dimensionResource(id = R.dimen.m)
 						),
@@ -147,14 +146,7 @@ fun HomePageView(
 				LazyColumn(
 					modifier = Modifier
 						.padding(padding)
-						.fillMaxWidth(1.0f)
-						.wrapContentHeight()
-						.padding(
-							dimensionResource(id = R.dimen.zero),
-							dimensionResource(id = R.dimen.zero),
-							dimensionResource(id = R.dimen.zero),
-							dimensionResource(id = R.dimen.xxxxl)
-						)
+						.fillMaxSize(1.0f)
 						.imePadding(),
 					state = listState,
 					verticalArrangement = Arrangement.spacedBy(dimensionResource(id = R.dimen.s)),
@@ -172,7 +164,6 @@ fun HomePageView(
 								modifier = Modifier
 									.width(dimensionResource(id = R.dimen.xl))
 									.height(dimensionResource(id = R.dimen.l)),
-
 								iconId = R.drawable.tune_round_black_24,
 								onClick = {},
 								contentDescription = stringResource(id = R.string.filter_menu),
@@ -230,13 +221,12 @@ fun HomePageView(
 							},
 						)
 					}
-
 				}
 			},
 			floatingActionButtonPosition = FabPosition.End,
 			floatingActionButton = {
 				FloatingActionButton(
-					modifier = modifier.padding(
+					modifier = Modifier.padding(
 						all = dimensionResource(id = R.dimen.zero),
 					),
 					onClick = {
