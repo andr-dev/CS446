@@ -344,6 +344,8 @@ class ListingsApi(basePath: kotlin.String = defaultBasePath, client: OkHttpClien
     /**
      * 
      * 
+     * @param pageNumber 
+     * @param pageSize 
      * @param priceMin  (optional)
      * @param priceMax  (optional)
      * @param roomsMin  (optional)
@@ -357,8 +359,8 @@ class ListingsApi(basePath: kotlin.String = defaultBasePath, client: OkHttpClien
      */
     @Suppress("UNCHECKED_CAST")
     @Throws(IllegalStateException::class, IOException::class, UnsupportedOperationException::class, ClientException::class, ServerException::class)
-    suspend fun listingsList(priceMin: kotlin.Int? = null, priceMax: kotlin.Int? = null, roomsMin: kotlin.Int? = null, roomsMax: kotlin.Int? = null) : GetListingsResponse = withContext(Dispatchers.IO) {
-        val localVarResponse = listingsListWithHttpInfo(priceMin = priceMin, priceMax = priceMax, roomsMin = roomsMin, roomsMax = roomsMax)
+    suspend fun listingsList(pageNumber: kotlin.Int, pageSize: kotlin.Int, priceMin: kotlin.Int? = null, priceMax: kotlin.Int? = null, roomsMin: kotlin.Int? = null, roomsMax: kotlin.Int? = null) : GetListingsResponse = withContext(Dispatchers.IO) {
+        val localVarResponse = listingsListWithHttpInfo(pageNumber = pageNumber, pageSize = pageSize, priceMin = priceMin, priceMax = priceMax, roomsMin = roomsMin, roomsMax = roomsMax)
 
         return@withContext when (localVarResponse.responseType) {
             ResponseType.Success -> (localVarResponse as Success<*>).data as GetListingsResponse
@@ -378,6 +380,8 @@ class ListingsApi(basePath: kotlin.String = defaultBasePath, client: OkHttpClien
     /**
      * 
      * 
+     * @param pageNumber 
+     * @param pageSize 
      * @param priceMin  (optional)
      * @param priceMax  (optional)
      * @param roomsMin  (optional)
@@ -388,8 +392,8 @@ class ListingsApi(basePath: kotlin.String = defaultBasePath, client: OkHttpClien
      */
     @Suppress("UNCHECKED_CAST")
     @Throws(IllegalStateException::class, IOException::class)
-    suspend fun listingsListWithHttpInfo(priceMin: kotlin.Int?, priceMax: kotlin.Int?, roomsMin: kotlin.Int?, roomsMax: kotlin.Int?) : ApiResponse<GetListingsResponse?> = withContext(Dispatchers.IO) {
-        val localVariableConfig = listingsListRequestConfig(priceMin = priceMin, priceMax = priceMax, roomsMin = roomsMin, roomsMax = roomsMax)
+    suspend fun listingsListWithHttpInfo(pageNumber: kotlin.Int, pageSize: kotlin.Int, priceMin: kotlin.Int?, priceMax: kotlin.Int?, roomsMin: kotlin.Int?, roomsMax: kotlin.Int?) : ApiResponse<GetListingsResponse?> = withContext(Dispatchers.IO) {
+        val localVariableConfig = listingsListRequestConfig(pageNumber = pageNumber, pageSize = pageSize, priceMin = priceMin, priceMax = priceMax, roomsMin = roomsMin, roomsMax = roomsMax)
 
         return@withContext request<Unit, GetListingsResponse>(
             localVariableConfig
@@ -399,13 +403,15 @@ class ListingsApi(basePath: kotlin.String = defaultBasePath, client: OkHttpClien
     /**
      * To obtain the request config of the operation listingsList
      *
+     * @param pageNumber 
+     * @param pageSize 
      * @param priceMin  (optional)
      * @param priceMax  (optional)
      * @param roomsMin  (optional)
      * @param roomsMax  (optional)
      * @return RequestConfig
      */
-    fun listingsListRequestConfig(priceMin: kotlin.Int?, priceMax: kotlin.Int?, roomsMin: kotlin.Int?, roomsMax: kotlin.Int?) : RequestConfig<Unit> {
+    fun listingsListRequestConfig(pageNumber: kotlin.Int, pageSize: kotlin.Int, priceMin: kotlin.Int?, priceMax: kotlin.Int?, roomsMin: kotlin.Int?, roomsMax: kotlin.Int?) : RequestConfig<Unit> {
         val localVariableBody = null
         val localVariableQuery: MultiValueMap = mutableMapOf<kotlin.String, kotlin.collections.List<kotlin.String>>()
             .apply {
@@ -421,6 +427,8 @@ class ListingsApi(basePath: kotlin.String = defaultBasePath, client: OkHttpClien
                 if (roomsMax != null) {
                     put("rooms_max", listOf(roomsMax.toString()))
                 }
+                put("page_number", listOf(pageNumber.toString()))
+                put("page_size", listOf(pageSize.toString()))
             }
         val localVariableHeaders: MutableMap<String, String> = mutableMapOf()
         localVariableHeaders["Accept"] = "application/json"
