@@ -9,6 +9,10 @@ use diesel::{
     SqliteConnection,
 };
 
+pub enum PaginationError {
+    InvalidLimit,
+}
+
 #[derive(Debug, Clone, Copy, QueryId)]
 pub struct Paginated<T> {
     query: T,
@@ -20,19 +24,23 @@ pub trait Paginate
 where
     Self: RunQueryDsl<SqliteConnection>,
 {
-    fn paginate(self, number: i64, limit: i64) -> Paginated<Self>;
+    fn paginate(self, number: i64, limit: i64) -> Result<Paginated<Self>, PaginationError>;
 }
 
 impl<T> Paginate for T
 where
     T: RunQueryDsl<SqliteConnection>,
 {
-    fn paginate(self, number: i64, limit: i64) -> Paginated<Self> {
-        Paginated {
+    fn paginate(self, number: i64, limit: i64) -> Result<Paginated<Self>, PaginationError> {
+        if limit <= 0 {
+            return Err(PaginationError::InvalidLimit);
+        }
+
+        Ok(Paginated {
             query: self,
             offset: number * limit,
             limit,
-        }
+        })
     }
 }
 

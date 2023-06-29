@@ -81,6 +81,7 @@ fn listings_list(state: &State<AppState>, listings_request: GetListingsRequest) 
         .filter(listings::rooms.ge(listings_request.rooms_min.map(|x| x as i32).unwrap_or(i32::MIN)))
         .filter(listings::rooms.le(listings_request.rooms_max.map(|x| x as i32).unwrap_or(i32::MAX)))
         .paginate(listings_request.page_number.into(), listings_request.page_size.into())
+        .map_err(|_| ServiceError::InternalError)?
         .load(&mut dbcon)?;
 
     let pages = fetched_listings.1.try_into().map_err(|_| ServiceError::InternalError)?;
