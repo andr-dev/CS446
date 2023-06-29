@@ -16,11 +16,15 @@ pub struct GetListingsRequest {
     pub price_max: Option<u16>,
     pub rooms_min: Option<u16>,
     pub rooms_max: Option<u16>,
+
+    pub page_number: u32,
+    pub page_size: u32,
 }
 
 #[derive(JsonSchema, Serialize, Clone, PartialEq)]
 pub struct GetListingsResponse {
     pub listings: Vec<ListingSummary>,
+    pub pages: u32,
     pub liked: HashSet<String>,
 }
 

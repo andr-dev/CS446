@@ -30,6 +30,7 @@ use super::{
 use crate::{
     db::{
         model::listings::{Listing, ListingImage},
+        paginate::Paginate,
         schema::{listings, listings_images},
     },
     error::{ServiceError, ServiceResult},
@@ -74,15 +75,19 @@ fn listings_create(
 fn listings_list(state: &State<AppState>, listings_request: GetListingsRequest) -> ServiceResult<GetListingsResponse> {
     let mut dbcon = state.pool.get()?;
 
-    let fetched_listings: Vec<Listing> = listings::dsl::listings
+    let fetched_listings: (Vec<Listing>, i64) = listings::dsl::listings
         .filter(listings::price.ge(listings_request.price_min.map(|x| x as i32).unwrap_or(i32::MIN)))
         .filter(listings::price.le(listings_request.price_max.map(|x| x as i32).unwrap_or(i32::MAX)))
         .filter(listings::rooms.ge(listings_request.rooms_min.map(|x| x as i32).unwrap_or(i32::MIN)))
         .filter(listings::rooms.le(listings_request.rooms_max.map(|x| x as i32).unwrap_or(i32::MAX)))
+        .paginate(listings_request.page_number.into(), listings_request.page_size.into())
         .load(&mut dbcon)?;
+
+    let pages = fetched_listings.1.try_into().map_err(|_| ServiceError::InternalError)?;
 
     Ok(Json(GetListingsResponse {
         listings: fetched_listings
+            .0
             .into_iter()
             .flat_map(|l| {
                 listings_images::dsl::listings_images
@@ -93,6 +98,7 @@ fn listings_list(state: &State<AppState>, listings_request: GetListingsRequest) 
                     })
             })
             .collect::<Result<Vec<ListingSummary>, ServiceError>>()?,
+        pages,
         liked: HashSet::default(),
     }))
 }
