@@ -21,3 +21,4 @@
 | 2023-06-25 | 2.5 hour(s) | Fix Observable Error Bug (Observables Don't Work After Error) |
 | 2023-06-27 | 2.5 hour(s) | Fix Various Bugs and Add Parallelization |
 | 2023-06-28 | 3.0 hour(s) | Fix Numerous Bugs on Home Page |
+| 2023-06-28 | 4.0 hour(s) | Add infinite scrolling and review PRs |
