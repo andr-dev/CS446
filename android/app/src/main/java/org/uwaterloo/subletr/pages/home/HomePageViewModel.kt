@@ -28,10 +28,16 @@ class HomePageViewModel @Inject constructor(
 	private val listingsApi: ListingsApi,
 	private val navigationService: INavigationService,
 ) : ViewModel() {
-	data class FilterVals(
-		var locationRange: LocationRange,
-		var priceRange: PriceRange,
-		var roomRange: RoomRange,
+	data class GetListingParams(
+		val locationRange: LocationRange,
+		val priceRange: PriceRange,
+		val roomRange: RoomRange,
+		val listingPagingParams: ListingPagingParams,
+	)
+
+	data class ListingPagingParams(
+		val previousListingItemsModel: HomePageUiState.ListingItemsModel,
+		val pageNumber: Int,
 	)
 
 	private val disposables: MutableList<Disposable> = mutableListOf()
@@ -45,56 +51,85 @@ class HomePageViewModel @Inject constructor(
 	val roomRangeFilterStream: BehaviorSubject<RoomRange> =
 		BehaviorSubject.createDefault(RoomRange.NOFILTER)
 
+	val listingPagingParamsStream: BehaviorSubject<ListingPagingParams> =
+		BehaviorSubject.createDefault(
+			ListingPagingParams(
+				previousListingItemsModel = HomePageUiState.ListingItemsModel(
+					listings = mutableListOf(),
+					likedListings = mutableSetOf(),
+					listingsImages = mutableListOf(),
+				),
+				pageNumber = 0,
+			)
+		)
+
 	private val infoTextStringIdStream: BehaviorSubject<Optional<Int>> =
 		BehaviorSubject.createDefault(Optional.empty())
 
-	private val filterStream: Observable<FilterVals> = Observable.combineLatest(
+	private val totalNumberOfPagesStream: BehaviorSubject<Int> =
+		BehaviorSubject.createDefault(1)
+
+	data class ListingParamsAndResponse(
+		val listingParams: GetListingParams,
+		val listingsResponse: GetListingsResponse,
+	)
+
+	private val listingsStream: Observable<ListingParamsAndResponse> = Observable.combineLatest(
 		locationRangeFilterStream,
 		priceRangeFilterStream,
 		roomRangeFilterStream,
-	) { locationRange, priceRange, roomRange ->
-		FilterVals(
-			locationRange = locationRange,
-			priceRange = priceRange,
-			roomRange = roomRange,
-		)
-	}
-
-	private val listingsStream: Observable<Result<GetListingsResponse>> = filterStream.map {
-		runCatching {
-			runBlocking {
-				// TODO: Change to use filter values
-				listingsApi.listingsList(
-					priceMin = null,
-					priceMax = null,
-					roomsMin = null,
-					roomsMax = null,
-				)
+		listingPagingParamsStream
+			.distinctUntilChanged { t1, t2 -> t1.pageNumber == t2.pageNumber }
+			.withLatestFrom(totalNumberOfPagesStream, ::Pair)
+			.filter {
+				0 <= it.first.pageNumber && it.first.pageNumber < it.second
 			}
-		}.onFailure {
-			navHostController.navigate(
-				route = NavigationDestination.LOGIN.rootNavPath,
-				navOptions = navOptions {
-					popUpTo(navHostController.graph.id)
-				},
-			)
-		}
+			.map {
+				it.first
+			},
+		::GetListingParams
+	)
+		.map { getListingParams ->
+			ListingParamsAndResponse(
+				listingParams = getListingParams,
+				listingsResponse = runCatching {
+					runBlocking {
+						// TODO: Change to use filter values
+						listingsApi.listingsList(
+							priceMin = null,
+							priceMax = null,
+							roomsMin = null,
+							roomsMax = null,
+							pageNumber = getListingParams.listingPagingParams.pageNumber,
+							pageSize = LISTING_PAGE_SIZE,
+						)
+					}
+				}.onSuccess {
+					totalNumberOfPagesStream.onNext(it.pages)
+				}.onFailure {
+					navHostController.navigate(
+						route = NavigationDestination.LOGIN.rootNavPath,
+						navOptions = navOptions {
+							popUpTo(navHostController.graph.id)
+						},
+					)
+				}
+					.getOrDefault(
+						GetListingsResponse(
+							listings = emptyList(),
+							liked = emptySet(),
+							pages = 0,
+						)
+					)
+		)
 	}
 		.onErrorResumeWith(Observable.never())
 		.subscribeOn(Schedulers.io())
 
 	private val imagesStream: Observable<List<Bitmap?>> = listingsStream
 		.map {
-			it.getOrDefault(
-				GetListingsResponse(
-					listings = emptyList(),
-					liked = emptySet(),
-				)
-			)
-		}
-		.map {
 			runBlocking {
-				it.listings
+				it.listingsResponse.listings
 					.map { l ->
 						async {
 							runCatching {
@@ -112,26 +147,35 @@ class HomePageViewModel @Inject constructor(
 		.observeOn(Schedulers.io())
 		.onErrorResumeWith(Observable.never())
 
+	private val listingItemsStream: Observable<HomePageUiState.ListingItemsModel> = Observable.combineLatest(
+		listingsStream,
+		imagesStream,
+		::Pair
+	).map {
+		HomePageUiState.ListingItemsModel(
+			listings = it.first.listingParams.listingPagingParams.previousListingItemsModel.listings +
+				it.first.listingsResponse.listings,
+			likedListings = it.first.listingParams.listingPagingParams.previousListingItemsModel.likedListings +
+				it.first.listingsResponse.liked,
+			listingsImages = it.first.listingParams.listingPagingParams.previousListingItemsModel.listingsImages +
+				it.second,
+		)
+	}
+
 	val uiStateStream: Observable<HomePageUiState> = Observable.combineLatest(
 		locationRangeFilterStream,
 		priceRangeFilterStream,
 		roomRangeFilterStream,
-		listingsStream,
-		imagesStream,
+		listingItemsStream,
 		infoTextStringIdStream,
-	) { locationRange, priceRange, roomRange, listings, listingsImages, infoTextStringId ->
-		listings.onSuccess {
-			return@combineLatest HomePageUiState.Loaded(
-				locationRange = locationRange,
-				priceRange = priceRange,
-				roomRange = roomRange,
-				listings = it,
-				listingsImages = listingsImages,
-				infoTextStringId = infoTextStringId.getOrNull()
-			)
-		}
-
-		return@combineLatest HomePageUiState.Loading
+	) { locationRange, priceRange, roomRange, listings, infoTextStringId ->
+		return@combineLatest HomePageUiState.Loaded(
+			locationRange = locationRange,
+			priceRange = priceRange,
+			roomRange = roomRange,
+			listingItems = listings,
+			infoTextStringId = infoTextStringId.getOrNull()
+		)
 	}
 
 	override fun onCleared() {
@@ -139,5 +183,9 @@ class HomePageViewModel @Inject constructor(
 		disposables.forEach {
 			it.dispose()
 		}
+	}
+
+	companion object {
+		const val LISTING_PAGE_SIZE = 5
 	}
 }

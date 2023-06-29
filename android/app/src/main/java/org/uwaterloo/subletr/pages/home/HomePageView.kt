@@ -42,6 +42,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -66,7 +67,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import org.uwaterloo.subletr.R
-import org.uwaterloo.subletr.api.models.GetListingsResponse
 import org.uwaterloo.subletr.api.models.ListingSummary
 import org.uwaterloo.subletr.api.models.ResidenceType
 import org.uwaterloo.subletr.components.button.SecondaryButton
@@ -104,13 +104,32 @@ fun HomePageView(
 			CircularProgressIndicator()
 		}
 	} else if (uiState is HomePageUiState.Loaded) {
-		// TODO: Ensure that this is the best way to refresh on reload
-		LaunchedEffect(Unit) {
-			viewModel.priceRangeFilterStream.onNext(uiState.priceRange)
-		}
-
 		val listState = rememberLazyListState()
 		val isListView = remember { mutableStateOf(true) }
+
+		val lastItemIsShowing by remember {
+			derivedStateOf {
+				if (listState.layoutInfo.totalItemsCount == 0) {
+					false
+				}
+				else {
+					listState.layoutInfo.visibleItemsInfo.lastOrNull()?.index == listState.layoutInfo.totalItemsCount - 1
+				}
+			}
+		}
+
+		LaunchedEffect(key1 = lastItemIsShowing) {
+			if (lastItemIsShowing) {
+				viewModel.listingPagingParamsStream.onNext(
+					HomePageViewModel.ListingPagingParams(
+						previousListingItemsModel = uiState.listingItems,
+						pageNumber = (
+							listState.layoutInfo.totalItemsCount
+						).floorDiv(HomePageViewModel.LISTING_PAGE_SIZE)
+					)
+				)
+			}
+		}
 
 		Scaffold(
 			modifier = modifier
@@ -205,9 +224,9 @@ fun HomePageView(
 							}
 
 						}
-						items(uiState.listings.listings.size) {
-							val listingSummary = uiState.listings.listings[it]
-							val listingImage = uiState.listingsImages[it]
+						items(uiState.listingItems.listings.size) {
+							val listingSummary = uiState.listingItems.listings[it]
+							val listingImage = uiState.listingItems.listingsImages[it]
 							ListingPost(
 								listingSummary = listingSummary,
 								listingImage = listingImage,
@@ -664,8 +683,11 @@ fun LoginPageViewLoadedPreview() {
 				locationRange = LocationRange.NOFILTER,
 				priceRange = PriceRange.NOFILTER,
 				roomRange = RoomRange.NOFILTER,
-				listings = GetListingsResponse(listOf(), setOf()),
-				listingsImages = emptyList(),
+				listingItems = HomePageUiState.ListingItemsModel(
+					listings = emptyList(),
+					likedListings = emptySet(),
+					listingsImages = emptyList(),
+				),
 				infoTextStringId = null,
 			),
 		)
