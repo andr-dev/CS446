@@ -17,3 +17,5 @@
 |2023-06-26| 2 hours (14:00 - 16:00) | Worked on prototype demo flow and fixed date formatting to send listing dates to API |
 |2023-06-26| 1 hour (23:00 - 00:00) | Worked on displaying listing images on the home page list view |
 |2023-06-27| 1 hour (10:30 - 11:30) | Finished work on displaying listing images on the home page list view |
+|2023-06-29| 1 hour (14:00 - 15:00) | Worked on D3 prototype document and changing api calls to match the corresponding microservice |
+|2023-06-29| 1.5 hourS (23:00 - 00:30) | Worked on Figma design of filters page |
