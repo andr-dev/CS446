@@ -2,11 +2,15 @@
 
 package org.uwaterloo.subletr.pages.createlisting
 
+import android.content.Context
 import android.graphics.ImageDecoder
 import android.net.Uri
 import android.os.Build
 import android.provider.MediaStore
+import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.ActivityResultCallback
+import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -73,6 +77,7 @@ import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.core.content.FileProvider
 import androidx.hilt.navigation.compose.hiltViewModel
 import kotlinx.coroutines.launch
 import org.uwaterloo.subletr.R
@@ -85,7 +90,7 @@ import org.uwaterloo.subletr.theme.subletrPink
 import org.uwaterloo.subletr.theme.textFieldBackgroundColor
 import org.uwaterloo.subletr.theme.textFieldBorderColor
 import org.uwaterloo.subletr.theme.textOnSubletrPink
-import org.uwaterloo.subletr.utils.toBase64String
+import java.io.File
 import java.text.SimpleDateFormat
 import java.time.ZoneOffset
 import java.time.format.DateTimeFormatter
@@ -585,24 +590,108 @@ fun LeaseDatePicker(state: DateRangePickerState, onClick: () -> Unit) {
 	}
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun UploadImages(viewModel: CreateListingPageViewModel,
-			  uiState: CreateListingPageUiState.Loaded) {
-	var imageUri by remember {
-		mutableStateOf<Uri?>(null)
+fun ImagePickerBottomSheet(
+	bottomSheetState: SheetState,
+	onDismissRequest: () -> Unit,
+	onClick: () -> Unit,
+) {
+	ModalBottomSheet(
+		modifier = Modifier,
+		onDismissRequest = onDismissRequest,
+		sheetState = bottomSheetState,
+		content = {
+			Box(
+				modifier = Modifier
+					.fillMaxWidth()
+					.height(dimensionResource(id = R.dimen.xxxxxxxl))
+					.background(Color.White)
+			) {
+
+				Button(
+					onClick = onClick,
+					colors = ButtonDefaults.buttonColors(
+						containerColor = subletrPink,
+					),
+					modifier = Modifier
+						.align(Alignment.BottomCenter)
+						.padding(
+							start = dimensionResource(id = R.dimen.s),
+							end = dimensionResource(id = R.dimen.s),
+							bottom = dimensionResource(id = R.dimen.s)
+						)
+						.fillMaxWidth()
+						.height(dimensionResource(id = R.dimen.xl))
+				) {
+					Text(stringResource(id = R.string.done), color = textOnSubletrPink)
+				}
+			}
+		},
+	)
+}
+
+class ComposeFileProvider : FileProvider(
+	R.xml.filepaths
+) {
+	companion object {
+		fun getImageUri(context: Context): Uri {
+			// 1
+			val directory = File(context.cacheDir, "images")
+			directory.mkdirs()
+			// 2
+			val file = File.createTempFile(
+				"selected_image_",
+				".jpg",
+				directory
+			)
+			// 3
+			val authority = context.packageName + ".fileprovider"
+			// 4
+			return getUriForFile(
+				context,
+				authority,
+				file,
+			)
+		}
+	}
+}
+
+@Composable
+fun UploadImages(
+	viewModel: CreateListingPageViewModel,
+	uiState: CreateListingPageUiState.Loaded,
+) {
+	var imageUris by remember {
+		mutableStateOf<List<Uri?>>(ArrayList())
 	}
 	val context = LocalContext.current
 
-	val launcher = rememberLauncherForActivityResult(contract =
-	ActivityResultContracts.GetContent()) { uri: Uri? ->
-		imageUri = uri
+	val launcher = rememberLauncherForActivityResult(
+		contract = ActivityResultContracts.GetMultipleContents()) {
+		imageUris = it
 	}
+
+	var hasImage by remember {
+		mutableStateOf(false)
+	}
+	var imageUri by remember {
+		mutableStateOf<Uri?>(null)
+	}
+
+	val cameraLauncher = rememberLauncherForActivityResult(
+		contract = ActivityResultContracts.TakePicture(),
+	) {
+		hasImage = it
+	}
+
 
 	LazyRow(
 		modifier = Modifier.fillMaxWidth(),
 		verticalAlignment = Alignment.CenterVertically,
 	) {
 		item {
+
 			Button(
 				modifier = Modifier
 					.size(dimensionResource(id = R.dimen.xxxxxxl))
@@ -613,7 +702,11 @@ fun UploadImages(viewModel: CreateListingPageViewModel,
 					),
 				shape = RoundedCornerShape(dimensionResource(id = R.dimen.s)),
 				onClick = {
-					launcher.launch("image/*")
+					Log.d("PACKET", "${context.packageName + ".fileprovider"}")
+//					launcher.launch("image/*")
+					val uri = ComposeFileProvider.getImageUri(context)
+					imageUris = listOf(uri)
+					cameraLauncher.launch(uri)
 				},
 				colors = ButtonDefaults.buttonColors(
 					containerColor = textFieldBackgroundColor,
@@ -629,24 +722,26 @@ fun UploadImages(viewModel: CreateListingPageViewModel,
 				)
 			}
 
-			imageUri?.let {
-				if (Build.VERSION.SDK_INT < 28) {
+			if (imageUris.isNotEmpty() && hasImage) {
+				imageUris.filterNotNull().map {
+					Log.d("URI", it.toString())
+					if (Build.VERSION.SDK_INT < 28) {
+						uiState.imagesBitmap.add(
+							MediaStore.Images
+								.Media.getBitmap(context.contentResolver, it)
+						)
+						viewModel.imagesBitmapStream.onNext(uiState.imagesBitmap)
 
-					uiState.imagesBitmap.add(
-						MediaStore.Images
-							.Media.getBitmap(context.contentResolver, it)
-					)
-					viewModel.imagesBitmapStream.onNext(uiState.imagesBitmap)
-
-				} else {
-					val source = ImageDecoder
-						.createSource(context.contentResolver, it)
-					uiState.imagesBitmap.add(ImageDecoder.decodeBitmap(source))
-					viewModel.imagesBitmapStream.onNext(uiState.imagesBitmap)
+					} else {
+						val source = ImageDecoder
+							.createSource(context.contentResolver, it)
+						uiState.imagesBitmap.add(ImageDecoder.decodeBitmap(source))
+						viewModel.imagesBitmapStream.onNext(uiState.imagesBitmap)
+					}
 				}
 			}
 
-			imageUri = null
+			imageUris = emptyList<Uri>()
 
 			Spacer(modifier = Modifier.width(dimensionResource(id = R.dimen.xs)))
 		}
