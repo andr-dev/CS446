@@ -2,7 +2,6 @@
 
 package org.uwaterloo.subletr.pages.createlisting
 
-import android.graphics.Bitmap
 import android.graphics.ImageDecoder
 import android.net.Uri
 import android.os.Build
@@ -15,6 +14,7 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -24,7 +24,10 @@ import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
@@ -47,7 +50,6 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.rememberDateRangePickerState
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -111,11 +113,7 @@ fun CreateListingPageView(
 	var openBottomSheet by rememberSaveable { mutableStateOf(false) }
 	val bottomSheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
 
-	var addressStr by remember { mutableStateOf("") }
-
 	val numberPattern = remember { Regex("^\\d+\$") }
-
-	val bitmap =  remember { mutableStateOf<Bitmap?>(null) }
 
 	Scaffold(
 		modifier = modifier,
@@ -193,20 +191,9 @@ fun CreateListingPageView(
 							color = secondaryTextColor,
 						)
 					},
-					value = addressStr,
+					value = uiState.address.fullAddress,
 					onValueChange = {
-						addressStr = it
-
-						val splitAddress = it.split(",").toTypedArray()
-						if (splitAddress.isNotEmpty()) {
-							viewModel.addressLineStream.onNext(splitAddress[0])
-						}
-						if (splitAddress.size >= 2) {
-							viewModel.addressCityStream.onNext(splitAddress[1])
-						}
-						if (splitAddress.size >= 3) {
-							viewModel.addressPostalCodeStream.onNext(splitAddress[2])
-						}
+						viewModel.fullAddressStream.onNext(it)
 					}
 				)
 
@@ -418,7 +405,7 @@ fun CreateListingPageView(
 					modifier = Modifier.weight(weight = 1.0f)
 				)
 
-				UploadImages(bitmap)
+				UploadImages(viewModel, uiState)
 
 				Spacer(
 					modifier = Modifier.weight(weight = 2.0f)
@@ -459,13 +446,6 @@ fun CreateListingPageView(
 								}
 							}
 						})
-				}
-
-				// TODO: move to ViewModel in a Schedules.computation thread
-				if (bitmap.value != null) {
-					val base64ImageString = bitmap.value!!.toBase64String()
-					val images = MutableList(1) { base64ImageString }
-					viewModel.imagesByteStream.onNext(images)
 				}
 
 				PrimaryButton(
@@ -606,7 +586,8 @@ fun LeaseDatePicker(state: DateRangePickerState, onClick: () -> Unit) {
 }
 
 @Composable
-fun UploadImages(bitmap: MutableState<Bitmap?>) {
+fun UploadImages(viewModel: CreateListingPageViewModel,
+			  uiState: CreateListingPageUiState.Loaded) {
 	var imageUri by remember {
 		mutableStateOf<Uri?>(null)
 	}
@@ -616,64 +597,99 @@ fun UploadImages(bitmap: MutableState<Bitmap?>) {
 	ActivityResultContracts.GetContent()) { uri: Uri? ->
 		imageUri = uri
 	}
-	Row(
+
+	LazyRow(
 		modifier = Modifier.fillMaxWidth(),
 		verticalAlignment = Alignment.CenterVertically,
 	) {
-		Button(
-			modifier = Modifier
-				.size(dimensionResource(id = R.dimen.xxxxxxl))
-				.border(
-					dimensionResource(id = R.dimen.xxxs),
-					textFieldBorderColor,
-					RoundedCornerShape(dimensionResource(id = R.dimen.s))
+		item {
+			Button(
+				modifier = Modifier
+					.size(dimensionResource(id = R.dimen.xxxxxxl))
+					.border(
+						dimensionResource(id = R.dimen.xxxs),
+						textFieldBorderColor,
+						RoundedCornerShape(dimensionResource(id = R.dimen.s))
+					),
+				shape = RoundedCornerShape(dimensionResource(id = R.dimen.s)),
+				onClick = {
+					launcher.launch("image/*")
+				},
+				colors = ButtonDefaults.buttonColors(
+					containerColor = textFieldBackgroundColor,
+					contentColor = Color(0xFF808080)
+
 				),
-			shape = RoundedCornerShape(dimensionResource(id = R.dimen.s)),
-			onClick = {
-				launcher.launch("image/*")
-			},
-			colors = ButtonDefaults.buttonColors(
-				containerColor = textFieldBackgroundColor,
-				contentColor = Color(0xFF808080)
-
-			),
-		) {
-			Icon(
-				painter = painterResource(
-					id = R.drawable.add_photo_solid_gray_24
-				),
-				contentDescription = stringResource(id = R.string.upload_images),
-			)
-		}
-
-		Spacer(modifier = Modifier.width(dimensionResource(id = R.dimen.s)))
-
-		imageUri?.let {
-			if (Build.VERSION.SDK_INT < 28) {
-				bitmap.value = MediaStore.Images
-					.Media.getBitmap(context.contentResolver,it)
-
-			} else {
-				val source = ImageDecoder
-					.createSource(context.contentResolver,it)
-				bitmap.value = ImageDecoder.decodeBitmap(source)
+			) {
+				Icon(
+					painter = painterResource(
+						id = R.drawable.add_photo_solid_gray_24
+					),
+					contentDescription = stringResource(id = R.string.upload_images),
+				)
 			}
 
-			bitmap.value?.let {  btm ->
-				Image(bitmap = btm.asImageBitmap(),
+			imageUri?.let {
+				if (Build.VERSION.SDK_INT < 28) {
+
+					uiState.imagesBitmap.add(
+						MediaStore.Images
+							.Media.getBitmap(context.contentResolver, it)
+					)
+					viewModel.imagesBitmapStream.onNext(uiState.imagesBitmap)
+
+				} else {
+					val source = ImageDecoder
+						.createSource(context.contentResolver, it)
+					uiState.imagesBitmap.add(ImageDecoder.decodeBitmap(source))
+					viewModel.imagesBitmapStream.onNext(uiState.imagesBitmap)
+				}
+			}
+
+			imageUri = null
+
+			Spacer(modifier = Modifier.width(dimensionResource(id = R.dimen.xs)))
+		}
+
+		itemsIndexed(uiState.imagesBitmap.filterNotNull()) { _, item ->
+			Box {
+				Image(
+					bitmap = item.asImageBitmap(),
 					contentDescription = null,
 					modifier = Modifier
 						.size(dimensionResource(id = R.dimen.xxxxxxl))
-						.border(
-							dimensionResource(id = R.dimen.xxxs),
-							textFieldBorderColor,
-							RoundedCornerShape(dimensionResource(id = R.dimen.s))
-						)
 						.clip(RoundedCornerShape(dimensionResource(id = R.dimen.s))),
-					contentScale = ContentScale.FillBounds)
-			}
-		}
+					contentScale = ContentScale.FillBounds
+				)
+				Button(
+					modifier = Modifier
+						.size(dimensionResource(id = R.dimen.xl))
+						.padding(dimensionResource(id = R.dimen.xs))
+						.align(Alignment.TopEnd),
+					shape = CircleShape,
+					contentPadding = PaddingValues(dimensionResource(id = R.dimen.xxs)),
+					onClick = {
+						uiState.imagesBitmap.remove(item)
+						viewModel.imagesBitmapStream.onNext(uiState.imagesBitmap)
+					},
+					colors = ButtonDefaults.buttonColors(
+						containerColor = textFieldBackgroundColor,
+						contentColor = Color.Black
 
+					),
+				) {
+					Icon(
+						modifier = Modifier.fillMaxSize(),
+						painter = painterResource(
+							id = R.drawable.close_solid_black_24
+						),
+						contentDescription = stringResource(id = R.string.upload_images),
+					)
+				}
+
+			}
+			Spacer(modifier = Modifier.width(dimensionResource(id = R.dimen.xs)))
+		}
 	}
 }
 
@@ -689,16 +705,20 @@ fun CreateListingPageLoadedPreview() {
 	SubletrTheme {
 		CreateListingPageView(
 			uiState = CreateListingPageUiState.Loaded(
-				addressLine = "",
-				addressCity = "",
-				addressPostalCode = "",
-				addressCountry = stringResource(id = R.string.canada),
+				address = CreateListingPageUiState.AddressModel(
+					fullAddress = "",
+					addressLine = "",
+					addressCity = "",
+					addressPostalCode = "",
+					addressCountry = stringResource(id = R.string.canada),
+				),
 				description = "",
 				price = 0,
 				numBedrooms = 0,
 				startDate = "",
 				endDate = "",
 				housingType = HousingType.OTHER,
+				imagesBitmap = ArrayList(),
 				images = ArrayList()
 			)
 		)

@@ -1,5 +1,6 @@
 package org.uwaterloo.subletr.pages.createlisting
 
+import android.graphics.Bitmap
 import android.util.Log
 import androidx.navigation.NavHostController
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -15,6 +16,7 @@ import org.uwaterloo.subletr.api.models.ResidenceType
 import org.uwaterloo.subletr.enums.HousingType
 import org.uwaterloo.subletr.infrastructure.SubletrViewModel
 import org.uwaterloo.subletr.services.INavigationService
+import org.uwaterloo.subletr.utils.toBase64String
 import javax.inject.Inject
 
 @HiltViewModel
@@ -24,9 +26,23 @@ class CreateListingPageViewModel @Inject constructor(
 ) : SubletrViewModel<CreateListingPageUiState>() {
 	val navHostController: NavHostController get() = navigationService.getNavHostController()
 
-	val addressLineStream: BehaviorSubject<String> = BehaviorSubject.createDefault("")
-	val addressCityStream: BehaviorSubject<String> = BehaviorSubject.createDefault("")
-	val addressPostalCodeStream: BehaviorSubject<String> = BehaviorSubject.createDefault("")
+	val fullAddressStream: BehaviorSubject<String> = BehaviorSubject.createDefault("")
+
+	private val addressStream: Observable<CreateListingPageUiState.AddressModel> = fullAddressStream
+		.observeOn(Schedulers.computation())
+		.map {
+			val splitAddress = it.split(",").toTypedArray()
+
+			CreateListingPageUiState.AddressModel(
+				fullAddress = it,
+				addressLine = if (splitAddress.isNotEmpty()) splitAddress[0] else "",
+				addressCity = if (splitAddress.size >= 2) splitAddress[1] else "",
+				addressPostalCode = if (splitAddress.size >= 3) splitAddress[2] else "",
+				addressCountry = if (splitAddress.size >= 4) splitAddress[3] else "Canada",
+			)
+		}
+		.observeOn(Schedulers.io())
+		.onErrorResumeWith(Observable.never())
 
 	val descriptionStream: BehaviorSubject<String> = BehaviorSubject.createDefault("")
 	val priceStream: BehaviorSubject<Int> = BehaviorSubject.createDefault(0)
@@ -34,31 +50,39 @@ class CreateListingPageViewModel @Inject constructor(
 	val startDateStream: BehaviorSubject<String> = BehaviorSubject.createDefault("")
 	val endDateStream: BehaviorSubject<String> = BehaviorSubject.createDefault("")
 
-	val imagesByteStream: BehaviorSubject<MutableList<String>> = BehaviorSubject.createDefault(ArrayList())
+	val imagesBitmapStream: BehaviorSubject<MutableList<Bitmap?>> = BehaviorSubject.createDefault(ArrayList())
+
+	private val imagesStream: Observable<List<String>> = imagesBitmapStream
+		.observeOn(Schedulers.computation())
+		.map {
+			it.filterNotNull().map { btm ->
+				btm.toBase64String()
+			}
+		}
+		.observeOn(Schedulers.io())
+		.onErrorResumeWith(Observable.never())
+
 
 	override val uiStateStream: Observable<CreateListingPageUiState> = Observable.combineLatest(
-		addressLineStream,
-		addressCityStream,
-		addressPostalCodeStream,
+		addressStream,
 		descriptionStream,
 		priceStream,
 		numBedroomsStream,
 		startDateStream,
 		endDateStream,
-		imagesByteStream
+		imagesBitmapStream,
+		imagesStream
 	) {
-			addressLine, addressCity, addressPostalCode, description, price, numBedrooms, startDate, endDate, images ->
+			address, description, price, numBedrooms, startDate, endDate, imagesBitmap, images ->
 		CreateListingPageUiState.Loaded(
-			addressLine = addressLine,
-			addressCity = addressCity,
-			addressPostalCode = addressPostalCode,
-			addressCountry = "Canada",
+			address = address,
 			description = description,
 			price = price,
 			numBedrooms = numBedrooms,
 			startDate = startDate,
 			endDate = endDate,
 			housingType = HousingType.OTHER,
+			imagesBitmap = imagesBitmap,
 			images = images,
 		)
 	}
@@ -69,24 +93,27 @@ class CreateListingPageViewModel @Inject constructor(
 		createListingStream.map {
 			runCatching {
 				runBlocking {
-					val imgId = listingsApi.listingsImagesCreate(
-						ListingsImagesCreateRequest(
-							image = it.images[0]
-						)
-					).imageId
+					val imgIds = it.images.map { img ->
+						listingsApi.listingsImagesCreate(
+							ListingsImagesCreateRequest(
+								image = img
+							)
+						).imageId
+					}
+
 					listingsApi.listingsCreate(
 						CreateListingRequest(
-							addressLine = it.addressLine,
-							addressCity = it.addressCity,
-							addressPostalcode = it.addressPostalCode,
-							addressCountry = it.addressCountry,
+							addressLine = it.address.addressLine,
+							addressCity = it.address.addressCity,
+							addressPostalcode = it.address.addressPostalCode,
+							addressCountry = it.address.addressCountry,
 							price = it.price,
 							rooms = it.numBedrooms,
 							leaseStart = it.startDate,
 							leaseEnd = it.endDate,
 							description = it.description,
 							residenceType = ResidenceType.house,
-							imgIds = listOf(imgId)
+							imgIds = imgIds
 						)
 					)
 				}
