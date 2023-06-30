@@ -2,6 +2,7 @@ package org.uwaterloo.subletr.pages.home
 
 import android.graphics.Bitmap
 import androidx.lifecycle.ViewModel
+import androidx.navigation.NavHostController
 import androidx.navigation.navOptions
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.reactivex.rxjava3.core.Observable
@@ -13,6 +14,7 @@ import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.runBlocking
 import org.uwaterloo.subletr.api.apis.ListingsApi
 import org.uwaterloo.subletr.api.models.GetListingsResponse
+import org.uwaterloo.subletr.api.models.ListingSummary
 import org.uwaterloo.subletr.enums.LocationRange
 import org.uwaterloo.subletr.enums.PriceRange
 import org.uwaterloo.subletr.enums.RoomRange
@@ -28,21 +30,9 @@ class HomePageViewModel @Inject constructor(
 	private val listingsApi: ListingsApi,
 	private val navigationService: INavigationService,
 ) : ViewModel() {
-	data class GetListingParams(
-		val locationRange: LocationRange,
-		val priceRange: PriceRange,
-		val roomRange: RoomRange,
-		val listingPagingParams: ListingPagingParams,
-	)
-
-	data class ListingPagingParams(
-		val previousListingItemsModel: HomePageUiState.ListingItemsModel,
-		val pageNumber: Int,
-	)
-
 	private val disposables: MutableList<Disposable> = mutableListOf()
 
-	val navHostController get() = navigationService.getNavHostController()
+	val navHostController: NavHostController get() = navigationService.getNavHostController()
 
 	val locationRangeFilterStream: BehaviorSubject<LocationRange> =
 		BehaviorSubject.createDefault(LocationRange.NOFILTER)
@@ -69,17 +59,14 @@ class HomePageViewModel @Inject constructor(
 	private val totalNumberOfPagesStream: BehaviorSubject<Int> =
 		BehaviorSubject.createDefault(1)
 
-	data class ListingParamsAndResponse(
-		val listingParams: GetListingParams,
-		val listingsResponse: GetListingsResponse,
-	)
-
 	private val listingsStream: Observable<ListingParamsAndResponse> = Observable.combineLatest(
-		locationRangeFilterStream,
-		priceRangeFilterStream,
-		roomRangeFilterStream,
+		locationRangeFilterStream.distinctUntilChanged(),
+		priceRangeFilterStream.distinctUntilChanged(),
+		roomRangeFilterStream.distinctUntilChanged(),
 		listingPagingParamsStream
-			.distinctUntilChanged { t1, t2 -> t1.pageNumber == t2.pageNumber }
+			.distinctUntilChanged { t1, t2 ->
+				t1.pageNumber == t2.pageNumber
+			}
 			.withLatestFrom(totalNumberOfPagesStream, ::Pair)
 			.filter {
 				0 <= it.first.pageNumber && it.first.pageNumber < it.second
@@ -89,7 +76,7 @@ class HomePageViewModel @Inject constructor(
 			},
 		::GetListingParams
 	)
-		.map { getListingParams ->
+		.map { getListingParams: GetListingParams ->
 			ListingParamsAndResponse(
 				listingParams = getListingParams,
 				listingsResponse = runCatching {
@@ -130,7 +117,7 @@ class HomePageViewModel @Inject constructor(
 		.map {
 			runBlocking {
 				it.listingsResponse.listings
-					.map { l ->
+					.map { l: ListingSummary ->
 						async {
 							runCatching {
 								listingsApi.listingsImagesGet(l.imgIds.first())
@@ -141,7 +128,7 @@ class HomePageViewModel @Inject constructor(
 		}
 		.subscribeOn(Schedulers.io())
 		.observeOn(Schedulers.computation())
-		.map { base64ImageList ->
+		.map { base64ImageList: List<String?> ->
 			base64ImageList.map { it?.base64ToBitmap() }
 		}
 		.observeOn(Schedulers.io())
@@ -162,19 +149,33 @@ class HomePageViewModel @Inject constructor(
 		)
 	}
 
-	val uiStateStream: Observable<HomePageUiState> = Observable.combineLatest(
+	// To ensure that view does not force an api call on every subscription
+	private val internalUiStateStream: Observable<Unit> = Observable.combineLatest(
 		locationRangeFilterStream,
 		priceRangeFilterStream,
 		roomRangeFilterStream,
 		listingItemsStream,
 		infoTextStringIdStream,
-	) { locationRange, priceRange, roomRange, listings, infoTextStringId ->
-		return@combineLatest HomePageUiState.Loaded(
+	) { locationRange: LocationRange,
+		priceRange: PriceRange,
+		roomRange: RoomRange,
+		listings: HomePageUiState.ListingItemsModel,
+		infoTextStringId: Optional<Int> ->
+		uiStateStream.onNext(HomePageUiState.Loaded(
 			locationRange = locationRange,
 			priceRange = priceRange,
 			roomRange = roomRange,
 			listingItems = listings,
 			infoTextStringId = infoTextStringId.getOrNull()
+		))
+	}
+
+	val uiStateStream: BehaviorSubject<HomePageUiState> =
+		BehaviorSubject.createDefault(HomePageUiState.Loading)
+
+	init {
+		disposables.add(
+			internalUiStateStream.subscribe()
 		)
 	}
 
@@ -184,6 +185,23 @@ class HomePageViewModel @Inject constructor(
 			it.dispose()
 		}
 	}
+
+	data class GetListingParams(
+		val locationRange: LocationRange,
+		val priceRange: PriceRange,
+		val roomRange: RoomRange,
+		val listingPagingParams: ListingPagingParams,
+	)
+
+	data class ListingPagingParams(
+		val previousListingItemsModel: HomePageUiState.ListingItemsModel,
+		val pageNumber: Int,
+	)
+
+	data class ListingParamsAndResponse(
+		val listingParams: GetListingParams,
+		val listingsResponse: GetListingsResponse,
+	)
 
 	companion object {
 		const val LISTING_PAGE_SIZE = 5
