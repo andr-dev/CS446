@@ -1,10 +1,9 @@
 package org.uwaterloo.subletr.pages.createlisting
 
 import android.util.Log
-import androidx.lifecycle.ViewModel
+import androidx.navigation.NavHostController
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.reactivex.rxjava3.core.Observable
-import io.reactivex.rxjava3.disposables.Disposable
 import io.reactivex.rxjava3.schedulers.Schedulers
 import io.reactivex.rxjava3.subjects.BehaviorSubject
 import io.reactivex.rxjava3.subjects.PublishSubject
@@ -14,6 +13,7 @@ import org.uwaterloo.subletr.api.models.CreateListingRequest
 import org.uwaterloo.subletr.api.models.ListingsImagesCreateRequest
 import org.uwaterloo.subletr.api.models.ResidenceType
 import org.uwaterloo.subletr.enums.HousingType
+import org.uwaterloo.subletr.infrastructure.SubletrViewModel
 import org.uwaterloo.subletr.services.INavigationService
 import javax.inject.Inject
 
@@ -21,10 +21,8 @@ import javax.inject.Inject
 class CreateListingPageViewModel @Inject constructor(
 	private val listingsApi: ListingsApi,
 	val navigationService: INavigationService,
-) : ViewModel() {
-	private val disposables: MutableList<Disposable> = mutableListOf()
-
-	val navHostController get() = navigationService.getNavHostController()
+) : SubletrViewModel<CreateListingPageUiState>() {
+	val navHostController: NavHostController get() = navigationService.getNavHostController()
 
 	val addressLineStream: BehaviorSubject<String> = BehaviorSubject.createDefault("")
 	val addressCityStream: BehaviorSubject<String> = BehaviorSubject.createDefault("")
@@ -38,7 +36,7 @@ class CreateListingPageViewModel @Inject constructor(
 
 	val imagesByteStream: BehaviorSubject<MutableList<String>> = BehaviorSubject.createDefault(ArrayList())
 
-	val uiStateStream: Observable<CreateListingPageUiState> = Observable.combineLatest(
+	override val uiStateStream: Observable<CreateListingPageUiState> = Observable.combineLatest(
 		addressLineStream,
 		addressCityStream,
 		addressPostalCodeStream,
@@ -68,8 +66,8 @@ class CreateListingPageViewModel @Inject constructor(
 	val createListingStream: PublishSubject<CreateListingPageUiState.Loaded> = PublishSubject.create()
 
 	init {
-		disposables.add(
-			createListingStream.map {
+		createListingStream.map {
+			runCatching {
 				runBlocking {
 					val imgId = listingsApi.listingsImagesCreate(
 						ListingsImagesCreateRequest(
@@ -93,22 +91,15 @@ class CreateListingPageViewModel @Inject constructor(
 					)
 				}
 			}
-				.map {
+				.onSuccess {
 					navHostController.popBackStack()
 				}
-				.doOnError {
-					Log.d("API ERROR", "Create listing failed	")
+				.onFailure {
+					Log.d("API ERROR", "Create listing failed")
 				}
-				.subscribeOn(Schedulers.io())
-				.onErrorResumeWith(Observable.never())
-				.subscribe()
-		)
-	}
-	override fun onCleared() {
-		super.onCleared()
-		disposables.forEach {
-			it.dispose()
 		}
+			.subscribeOn(Schedulers.io())
+			.onErrorResumeWith(Observable.never())
+			.safeSubscribe()
 	}
-
 }

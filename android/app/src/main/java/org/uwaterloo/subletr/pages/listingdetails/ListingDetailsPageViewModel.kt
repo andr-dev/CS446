@@ -2,7 +2,6 @@ package org.uwaterloo.subletr.pages.listingdetails
 
 import android.graphics.Bitmap
 import androidx.lifecycle.SavedStateHandle
-import androidx.lifecycle.ViewModel
 import androidx.navigation.navOptions
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.reactivex.rxjava3.core.Observable
@@ -13,6 +12,7 @@ import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.runBlocking
 import org.uwaterloo.subletr.api.apis.ListingsApi
 import org.uwaterloo.subletr.api.models.ListingDetails
+import org.uwaterloo.subletr.infrastructure.SubletrViewModel
 import org.uwaterloo.subletr.navigation.NavigationDestination
 import org.uwaterloo.subletr.services.INavigationService
 import org.uwaterloo.subletr.utils.base64ToBitmap
@@ -23,7 +23,7 @@ class ListingDetailsPageViewModel @Inject constructor(
 	private val listingsApi: ListingsApi,
 	savedStateHandle: SavedStateHandle,
 	private val navigationService: INavigationService
-) : ViewModel() {
+) : SubletrViewModel<ListingDetailsPageUiState>() {
 	val navHostController get() = navigationService.getNavHostController()
 
 	private val listingIdStream: BehaviorSubject<Int> =
@@ -70,7 +70,7 @@ class ListingDetailsPageViewModel @Inject constructor(
 		.observeOn(Schedulers.io())
 		.onErrorResumeWith(Observable.never())
 
-	val uiStateStream: Observable<ListingDetailsPageUiState> = Observable.combineLatest(
+	override val uiStateStream: Observable<ListingDetailsPageUiState> = Observable.combineLatest(
 		listingDetailsStream,
 		favouritedStream,
 		imagesStream,

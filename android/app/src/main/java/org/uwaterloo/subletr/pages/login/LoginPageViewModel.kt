@@ -1,17 +1,15 @@
 package org.uwaterloo.subletr.pages.login
 
-import androidx.lifecycle.ViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.reactivex.rxjava3.core.Observable
-import io.reactivex.rxjava3.disposables.Disposable
 import io.reactivex.rxjava3.schedulers.Schedulers
 import io.reactivex.rxjava3.subjects.BehaviorSubject
 import io.reactivex.rxjava3.subjects.PublishSubject
 import kotlinx.coroutines.runBlocking
 import org.uwaterloo.subletr.R
 import org.uwaterloo.subletr.api.apis.AuthenticationApi
-import org.uwaterloo.subletr.api.apis.UserApi
 import org.uwaterloo.subletr.api.models.UserLoginRequest
+import org.uwaterloo.subletr.infrastructure.SubletrViewModel
 import org.uwaterloo.subletr.navigation.NavigationDestination
 import org.uwaterloo.subletr.services.IAuthenticationService
 import org.uwaterloo.subletr.services.INavigationService
@@ -24,16 +22,14 @@ class LoginPageViewModel @Inject constructor(
 	private val authenticationApi: AuthenticationApi,
 	private val navigationService: INavigationService,
 	private val authenticationService: IAuthenticationService,
-) : ViewModel() {
-	private val disposables: MutableList<Disposable> = mutableListOf()
-
+) : SubletrViewModel<LoginPageUiState>() {
 	val navHostController get() = navigationService.getNavHostController()
 
 	val emailStream: BehaviorSubject<String> = BehaviorSubject.createDefault("")
 	val passwordStream: BehaviorSubject<String> = BehaviorSubject.createDefault("")
 	private val infoTextStringIdStream: BehaviorSubject<Optional<Int>> = BehaviorSubject.createDefault(Optional.empty())
 
-	val uiStateStream: Observable<LoginPageUiState> = Observable.combineLatest(
+	override val uiStateStream: Observable<LoginPageUiState> = Observable.combineLatest(
 		emailStream,
 		passwordStream,
 		infoTextStringIdStream,
@@ -49,39 +45,30 @@ class LoginPageViewModel @Inject constructor(
 	val loginStream: PublishSubject<LoginPageUiState.Loaded> = PublishSubject.create()
 
 	init {
-		disposables.add(
-			loginStream.map {
-				runCatching {
-					runBlocking {
-						authenticationApi.authLogin(
-							UserLoginRequest(
-								email = it.email,
-								password = it.password,
-							)
+		loginStream.map {
+			runCatching {
+				runBlocking {
+					authenticationApi.authLogin(
+						UserLoginRequest(
+							email = it.email,
+							password = it.password,
 						)
-					}
+					)
 				}
-					.onSuccess {
-						authenticationService.setAccessToken(it.token)
-						navHostController.navigate(NavigationDestination.HOME.rootNavPath)
-					}
-					.onFailure {
-						infoTextStringIdStream.onNext(
-							Optional.of(R.string.invalid_login_credentials_try_again)
-						)
-						authenticationService.deleteAccessToken()
-					}
 			}
-				.onErrorResumeWith(Observable.never())
-				.subscribeOn(Schedulers.io())
-				.subscribe()
-		)
-	}
-
-	override fun onCleared() {
-		super.onCleared()
-		disposables.forEach {
-			it.dispose()
+				.onSuccess {
+					authenticationService.setAccessToken(it.token)
+					navHostController.navigate(NavigationDestination.HOME.rootNavPath)
+				}
+				.onFailure {
+					infoTextStringIdStream.onNext(
+						Optional.of(R.string.invalid_login_credentials_try_again)
+					)
+					authenticationService.deleteAccessToken()
+				}
 		}
+			.onErrorResumeWith(Observable.never())
+			.subscribeOn(Schedulers.io())
+			.safeSubscribe()
 	}
 }

@@ -1,10 +1,10 @@
 package org.uwaterloo.subletr.pages.account
 
-import androidx.lifecycle.ViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.reactivex.rxjava3.subjects.BehaviorSubject
 import org.uwaterloo.subletr.R
 import org.uwaterloo.subletr.enums.Gender
+import org.uwaterloo.subletr.infrastructure.SubletrViewModel
 import org.uwaterloo.subletr.navigation.NavigationDestination
 import org.uwaterloo.subletr.services.IAuthenticationService
 import org.uwaterloo.subletr.services.INavigationService
@@ -14,10 +14,10 @@ import javax.inject.Inject
 class AccountPageViewModel @Inject constructor(
 	val authenticationService: IAuthenticationService,
 	val navigationService: INavigationService,
-): ViewModel() {
+): SubletrViewModel<AccountPageUiState>() {
 	val navHostController get() = navigationService.getNavHostController()
 
-	val uiStateStream: BehaviorSubject<AccountPageUiState> = BehaviorSubject.createDefault(
+	override val uiStateStream: BehaviorSubject<AccountPageUiState> = BehaviorSubject.createDefault(
 		AccountPageUiState.Loaded(
 			lastName = "",
 			firstName = "",
