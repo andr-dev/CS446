@@ -27,11 +27,17 @@ pub async fn listings_images_get(
     image_id: String,
 ) -> ServiceResult<String> {
     if image_id.chars().any(|c| !c.is_ascii_alphanumeric() && c != '-') {
-        return Err(ServiceError::InternalError);
+        return Err(ServiceError::InvalidFieldError {
+            field: "image_id",
+            reason: format!("invalid character"),
+        });
     }
 
     if Uuid::try_parse(&image_id).is_err() {
-        return Err(ServiceError::InternalError);
+        return Err(ServiceError::InvalidFieldError {
+            field: "image_id",
+            reason: format!("invalid uuid"),
+        });
     }
 
     let mut dbcon = state.pool.get()?;
@@ -51,12 +57,21 @@ pub async fn listings_images_create(
     user: AuthenticatedUser,
     create_request: Json<ListingsImagesCreateRequest>,
 ) -> ServiceResult<ListingsImagesCreateResponse> {
-    let image = base64::decode(&create_request.image).map_err(|_| ServiceError::InternalError)?;
+    let image = base64::decode(&create_request.image).map_err(|_| ServiceError::InvalidFieldError {
+        field: "image",
+        reason: format!("failed to decode base64 string"),
+    })?;
 
-    let data_type = infer::get(&image).ok_or(ServiceError::InternalError)?;
+    let data_type = infer::get(&image).ok_or(ServiceError::InvalidFieldError {
+        field: "image",
+        reason: format!("invalid image"),
+    })?;
 
     if data_type.mime_type() != "image/jpeg" && data_type.mime_type() != "image/png" {
-        return Err(ServiceError::InternalError);
+        return Err(ServiceError::InvalidFieldError {
+            field: "image",
+            reason: format!("invalid image"),
+        });
     }
 
     let image_id = Uuid::new_v4().to_string();

@@ -30,7 +30,7 @@ use super::{
 use crate::{
     db::{
         model::listings::{Listing, ListingImage},
-        paginate::Paginate,
+        paginate::{Paginate, PaginationError},
         schema::{listings, listings_images},
     },
     error::{ServiceError, ServiceResult},
@@ -50,11 +50,15 @@ fn listings_create(
         let listing_image: ListingImage = listings_images::dsl::listings_images.find(img_id).first(&mut dbcon)?;
 
         if listing_image.user_id != user.user_id || listing_image.listing_id.is_some() {
-            return Err(ServiceError::InternalError);
+            return Err(ServiceError::Forbidden);
         }
     }
 
     let listing_id: i32 = rand::thread_rng().gen();
+
+    diesel::insert_into(listings::table)
+        .values(&listing_request.try_into_new_listing(listing_id, user.user_id)?)
+        .execute(&mut dbcon)?;
 
     for img_id in &listing_request.img_ids {
         diesel::update(listings_images::dsl::listings_images)
@@ -62,10 +66,6 @@ fn listings_create(
             .set(listings_images::listing_id.eq(listing_id))
             .execute(&mut dbcon)?;
     }
-
-    diesel::insert_into(listings::table)
-        .values(&listing_request.try_into_new_listing(listing_id, user.user_id)?)
-        .execute(&mut dbcon)?;
 
     Ok(Json(CreateListingResponse { listing_id }))
 }
@@ -81,10 +81,15 @@ fn listings_list(state: &State<AppState>, listings_request: GetListingsRequest) 
         .filter(listings::rooms.ge(listings_request.rooms_min.map(|x| x as i32).unwrap_or(i32::MIN)))
         .filter(listings::rooms.le(listings_request.rooms_max.map(|x| x as i32).unwrap_or(i32::MAX)))
         .paginate(listings_request.page_number.into(), listings_request.page_size.into())
-        .map_err(|_| ServiceError::InternalError)?
+        .map_err(|e| match e {
+            PaginationError::InvalidLimit => ServiceError::InvalidFieldError {
+                field: "page_size",
+                reason: format!("invalid"),
+            },
+        })?
         .load(&mut dbcon)?;
 
-    let pages = fetched_listings.1.try_into().map_err(|_| ServiceError::InternalError)?;
+    let pages = fetched_listings.1.try_into().or(Err(ServiceError::InternalError))?;
 
     Ok(Json(GetListingsResponse {
         listings: fetched_listings
