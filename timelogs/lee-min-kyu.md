@@ -22,3 +22,4 @@
 | 2023-06-27 | 2.5 hour(s) | Fix Various Bugs and Add Parallelization |
 | 2023-06-28 | 3.0 hour(s) | Fix Numerous Bugs on Home Page |
 | 2023-06-28 | 4.0 hour(s) | Add infinite scrolling and review PRs |
+| 2023-06-30 | 5.0 hour(s) | Fix infinite scrolling bug and add ChildView and ChildViewModels |
