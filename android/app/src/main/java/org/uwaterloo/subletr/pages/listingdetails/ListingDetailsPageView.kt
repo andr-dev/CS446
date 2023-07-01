@@ -121,7 +121,12 @@ fun ListingDetailsPageView(
 				Box(
 					modifier = Modifier
 				) {
-					if (uiState.images.isNotEmpty()) {
+					if (uiState.isFetchingImages) {
+						ImageBoxPlaceholder {
+							CircularProgressIndicator()
+						}
+					}
+					else if (uiState.images.isNotEmpty()) {
 						HorizontalPager(
 							modifier = Modifier,
 							state = pagerState,
@@ -411,6 +416,22 @@ fun ListingDetailsPageView(
 	}
 }
 
+@Composable
+fun ImageBoxPlaceholder(
+	modifier: Modifier = Modifier,
+	contentAlignment: Alignment = Alignment.Center,
+	content: @Composable () -> Unit
+) {
+	Box(
+		modifier = modifier
+			.padding(dimensionResource(id = R.dimen.xs))
+			.size(dimensionResource(id = R.dimen.listing_details_image)),
+		contentAlignment = contentAlignment
+	) {
+		content()
+	}
+}
+
 private const val ELEMENT_WIDTH = 0.9f
 /* TODO localize date format */
 private val dateFormat = DateTimeFormatter.ofPattern("MM/dd/yyyy")
@@ -434,6 +455,7 @@ fun ListingDetailsPagePreview() {
 				),
 				favourited = true,
 				images = listOf(),
+				isFetchingImages = false,
 			),
 		)
 	}

@@ -10,5 +10,6 @@ sealed interface ListingDetailsPageUiState {
 		val listingDetails: ListingDetails,
 		val favourited: Boolean,
 		val images: List<Bitmap>,
+		val isFetchingImages: Boolean,
 	) : ListingDetailsPageUiState
 }

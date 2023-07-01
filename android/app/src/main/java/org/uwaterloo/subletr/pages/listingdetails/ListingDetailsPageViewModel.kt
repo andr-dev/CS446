@@ -30,6 +30,7 @@ class ListingDetailsPageViewModel @Inject constructor(
 		BehaviorSubject.createDefault(checkNotNull(savedStateHandle["listingId"]))
 	private val imageIdsStream: BehaviorSubject<List<String>> = BehaviorSubject.createDefault(emptyList())
 	val favouritedStream: BehaviorSubject<Boolean> = BehaviorSubject.createDefault(false)
+	private val isFetchingImagesStream: BehaviorSubject<Boolean> = BehaviorSubject.createDefault(false)
 	private val listingDetailsStream: Observable<Result<ListingDetails>> = listingIdStream.map {
 		runCatching {
 			runBlocking {
@@ -51,6 +52,7 @@ class ListingDetailsPageViewModel @Inject constructor(
 		.subscribeOn(Schedulers.io())
 
 	private val imagesStream: Observable<List<Bitmap>> = imageIdsStream.map {
+		isFetchingImagesStream.onNext(true)
 		runBlocking {
 			it.map { id ->
 				async {
@@ -67,6 +69,9 @@ class ListingDetailsPageViewModel @Inject constructor(
 		.map { base64ImageList ->
 			base64ImageList.map { it.base64ToBitmap() }
 		}
+		.doOnNext {
+			isFetchingImagesStream.onNext(false)
+		}
 		.observeOn(Schedulers.io())
 		.onErrorResumeWith(Observable.never())
 
@@ -74,13 +79,15 @@ class ListingDetailsPageViewModel @Inject constructor(
 		listingDetailsStream,
 		favouritedStream,
 		imagesStream,
+		isFetchingImagesStream,
 	) {
-		listingDetails, favourited, images ->
+		listingDetails, favourited, images, isFetchingImages ->
 			listingDetails.getOrNull()?.let {
 				return@combineLatest ListingDetailsPageUiState.Loaded(
 					it,
 					favourited,
 					images,
+					isFetchingImages,
 				)
 			}
 		return@combineLatest ListingDetailsPageUiState.Loading
