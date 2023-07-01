@@ -26,7 +26,7 @@
         </activity>
 
         <provider
-            android:name=".pages.createlisting.ComposeFileProvider"
+            android:name=".utils.ComposeFileProvider"
             android:authorities="org.uwaterloo.subletr.fileprovider"
             android:grantUriPermissions="true"
             android:exported="false">

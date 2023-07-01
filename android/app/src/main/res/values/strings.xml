@@ -118,4 +118,7 @@
     <string name="open_date_picker">Open date picker</string>
     <string name="dollar_sign_n">$%d</string>
     <string name="short_for_all_date_range">%s – %s</string>
+    <string name="take_photo">Take photo</string>
+    <string name="choose_image">Choose Image</string>
+    <string name="add_photo">Add photo</string>
 </resources>

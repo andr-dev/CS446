@@ -2,15 +2,11 @@
 
 package org.uwaterloo.subletr.pages.createlisting
 
-import android.content.Context
 import android.graphics.ImageDecoder
 import android.net.Uri
 import android.os.Build
 import android.provider.MediaStore
-import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.activity.result.ActivityResultCallback
-import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -21,6 +17,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -37,6 +34,7 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
+import androidx.compose.material3.BottomSheetDefaults
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
@@ -77,7 +75,6 @@ import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.core.content.FileProvider
 import androidx.hilt.navigation.compose.hiltViewModel
 import kotlinx.coroutines.launch
 import org.uwaterloo.subletr.R
@@ -90,13 +87,12 @@ import org.uwaterloo.subletr.theme.subletrPink
 import org.uwaterloo.subletr.theme.textFieldBackgroundColor
 import org.uwaterloo.subletr.theme.textFieldBorderColor
 import org.uwaterloo.subletr.theme.textOnSubletrPink
-import java.io.File
+import org.uwaterloo.subletr.utils.ComposeFileProvider
 import java.text.SimpleDateFormat
 import java.time.ZoneOffset
 import java.time.format.DateTimeFormatter
 import java.util.Date
 import java.util.Locale
-
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -115,8 +111,8 @@ fun CreateListingPageView(
 	var startButtonText by remember { mutableStateOf("") }
 	var endButtonText by remember { mutableStateOf("") }
 
-	var openBottomSheet by rememberSaveable { mutableStateOf(false) }
-	val bottomSheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
+	var openDatePicker by rememberSaveable { mutableStateOf(false) }
+	val datePickerBottomSheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
 
 	val numberPattern = remember { Regex("^\\d+\$") }
 
@@ -165,10 +161,7 @@ fun CreateListingPageView(
 					.padding(top = paddingValues.calculateTopPadding())
 					.fillMaxSize()
 					.verticalScroll(scrollState)
-					.padding(
-						start = dimensionResource(id = R.dimen.s),
-						end = dimensionResource(id = R.dimen.s)
-					),
+					.padding(horizontal = dimensionResource(id = R.dimen.s)),
 				verticalArrangement = Arrangement.Center,
 			) {
 
@@ -281,87 +274,25 @@ fun CreateListingPageView(
 					horizontalArrangement = Arrangement.SpaceBetween,
 					verticalAlignment = Alignment.CenterVertically,
 				) {
-					RoundedTextField(
-						modifier = Modifier
-							.fillMaxWidth(0.475f)
-							.border(
-								dimensionResource(id = R.dimen.xxxs),
-								textFieldBorderColor,
-								RoundedCornerShape(dimensionResource(id = R.dimen.xxxxl))
-							),
-						placeholder = {
-							Text(
-								text = stringResource(id = R.string.placeholder_date),
-								color = secondaryTextColor,
-							)
-						},
-						label = {
-							Text(
-								text = stringResource(id = R.string.start_date),
-								color = secondaryTextColor,
-							)
-						},
-						trailingIcon = {
-						   IconButton(
-							   onClick = {
-								   coroutineScope.launch {
-									   openBottomSheet = true
-								   }
-							   }
-						   ) {
-							   Icon(
-								   painter = painterResource(
-									   id = R.drawable.calendar_outline_gray_24
-								   ),
-								   contentDescription = stringResource(id = R.string.open_date_picker),
-							   )
-						   }
-						},
+					DateInputButton(
+						width = 0.475f,
+						label = stringResource(id = R.string.start_date),
 						value = startButtonText,
-						readOnly = true,
-						onValueChange = { }
-					)
-
-					RoundedTextField(
-						modifier = Modifier
-							.fillMaxWidth(0.475f / 0.525f)
-							.border(
-								dimensionResource(id = R.dimen.xxxs),
-								textFieldBorderColor,
-								RoundedCornerShape(dimensionResource(id = R.dimen.xxxxl))
-							),
-						placeholder = {
-							Text(
-								text = stringResource(id = R.string.placeholder_date),
-								color = secondaryTextColor,
-							)
-						},
-						label = {
-							Text(
-								text = stringResource(id = R.string.end_date),
-								color = secondaryTextColor,
-							)
-						},
-						trailingIcon = {
-							IconButton(
-								onClick = {
-									coroutineScope.launch {
-										openBottomSheet = true
-									}
-								}
-							) {
-								Icon(
-									painter = painterResource(
-										id = R.drawable.calendar_outline_gray_24
-									),
-									contentDescription = stringResource(id = R.string.open_date_picker),
-								)
+						onClick = {
+							coroutineScope.launch {
+								openDatePicker = true
 							}
-						},
+						})
+
+					DateInputButton(
+						width = 0.475f / 0.525f,
+						label = stringResource(id = R.string.end_date),
 						value = endButtonText,
-						readOnly = true,
-						onValueChange = { }
-					)
+						onClick = {
+							coroutineScope.launch {
+								openDatePicker = true
+							}
+						})
 				}
 
 				Spacer(
@@ -416,12 +347,13 @@ fun CreateListingPageView(
 					modifier = Modifier.weight(weight = 2.0f)
 				)
 
-				if (openBottomSheet) {
-					DatePickerBottomSheet(bottomSheetState, dateRangePickerState, onDismissRequest = { openBottomSheet = false },
+				if (openDatePicker) {
+					DatePickerBottomSheet(datePickerBottomSheetState, dateRangePickerState,
+						onDismissRequest = { openDatePicker = false },
 						onClick = {
-							coroutineScope.launch { bottomSheetState.hide() }.invokeOnCompletion {
-								if (!bottomSheetState.isVisible) {
-									openBottomSheet = false
+							coroutineScope.launch { datePickerBottomSheetState.hide() }.invokeOnCompletion {
+								if (!datePickerBottomSheetState.isVisible) {
+									openDatePicker = false
 								}
 								if (dateRangePickerState.selectedStartDateMillis != null) {
 									startButtonText =
@@ -478,6 +410,46 @@ private val storeDateFormatISO: DateTimeFormatter = DateTimeFormatter.ISO_LOCAL_
 // TODO: localize date format
 @OptIn(ExperimentalMaterial3Api::class)
 private val displayDateFormatter = DatePickerDefaults.dateFormatter(selectedDateSkeleton = "MM/dd/yyyy")
+
+@Composable
+fun DateInputButton(width: Float, label: String, value: String, onClick: () -> Unit) {
+	RoundedTextField(
+		modifier = Modifier
+			.fillMaxWidth(width)
+			.border(
+				dimensionResource(id = R.dimen.xxxs),
+				textFieldBorderColor,
+				RoundedCornerShape(dimensionResource(id = R.dimen.xxxxl))
+			),
+		placeholder = {
+			Text(
+				text = stringResource(id = R.string.placeholder_date),
+				color = secondaryTextColor,
+			)
+		},
+		label = {
+			Text(
+				text = label,
+				color = secondaryTextColor,
+			)
+		},
+		trailingIcon = {
+			IconButton(
+				onClick = onClick
+			) {
+				Icon(
+					painter = painterResource(
+						id = R.drawable.calendar_outline_gray_24
+					),
+					contentDescription = stringResource(id = R.string.open_date_picker),
+				)
+			}
+		},
+		value = value,
+		readOnly = true,
+		onValueChange = {},
+	)
+}
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -590,17 +562,56 @@ fun LeaseDatePicker(state: DateRangePickerState, onClick: () -> Unit) {
 	}
 }
 
+@Composable
+fun ImageUploadMethodButton(
+	iconId: Int,
+	buttonText: String,
+	onClick: () -> Unit,
+) {
+	Button(
+		modifier = Modifier,
+		onClick = onClick,
+		colors = ButtonDefaults.buttonColors(
+			containerColor = Color.White,
+		),
+	) {
+		Column(
+			modifier = Modifier,
+			horizontalAlignment = Alignment.CenterHorizontally,
+			verticalArrangement = Arrangement.spacedBy(dimensionResource(id = R.dimen.s))
+		) {
+			Icon(
+				modifier = Modifier.size(dimensionResource(id = R.dimen.xxl)),
+				painter = painterResource(
+					id = iconId,
+				),
+				contentDescription = buttonText,
+				tint = Color.Gray,
+			)
+			Text(
+				text = buttonText,
+				style = MaterialTheme.typography.bodyLarge,
+			)
+		}
+	}
+}
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ImagePickerBottomSheet(
 	bottomSheetState: SheetState,
 	onDismissRequest: () -> Unit,
-	onClick: () -> Unit,
-) {
+	onTakePhotoClick: () -> Unit,
+	onChooseImageClick: () -> Unit,
+	) {
 	ModalBottomSheet(
 		modifier = Modifier,
 		onDismissRequest = onDismissRequest,
 		sheetState = bottomSheetState,
+		containerColor = Color.White,
+		dragHandle = { BottomSheetDefaults.DragHandle(
+			width = dimensionResource(id = R.dimen.xl)
+		)},
 		content = {
 			Box(
 				modifier = Modifier
@@ -608,75 +619,50 @@ fun ImagePickerBottomSheet(
 					.height(dimensionResource(id = R.dimen.xxxxxxxl))
 					.background(Color.White)
 			) {
-
-				Button(
-					onClick = onClick,
-					colors = ButtonDefaults.buttonColors(
-						containerColor = subletrPink,
-					),
+				Row(
 					modifier = Modifier
-						.align(Alignment.BottomCenter)
-						.padding(
-							start = dimensionResource(id = R.dimen.s),
-							end = dimensionResource(id = R.dimen.s),
-							bottom = dimensionResource(id = R.dimen.s)
-						)
 						.fillMaxWidth()
-						.height(dimensionResource(id = R.dimen.xl))
+						.fillMaxHeight()
+						.padding(horizontal = dimensionResource(id = R.dimen.l)),
+					horizontalArrangement = Arrangement.SpaceBetween,
+					verticalAlignment = Alignment.CenterVertically,
 				) {
-					Text(stringResource(id = R.string.done), color = textOnSubletrPink)
+					ImageUploadMethodButton(
+						R.drawable.photo_camera_outline_black_64,
+						stringResource(id = R.string.take_photo),
+						onClick = onTakePhotoClick,
+					)
+
+					ImageUploadMethodButton(
+						R.drawable.photo_outline_black_64,
+						stringResource(id = R.string.choose_image),
+						onClick = onChooseImageClick,
+					)
 				}
 			}
 		},
 	)
 }
 
-class ComposeFileProvider : FileProvider(
-	R.xml.filepaths
-) {
-	companion object {
-		fun getImageUri(context: Context): Uri {
-			// 1
-			val directory = File(context.cacheDir, "images")
-			directory.mkdirs()
-			// 2
-			val file = File.createTempFile(
-				"selected_image_",
-				".jpg",
-				directory
-			)
-			// 3
-			val authority = context.packageName + ".fileprovider"
-			// 4
-			return getUriForFile(
-				context,
-				authority,
-				file,
-			)
-		}
-	}
-}
-
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun UploadImages(
 	viewModel: CreateListingPageViewModel,
 	uiState: CreateListingPageUiState.Loaded,
 ) {
-	var imageUris by remember {
-		mutableStateOf<List<Uri?>>(ArrayList())
-	}
 	val context = LocalContext.current
+	val coroutineScope = rememberCoroutineScope()
 
-	val launcher = rememberLauncherForActivityResult(
+	var imageUris by remember { mutableStateOf<List<Uri?>>(ArrayList()) }
+	var hasImage by remember { mutableStateOf(false) }
+
+	var openImagePicker by rememberSaveable { mutableStateOf(false) }
+	val imagePickerBottomSheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
+
+	val imageSelectorLauncher = rememberLauncherForActivityResult(
 		contract = ActivityResultContracts.GetMultipleContents()) {
 		imageUris = it
-	}
-
-	var hasImage by remember {
-		mutableStateOf(false)
-	}
-	var imageUri by remember {
-		mutableStateOf<Uri?>(null)
+		hasImage = true
 	}
 
 	val cameraLauncher = rememberLauncherForActivityResult(
@@ -685,13 +671,11 @@ fun UploadImages(
 		hasImage = it
 	}
 
-
 	LazyRow(
 		modifier = Modifier.fillMaxWidth(),
 		verticalAlignment = Alignment.CenterVertically,
 	) {
 		item {
-
 			Button(
 				modifier = Modifier
 					.size(dimensionResource(id = R.dimen.xxxxxxl))
@@ -702,36 +686,66 @@ fun UploadImages(
 					),
 				shape = RoundedCornerShape(dimensionResource(id = R.dimen.s)),
 				onClick = {
-					Log.d("PACKET", "${context.packageName + ".fileprovider"}")
-//					launcher.launch("image/*")
-					val uri = ComposeFileProvider.getImageUri(context)
-					imageUris = listOf(uri)
-					cameraLauncher.launch(uri)
+					coroutineScope.launch {
+						openImagePicker = true
+					}
 				},
 				colors = ButtonDefaults.buttonColors(
 					containerColor = textFieldBackgroundColor,
-					contentColor = Color(0xFF808080)
-
+					contentColor = Color(0xFF808080),
 				),
 			) {
-				Icon(
-					painter = painterResource(
-						id = R.drawable.add_photo_solid_gray_24
-					),
-					contentDescription = stringResource(id = R.string.upload_images),
+				Column(
+					modifier = Modifier,
+					horizontalAlignment = Alignment.CenterHorizontally,
+					verticalArrangement = Arrangement.spacedBy(dimensionResource(id = R.dimen.xs))
+				) {
+					Icon(
+						painter = painterResource(
+							id = R.drawable.add_filled_black_32
+						),
+						contentDescription = stringResource(id = R.string.upload_images),
+					)
+					Text(
+						text = stringResource(id = R.string.add_photo),
+						color = secondaryTextColor
+					)
+				}
+			}
+
+			if (openImagePicker) {
+				ImagePickerBottomSheet(
+					bottomSheetState = imagePickerBottomSheetState,
+					onDismissRequest = { openImagePicker = false },
+					onTakePhotoClick = {
+						coroutineScope.launch { imagePickerBottomSheetState.hide() }.invokeOnCompletion {
+							if (!imagePickerBottomSheetState.isVisible) {
+								openImagePicker = false
+							}
+							val uri = ComposeFileProvider.getImageUri(context)
+							imageUris = listOf(uri)
+							cameraLauncher.launch(uri)
+						}
+					},
+					onChooseImageClick = {
+						coroutineScope.launch { imagePickerBottomSheetState.hide() }.invokeOnCompletion {
+							if (!imagePickerBottomSheetState.isVisible) {
+								openImagePicker = false
+							}
+							imageSelectorLauncher.launch("image/*")
+						}
+					},
 				)
 			}
 
 			if (imageUris.isNotEmpty() && hasImage) {
 				imageUris.filterNotNull().map {
-					Log.d("URI", it.toString())
 					if (Build.VERSION.SDK_INT < 28) {
 						uiState.imagesBitmap.add(
 							MediaStore.Images
 								.Media.getBitmap(context.contentResolver, it)
 						)
 						viewModel.imagesBitmapStream.onNext(uiState.imagesBitmap)
-
 					} else {
 						val source = ImageDecoder
 							.createSource(context.contentResolver, it)
@@ -739,10 +753,9 @@ fun UploadImages(
 						viewModel.imagesBitmapStream.onNext(uiState.imagesBitmap)
 					}
 				}
+				imageUris = emptyList<Uri>()
+				hasImage = false
 			}
-
-			imageUris = emptyList<Uri>()
-
 			Spacer(modifier = Modifier.width(dimensionResource(id = R.dimen.xs)))
 		}
 
@@ -781,7 +794,6 @@ fun UploadImages(
 						contentDescription = stringResource(id = R.string.upload_images),
 					)
 				}
-
 			}
 			Spacer(modifier = Modifier.width(dimensionResource(id = R.dimen.xs)))
 		}
