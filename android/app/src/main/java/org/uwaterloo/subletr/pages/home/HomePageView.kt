@@ -45,6 +45,8 @@ import org.uwaterloo.subletr.enums.RoomRange
 import org.uwaterloo.subletr.navigation.NavigationDestination
 import org.uwaterloo.subletr.pages.home.list.HomeListChildView
 import org.uwaterloo.subletr.pages.home.list.HomeListUiState
+import org.uwaterloo.subletr.pages.home.map.HomeMapChildView
+import org.uwaterloo.subletr.pages.home.map.HomeMapUiState
 import org.uwaterloo.subletr.theme.SubletrTheme
 import org.uwaterloo.subletr.theme.secondaryButtonBackgroundColor
 import org.uwaterloo.subletr.theme.secondaryTextColor
@@ -86,15 +88,21 @@ fun HomePageView(
 					text = stringResource(id = R.string.view_sublets),
 					style = MaterialTheme.typography.titleMedium,
 				)
-				ViewSwitch(isListView = isListView)
+				ViewSwitch(isListView = isListView, viewModel = viewModel)
 			}
 		},
 		content = { padding: PaddingValues ->
 			if (uiState is HomeListUiState) {
 				HomeListChildView(
 					modifier = Modifier.padding(padding),
-					viewModel = viewModel.homeListViewModel,
+					viewModel = viewModel.homeListChildViewModel,
 					uiState = uiState,
+				)
+			}
+			else if (uiState is HomeMapUiState) {
+				HomeMapChildView(
+					modifier = Modifier.padding(padding),
+					viewModel = viewModel.homeMapChildViewModel,
 				)
 			}
 		},
@@ -125,7 +133,11 @@ fun HomePageView(
 }
 
 @Composable
-fun ViewSwitch(modifier: Modifier = Modifier, isListView: MutableState<Boolean>) {
+fun ViewSwitch(
+	modifier: Modifier = Modifier,
+	isListView: MutableState<Boolean>,
+	viewModel: HomePageViewModel,
+) {
 	Row(
 		modifier = modifier
 			.wrapContentWidth(),
@@ -167,7 +179,7 @@ fun ViewSwitch(modifier: Modifier = Modifier, isListView: MutableState<Boolean>)
 			content = {
 				Icon(
 					painter = painterResource(
-						id = R.drawable.view_list_outline_pink_24
+						id = R.drawable.view_list_outline_pink_24,
 					),
 					contentDescription = stringResource(id = R.string.list_icon),
 					tint = if (isListView.value) subletrPink else secondaryTextColor

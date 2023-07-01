@@ -5,17 +5,22 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import io.reactivex.rxjava3.core.Observable
 import org.uwaterloo.subletr.infrastructure.SubletrViewModel
 import org.uwaterloo.subletr.pages.home.list.HomeListChildViewModel
+import org.uwaterloo.subletr.pages.home.map.HomeMapChildViewModel
 import org.uwaterloo.subletr.services.INavigationService
 import javax.inject.Inject
 
 @HiltViewModel
 class HomePageViewModel @Inject constructor(
 	private val navigationService: INavigationService,
-	val homeListViewModel: HomeListChildViewModel,
-) : SubletrViewModel<HomePageUiState>(homeListViewModel) {
+	val homeListChildViewModel: HomeListChildViewModel,
+	val homeMapChildViewModel: HomeMapChildViewModel,
+) : SubletrViewModel<HomePageUiState>(
+	homeListChildViewModel,
+	homeMapChildViewModel,
+) {
 	val navHostController: NavHostController get() = navigationService.getNavHostController()
 
-	override val uiStateStream: Observable<HomePageUiState> = homeListViewModel.uiStateStream.map {
+	override val uiStateStream: Observable<HomePageUiState> = homeListChildViewModel.uiStateStream.map {
 		it
 	}
 }

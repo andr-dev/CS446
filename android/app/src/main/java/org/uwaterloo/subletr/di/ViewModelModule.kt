@@ -1,12 +1,22 @@
 package org.uwaterloo.subletr.di
 
+import android.content.Context
 import dagger.Module
+import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.components.ViewModelComponent
+import dagger.hilt.android.qualifiers.ApplicationContext
+import org.uwaterloo.subletr.services.ILocationService
+import org.uwaterloo.subletr.services.LocationService
 
 @Module
 @InstallIn(ViewModelComponent::class)
-object ViewModelModule
+object ViewModelModule {
+	@Provides
+	fun provideLocationService(@ApplicationContext context: Context): ILocationService {
+		return LocationService(context)
+	}
+}
 
 @Module
 @InstallIn(ViewModelComponent::class)
