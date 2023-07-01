@@ -27,7 +27,10 @@ fn user_create(
     let mut dbcon = state.pool.get()?;
 
     if !create_user_request.email.ends_with("@uwaterloo.ca") {
-        return Err(ServiceError::InternalError);
+        return Err(ServiceError::InvalidFieldError {
+            field: "email",
+            reason: format!("{} does not end with @uwaterloo.ca", create_user_request.email),
+        });
     }
 
     let user_id: i32 = rand::thread_rng().gen();
