@@ -8,6 +8,8 @@ import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.schedulers.Schedulers
 import io.reactivex.rxjava3.subjects.BehaviorSubject
 import io.reactivex.rxjava3.subjects.PublishSubject
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.runBlocking
 import org.uwaterloo.subletr.api.apis.ListingsApi
 import org.uwaterloo.subletr.api.models.CreateListingRequest
@@ -50,7 +52,7 @@ class CreateListingPageViewModel @Inject constructor(
 	val startDateStream: BehaviorSubject<String> = BehaviorSubject.createDefault("")
 	val endDateStream: BehaviorSubject<String> = BehaviorSubject.createDefault("")
 
-	val imagesBitmapStream: BehaviorSubject<MutableList<Bitmap?>> = BehaviorSubject.createDefault(ArrayList())
+	val imagesBitmapStream: BehaviorSubject<MutableList<Bitmap?>> = BehaviorSubject.createDefault(mutableListOf())
 
 	private val imagesStream: Observable<List<String>> = imagesBitmapStream
 		.observeOn(Schedulers.computation())
@@ -71,7 +73,7 @@ class CreateListingPageViewModel @Inject constructor(
 		startDateStream,
 		endDateStream,
 		imagesBitmapStream,
-		imagesStream
+		imagesStream,
 	) {
 			address, description, price, numBedrooms, startDate, endDate, imagesBitmap, images ->
 		CreateListingPageUiState.Loaded(
@@ -94,12 +96,14 @@ class CreateListingPageViewModel @Inject constructor(
 			runCatching {
 				runBlocking {
 					val imgIds = it.images.map { img ->
-						listingsApi.listingsImagesCreate(
-							ListingsImagesCreateRequest(
-								image = img
-							)
-						).imageId
-					}
+						async {
+							listingsApi.listingsImagesCreate(
+								ListingsImagesCreateRequest(
+									image = img,
+								)
+							).imageId
+						}
+					}.awaitAll()
 
 					listingsApi.listingsCreate(
 						CreateListingRequest(
@@ -113,7 +117,7 @@ class CreateListingPageViewModel @Inject constructor(
 							leaseEnd = it.endDate,
 							description = it.description,
 							residenceType = ResidenceType.house,
-							imgIds = imgIds
+							imgIds = imgIds,
 						)
 					)
 				}

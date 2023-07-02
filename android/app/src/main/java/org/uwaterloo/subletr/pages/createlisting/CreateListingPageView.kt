@@ -76,6 +76,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import org.uwaterloo.subletr.R
 import org.uwaterloo.subletr.components.button.PrimaryButton
@@ -87,6 +88,7 @@ import org.uwaterloo.subletr.theme.subletrPink
 import org.uwaterloo.subletr.theme.textFieldBackgroundColor
 import org.uwaterloo.subletr.theme.textFieldBorderColor
 import org.uwaterloo.subletr.theme.textOnSubletrPink
+import org.uwaterloo.subletr.theme.unselectedGray
 import org.uwaterloo.subletr.utils.ComposeFileProvider
 import java.text.SimpleDateFormat
 import java.time.ZoneOffset
@@ -271,12 +273,19 @@ fun CreateListingPageView(
 
 				Row(
 					modifier = Modifier.fillMaxWidth(),
-					horizontalArrangement = Arrangement.SpaceBetween,
+					horizontalArrangement =  Arrangement.spacedBy(dimensionResource(id = R.dimen.s)),
 					verticalAlignment = Alignment.CenterVertically,
 				) {
 					DateInputButton(
-						width = 0.475f,
-						label = stringResource(id = R.string.start_date),
+						modifier = Modifier
+							.fillMaxWidth()
+							.weight(1f)
+							.border(
+								dimensionResource(id = R.dimen.xxxs),
+								textFieldBorderColor,
+								RoundedCornerShape(dimensionResource(id = R.dimen.xxxxl))
+							),
+						labelStringId = R.string.start_date,
 						value = startButtonText,
 						onClick = {
 							coroutineScope.launch {
@@ -285,8 +294,15 @@ fun CreateListingPageView(
 						})
 
 					DateInputButton(
-						width = 0.475f / 0.525f,
-						label = stringResource(id = R.string.end_date),
+						modifier = Modifier
+							.fillMaxWidth()
+							.weight(1f)
+							.border(
+								dimensionResource(id = R.dimen.xxxs),
+								textFieldBorderColor,
+								RoundedCornerShape(dimensionResource(id = R.dimen.xxxxl))
+							),
+						labelStringId = R.string.end_date,
 						value = endButtonText,
 						onClick = {
 							coroutineScope.launch {
@@ -341,7 +357,7 @@ fun CreateListingPageView(
 					modifier = Modifier.weight(weight = 1.0f)
 				)
 
-				UploadImages(viewModel, uiState)
+				UploadImages(viewModel, uiState, coroutineScope)
 
 				Spacer(
 					modifier = Modifier.weight(weight = 2.0f)
@@ -412,15 +428,9 @@ private val storeDateFormatISO: DateTimeFormatter = DateTimeFormatter.ISO_LOCAL_
 private val displayDateFormatter = DatePickerDefaults.dateFormatter(selectedDateSkeleton = "MM/dd/yyyy")
 
 @Composable
-fun DateInputButton(width: Float, label: String, value: String, onClick: () -> Unit) {
+fun DateInputButton(modifier: Modifier, labelStringId: Int, value: String, onClick: () -> Unit) {
 	RoundedTextField(
-		modifier = Modifier
-			.fillMaxWidth(width)
-			.border(
-				dimensionResource(id = R.dimen.xxxs),
-				textFieldBorderColor,
-				RoundedCornerShape(dimensionResource(id = R.dimen.xxxxl))
-			),
+		modifier = modifier,
 		placeholder = {
 			Text(
 				text = stringResource(id = R.string.placeholder_date),
@@ -429,7 +439,7 @@ fun DateInputButton(width: Float, label: String, value: String, onClick: () -> U
 		},
 		label = {
 			Text(
-				text = label,
+				text = stringResource(id = labelStringId),
 				color = secondaryTextColor,
 			)
 		},
@@ -603,7 +613,7 @@ fun ImagePickerBottomSheet(
 	onDismissRequest: () -> Unit,
 	onTakePhotoClick: () -> Unit,
 	onChooseImageClick: () -> Unit,
-	) {
+) {
 	ModalBottomSheet(
 		modifier = Modifier,
 		onDismissRequest = onDismissRequest,
@@ -649,9 +659,9 @@ fun ImagePickerBottomSheet(
 fun UploadImages(
 	viewModel: CreateListingPageViewModel,
 	uiState: CreateListingPageUiState.Loaded,
+	coroutineScope: CoroutineScope,
 ) {
 	val context = LocalContext.current
-	val coroutineScope = rememberCoroutineScope()
 
 	var imageUris by remember { mutableStateOf<List<Uri?>>(ArrayList()) }
 	var hasImage by remember { mutableStateOf(false) }
@@ -660,7 +670,8 @@ fun UploadImages(
 	val imagePickerBottomSheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
 
 	val imageSelectorLauncher = rememberLauncherForActivityResult(
-		contract = ActivityResultContracts.GetMultipleContents()) {
+		contract = ActivityResultContracts.GetMultipleContents()
+	) {
 		imageUris = it
 		hasImage = true
 	}
@@ -692,7 +703,7 @@ fun UploadImages(
 				},
 				colors = ButtonDefaults.buttonColors(
 					containerColor = textFieldBackgroundColor,
-					contentColor = Color(0xFF808080),
+					contentColor = unselectedGray,
 				),
 			) {
 				Column(
@@ -738,6 +749,7 @@ fun UploadImages(
 				)
 			}
 
+			// TODO: move to ViewModel to retrieve images
 			if (imageUris.isNotEmpty() && hasImage) {
 				imageUris.filterNotNull().map {
 					if (Build.VERSION.SDK_INT < 28) {
@@ -782,8 +794,7 @@ fun UploadImages(
 					},
 					colors = ButtonDefaults.buttonColors(
 						containerColor = textFieldBackgroundColor,
-						contentColor = Color.Black
-
+						contentColor = Color.Black,
 					),
 				) {
 					Icon(
