@@ -37,10 +37,9 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.zIndex
 import androidx.hilt.navigation.compose.hiltViewModel
 import org.uwaterloo.subletr.R
-import org.uwaterloo.subletr.enums.LocationRange
-import org.uwaterloo.subletr.enums.PriceRange
 import org.uwaterloo.subletr.enums.RoomRange
 import org.uwaterloo.subletr.navigation.NavigationDestination
 import org.uwaterloo.subletr.pages.home.list.HomeListChildView
@@ -61,24 +60,17 @@ fun HomePageView(
 	).value,
 ) {
 	val isListView = remember { mutableStateOf(true) }
-
 	Scaffold(
 		modifier = modifier
-			.padding(
-				start = dimensionResource(id = R.dimen.s),
-				top = dimensionResource(id = R.dimen.zero),
-				end = dimensionResource(id = R.dimen.s),
-				bottom = dimensionResource(id = R.dimen.zero),
-			)
 			.imePadding(),
 		topBar = {
 			Row(
 				modifier = Modifier
 					.fillMaxWidth(1.0f)
 					.padding(
-						start = dimensionResource(id = R.dimen.zero),
+						start = dimensionResource(id = R.dimen.s),
 						top = dimensionResource(id = R.dimen.s),
-						end = dimensionResource(id = R.dimen.zero),
+						end = dimensionResource(id = R.dimen.s),
 						bottom = dimensionResource(id = R.dimen.m)
 					),
 				verticalAlignment = Alignment.CenterVertically,
@@ -245,8 +237,8 @@ fun LoginPageViewLoadedPreview() {
 	SubletrTheme {
 		HomePageView(
 			uiState = HomeListUiState.Loaded(
-				locationRange = LocationRange.NOFILTER,
-				priceRange = PriceRange.NOFILTER,
+				locationRange = HomeListUiState.LocationRange(),
+				priceRange = HomeListUiState.PriceRange(),
 				roomRange = RoomRange.NOFILTER,
 				listingItems = HomeListUiState.ListingItemsModel(
 					listings = emptyList(),

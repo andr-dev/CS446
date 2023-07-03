@@ -121,4 +121,16 @@
     <string name="take_photo">Take photo</string>
     <string name="choose_image">Choose Image</string>
     <string name="add_photo">Add photo</string>
+    <string name="property_type">Property Type</string>
+    <string name="roommate">Roommate</string>
+    <string name="minimum">Minimum</string>
+    <string name="maximum">Maximum</string>
+    <string name="Distance_instruction">Distance from your current location:</string>
+    <string name="km">Km</string>
+    <string name="show_sublets">Show sublets</string>
+    <string name="price_range">Price Range</string>
+
+
+
+
 </resources>

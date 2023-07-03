@@ -62,6 +62,24 @@ val listingDescriptionFont
 		lineHeight = 14.sp,
 		textAlign = TextAlign.Center
 	)
+val filterBoldFont
+	@Composable
+	get() = TextStyle(
+		fontFamily = FontFamily.Default,
+		fontWeight = FontWeight.Bold,
+		fontSize = 16.sp,
+		letterSpacing = 0.sp,
+		textAlign = TextAlign.Center
+	)
+val filterRegularFont
+	@Composable
+	get() = TextStyle(
+		fontFamily = FontFamily.Default,
+		fontWeight = FontWeight.Normal,
+		fontSize = 16.sp,
+		letterSpacing = 0.sp,
+		textAlign = TextAlign.Center
+	)
 
 val SubletrTypography = Typography(
 	bodyLarge = TextStyle(
