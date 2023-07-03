@@ -200,7 +200,7 @@ fun LocationFilterForm(
 			upperTextFieldError = false
 
 		},
-		updateFilter = {
+		updateFilterAndClose = {
 			if (!lowerTextFieldError && !upperTextFieldError) {
 				updateLocationFilter(
 					HomeListUiState.LocationRange(
@@ -208,6 +208,7 @@ fun LocationFilterForm(
 						upperboundText.toIntOrNull()
 					)
 				)
+				closeAction()
 
 			}
 		},
@@ -289,7 +290,7 @@ fun PriceFilterForm(
 			lowerTextFieldError = false
 			upperTextFieldError = false
 		},
-		updateFilter = {
+		updateFilterAndClose = {
 			if (!lowerTextFieldError && !upperTextFieldError) {
 				updatePriceFilter(
 					HomeListUiState.PriceRange(
@@ -297,6 +298,7 @@ fun PriceFilterForm(
 						upperboundText.toIntOrNull()
 					)
 				)
+				closeAction()
 
 			}
 		},
@@ -344,7 +346,7 @@ fun BasicFilterLayout(
 	@StringRes titleId: Int,
 	closeAction: () -> Unit,
 	content: @Composable (() -> Unit)? = null,
-	updateFilter: () -> Unit,
+	updateFilterAndClose: () -> Unit,
 	clearAction: () -> Unit,
 	revertInput: () -> Unit,
 ) {
@@ -405,8 +407,8 @@ fun BasicFilterLayout(
 						style = filterBoldFont,
 						modifier = Modifier.clickable { clearAction() })
 					PrimaryButton(onClick = {
-						updateFilter()
-						closeAction()
+						updateFilterAndClose()
+
 					}, content = {
 						Text(
 							stringResource(
