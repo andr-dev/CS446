@@ -14,10 +14,7 @@ import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentWidth
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.FabPosition
-import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -34,14 +31,10 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.sp
-import androidx.compose.ui.zIndex
 import androidx.hilt.navigation.compose.hiltViewModel
 import org.uwaterloo.subletr.R
 import org.uwaterloo.subletr.enums.RoomRange
-import org.uwaterloo.subletr.navigation.NavigationDestination
 import org.uwaterloo.subletr.pages.home.list.HomeListChildView
 import org.uwaterloo.subletr.pages.home.list.HomeListUiState
 import org.uwaterloo.subletr.pages.home.map.HomeMapChildView
@@ -95,26 +88,6 @@ fun HomePageView(
 				HomeMapChildView(
 					modifier = Modifier.padding(padding),
 					viewModel = viewModel.homeMapChildViewModel,
-				)
-			}
-		},
-		floatingActionButtonPosition = FabPosition.End,
-		floatingActionButton = {
-			FloatingActionButton(
-				modifier = Modifier.padding(
-					all = dimensionResource(id = R.dimen.zero),
-				),
-				onClick = {
-					viewModel.navHostController.navigate(NavigationDestination.CREATE_LISTING.fullNavPath)
-				},
-				shape = CircleShape,
-				containerColor = subletrPink,
-				contentColor = Color.White,
-			) {
-				Text(
-					stringResource(id = R.string.plus_sign), style = TextStyle(
-						fontSize = 24.sp
-					)
 				)
 			}
 		},
