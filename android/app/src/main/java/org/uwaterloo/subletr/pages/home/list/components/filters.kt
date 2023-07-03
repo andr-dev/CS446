@@ -314,16 +314,17 @@ fun PriceFilterForm(
 }
 
 @Composable
-fun GenderFilterForm() {
-//	TODO
-
-}
-
-@Composable
 fun RoomFilterForm() {
 	//	TODO
 
 }
+
+@Composable
+fun GenderFilterForm() {
+	//	TODO
+
+}
+
 
 @Composable
 fun PropertyTypeFilterForm() {
@@ -386,7 +387,7 @@ fun BasicFilterLayout(
 				Divider(
 					color = textFieldBackgroundColor,
 					modifier = Modifier
-						.height(1.dp)
+						.height(dimensionResource(id = R.dimen.xxxxs))
 						.fillMaxWidth()
 				)
 				Row(
@@ -486,14 +487,14 @@ fun verifyNewBoundVal(
 	lowerBound: String? = null,
 	upperBound: String? = null,
 ): Boolean {
-	if (newVal == "") {
+	if (newVal.isEmpty()) {
 		return true
 	}
 	val newInt = newVal.toIntOrNull()
 	var result = false
 	if (newInt != null && newInt >= 0) {
 		if (lowerBound == null) {
-			if (upperBound == "") {
+			if (upperBound!!.isEmpty()) {
 				result = true
 			}
 			val ub = upperBound!!.toIntOrNull()
@@ -501,7 +502,7 @@ fun verifyNewBoundVal(
 				result = true
 			}
 		} else {
-			if (lowerBound == "") {
+			if (lowerBound.isEmpty()) {
 				result = true
 			}
 			val lb = lowerBound.toIntOrNull()

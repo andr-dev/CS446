@@ -23,6 +23,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.BottomSheetScaffold
 import androidx.compose.material3.BottomSheetScaffoldState
@@ -31,8 +32,11 @@ import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FabPosition
+import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberBottomSheetScaffoldState
 import androidx.compose.runtime.Composable
@@ -52,10 +56,12 @@ import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import org.uwaterloo.subletr.R
@@ -76,6 +82,7 @@ import org.uwaterloo.subletr.theme.listingDescriptionFont
 import org.uwaterloo.subletr.theme.listingTitleFont
 import org.uwaterloo.subletr.theme.secondaryButtonBackgroundColor
 import org.uwaterloo.subletr.theme.secondaryTextColor
+import org.uwaterloo.subletr.theme.subletrPink
 import java.time.OffsetDateTime
 import java.time.format.DateTimeFormatter
 
@@ -134,7 +141,6 @@ fun HomeListChildView(
 			modifier = Modifier.fillMaxSize(1.0f),
 			scaffoldState = scaffoldState,
 			sheetContent = {
-//TODO: remove the add button that is on top of the bottomsheet
 				when (filterType.value) {
 					FilterType.LOCATION -> {
 						LocationFilterForm(
@@ -158,122 +164,155 @@ fun HomeListChildView(
 			},
 			sheetSwipeEnabled = false,
 			sheetContainerColor = Color.White,
-			sheetPeekHeight = dimensionResource(id = R.dimen.zero)
-		) {
-			LazyColumn(
-				modifier = modifier
-					.fillMaxSize(1.0f)
-					.padding(
-						dimensionResource(id = R.dimen.s),
-						dimensionResource(id = R.dimen.zero)
-					),
-				state = listState,
-				verticalArrangement = Arrangement.spacedBy(dimensionResource(id = R.dimen.s)),
-				horizontalAlignment = Alignment.CenterHorizontally,
-			) {
-				item {
-					LazyRow(
-						modifier = Modifier
-							.fillMaxWidth(1.0f),
-						verticalAlignment = Alignment.CenterVertically,
-						horizontalArrangement = Arrangement.spacedBy(dimensionResource(id = R.dimen.xs)),
+			sheetPeekHeight = dimensionResource(id = R.dimen.zero),
+
+			) { padding ->
+			Scaffold(
+				modifier = Modifier
+					.padding(padding)
+					.fillMaxSize(1.0f),
+				floatingActionButtonPosition = FabPosition.End,
+				floatingActionButton = {
+					FloatingActionButton(
+						modifier = Modifier.padding(
+							all = dimensionResource(id = R.dimen.zero),
+						),
+						onClick = {
+							viewModel.navHostController.navigate(NavigationDestination.CREATE_LISTING.fullNavPath)
+						},
+						shape = CircleShape,
+						containerColor = subletrPink,
+						contentColor = Color.White,
 					) {
-						item {
-							ButtonWithIcon(
-								modifier = Modifier
-									.width(dimensionResource(id = R.dimen.xl))
-									.height(dimensionResource(id = R.dimen.l)),
-								iconId = R.drawable.tune_round_black_24,
-								onClick = {
-									filterType.value = FilterType.ALL
-									coroutineScope.launch {
-										scaffoldState.bottomSheetState.expand()
-
-									}
-								},
-								contentDescription = stringResource(id = R.string.filter_menu),
+						Text(
+							stringResource(id = R.string.plus_sign), style = TextStyle(
+								fontSize = 24.sp
 							)
-						}
-						item {
-							FilterButton(
-								filterName = stringResource(id = R.string.location),
-								onClick = {
-									filterType.value = FilterType.LOCATION
-									coroutineScope.launch {
-										scaffoldState.bottomSheetState.expand()
+						)
+					}
+				},
+				topBar = {
+					Box(modifier = Modifier)
+				},
+				bottomBar = {
+					Box(modifier = Modifier)
+				},
+			) { scaffoldPadding ->
+				LazyColumn(
+					modifier = modifier
+						.fillMaxSize(1.0f)
+						.padding(scaffoldPadding)
+						.padding(
+							dimensionResource(id = R.dimen.s),
+							dimensionResource(id = R.dimen.zero)
+						),
+					state = listState,
+					verticalArrangement = Arrangement.spacedBy(dimensionResource(id = R.dimen.s)),
+					horizontalAlignment = Alignment.CenterHorizontally,
+				) {
+					item {
+						LazyRow(
+							modifier = Modifier
+								.fillMaxWidth(1.0f),
+							verticalAlignment = Alignment.CenterVertically,
+							horizontalArrangement = Arrangement.spacedBy(dimensionResource(id = R.dimen.xs)),
+						) {
+							item {
+								ButtonWithIcon(
+									modifier = Modifier
+										.width(dimensionResource(id = R.dimen.xl))
+										.height(dimensionResource(id = R.dimen.l)),
+									iconId = R.drawable.tune_round_black_24,
+									onClick = {
+										filterType.value = FilterType.ALL
+										coroutineScope.launch {
+											scaffoldState.bottomSheetState.expand()
 
+										}
+									},
+									contentDescription = stringResource(id = R.string.filter_menu),
+								)
+							}
+							item {
+								FilterButton(
+									filterName = stringResource(id = R.string.location),
+									onClick = {
+										filterType.value = FilterType.LOCATION
+										coroutineScope.launch {
+											scaffoldState.bottomSheetState.expand()
+
+										}
 									}
-								}
 
-							)
-						}
-						item {
-							FilterButton(
-								filterName = stringResource(id = R.string.price),
-								onClick = {
-									filterType.value = FilterType.PRICE
-									coroutineScope.launch {
-										scaffoldState.bottomSheetState.expand()
+								)
+							}
+							item {
+								FilterButton(
+									filterName = stringResource(id = R.string.price),
+									onClick = {
+										filterType.value = FilterType.PRICE
+										coroutineScope.launch {
+											scaffoldState.bottomSheetState.expand()
 
+										}
 									}
-								}
-							)
-						}
-						item {
-							FilterButton(
-								filterName = stringResource(id = R.string.rooms),
-								onClick = {
-									filterType.value = FilterType.ROOMS
-									coroutineScope.launch {
-										scaffoldState.bottomSheetState.expand()
+								)
+							}
+							item {
+								FilterButton(
+									filterName = stringResource(id = R.string.rooms),
+									onClick = {
+										filterType.value = FilterType.ROOMS
+										coroutineScope.launch {
+											scaffoldState.bottomSheetState.expand()
 
+										}
 									}
-								}
-							)
-						}
-						item {
-							FilterButton(
-								filterName = stringResource(id = R.string.property_type),
-								onClick = {
-									filterType.value = FilterType.PROPERTY_TYPE
-									coroutineScope.launch {
-										scaffoldState.bottomSheetState.expand()
+								)
+							}
+							item {
+								FilterButton(
+									filterName = stringResource(id = R.string.property_type),
+									onClick = {
+										filterType.value = FilterType.PROPERTY_TYPE
+										coroutineScope.launch {
+											scaffoldState.bottomSheetState.expand()
 
+										}
 									}
-								}
-							)
-						}
-						item {
-							FilterButton(
-								filterName = stringResource(id = R.string.roommate),
-								onClick = {
-									filterType.value = FilterType.ROOMMATE
-									coroutineScope.launch {
-										scaffoldState.bottomSheetState.expand()
+								)
+							}
+							item {
+								FilterButton(
+									filterName = stringResource(id = R.string.roommate),
+									onClick = {
+										filterType.value = FilterType.ROOMMATE
+										coroutineScope.launch {
+											scaffoldState.bottomSheetState.expand()
 
+										}
 									}
-								}
-							)
+								)
+							}
 						}
 					}
-				}
 
-				items(uiState.listingItems.listings.size) {
-					val listingSummary = uiState.listingItems.listings[it]
-					val listingImage = uiState.listingItems.listingsImages[it]
-					ListingPost(
-						listingSummary = listingSummary,
-						listingImage = listingImage,
-						detailsNavigation = {
-							viewModel.navHostController.navigate(
-								route = "${NavigationDestination.LISTING_DETAILS.rootNavPath}/${listingSummary.listingId}"
-							)
-						},
-					)
+					items(uiState.listingItems.listings.size) {
+						val listingSummary = uiState.listingItems.listings[it]
+						val listingImage = uiState.listingItems.listingsImages[it]
+						ListingPost(
+							listingSummary = listingSummary,
+							listingImage = listingImage,
+							detailsNavigation = {
+								viewModel.navHostController.navigate(
+									route = "${NavigationDestination.LISTING_DETAILS.rootNavPath}/${listingSummary.listingId}"
+								)
+							},
+						)
+					}
 				}
 			}
 		}
-
 	}
 }
 
@@ -395,8 +434,8 @@ fun ListingPost(
 					Text(
 						text = stringResource(
 							id = R.string.short_for_all_date_range,
-							dateTimeFormater(listingSummary.leaseStart),
-							dateTimeFormater(offsetDateTime = listingSummary.leaseEnd),
+							dateTimeFormatter(listingSummary.leaseStart),
+							dateTimeFormatter(offsetDateTime = listingSummary.leaseEnd),
 						),
 						style = MaterialTheme.typography.bodyLarge,
 					)
@@ -546,7 +585,7 @@ fun FilterButton(
 	}
 }
 
-fun dateTimeFormater(offsetDateTime: OffsetDateTime): String {
+fun dateTimeFormatter(offsetDateTime: OffsetDateTime): String {
 	// TODO: Localize this
 	val formatter = DateTimeFormatter.ofPattern("MMM. yyyy")
 	return offsetDateTime.format(formatter)
