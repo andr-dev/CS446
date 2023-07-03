@@ -16,6 +16,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.runtime.setValue
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.layout.wrapContentWidth
@@ -25,8 +26,6 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.BottomSheetScaffold
-import androidx.compose.material3.BottomSheetScaffoldState
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.ButtonDefaults
@@ -36,9 +35,10 @@ import androidx.compose.material3.FabPosition
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.rememberBottomSheetScaffoldState
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
@@ -60,9 +60,9 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import org.uwaterloo.subletr.R
 import org.uwaterloo.subletr.api.apis.ListingsApi
@@ -106,8 +106,11 @@ fun HomeListChildView(
 	} else if (uiState is HomeListUiState.Loaded) {
 		val filterType = remember { mutableStateOf(FilterType.LOCATION) }
 		val coroutineScope = rememberCoroutineScope()
-		val scaffoldState = rememberBottomSheetScaffoldState()
+		val modelSheetState = rememberModalBottomSheetState()
 		val listState: LazyListState = rememberLazyListState()
+		var isBottomSheetOpen by remember {
+			mutableStateOf(false)
+		}
 		val lastItemIsShowing by remember {
 			derivedStateOf {
 				if (listState.layoutInfo.totalItemsCount == 0) {
@@ -137,192 +140,182 @@ fun HomeListChildView(
 		fun updatePriceFilter(newVal: HomeListUiState.PriceRange) {
 			viewModel.priceRangeFilterStream.onNext(newVal)
 		}
-		BottomSheetScaffold(
-			modifier = Modifier.fillMaxSize(1.0f),
-			scaffoldState = scaffoldState,
-			sheetContent = {
-				when (filterType.value) {
-					FilterType.LOCATION -> {
-						LocationFilterForm(
-							uiState.locationRange,
-							::updateLocationFilter
-						) { closeBottomSheet(coroutineScope, scaffoldState) }
-					}
 
-					FilterType.PRICE -> PriceFilterForm(
-						currentPriceRange = uiState.priceRange,
-						updatePriceFilter = ::updatePriceFilter
-					) { closeBottomSheet(coroutineScope, scaffoldState) }
+		fun closeBottomSheet() {
+			coroutineScope.launch {
+				isBottomSheetOpen = false
 
-					FilterType.ROOMS -> TODO()
-					FilterType.PROPERTY_TYPE -> TODO()
-					FilterType.ROOMMATE -> TODO()
-					FilterType.ALL -> TODO()
-				}
+			}
 
-
-			},
-			sheetSwipeEnabled = false,
-			sheetContainerColor = Color.White,
-			sheetPeekHeight = dimensionResource(id = R.dimen.zero),
-
-			) { padding ->
-			Scaffold(
-				modifier = Modifier
-					.padding(padding)
-					.fillMaxSize(1.0f),
-				floatingActionButtonPosition = FabPosition.End,
-				floatingActionButton = {
-					FloatingActionButton(
-						modifier = Modifier.padding(
-							all = dimensionResource(id = R.dimen.zero),
-						),
-						onClick = {
-							viewModel.navHostController.navigate(NavigationDestination.CREATE_LISTING.fullNavPath)
-						},
-						shape = CircleShape,
-						containerColor = subletrPink,
-						contentColor = Color.White,
-					) {
-						Text(
-							stringResource(id = R.string.plus_sign), style = TextStyle(
-								fontSize = 24.sp
-							)
-						)
-					}
-				},
-				topBar = {
-					Box(modifier = Modifier)
-				},
-				bottomBar = {
-					Box(modifier = Modifier)
-				},
-			) { scaffoldPadding ->
-				LazyColumn(
-					modifier = modifier
-						.fillMaxSize(1.0f)
-						.padding(scaffoldPadding)
-						.padding(
-							dimensionResource(id = R.dimen.s),
-							dimensionResource(id = R.dimen.zero)
-						),
-					state = listState,
-					verticalArrangement = Arrangement.spacedBy(dimensionResource(id = R.dimen.s)),
-					horizontalAlignment = Alignment.CenterHorizontally,
+		}
+		Scaffold(
+			modifier = modifier
+				.fillMaxSize(1.0f),
+			floatingActionButtonPosition = FabPosition.End,
+			floatingActionButton = {
+				FloatingActionButton(
+					modifier = Modifier.padding(
+						all = dimensionResource(id = R.dimen.zero),
+					),
+					onClick = {
+						viewModel.navHostController.navigate(NavigationDestination.CREATE_LISTING.fullNavPath)
+					},
+					shape = CircleShape,
+					containerColor = subletrPink,
+					contentColor = Color.White,
 				) {
-					item {
-						LazyRow(
-							modifier = Modifier
-								.fillMaxWidth(1.0f),
-							verticalAlignment = Alignment.CenterVertically,
-							horizontalArrangement = Arrangement.spacedBy(dimensionResource(id = R.dimen.xs)),
-						) {
-							item {
-								ButtonWithIcon(
-									modifier = Modifier
-										.width(dimensionResource(id = R.dimen.xl))
-										.height(dimensionResource(id = R.dimen.l)),
-									iconId = R.drawable.tune_round_black_24,
-									onClick = {
-										filterType.value = FilterType.ALL
-										coroutineScope.launch {
-											scaffoldState.bottomSheetState.expand()
+					Text(
+						stringResource(id = R.string.plus_sign), style = TextStyle(
+							fontSize = 24.sp
+						),
+					)
+				}
+			},
+			topBar = {
+				Box(modifier = Modifier)
+			},
+			bottomBar = {
+				Box(modifier = Modifier)
+			},
+		) { scaffoldPadding ->
+			LazyColumn(
+				modifier = Modifier
+					.fillMaxSize(1.0f)
+					.padding(scaffoldPadding)
+					.padding(
+						dimensionResource(id = R.dimen.s),
+						dimensionResource(id = R.dimen.zero)
+					),
+				state = listState,
+				verticalArrangement = Arrangement.spacedBy(dimensionResource(id = R.dimen.s)),
+				horizontalAlignment = Alignment.CenterHorizontally,
+			) {
+				item {
+					LazyRow(
+						modifier = Modifier
+							.fillMaxWidth(1.0f),
+						verticalAlignment = Alignment.CenterVertically,
+						horizontalArrangement = Arrangement.spacedBy(dimensionResource(id = R.dimen.xs)),
+					) {
+						item {
+							ButtonWithIcon(
+								modifier = Modifier
+									.width(dimensionResource(id = R.dimen.xl))
+									.height(dimensionResource(id = R.dimen.l)),
+								iconId = R.drawable.tune_round_black_24,
+								onClick = {
+									filterType.value = FilterType.ALL
+									coroutineScope.launch {
+										isBottomSheetOpen = true
 
-										}
-									},
-									contentDescription = stringResource(id = R.string.filter_menu),
-								)
-							}
-							item {
-								FilterButton(
-									filterName = stringResource(id = R.string.location),
-									onClick = {
-										filterType.value = FilterType.LOCATION
-										coroutineScope.launch {
-											scaffoldState.bottomSheetState.expand()
-
-										}
 									}
+								},
+								contentDescription = stringResource(id = R.string.filter_menu),
+							)
+						}
+						item {
+							FilterButton(
+								filterName = stringResource(id = R.string.location),
+								onClick = {
+									filterType.value = FilterType.LOCATION
+									coroutineScope.launch {
+										isBottomSheetOpen = true
 
-								)
-							}
-							item {
-								FilterButton(
-									filterName = stringResource(id = R.string.price),
-									onClick = {
-										filterType.value = FilterType.PRICE
-										coroutineScope.launch {
-											scaffoldState.bottomSheetState.expand()
-
-										}
 									}
-								)
-							}
-							item {
-								FilterButton(
-									filterName = stringResource(id = R.string.rooms),
-									onClick = {
-										filterType.value = FilterType.ROOMS
-										coroutineScope.launch {
-											scaffoldState.bottomSheetState.expand()
+								},
 
-										}
-									}
 								)
-							}
-							item {
-								FilterButton(
-									filterName = stringResource(id = R.string.property_type),
-									onClick = {
-										filterType.value = FilterType.PROPERTY_TYPE
-										coroutineScope.launch {
-											scaffoldState.bottomSheetState.expand()
-
-										}
+						}
+						item {
+							FilterButton(
+								filterName = stringResource(id = R.string.price),
+								onClick = {
+									filterType.value = FilterType.PRICE
+									coroutineScope.launch {
+										isBottomSheetOpen = true
 									}
-								)
-							}
-							item {
-								FilterButton(
-									filterName = stringResource(id = R.string.roommate),
-									onClick = {
-										filterType.value = FilterType.ROOMMATE
-										coroutineScope.launch {
-											scaffoldState.bottomSheetState.expand()
-
-										}
-									}
-								)
+								}
+							)
+						}
+						item {
+							FilterButton(
+								filterName = stringResource(id = R.string.rooms)
+							) {
+								filterType.value = FilterType.ROOMS
+								coroutineScope.launch {
+									isBottomSheetOpen = true
+								}
 							}
 						}
+						item {
+							FilterButton(
+								filterName = stringResource(id = R.string.property_type)
+							) {
+								filterType.value = FilterType.PROPERTY_TYPE
+								coroutineScope.launch {
+									isBottomSheetOpen = true
+								}
+							}
+						}
+						item {
+							FilterButton(
+								filterName = stringResource(id = R.string.roommate),
+								onClick = {
+									filterType.value = FilterType.ROOMMATE
+									coroutineScope.launch {
+										isBottomSheetOpen = true
+									}
+								}
+							)
+						}
 					}
+				}
+				item {
+					if (isBottomSheetOpen) {
+						ModalBottomSheet(
+							modifier = Modifier.wrapContentHeight(),
+							onDismissRequest = { isBottomSheetOpen = false },
+							sheetState = modelSheetState,
+							containerColor = Color.White,
+							content = {
+								when (filterType.value) {
+									FilterType.LOCATION -> {
+										LocationFilterForm(
+											uiState.locationRange,
+											::updateLocationFilter
+										) { closeBottomSheet() }
+									}
 
-					items(uiState.listingItems.listings.size) {
-						val listingSummary = uiState.listingItems.listings[it]
-						val listingImage = uiState.listingItems.listingsImages[it]
-						ListingPost(
-							listingSummary = listingSummary,
-							listingImage = listingImage,
-							detailsNavigation = {
-								viewModel.navHostController.navigate(
-									route = "${NavigationDestination.LISTING_DETAILS.rootNavPath}/${listingSummary.listingId}"
-								)
+									FilterType.PRICE -> PriceFilterForm(
+										currentPriceRange = uiState.priceRange,
+										updatePriceFilter = ::updatePriceFilter
+									) { closeBottomSheet() }
+
+									FilterType.ROOMS -> TODO()
+									FilterType.PROPERTY_TYPE -> TODO()
+									FilterType.ROOMMATE -> TODO()
+									FilterType.ALL -> TODO()
+								}
 							},
 						)
 					}
 				}
+
+				items(uiState.listingItems.listings.size) {
+					val listingSummary = uiState.listingItems.listings[it]
+					val listingImage = uiState.listingItems.listingsImages[it]
+					ListingPost(
+						listingSummary = listingSummary,
+						listingImage = listingImage,
+						detailsNavigation = {
+							viewModel.navHostController.navigate(
+								route = "${NavigationDestination.LISTING_DETAILS.rootNavPath}/${listingSummary.listingId}"
+							)
+						},
+					)
+				}
 			}
 		}
-	}
-}
-
-
-@OptIn(ExperimentalMaterial3Api::class)
-fun closeBottomSheet(
-	coroutineScope: CoroutineScope, scaffoldState: BottomSheetScaffoldState,
-) {
-	coroutineScope.launch {
-		scaffoldState.bottomSheetState.partialExpand()
 
 	}
 }
