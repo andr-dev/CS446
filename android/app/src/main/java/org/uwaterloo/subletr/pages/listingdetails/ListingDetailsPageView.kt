@@ -3,6 +3,7 @@ package org.uwaterloo.subletr.pages.listingdetails
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -21,6 +22,7 @@ import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.CircularProgressIndicator
@@ -54,6 +56,7 @@ import org.uwaterloo.subletr.theme.SubletrTheme
 import org.uwaterloo.subletr.theme.SubletrTypography
 import org.uwaterloo.subletr.theme.primaryTextColor
 import org.uwaterloo.subletr.theme.secondaryButtonBackgroundColor
+import org.uwaterloo.subletr.theme.secondaryTextColor
 import org.uwaterloo.subletr.theme.textFieldBackgroundColor
 import org.uwaterloo.subletr.theme.textOnSubletrPink
 import java.time.OffsetDateTime
@@ -106,10 +109,11 @@ fun ListingDetailsPageView(
 				CircularProgressIndicator()
 			}
 		} else if (uiState is ListingDetailsPageUiState.Loaded) {
+			val imageCount = uiState.images.size
 			val pagerState = rememberPagerState(
 				initialPage = 0,
 				initialPageOffsetFraction = 0f,
-			) { uiState.images.size }
+			) { imageCount }
 			Column(
 				modifier = Modifier
 					.padding(top = paddingValues.calculateTopPadding())
@@ -127,19 +131,43 @@ fun ListingDetailsPageView(
 						}
 					}
 					else if (uiState.images.isNotEmpty()) {
-						HorizontalPager(
+						Column(
 							modifier = Modifier,
-							state = pagerState,
-							contentPadding = PaddingValues(start = dimensionResource(id = R.dimen.xxl)),
-						) { page ->
-							Image(
-								bitmap = uiState.images[page].asImageBitmap(),
-								contentDescription = stringResource(id = R.string.listing_image),
-								contentScale = ContentScale.Fit,
+						) {
+							HorizontalPager(
+								modifier = Modifier,
+								state = pagerState,
+								contentPadding = PaddingValues(start = dimensionResource(id = R.dimen.xxl)),
+							) { page ->
+								Image(
+									bitmap = uiState.images[page].asImageBitmap(),
+									contentDescription = stringResource(id = R.string.listing_image),
+									contentScale = ContentScale.Fit,
+									modifier = Modifier
+										.size(dimensionResource(id = R.dimen.listing_details_image))
+										.clip(RoundedCornerShape(dimensionResource(id = R.dimen.xxs))),
+								)
+							}
+
+							Row(
 								modifier = Modifier
-									.size(dimensionResource(id = R.dimen.listing_details_image))
-									.clip(RoundedCornerShape(dimensionResource(id = R.dimen.xxs))),
-							)
+									.height(dimensionResource(id = R.dimen.s))
+									.fillMaxWidth(),
+								horizontalArrangement = Arrangement.Center,
+								verticalAlignment = Alignment.CenterVertically,
+							) {
+								repeat(imageCount) { iteration ->
+									val dotColor =
+										if (pagerState.currentPage == iteration) primaryTextColor else secondaryTextColor
+									Box(
+										modifier = Modifier
+											.padding(dimensionResource(id = R.dimen.xxs))
+											.clip(CircleShape)
+											.background(dotColor)
+											.size(dimensionResource(id = R.dimen.xs)),
+									)
+								}
+							}
 						}
 
 						IconButton(
