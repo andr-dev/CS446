@@ -77,8 +77,8 @@ class HomeListChildViewModel @Inject constructor(
 					runBlocking {
 						// TODO: Change to use filter values
 						listingsApi.listingsList(
-							priceMin = priceRangeFilterStream.value!!.lowerBound,
-							priceMax = priceRangeFilterStream.value!!.upperBound,
+							priceMin = getListingParams.priceRange.lowerBound,
+							priceMax = getListingParams.priceRange.upperBound,
 							roomsMin = null,
 							roomsMax = null,
 							pageNumber = getListingParams.listingPagingParams.pageNumber,

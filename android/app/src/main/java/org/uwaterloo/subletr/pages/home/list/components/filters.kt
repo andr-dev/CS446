@@ -46,6 +46,7 @@ import androidx.compose.ui.unit.sp
 import org.uwaterloo.subletr.R
 import org.uwaterloo.subletr.components.button.PrimaryButton
 import org.uwaterloo.subletr.pages.home.list.HomeListUiState
+import org.uwaterloo.subletr.theme.SubletrLightColorScheme
 import org.uwaterloo.subletr.theme.darkerGrayButtonColor
 import org.uwaterloo.subletr.theme.filterBoldFont
 import org.uwaterloo.subletr.theme.filterRegularFont
@@ -98,9 +99,9 @@ fun LocationFilterForm(
 				},
 				valueRange = 0f..MAX_LOCATION_RANGE.toFloat(),
 				colors = SliderDefaults.colors(
-					thumbColor = Color.White,
+					thumbColor = SubletrLightColorScheme.onPrimary,
 					activeTrackColor = subletrPink,
-					inactiveTrackColor = darkerGrayButtonColor
+					inactiveTrackColor = darkerGrayButtonColor,
 				),
 				startThumb = {
 					SliderDefaults.Thumb(
@@ -109,7 +110,7 @@ fun LocationFilterForm(
 							.size(dimensionResource(id = R.dimen.m)),
 						interactionSource = remember { MutableInteractionSource() },
 						colors = SliderDefaults.colors(
-							thumbColor = Color.White,
+							thumbColor = SubletrLightColorScheme.onPrimary,
 						),
 						enabled = true
 					)
@@ -121,7 +122,7 @@ fun LocationFilterForm(
 							.size(dimensionResource(id = R.dimen.m)),
 						interactionSource = remember { MutableInteractionSource() },
 						colors = SliderDefaults.colors(
-							thumbColor = Color.White,
+							thumbColor = SubletrLightColorScheme.onPrimary,
 						),
 						enabled = true
 					)
@@ -130,12 +131,12 @@ fun LocationFilterForm(
 			Text(
 				text = stringResource(id = R.string.Distance_instruction),
 				style = filterRegularFont,
-				color = secondaryTextColor
+				color = secondaryTextColor,
 			)
 			Row(
 				modifier = Modifier.fillMaxWidth(1.0f),
 				verticalAlignment = Alignment.CenterVertically,
-				horizontalArrangement = Arrangement.SpaceBetween
+				horizontalArrangement = Arrangement.SpaceBetween,
 			) {
 
 				TextFieldWithErrorIndication(
@@ -157,15 +158,15 @@ fun LocationFilterForm(
 					suffix = {
 						Text(
 							text = stringResource(id = R.string.km),
-							style = filterBoldFont
+							style = filterBoldFont,
 						)
-					}
+					},
 
-				)
+					)
 				Divider(
 					modifier = Modifier.width(width = dimensionResource(id = R.dimen.m)),
 					color = secondaryTextColor,
-					thickness = dimensionResource(id = R.dimen.xxxxs)
+					thickness = dimensionResource(id = R.dimen.xxxxs),
 				)
 				TextFieldWithErrorIndication(
 					value = upperboundText,
@@ -186,9 +187,9 @@ fun LocationFilterForm(
 					suffix = {
 						Text(
 							text = stringResource(id = R.string.km),
-							style = filterBoldFont
+							style = filterBoldFont,
 						)
-					}
+					},
 				)
 			}
 		},
@@ -205,7 +206,7 @@ fun LocationFilterForm(
 				updateLocationFilter(
 					HomeListUiState.LocationRange(
 						lowerBoundText.toIntOrNull(),
-						upperboundText.toIntOrNull()
+						upperboundText.toIntOrNull(),
 					)
 				)
 				closeAction()
@@ -254,7 +255,7 @@ fun PriceFilterForm(
 			Row(
 				modifier = Modifier.fillMaxWidth(1.0f),
 				verticalAlignment = Alignment.CenterVertically,
-				horizontalArrangement = Arrangement.SpaceBetween
+				horizontalArrangement = Arrangement.SpaceBetween,
 			) {
 				TextFieldWithErrorIndication(
 					value = lowerBoundText,
@@ -269,7 +270,7 @@ fun PriceFilterForm(
 				Divider(
 					modifier = Modifier.width(width = dimensionResource(id = R.dimen.m)),
 					color = secondaryTextColor,
-					thickness = dimensionResource(id = R.dimen.xxxxs)
+					thickness = dimensionResource(id = R.dimen.xxxxs),
 				)
 				TextFieldWithErrorIndication(
 					value = upperboundText,
@@ -328,7 +329,8 @@ fun BasicFilterLayout(
 	Scaffold(
 		modifier = modifier
 			.fillMaxWidth(1.0f),
-		containerColor = Color.White,
+		containerColor = SubletrLightColorScheme.onPrimary,
+//		contentWindowInsets = ,
 		topBar = {
 			Row(
 				modifier = Modifier
@@ -338,7 +340,7 @@ fun BasicFilterLayout(
 						dimensionResource(id = R.dimen.m),
 						dimensionResource(id = R.dimen.xxs)
 					),
-				horizontalArrangement = Arrangement.SpaceBetween
+				horizontalArrangement = Arrangement.SpaceBetween,
 			)
 			{
 				Icon(
@@ -360,12 +362,14 @@ fun BasicFilterLayout(
 			}
 		},
 		bottomBar = {
-			Column {
+			Column(
+				modifier = Modifier.height(dimensionResource(id = R.dimen.xxl)),
+			) {
 				Divider(
 					color = textFieldBackgroundColor,
 					modifier = Modifier
 						.height(dimensionResource(id = R.dimen.xxxxs))
-						.fillMaxWidth()
+						.fillMaxWidth(),
 				)
 				Row(
 					modifier = Modifier
@@ -375,12 +379,13 @@ fun BasicFilterLayout(
 							dimensionResource(id = R.dimen.xxs)
 						),
 					verticalAlignment = Alignment.CenterVertically,
-					horizontalArrangement = Arrangement.SpaceBetween
+					horizontalArrangement = Arrangement.SpaceBetween,
 				) {
 					Text(
 						stringResource(id = R.string.clear),
 						style = filterBoldFont,
-						modifier = Modifier.clickable { clearAction() })
+						modifier = Modifier.clickable { clearAction() },
+					)
 					PrimaryButton(onClick = {
 						updateFilterAndClose()
 
@@ -389,13 +394,12 @@ fun BasicFilterLayout(
 							stringResource(
 								id = R.string.show_sublets,
 							),
-							color = Color.White,
-							style = filterBoldFont
+							color = SubletrLightColorScheme.onPrimary,
+							style = filterBoldFont,
 
-						)
+							)
 					})
 				}
-
 			}
 
 		}
@@ -405,7 +409,7 @@ fun BasicFilterLayout(
 				.padding(paddingValues = paddingValues)
 				.padding(dimensionResource(id = R.dimen.m), dimensionResource(id = R.dimen.zero))
 				.fillMaxWidth(1.0f),
-			verticalArrangement = Arrangement.spacedBy(dimensionResource(id = R.dimen.s))
+			verticalArrangement = Arrangement.spacedBy(dimensionResource(id = R.dimen.s)),
 		) {
 			if (content != null) {
 				content()
@@ -439,7 +443,7 @@ fun TextFieldWithErrorIndication(
 			unfocusedIndicatorColor = Color.Transparent,
 			focusedIndicatorColor = Color.Transparent,
 			errorIndicatorColor = Color.Transparent,
-			errorContainerColor = textFieldBackgroundColor
+			errorContainerColor = textFieldBackgroundColor,
 		),
 		textStyle = LocalTextStyle.current.copy(fontSize = 14.sp),
 		onValueChange = onValueChange,
@@ -451,12 +455,12 @@ fun TextFieldWithErrorIndication(
 			Text(
 				text = placeholderString,
 				color = secondaryTextColor,
-				style = TextStyle(fontSize = 14.sp)
+				style = TextStyle(fontSize = 14.sp),
 			)
 		},
-		suffix = suffix
+		suffix = suffix,
 
-	)
+		)
 }
 
 fun verifyNewBoundVal(
@@ -474,7 +478,7 @@ fun verifyNewBoundVal(
 			if (upperBound!!.isEmpty()) {
 				result = true
 			}
-			val ub = upperBound!!.toIntOrNull()
+			val ub = upperBound.toIntOrNull()
 			if (ub == null || newInt <= ub) {
 				result = true
 			}
