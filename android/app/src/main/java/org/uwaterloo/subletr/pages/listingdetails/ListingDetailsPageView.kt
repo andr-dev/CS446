@@ -133,6 +133,7 @@ fun ListingDetailsPageView(
 					else if (uiState.images.isNotEmpty()) {
 						Column(
 							modifier = Modifier,
+							verticalArrangement = Arrangement.spacedBy(dimensionResource(id = R.dimen.xs)),
 						) {
 							HorizontalPager(
 								modifier = Modifier,
