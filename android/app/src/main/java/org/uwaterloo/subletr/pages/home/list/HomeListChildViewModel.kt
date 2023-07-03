@@ -12,8 +12,6 @@ import kotlinx.coroutines.runBlocking
 import org.uwaterloo.subletr.api.apis.ListingsApi
 import org.uwaterloo.subletr.api.models.GetListingsResponse
 import org.uwaterloo.subletr.api.models.ListingSummary
-import org.uwaterloo.subletr.enums.LocationRange
-import org.uwaterloo.subletr.enums.PriceRange
 import org.uwaterloo.subletr.enums.RoomRange
 import org.uwaterloo.subletr.infrastructure.SubletrChildViewModel
 import org.uwaterloo.subletr.navigation.NavigationDestination
@@ -27,12 +25,13 @@ class HomeListChildViewModel @Inject constructor(
 	private val listingsApi: ListingsApi,
 	private val navigationService: INavigationService,
 ): SubletrChildViewModel<HomeListUiState>() {
+
 	val navHostController: NavHostController get() = navigationService.getNavHostController()
 
-	val locationRangeFilterStream: BehaviorSubject<LocationRange> =
-		BehaviorSubject.createDefault(LocationRange.NOFILTER)
-	val priceRangeFilterStream: BehaviorSubject<PriceRange> =
-		BehaviorSubject.createDefault(PriceRange.NOFILTER)
+	val locationRangeFilterStream: BehaviorSubject<HomeListUiState.LocationRange> =
+		BehaviorSubject.createDefault(HomeListUiState.LocationRange())
+	val priceRangeFilterStream: BehaviorSubject<HomeListUiState.PriceRange> =
+		BehaviorSubject.createDefault(HomeListUiState.PriceRange())
 	val roomRangeFilterStream: BehaviorSubject<RoomRange> =
 		BehaviorSubject.createDefault(RoomRange.NOFILTER)
 
@@ -78,8 +77,8 @@ class HomeListChildViewModel @Inject constructor(
 					runBlocking {
 						// TODO: Change to use filter values
 						listingsApi.listingsList(
-							priceMin = null,
-							priceMax = null,
+							priceMin = priceRangeFilterStream.value!!.lowerBound,
+							priceMax = priceRangeFilterStream.value!!.upperBound,
 							roomsMin = null,
 							roomsMax = null,
 							pageNumber = getListingParams.listingPagingParams.pageNumber,
@@ -151,8 +150,8 @@ class HomeListChildViewModel @Inject constructor(
 		roomRangeFilterStream,
 		listingItemsStream,
 		infoTextStringIdStream,
-	) { locationRange: LocationRange,
-		priceRange: PriceRange,
+	) { locationRange: HomeListUiState.LocationRange,
+		priceRange: HomeListUiState.PriceRange,
 		roomRange: RoomRange,
 		listings: HomeListUiState.ListingItemsModel,
 		infoTextStringId: Optional<Int>
@@ -174,8 +173,8 @@ class HomeListChildViewModel @Inject constructor(
 	}
 
 	data class GetListingParams(
-		val locationRange: LocationRange,
-		val priceRange: PriceRange,
+		val locationRange: HomeListUiState.LocationRange,
+		val priceRange: HomeListUiState.PriceRange,
 		val roomRange: RoomRange,
 		val listingPagingParams: ListingPagingParams,
 	)
