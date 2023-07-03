@@ -316,31 +316,6 @@ fun PriceFilterForm(
 }
 
 @Composable
-fun RoomFilterForm() {
-	//	TODO
-
-}
-
-@Composable
-fun GenderFilterForm() {
-	//	TODO
-
-}
-
-
-@Composable
-fun PropertyTypeFilterForm() {
-	//	TODO
-
-}
-
-@Composable
-fun AllFilterForm() {
-	//	TODO
-
-}
-
-@Composable
 fun BasicFilterLayout(
 	modifier: Modifier = Modifier,
 	@StringRes titleId: Int,
