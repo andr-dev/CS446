@@ -1,5 +1,6 @@
 package org.uwaterloo.subletr.pages.login
 
+import androidx.navigation.NavHostController
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.schedulers.Schedulers
@@ -23,7 +24,7 @@ class LoginPageViewModel @Inject constructor(
 	private val navigationService: INavigationService,
 	private val authenticationService: IAuthenticationService,
 ) : SubletrViewModel<LoginPageUiState>() {
-	val navHostController get() = navigationService.getNavHostController()
+	val navHostController: NavHostController get() = navigationService.navHostController
 
 	val emailStream: BehaviorSubject<String> = BehaviorSubject.createDefault("")
 	val passwordStream: BehaviorSubject<String> = BehaviorSubject.createDefault("")

@@ -2,6 +2,7 @@ package org.uwaterloo.subletr.pages.listingdetails
 
 import android.graphics.Bitmap
 import androidx.lifecycle.SavedStateHandle
+import androidx.navigation.NavHostController
 import androidx.navigation.navOptions
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.reactivex.rxjava3.core.Observable
@@ -24,7 +25,7 @@ class ListingDetailsPageViewModel @Inject constructor(
 	savedStateHandle: SavedStateHandle,
 	private val navigationService: INavigationService
 ) : SubletrViewModel<ListingDetailsPageUiState>() {
-	val navHostController get() = navigationService.getNavHostController()
+	val navHostController: NavHostController get() = navigationService.navHostController
 
 	private val listingIdStream: BehaviorSubject<Int> =
 		BehaviorSubject.createDefault(checkNotNull(savedStateHandle["listingId"]))

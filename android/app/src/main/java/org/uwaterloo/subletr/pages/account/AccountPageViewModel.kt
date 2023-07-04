@@ -1,5 +1,6 @@
 package org.uwaterloo.subletr.pages.account
 
+import androidx.navigation.NavHostController
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.reactivex.rxjava3.subjects.BehaviorSubject
 import org.uwaterloo.subletr.R
@@ -15,7 +16,7 @@ class AccountPageViewModel @Inject constructor(
 	val authenticationService: IAuthenticationService,
 	val navigationService: INavigationService,
 ): SubletrViewModel<AccountPageUiState>() {
-	val navHostController get() = navigationService.getNavHostController()
+	val navHostController: NavHostController get() = navigationService.navHostController
 
 	override val uiStateStream: BehaviorSubject<AccountPageUiState> = BehaviorSubject.createDefault(
 		AccountPageUiState.Loaded(
@@ -42,7 +43,7 @@ class AccountPageViewModel @Inject constructor(
 	fun logout() {
 		authenticationService.deleteAccessToken()
 		navigationService
-			.getNavHostController()
+			navHostController
 			.navigate(NavigationDestination.LOGIN.rootNavPath)
 	}
 }

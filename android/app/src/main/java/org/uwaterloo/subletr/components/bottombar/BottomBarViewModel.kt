@@ -10,5 +10,5 @@ import javax.inject.Inject
 class BottomBarViewModel @Inject constructor(
 	private val navigationService: INavigationService,
 ): ViewModel() {
-	val navHostController: NavHostController get() = navigationService.getNavHostController()
+	val navHostController: NavHostController get() = navigationService.navHostController
 }

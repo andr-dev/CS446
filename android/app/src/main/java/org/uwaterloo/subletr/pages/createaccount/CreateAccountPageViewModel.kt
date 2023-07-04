@@ -26,7 +26,7 @@ class CreateAccountPageViewModel @Inject constructor(
 	navigationService: INavigationService,
 	userApi: UserApi,
 ) : SubletrViewModel<CreateAccountPageUiState>() {
-	val navHostController = navigationService.getNavHostController()
+	val navHostController = navigationService.navHostController
 
 
 	val firstNameStream: BehaviorSubject<String> = BehaviorSubject.createDefault("")

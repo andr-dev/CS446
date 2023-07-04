@@ -15,6 +15,8 @@ class MainScaffoldViewModel @Inject constructor(
 	private val navigationService: INavigationService,
 	authenticationService: IAuthenticationService,
 ): ViewModel() {
+	val navHostController: NavHostController get() = navigationService.navHostController
+
 	init {
 		/*
 		 * Keep synchronous to load proper first page
@@ -22,9 +24,5 @@ class MainScaffoldViewModel @Inject constructor(
 		viewModelScope.launch(Dispatchers.IO) {
 			authenticationService.setAccessTokenFromInternalFile()
 		}
-	}
-
-	fun setNavHostController(navHostController: NavHostController) {
-		navigationService.setNavHostController(navHostControllerParam = navHostController)
 	}
 }

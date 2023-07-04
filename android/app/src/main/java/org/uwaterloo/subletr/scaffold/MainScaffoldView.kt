@@ -18,17 +18,14 @@ import org.uwaterloo.subletr.navigation.isTopLevelDestinationInHierarchy
 @Composable
 fun MainScaffoldView(
 	modifier: Modifier = Modifier,
-	mainAppState: MainAppState = rememberMainAppState(),
 	viewModel: MainScaffoldViewModel = hiltViewModel(),
 ) {
 	val snackbarHostState: SnackbarHostState = remember { SnackbarHostState() }
 	var currentDestination: NavigationDestination = NavigationDestination.LOGIN
 
-	viewModel.setNavHostController(mainAppState.navHostController)
-
 	NavigationDestination.values().forEach {
 		if (
-			mainAppState
+			viewModel
 				.navHostController
 				.currentBackStackEntryAsState()
 				.value
@@ -59,7 +56,7 @@ fun MainScaffoldView(
 			modifier = Modifier.padding(
 				paddingValues = paddingValues
 			),
-			navHostController = mainAppState.navHostController,
+			navHostController = viewModel.navHostController,
 		)
 	}
 }

@@ -10,10 +10,15 @@ import androidx.compose.ui.Modifier
 import androidx.core.view.WindowCompat
 import dagger.hilt.android.AndroidEntryPoint
 import org.uwaterloo.subletr.scaffold.MainScaffoldView
+import org.uwaterloo.subletr.services.INavigationService
 import org.uwaterloo.subletr.theme.SubletrTheme
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
+	@Inject
+	lateinit var navigationService: INavigationService
+
 	override fun onCreate(savedInstanceState: Bundle?) {
 		super.onCreate(savedInstanceState)
 

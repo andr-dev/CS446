@@ -25,8 +25,7 @@ class HomeListChildViewModel @Inject constructor(
 	private val listingsApi: ListingsApi,
 	private val navigationService: INavigationService,
 ): SubletrChildViewModel<HomeListUiState>() {
-
-	val navHostController: NavHostController get() = navigationService.getNavHostController()
+	val navHostController: NavHostController get() = navigationService.navHostController
 
 	val locationRangeFilterStream: BehaviorSubject<HomeListUiState.LocationRange> =
 		BehaviorSubject.createDefault(HomeListUiState.LocationRange())

@@ -46,7 +46,7 @@ fun ChangePasswordPageView(
 			) {
 				IconButton(
 					onClick = {
-						viewModel.navigationService.getNavHostController().popBackStack()
+						viewModel.navigationService.navHostController.popBackStack()
 					}
 				) {
 					Icon(
