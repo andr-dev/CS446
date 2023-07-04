@@ -154,6 +154,6 @@ fun DisplayEntries(contacts : List<Contact>) {
 
 @Preview(showBackground = true)
 @Composable
-fun ChatListLoadedPreview() {
+fun ChatListLoadingPreview() {
 	ChatListingPageView()
 }
