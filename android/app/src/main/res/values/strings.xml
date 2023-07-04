@@ -80,7 +80,6 @@
     <item quantity="one">%d Bedroom</item>
     <item quantity="other">%d Bedrooms</item>
 </plurals>
-    <string name="messages">Messages</string>
 <string name="filter_menu">filter menu</string>
 <string name="view_sublets">View Sublets</string>
 <string name="plus_sign">+</string>
@@ -122,4 +121,5 @@
 <string name="take_photo">Take photo</string>
 <string name="choose_image">Choose Image</string>
 <string name="add_photo">Add photo</string>
+<string name="messages">Messages</string>
 </resources>
