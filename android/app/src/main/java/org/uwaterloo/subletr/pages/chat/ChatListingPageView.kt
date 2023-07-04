@@ -50,7 +50,7 @@ fun ChatListingPageView(
 				contentAlignment = Alignment.BottomStart,
 			) {
 				Text(
-					stringResource(id = R.string.Messages),
+					stringResource(id = R.string.messages),
 					style = MaterialTheme.typography.titleMedium,
 				)
 			}
