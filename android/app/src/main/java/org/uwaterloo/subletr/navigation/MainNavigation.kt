@@ -13,8 +13,10 @@ import org.uwaterloo.subletr.pages.account.AccountPageView
 import org.uwaterloo.subletr.pages.changepassword.ChangePasswordPageView
 import org.uwaterloo.subletr.pages.chat.ChatListingPageView
 import org.uwaterloo.subletr.pages.createaccount.CreateAccountPageView
+import org.uwaterloo.subletr.pages.createlisting.CreateListingPageView
 import org.uwaterloo.subletr.pages.emailverification.EmailVerificationPageView
 import org.uwaterloo.subletr.pages.home.HomePageView
+import org.uwaterloo.subletr.pages.listingdetails.ListingDetailsPageView
 import org.uwaterloo.subletr.pages.login.LoginPageView
 
 @Composable
@@ -66,6 +68,19 @@ fun MainNavigation(
 		}
 		composable(NavigationDestination.CHAT_LISTING.fullNavPath) {
 			ChatListingPageView(
+				modifier = modifier,
+			)
+		}
+		composable(
+			route = NavigationDestination.LISTING_DETAILS.fullNavPath,
+			arguments = listOf(navArgument("listingId") { type = NavType.IntType }),
+		) {
+			ListingDetailsPageView(
+				modifier = modifier,
+			)
+		}
+		composable(NavigationDestination.CREATE_LISTING.fullNavPath) {
+			CreateListingPageView(
 				modifier = modifier,
 			)
 		}

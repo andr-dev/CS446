@@ -22,6 +22,9 @@ pub enum ServiceError {
         source: r2d2::Error,
     },
 
+    #[error("Invalid field {}, reason: {}", field, reason)]
+    InvalidFieldError { field: &'static str, reason: String },
+
     #[error("Internal Error")]
     InternalError,
 
@@ -30,6 +33,9 @@ pub enum ServiceError {
 
     #[error("Not Found Error")]
     NotFound,
+
+    #[error("Forbidden")]
+    Forbidden,
 }
 
 impl rocket_okapi::JsonSchema for ServiceError {
@@ -48,7 +54,18 @@ pub type ServiceResult<T> = std::result::Result<Json<T>, ServiceError>;
 
 impl<'r, 'o: 'r> Responder<'r, 'o> for ServiceError {
     fn respond_to(self, req: &'r Request<'_>) -> rocket::response::Result<'o> {
-        Status::InternalServerError.respond_to(req)
+        match self {
+            ServiceError::AuthenticationError => Status::Unauthorized.respond_to(req),
+            ServiceError::SerdeJson { source } => Json(source.to_string()).respond_to(req),
+            ServiceError::Diesel { source } => Json(source.to_string()).respond_to(req),
+            ServiceError::R2D2 { source } => Json(source.to_string()).respond_to(req),
+            ServiceError::InvalidFieldError { field, reason } => {
+                Json(format!("Invalid field {}, reason: {}", field, reason)).respond_to(req)
+            },
+            ServiceError::InternalError => Status::InternalServerError.respond_to(req),
+            ServiceError::NotFound => Status::NotFound.respond_to(req),
+            ServiceError::Forbidden => Status::Forbidden.respond_to(req),
+        }
     }
 }
 

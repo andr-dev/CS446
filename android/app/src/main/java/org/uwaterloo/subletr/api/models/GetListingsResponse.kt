@@ -24,6 +24,7 @@ import com.squareup.moshi.JsonClass
  * 
  *
  * @param listings 
+ * @param pages 
  * @param liked 
  */
 
@@ -32,6 +33,9 @@ data class GetListingsResponse (
 
     @Json(name = "listings")
     val listings: kotlin.collections.List<ListingSummary>,
+
+    @Json(name = "pages")
+    val pages: kotlin.Int,
 
     @Json(name = "liked")
     val liked: kotlin.collections.Set<kotlin.String>

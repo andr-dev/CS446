@@ -49,5 +49,14 @@ enum class NavigationDestination(
 			bottomBarNavigationTextId = R.string.chat,
 		),
 		showBottomBar = true,
-	)
+	),
+	LISTING_DETAILS(
+		rootNavPath = "home/listingdetails",
+		fullNavPath = "home/listingdetails/{listingId}",
+		bottomBarNavigationItems = null,
+		showBottomBar = true,
+	),
+	CREATE_LISTING(
+		rootNavPath = "home/createlisting",
+	),
 }

@@ -32,6 +32,7 @@ import com.squareup.moshi.JsonClass
  * @param leaseStart 
  * @param leaseEnd 
  * @param description 
+ * @param imgIds 
  * @param residenceType 
  */
 
@@ -64,6 +65,9 @@ data class CreateListingRequest (
 
     @Json(name = "description")
     val description: kotlin.String,
+
+    @Json(name = "img_ids")
+    val imgIds: kotlin.collections.List<kotlin.String>,
 
     @Json(name = "residence_type")
     val residenceType: ResidenceType

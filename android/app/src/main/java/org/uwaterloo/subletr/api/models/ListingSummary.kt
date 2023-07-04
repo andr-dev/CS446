@@ -29,6 +29,7 @@ import com.squareup.moshi.JsonClass
  * @param rooms 
  * @param leaseStart 
  * @param leaseEnd 
+ * @param imgIds 
  * @param residenceType 
  */
 
@@ -52,6 +53,9 @@ data class ListingSummary (
 
     @Json(name = "lease_end")
     val leaseEnd: java.time.OffsetDateTime,
+
+    @Json(name = "img_ids")
+    val imgIds: kotlin.collections.List<kotlin.String>,
 
     @Json(name = "residence_type")
     val residenceType: ResidenceType

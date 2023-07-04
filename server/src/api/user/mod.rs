@@ -10,12 +10,15 @@ use super::{
 };
 use crate::{
     api::token::AuthenticatedUser,
-    db::model::users::{NewUser, User},
+    db::{
+        model::users::{NewUser, User},
+        schema::users,
+    },
     error::{ServiceError, ServiceResult},
     state::AppState,
 };
 
-#[openapi]
+#[openapi(tag = "User")]
 #[post("/create", format = "json", data = "<create_user_request>")]
 fn user_create(
     state: &State<AppState>,
@@ -24,12 +27,15 @@ fn user_create(
     let mut dbcon = state.pool.get()?;
 
     if !create_user_request.email.ends_with("@uwaterloo.ca") {
-        return Err(ServiceError::InternalError);
+        return Err(ServiceError::InvalidFieldError {
+            field: "email",
+            reason: format!("{} does not end with @uwaterloo.ca", create_user_request.email),
+        });
     }
 
     let user_id: i32 = rand::thread_rng().gen();
 
-    diesel::insert_into(crate::db::schema::users::table)
+    diesel::insert_into(users::table)
         .values(&NewUser {
             user_id,
             first_name: &create_user_request.first_name,
@@ -43,15 +49,12 @@ fn user_create(
     Ok(Json(CreateUserResponse { user_id }))
 }
 
-#[openapi]
+#[openapi(tag = "User")]
 #[get("/email")]
 fn user_email(state: &State<AppState>, user: AuthenticatedUser) -> ServiceResult<String> {
     let mut dbcon = state.pool.get()?;
 
-    let user: User = crate::db::schema::users::dsl::users
-        .find(user.user_id)
-        .first(&mut dbcon)
-        .unwrap();
+    let user: User = users::dsl::users.find(user.user_id).first(&mut dbcon).unwrap();
 
     Ok(Json(user.email))
 }

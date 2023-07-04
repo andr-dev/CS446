@@ -30,6 +30,38 @@ val changePasswordTopBarTitle
 		lineHeight = 40.sp,
 		letterSpacing = 0.sp,
 	)
+val filterTextFont
+	@Composable
+	get() = TextStyle(
+		color = primaryTextColor,
+		fontFamily = FontFamily.Default,
+		fontWeight = FontWeight.Medium,
+		fontSize = 14.sp,
+		letterSpacing = 0.sp,
+		textAlign = TextAlign.Center
+	)
+val listingTitleFont
+	@Composable
+	get() = TextStyle(
+		color = primaryTextColor,
+		fontFamily = FontFamily.Default,
+		fontWeight = FontWeight.Bold,
+		fontSize = 18.sp,
+		letterSpacing = 0.sp,
+		lineHeight = 20.sp,
+		textAlign = TextAlign.Center
+	)
+val listingDescriptionFont
+	@Composable
+	get() = TextStyle(
+		color = secondaryTextColor,
+		fontFamily = FontFamily.Default,
+		fontWeight = FontWeight.Medium,
+		fontSize = 14.sp,
+		letterSpacing = 0.sp,
+		lineHeight = 14.sp,
+		textAlign = TextAlign.Center
+	)
 
 val SubletrTypography = Typography(
 	bodyLarge = TextStyle(
@@ -81,7 +113,7 @@ val SubletrTypography = Typography(
 		letterSpacing = 0.5.sp
 	),
 	labelMedium = TextStyle(
-
+		color = Color.Gray,
 		fontFamily = FontFamily.Default,
 		fontWeight = FontWeight.Light,
 		fontSize = 20.sp,
@@ -93,6 +125,22 @@ val SubletrTypography = Typography(
 		fontFamily = FontFamily.Default,
 		fontWeight = FontWeight.Bold,
 		fontSize = 19.sp,
+		letterSpacing = 0.sp,
+		textAlign = TextAlign.Center
+	),
+	displaySmall = TextStyle(
+		color = Color.Gray,
+		fontFamily = FontFamily.Default,
+		fontWeight = FontWeight.Medium,
+		fontSize = 15.sp,
+		lineHeight = 16.sp,
+		letterSpacing = 0.5.sp
+	),
+	displayLarge = TextStyle(
+		color = Color.Black,
+		fontFamily = FontFamily.Default,
+		fontWeight = FontWeight.Bold,
+		fontSize = 22.sp,
 		letterSpacing = 0.sp,
 		textAlign = TextAlign.Center
 	),

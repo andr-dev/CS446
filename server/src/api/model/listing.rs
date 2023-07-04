@@ -16,11 +16,15 @@ pub struct GetListingsRequest {
     pub price_max: Option<u16>,
     pub rooms_min: Option<u16>,
     pub rooms_max: Option<u16>,
+
+    pub page_number: u32,
+    pub page_size: u32,
 }
 
 #[derive(JsonSchema, Serialize, Clone, PartialEq)]
 pub struct GetListingsResponse {
     pub listings: Vec<ListingSummary>,
+    pub pages: u32,
     pub liked: HashSet<String>,
 }
 
@@ -32,31 +36,43 @@ pub struct ListingSummary {
     pub rooms: u16,
     pub lease_start: DateTime<Utc>,
     pub lease_end: DateTime<Utc>,
+    pub img_ids: Vec<String>,
     pub residence_type: ResidenceType,
 }
 
-impl TryFrom<Listing> for ListingSummary {
-    type Error = ServiceError;
-
-    fn try_from(l: Listing) -> Result<Self, Self::Error> {
+impl ListingSummary {
+    pub fn try_from_db(l: Listing, img_ids: Vec<String>) -> Result<Self, ServiceError> {
         Ok(ListingSummary {
             listing_id: l.listing_id,
             address: format!(
                 "{}, {} {}, {}",
                 l.address_line, l.address_city, l.address_postalcode, l.address_country
             ),
-            price: l.price.try_into().map_err(|_| ServiceError::InternalError)?,
-            rooms: l.rooms.try_into().map_err(|_| ServiceError::InternalError)?,
+            price: TryInto::<u16>::try_into(l.price).map_err(|e| ServiceError::InvalidFieldError {
+                field: "price",
+                reason: e.to_string(),
+            })?,
+            rooms: TryInto::<u16>::try_into(l.rooms).map_err(|e| ServiceError::InvalidFieldError {
+                field: "rooms",
+                reason: e.to_string(),
+            })?,
             lease_start: l
                 .lease_start
                 .and_local_timezone(Utc)
                 .single()
-                .ok_or(ServiceError::InternalError)?,
+                .ok_or(ServiceError::InvalidFieldError {
+                    field: "lease_start",
+                    reason: format!("failed to convert to a unique datetime"),
+                })?,
             lease_end: l
                 .lease_end
                 .and_local_timezone(Utc)
                 .single()
-                .ok_or(ServiceError::InternalError)?,
+                .ok_or(ServiceError::InvalidFieldError {
+                    field: "lease_end",
+                    reason: format!("failed to convert to a unique datetime"),
+                })?,
+            img_ids,
             residence_type: ResidenceType::Other,
         })
     }
@@ -95,11 +111,18 @@ pub struct ListingDetails {
     pub owner_user_id: i32,
 }
 
-impl TryFrom<Listing> for ListingDetails {
-    type Error = ServiceError;
+impl ListingDetails {
+    pub fn try_from_db(l: Listing, img_ids: Vec<String>) -> Result<Self, ServiceError> {
+        let description = l.listing_description.to_owned();
 
-    fn try_from(l: Listing) -> Result<Self, Self::Error> {
-        let ls = ListingSummary::try_from(l.clone())?;
+        let residence_type = ResidenceType::from_string(&l.residence_type).ok_or(ServiceError::InvalidFieldError {
+            field: "residence_type",
+            reason: format!("failed to parse"),
+        })?;
+
+        let owner_user_id = l.owner_user_id;
+
+        let ls = ListingSummary::try_from_db(l, img_ids)?;
 
         Ok(ListingDetails {
             address: ls.address,
@@ -107,10 +130,10 @@ impl TryFrom<Listing> for ListingDetails {
             rooms: ls.rooms,
             lease_start: ls.lease_start,
             lease_end: ls.lease_end,
-            description: l.listing_description,
-            img_ids: vec![],
-            residence_type: ResidenceType::from_string(&l.residence_type).ok_or(ServiceError::InternalError)?,
-            owner_user_id: l.owner_user_id,
+            description,
+            img_ids: ls.img_ids,
+            residence_type,
+            owner_user_id,
         })
     }
 }
@@ -126,6 +149,7 @@ pub struct CreateListingRequest {
     pub lease_start: NaiveDateTime,
     pub lease_end: NaiveDateTime,
     pub description: String,
+    pub img_ids: Vec<String>,
     pub residence_type: ResidenceType,
 }
 
@@ -137,8 +161,8 @@ impl CreateListingRequest {
             address_city: &self.address_city,
             address_postalcode: &self.address_postalcode,
             address_country: &self.address_country,
-            price: self.price.try_into().map_err(|_| ServiceError::InternalError)?,
-            rooms: self.rooms.try_into().map_err(|_| ServiceError::InternalError)?,
+            price: self.price.into(),
+            rooms: self.rooms.into(),
             lease_start: self.lease_start,
             lease_end: self.lease_end,
             listing_description: &self.description,
@@ -151,4 +175,14 @@ impl CreateListingRequest {
 #[derive(JsonSchema, Serialize, Clone, PartialEq)]
 pub struct CreateListingResponse {
     pub listing_id: i32,
+}
+
+#[derive(JsonSchema, Deserialize, Clone, PartialEq)]
+pub struct ListingsImagesCreateRequest {
+    pub image: String,
+}
+
+#[derive(JsonSchema, Serialize, Clone, PartialEq)]
+pub struct ListingsImagesCreateResponse {
+    pub image_id: String,
 }

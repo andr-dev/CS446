@@ -26,7 +26,7 @@ cd "${PROJECT_DIR}/server"
 
 cargo build
 
-DATABASE_URL="db/store.db" ./target/debug/server 2>&1 1>/dev/null &
+DATABASE_URL="db/store.db" MEDIA_DIR="/tmp/cs446" ./target/debug/server 2>&1 1>/dev/null &
 
 SERVER_PID=$!
 
