@@ -23,7 +23,7 @@ fun MainNavigation(
 	navHostController: NavHostController = rememberNavController(),
 ) {
 	val startingDestination =
-		if (ApiClient.accessToken == null) NavigationDestination.CHAT.fullNavPath
+		if (ApiClient.accessToken == null) NavigationDestination.LOGIN.fullNavPath
 		else NavigationDestination.HOME.fullNavPath
 
 	NavHost(
@@ -64,7 +64,7 @@ fun MainNavigation(
 				modifier = modifier,
 			)
 		}
-		composable(NavigationDestination.CHAT.fullNavPath) {
+		composable(NavigationDestination.CHAT_LISTING.fullNavPath) {
 			ChatListingPageView(
 				modifier = modifier,
 			)
