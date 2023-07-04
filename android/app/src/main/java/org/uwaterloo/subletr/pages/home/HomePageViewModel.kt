@@ -18,7 +18,7 @@ class HomePageViewModel @Inject constructor(
 	homeListChildViewModel,
 	homeMapChildViewModel,
 ) {
-	val navHostController: NavHostController get() = navigationService.getNavHostController()
+	val navHostController: NavHostController get() = navigationService.navHostController
 
 	override val uiStateStream: Observable<HomePageUiState> = homeListChildViewModel.uiStateStream.map {
 		it

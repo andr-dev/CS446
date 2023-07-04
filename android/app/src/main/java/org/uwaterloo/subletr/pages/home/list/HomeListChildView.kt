@@ -52,6 +52,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.pluralStringResource
@@ -596,7 +597,10 @@ private fun HomeListViewPreview() {
 	SubletrTheme {
 		HomeListChildView(
 			modifier = Modifier,
-			viewModel = HomeListChildViewModel(ListingsApi(), NavigationService()),
+			viewModel = HomeListChildViewModel(
+				ListingsApi(),
+				NavigationService(context = LocalContext.current),
+			),
 			uiState = HomeListUiState.Loaded(
 				locationRange = HomeListUiState.LocationRange(null, null),
 				priceRange = HomeListUiState.PriceRange(null, null),

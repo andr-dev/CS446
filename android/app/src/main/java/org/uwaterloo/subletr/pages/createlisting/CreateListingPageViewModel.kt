@@ -26,7 +26,7 @@ class CreateListingPageViewModel @Inject constructor(
 	private val listingsApi: ListingsApi,
 	val navigationService: INavigationService,
 ) : SubletrViewModel<CreateListingPageUiState>() {
-	val navHostController: NavHostController get() = navigationService.getNavHostController()
+	val navHostController: NavHostController get() = navigationService.navHostController
 
 	val fullAddressStream: BehaviorSubject<String> = BehaviorSubject.createDefault("")
 

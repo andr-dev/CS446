@@ -1,7 +1,6 @@
 package org.uwaterloo.subletr.di
 
 import android.content.Context
-import dagger.Binds
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -16,9 +15,7 @@ import org.uwaterloo.subletr.api.infrastructure.ApiClient
 import org.uwaterloo.subletr.services.AuthenticationService
 import org.uwaterloo.subletr.services.IAuthenticationService
 import org.uwaterloo.subletr.services.IIoService
-import org.uwaterloo.subletr.services.INavigationService
 import org.uwaterloo.subletr.services.IoService
-import org.uwaterloo.subletr.services.NavigationService
 import javax.inject.Singleton
 
 @Module
@@ -35,25 +32,25 @@ object SingletonModule {
 	@Singleton
 	@Provides
 	fun provideAuthenticationApi(httpClient: OkHttpClient): AuthenticationApi {
-		return AuthenticationApi(apiBaseUrl, httpClient)
+		return AuthenticationApi(basePath = apiBaseUrl, client = httpClient)
 	}
 
 	@Singleton
 	@Provides
 	fun provideListingsApi(httpClient: OkHttpClient): ListingsApi {
-		return ListingsApi(apiBaseUrl, httpClient)
+		return ListingsApi(basePath = apiBaseUrl, client = httpClient)
 	}
 
 	@Singleton
 	@Provides
 	fun provideServerApi(httpClient: OkHttpClient): ServerApi {
-		return ServerApi(apiBaseUrl, httpClient)
+		return ServerApi(basePath = apiBaseUrl, client = httpClient)
 	}
 
 	@Singleton
 	@Provides
 	fun provideUserApi(httpClient: OkHttpClient): UserApi {
-		return UserApi(apiBaseUrl, httpClient)
+		return UserApi(basePath = apiBaseUrl, client = httpClient)
 	}
 
 	@Singleton
@@ -71,8 +68,4 @@ object SingletonModule {
 
 @Module
 @InstallIn(SingletonComponent::class)
-abstract class SimpleSingletonModule {
-	@Singleton
-	@Binds
-	abstract fun addNavigationService(navigationService: NavigationService): INavigationService
-}
+abstract class SimpleSingletonModule

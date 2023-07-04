@@ -1,5 +1,6 @@
 package org.uwaterloo.subletr.pages.emailverification
 
+import androidx.navigation.NavHostController
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.reactivex.rxjava3.subjects.BehaviorSubject
 import okhttp3.internal.immutableListOf
@@ -11,7 +12,7 @@ import javax.inject.Inject
 class EmailVerificationPageViewModel @Inject constructor(
 	private val navigationService: INavigationService
 ) : SubletrViewModel<EmailVerificationPageUiState>() {
-	val navHostController get() = navigationService.getNavHostController()
+	val navHostController: NavHostController get() = navigationService.navHostController
 
 	override val uiStateStream: BehaviorSubject<EmailVerificationPageUiState> =
 		BehaviorSubject.createDefault(

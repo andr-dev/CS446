@@ -129,7 +129,7 @@ fun CreateListingPageView(
 				IconButton(
 					modifier = Modifier,
 					onClick = {
-						viewModel.navigationService.getNavHostController().popBackStack()
+						viewModel.navigationService.navHostController.popBackStack()
 					},
 				) {
 					Icon(
