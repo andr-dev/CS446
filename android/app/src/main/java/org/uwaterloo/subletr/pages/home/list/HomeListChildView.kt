@@ -109,7 +109,7 @@ fun HomeListChildView(
 		val modelSheetState = rememberModalBottomSheetState()
 		val listState: LazyListState = rememberLazyListState()
 		var isBottomSheetOpen by remember {
-			mutableStateOf(true)
+			mutableStateOf(false)
 		}
 		val lastItemIsShowing by remember {
 			derivedStateOf {
