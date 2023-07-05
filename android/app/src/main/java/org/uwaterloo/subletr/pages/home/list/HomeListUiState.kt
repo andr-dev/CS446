@@ -3,10 +3,9 @@ package org.uwaterloo.subletr.pages.home.list
 import android.graphics.Bitmap
 import androidx.annotation.StringRes
 import org.uwaterloo.subletr.api.models.ListingSummary
-import org.uwaterloo.subletr.enums.LocationRange
-import org.uwaterloo.subletr.enums.PriceRange
 import org.uwaterloo.subletr.enums.RoomRange
 import org.uwaterloo.subletr.pages.home.HomePageUiState
+import java.util.Optional
 
 sealed interface HomeListUiState: HomePageUiState {
 	object Loading : HomeListUiState
@@ -15,6 +14,16 @@ sealed interface HomeListUiState: HomePageUiState {
 		val listings: List<ListingSummary>,
 		val likedListings: Set<String>,
 		val listingsImages: List<Bitmap?>,
+	)
+
+	data class LocationRange(
+		var lowerBound: Int? = null,
+		var upperBound: Int? = null,
+	)
+
+	data class PriceRange(
+		var lowerBound: Int? = null,
+		var upperBound: Int? = null,
 	)
 
 	data class Loaded(

@@ -1,7 +1,6 @@
 package org.uwaterloo.subletr.pages.home.list
 
 import android.graphics.Bitmap
-import androidx.annotation.StringRes
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -17,28 +16,36 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.runtime.setValue
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
+import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.DropdownMenu
-import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FabPosition
+import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -49,20 +56,23 @@ import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import kotlinx.coroutines.launch
 import org.uwaterloo.subletr.R
 import org.uwaterloo.subletr.api.apis.ListingsApi
 import org.uwaterloo.subletr.api.models.ListingSummary
 import org.uwaterloo.subletr.api.models.ResidenceType
 import org.uwaterloo.subletr.components.button.SecondaryButton
-import org.uwaterloo.subletr.enums.LocationRange
-import org.uwaterloo.subletr.enums.PriceRange
+import org.uwaterloo.subletr.enums.FilterType
 import org.uwaterloo.subletr.enums.RoomRange
 import org.uwaterloo.subletr.navigation.NavigationDestination
+import org.uwaterloo.subletr.pages.home.list.components.LocationFilter
+import org.uwaterloo.subletr.pages.home.list.components.PriceFilterForm
 import org.uwaterloo.subletr.services.NavigationService
 import org.uwaterloo.subletr.theme.SubletrTheme
 import org.uwaterloo.subletr.theme.darkerGrayButtonColor
@@ -75,6 +85,8 @@ import org.uwaterloo.subletr.theme.subletrPink
 import java.time.OffsetDateTime
 import java.time.format.DateTimeFormatter
 
+@SuppressWarnings("CyclomaticComplexMethod")
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeListChildView(
 	modifier: Modifier,
@@ -91,16 +103,19 @@ fun HomeListChildView(
 		) {
 			CircularProgressIndicator()
 		}
-	}
-	else if (uiState is HomeListUiState.Loaded) {
+	} else if (uiState is HomeListUiState.Loaded) {
+		val filterType = remember { mutableStateOf(FilterType.LOCATION) }
+		val coroutineScope = rememberCoroutineScope()
+		val modelSheetState = rememberModalBottomSheetState()
 		val listState: LazyListState = rememberLazyListState()
-
+		var isBottomSheetOpen by remember {
+			mutableStateOf(false)
+		}
 		val lastItemIsShowing by remember {
 			derivedStateOf {
 				if (listState.layoutInfo.totalItemsCount == 0) {
 					false
-				}
-				else {
+				} else {
 					listState.layoutInfo.visibleItemsInfo.lastOrNull()?.index == listState.layoutInfo.totalItemsCount - 1
 				}
 			}
@@ -118,83 +133,194 @@ fun HomeListChildView(
 				)
 			}
 		}
+		fun updateLocationFilter(newVal: HomeListUiState.LocationRange) {
+			viewModel.locationRangeFilterStream.onNext(newVal)
+		}
 
-		LazyColumn(
+		fun updatePriceFilter(newVal: HomeListUiState.PriceRange) {
+			viewModel.priceRangeFilterStream.onNext(newVal)
+		}
+
+		fun closeBottomSheet() {
+			coroutineScope.launch {
+				isBottomSheetOpen = false
+
+			}
+
+		}
+		Scaffold(
 			modifier = modifier
 				.fillMaxSize(1.0f),
-			state = listState,
-			verticalArrangement = Arrangement.spacedBy(dimensionResource(id = R.dimen.s)),
-			horizontalAlignment = Alignment.CenterHorizontally,
-		) {
-			item {
-				Row(
-					modifier = Modifier
-						.fillMaxWidth(1.0f),
-					verticalAlignment = Alignment.CenterVertically,
-					horizontalArrangement = Arrangement.SpaceBetween,
+			floatingActionButtonPosition = FabPosition.End,
+			floatingActionButton = {
+				FloatingActionButton(
+					modifier = Modifier.padding(
+						all = dimensionResource(id = R.dimen.zero),
+					),
+					onClick = {
+						viewModel.navHostController.navigate(NavigationDestination.CREATE_LISTING.fullNavPath)
+					},
+					shape = CircleShape,
+					containerColor = subletrPink,
+					contentColor = Color.White,
 				) {
-					ButtonWithIcon(
-						modifier = Modifier
-							.width(dimensionResource(id = R.dimen.xl))
-							.height(dimensionResource(id = R.dimen.l)),
-						iconId = R.drawable.tune_round_black_24,
-						onClick = {},
-						contentDescription = stringResource(id = R.string.filter_menu),
-					)
-					FilterDropDown(
-						filterName = stringResource(id = R.string.location),
-						dropDownItems = LocationRange.values().map { it.stringId }
-							.toTypedArray(),
-						updateState = { newVal ->
-							viewModel.locationRangeFilterStream.onNext(
-								LocationRange.fromInt(newVal)
-							)
-						},
-						selectedValue = uiState.locationRange.stringId,
-						width = dimensionResource(id = R.dimen.xxxxl),
-					)
-					FilterDropDown(
-						filterName = stringResource(id = R.string.price),
-						dropDownItems = PriceRange.values().map { it.stringId }
-							.toTypedArray(),
-						updateState = { newVal ->
-							viewModel.priceRangeFilterStream.onNext(
-								PriceRange.fromInt(newVal)
-							)
-						},
-						selectedValue = uiState.priceRange.stringId,
-						width = dimensionResource(id = R.dimen.xxxl),
-
-						)
-					FilterDropDown(
-						filterName = stringResource(id = R.string.rooms),
-						dropDownItems = RoomRange.values().map { it.stringId }
-							.toTypedArray(),
-						updateState = { newVal ->
-							viewModel.roomRangeFilterStream.onNext(
-								RoomRange.fromInt(newVal)
-							)
-						},
-						selectedValue = uiState.roomRange.stringId,
-						width = dimensionResource(id = R.dimen.xxxxl)
+					Text(
+						stringResource(id = R.string.plus_sign),
+						style = TextStyle(
+							fontSize = 24.sp
+						),
 					)
 				}
+			},
+			topBar = {
+				Box(modifier = Modifier)
+			},
+			bottomBar = {
+				Box(modifier = Modifier)
+			},
+		) { scaffoldPadding ->
+			LazyColumn(
+				modifier = Modifier
+					.fillMaxSize(1.0f)
+					.padding(scaffoldPadding)
+					.padding(
+						horizontal = dimensionResource(id = R.dimen.s),
+						vertical = dimensionResource(id = R.dimen.zero),
+					),
+				state = listState,
+				verticalArrangement = Arrangement.spacedBy(dimensionResource(id = R.dimen.s)),
+				horizontalAlignment = Alignment.CenterHorizontally,
+			) {
+				item {
+					LazyRow(
+						modifier = Modifier
+							.fillMaxWidth(1.0f),
+						verticalAlignment = Alignment.CenterVertically,
+						horizontalArrangement = Arrangement.spacedBy(dimensionResource(id = R.dimen.xs)),
+					) {
+						item {
+							ButtonWithIcon(
+								modifier = Modifier
+									.width(dimensionResource(id = R.dimen.xl))
+									.height(dimensionResource(id = R.dimen.l)),
+//								TODO: make this dark mode conscious
+								iconId = R.drawable.tune_round_black_24,
+								onClick = {
+									filterType.value = FilterType.ALL
+									coroutineScope.launch {
+										isBottomSheetOpen = true
 
-			}
-			items(uiState.listingItems.listings.size) {
-				val listingSummary = uiState.listingItems.listings[it]
-				val listingImage = uiState.listingItems.listingsImages[it]
-				ListingPost(
-					listingSummary = listingSummary,
-					listingImage = listingImage,
-					detailsNavigation = {
-						viewModel.navHostController.navigate(
-							route = "${NavigationDestination.LISTING_DETAILS.rootNavPath}/${listingSummary.listingId}"
+									}
+								},
+								contentDescription = stringResource(id = R.string.filter_menu),
+							)
+						}
+						item {
+							FilterButton(
+								filterName = stringResource(id = R.string.location),
+								onClick = {
+									filterType.value = FilterType.LOCATION
+									coroutineScope.launch {
+										isBottomSheetOpen = true
+
+									}
+								},
+
+								)
+						}
+						item {
+							FilterButton(
+								filterName = stringResource(id = R.string.price),
+								onClick = {
+									filterType.value = FilterType.PRICE
+									coroutineScope.launch {
+										isBottomSheetOpen = true
+									}
+								}
+							)
+						}
+						item {
+							FilterButton(
+								filterName = stringResource(id = R.string.rooms)
+							) {
+								filterType.value = FilterType.ROOMS
+								coroutineScope.launch {
+									isBottomSheetOpen = true
+								}
+							}
+						}
+						item {
+							FilterButton(
+								filterName = stringResource(id = R.string.property_type)
+							) {
+								filterType.value = FilterType.PROPERTY_TYPE
+								coroutineScope.launch {
+									isBottomSheetOpen = true
+								}
+							}
+						}
+						item {
+							FilterButton(
+								filterName = stringResource(id = R.string.roommate),
+								onClick = {
+									filterType.value = FilterType.ROOMMATE
+									coroutineScope.launch {
+										isBottomSheetOpen = true
+									}
+								}
+							)
+						}
+					}
+				}
+				item {
+					if (isBottomSheetOpen) {
+						ModalBottomSheet(
+							modifier = Modifier.wrapContentSize(),
+							onDismissRequest = { isBottomSheetOpen = false },
+							sheetState = modelSheetState,
+							containerColor = Color.White,
+							content = {
+								when (filterType.value) {
+									FilterType.LOCATION -> {
+										LocationFilter(
+											currentLocationRange = uiState.locationRange,
+											updateLocationFilter = ::updateLocationFilter,
+											closeAction = ::closeBottomSheet
+										)
+									}
+
+									FilterType.PRICE -> PriceFilterForm(
+										currentPriceRange = uiState.priceRange,
+										updatePriceFilter = ::updatePriceFilter,
+										closeAction = ::closeBottomSheet
+									)
+
+									FilterType.ROOMS -> TODO()
+									FilterType.PROPERTY_TYPE -> TODO()
+									FilterType.ROOMMATE -> TODO()
+									FilterType.ALL -> TODO()
+								}
+							},
 						)
-					},
-				)
+					}
+				}
+
+				items(uiState.listingItems.listings.size) {
+					val listingSummary = uiState.listingItems.listings[it]
+					val listingImage = uiState.listingItems.listingsImages[it]
+					ListingPost(
+						listingSummary = listingSummary,
+						listingImage = listingImage,
+						detailsNavigation = {
+							viewModel.navHostController.navigate(
+								route = "${NavigationDestination.LISTING_DETAILS.rootNavPath}/${listingSummary.listingId}"
+							)
+						},
+					)
+				}
 			}
 		}
+
 	}
 }
 
@@ -246,10 +372,10 @@ fun ListingPost(
 			modifier = Modifier
 				.fillMaxWidth(1.0f)
 				.padding(
-					dimensionResource(id = R.dimen.s),
-					dimensionResource(id = R.dimen.s),
-					dimensionResource(id = R.dimen.s),
-					dimensionResource(id = R.dimen.xs),
+					start = dimensionResource(id = R.dimen.s),
+					top = dimensionResource(id = R.dimen.s),
+					bottom = dimensionResource(id = R.dimen.s),
+					end = dimensionResource(id = R.dimen.xs),
 				),
 			verticalArrangement = Arrangement.spacedBy(dimensionResource(id = R.dimen.xs))
 
@@ -268,8 +394,7 @@ fun ListingPost(
 						contentDescription = stringResource(id = R.string.listing_image),
 						contentScale = ContentScale.Crop,
 					)
-				}
-				else {
+				} else {
 					Image(
 						modifier = Modifier
 							.height(dimensionResource(id = R.dimen.xxxl))
@@ -306,13 +431,14 @@ fun ListingPost(
 					Text(
 						text = stringResource(
 							id = R.string.short_for_all_date_range,
-							dateTimeFormater(listingSummary.leaseStart),
-							dateTimeFormater(offsetDateTime = listingSummary.leaseEnd),
+							dateTimeFormatter(listingSummary.leaseStart),
+							dateTimeFormatter(offsetDateTime = listingSummary.leaseEnd),
 						),
 						style = MaterialTheme.typography.bodyLarge,
 					)
 				}
 			}
+			Spacer(modifier = Modifier.height(dimensionResource(R.dimen.m)))
 			Row(
 				modifier = Modifier
 					.fillMaxWidth(1.0f),
@@ -338,12 +464,11 @@ fun ListingPost(
 				Icon(
 					painter = painterResource(
 						id =
-						if (listingSummary.residenceType == ResidenceType.apartment)
-							R.drawable.apartment_solid_gray_16
-						else if (listingSummary.residenceType == ResidenceType.other)
-							R.drawable.other_houses_solid_gray_16
-						else
-							R.drawable.home_outline_gray_16
+						when (listingSummary.residenceType) {
+							ResidenceType.apartment -> R.drawable.apartment_solid_gray_16
+							ResidenceType.other -> R.drawable.other_houses_solid_gray_16
+							else -> R.drawable.home_outline_gray_16
+						}
 
 					),
 					contentDescription = stringResource(R.string.home_icon),
@@ -357,7 +482,7 @@ fun ListingPost(
 			Row(
 				modifier = Modifier
 					.height(40.dp),
-				horizontalArrangement = Arrangement.SpaceBetween
+				horizontalArrangement = Arrangement.SpaceBetween,
 			) {
 				SecondaryButton(
 					modifier = Modifier
@@ -405,27 +530,21 @@ fun ListingPost(
 	}
 }
 
+
 @Composable
-fun FilterDropDown(
+fun FilterButton(
 	modifier: Modifier = Modifier,
 	filterName: String,
-	dropDownItems: Array<Int>,
-	updateState: (Int) -> Unit,
-	@StringRes selectedValue: Int,
-	width: Dp,
+	onClick: () -> Unit,
 ) {
-	var expanded by remember { mutableStateOf(false) }
-
 	Box(
 		modifier = modifier
-			.width(width)
+			.wrapContentSize()
 			.height(dimensionResource(id = R.dimen.l))
-			.fillMaxWidth(1.0f),
 	) {
 		Button(
 			modifier = Modifier
-				.fillMaxWidth(1.0f)
-				.fillMaxHeight(1.0f),
+				.wrapContentSize(),
 			contentPadding = PaddingValues(
 				horizontal = dimensionResource(id = R.dimen.s),
 				vertical = dimensionResource(id = R.dimen.zero),
@@ -438,11 +557,11 @@ fun FilterDropDown(
 				size = dimensionResource(id = R.dimen.s),
 			),
 			onClick = {
-				expanded = !expanded
+				onClick()
 			},
 		) {
 			Row(
-				modifier = Modifier.fillMaxWidth(fraction = 1.0f),
+				modifier = Modifier.wrapContentWidth(),
 				verticalAlignment = Alignment.CenterVertically,
 				horizontalArrangement = Arrangement.SpaceBetween,
 			) {
@@ -453,49 +572,18 @@ fun FilterDropDown(
 
 				Icon(
 					painter = painterResource(
-						id =
-						if (expanded) R.drawable.arrow_drop_up_soild_gray_24
-						else R.drawable.arrow_drop_down_solid_gray_24
+						id = R.drawable.arrow_drop_down_solid_gray_24
 					),
 					contentDescription = stringResource(
-						id =
-						if (expanded) R.string.drop_up_arrow
-						else R.string.drop_down_arrow
+						id = R.string.drop_down_arrow
 					)
-				)
-			}
-		}
-		DropdownMenu(
-			modifier = modifier
-				.background(color = Color.White),
-			expanded = expanded,
-			onDismissRequest = { expanded = false },
-		) {
-			dropDownItems.forEach {
-				DropdownMenuItem(
-					modifier = Modifier,
-					text = {
-						Text(
-							text = stringResource(it),
-							style = filterTextFont,
-							color = if (it == selectedValue && it != R.string.clear) subletrPink else Color.Black
-						)
-					},
-					contentPadding = PaddingValues(
-						horizontal = dimensionResource(id = R.dimen.s),
-						vertical = dimensionResource(id = R.dimen.zero),
-					),
-					onClick = {
-						updateState(it)
-						expanded = false
-					},
 				)
 			}
 		}
 	}
 }
 
-fun dateTimeFormater(offsetDateTime: OffsetDateTime): String {
+fun dateTimeFormatter(offsetDateTime: OffsetDateTime): String {
 	// TODO: Localize this
 	val formatter = DateTimeFormatter.ofPattern("MMM. yyyy")
 	return offsetDateTime.format(formatter)
@@ -510,8 +598,8 @@ private fun HomeListViewPreview() {
 			modifier = Modifier,
 			viewModel = HomeListChildViewModel(ListingsApi(), NavigationService()),
 			uiState = HomeListUiState.Loaded(
-				locationRange = LocationRange.LESSTHAN1KM,
-				priceRange = PriceRange.FIVEHUNDREDTOONEK,
+				locationRange = HomeListUiState.LocationRange(null, null),
+				priceRange = HomeListUiState.PriceRange(null, null),
 				roomRange = RoomRange.FOURTOFIVE,
 				listingItems = HomeListUiState.ListingItemsModel(
 					listings = emptyList(),

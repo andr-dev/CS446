@@ -10,14 +10,10 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentWidth
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.FabPosition
-import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -34,15 +30,10 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import org.uwaterloo.subletr.R
-import org.uwaterloo.subletr.enums.LocationRange
-import org.uwaterloo.subletr.enums.PriceRange
 import org.uwaterloo.subletr.enums.RoomRange
-import org.uwaterloo.subletr.navigation.NavigationDestination
 import org.uwaterloo.subletr.pages.home.list.HomeListChildView
 import org.uwaterloo.subletr.pages.home.list.HomeListUiState
 import org.uwaterloo.subletr.pages.home.map.HomeMapChildView
@@ -61,24 +52,16 @@ fun HomePageView(
 	).value,
 ) {
 	val isListView = remember { mutableStateOf(true) }
-
 	Scaffold(
-		modifier = modifier
-			.padding(
-				start = dimensionResource(id = R.dimen.s),
-				top = dimensionResource(id = R.dimen.zero),
-				end = dimensionResource(id = R.dimen.s),
-				bottom = dimensionResource(id = R.dimen.zero),
-			)
-			.imePadding(),
+		modifier = modifier,
 		topBar = {
 			Row(
 				modifier = Modifier
 					.fillMaxWidth(1.0f)
 					.padding(
-						start = dimensionResource(id = R.dimen.zero),
+						start = dimensionResource(id = R.dimen.s),
 						top = dimensionResource(id = R.dimen.s),
-						end = dimensionResource(id = R.dimen.zero),
+						end = dimensionResource(id = R.dimen.s),
 						bottom = dimensionResource(id = R.dimen.m)
 					),
 				verticalAlignment = Alignment.CenterVertically,
@@ -98,31 +81,10 @@ fun HomePageView(
 					viewModel = viewModel.homeListChildViewModel,
 					uiState = uiState,
 				)
-			}
-			else if (uiState is HomeMapUiState) {
+			} else if (uiState is HomeMapUiState) {
 				HomeMapChildView(
 					modifier = Modifier.padding(padding),
 					viewModel = viewModel.homeMapChildViewModel,
-				)
-			}
-		},
-		floatingActionButtonPosition = FabPosition.End,
-		floatingActionButton = {
-			FloatingActionButton(
-				modifier = Modifier.padding(
-					all = dimensionResource(id = R.dimen.zero),
-				),
-				onClick = {
-					viewModel.navHostController.navigate(NavigationDestination.CREATE_LISTING.fullNavPath)
-				},
-				shape = CircleShape,
-				containerColor = subletrPink,
-				contentColor = Color.White,
-			) {
-				Text(
-					stringResource(id = R.string.plus_sign), style = TextStyle(
-						fontSize = 24.sp
-					)
 				)
 			}
 		},
@@ -245,8 +207,8 @@ fun LoginPageViewLoadedPreview() {
 	SubletrTheme {
 		HomePageView(
 			uiState = HomeListUiState.Loaded(
-				locationRange = LocationRange.NOFILTER,
-				priceRange = PriceRange.NOFILTER,
+				locationRange = HomeListUiState.LocationRange(),
+				priceRange = HomeListUiState.PriceRange(),
 				roomRange = RoomRange.NOFILTER,
 				listingItems = HomeListUiState.ListingItemsModel(
 					listings = emptyList(),
