@@ -283,15 +283,17 @@ fun HomeListChildView(
 								when (filterType.value) {
 									FilterType.LOCATION -> {
 										LocationFilter(
-											uiState.locationRange,
-											::updateLocationFilter
-										) { closeBottomSheet() }
+											currentLocationRange = uiState.locationRange,
+											updateLocationFilter = ::updateLocationFilter,
+											closeAction = ::closeBottomSheet
+										)
 									}
 
 									FilterType.PRICE -> PriceFilterForm(
 										currentPriceRange = uiState.priceRange,
-										updatePriceFilter = ::updatePriceFilter
-									) { closeBottomSheet() }
+										updatePriceFilter = ::updatePriceFilter,
+										closeAction = ::closeBottomSheet
+									)
 
 									FilterType.ROOMS -> TODO()
 									FilterType.PROPERTY_TYPE -> TODO()
