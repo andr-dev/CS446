@@ -60,7 +60,6 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import kotlinx.coroutines.launch
@@ -72,7 +71,7 @@ import org.uwaterloo.subletr.components.button.SecondaryButton
 import org.uwaterloo.subletr.enums.FilterType
 import org.uwaterloo.subletr.enums.RoomRange
 import org.uwaterloo.subletr.navigation.NavigationDestination
-import org.uwaterloo.subletr.pages.home.list.components.LocationFilterForm
+import org.uwaterloo.subletr.pages.home.list.components.LocationFilter
 import org.uwaterloo.subletr.pages.home.list.components.PriceFilterForm
 import org.uwaterloo.subletr.services.NavigationService
 import org.uwaterloo.subletr.theme.SubletrTheme
@@ -86,6 +85,7 @@ import org.uwaterloo.subletr.theme.subletrPink
 import java.time.OffsetDateTime
 import java.time.format.DateTimeFormatter
 
+@SuppressWarnings("CyclomaticComplexMethod")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeListChildView(
@@ -109,7 +109,7 @@ fun HomeListChildView(
 		val modelSheetState = rememberModalBottomSheetState()
 		val listState: LazyListState = rememberLazyListState()
 		var isBottomSheetOpen by remember {
-			mutableStateOf(false)
+			mutableStateOf(true)
 		}
 		val lastItemIsShowing by remember {
 			derivedStateOf {
@@ -165,7 +165,8 @@ fun HomeListChildView(
 					contentColor = Color.White,
 				) {
 					Text(
-						stringResource(id = R.string.plus_sign), style = TextStyle(
+						stringResource(id = R.string.plus_sign),
+						style = TextStyle(
 							fontSize = 24.sp
 						),
 					)
@@ -183,8 +184,8 @@ fun HomeListChildView(
 					.fillMaxSize(1.0f)
 					.padding(scaffoldPadding)
 					.padding(
-						dimensionResource(id = R.dimen.s),
-						dimensionResource(id = R.dimen.zero)
+						horizontal = dimensionResource(id = R.dimen.s),
+						vertical = dimensionResource(id = R.dimen.zero),
 					),
 				state = listState,
 				verticalArrangement = Arrangement.spacedBy(dimensionResource(id = R.dimen.s)),
@@ -202,6 +203,7 @@ fun HomeListChildView(
 								modifier = Modifier
 									.width(dimensionResource(id = R.dimen.xl))
 									.height(dimensionResource(id = R.dimen.l)),
+//								TODO: make this dark mode conscious
 								iconId = R.drawable.tune_round_black_24,
 								onClick = {
 									filterType.value = FilterType.ALL
@@ -273,14 +275,14 @@ fun HomeListChildView(
 				item {
 					if (isBottomSheetOpen) {
 						ModalBottomSheet(
-							modifier = Modifier.wrapContentHeight(),
+							modifier = Modifier.wrapContentSize(),
 							onDismissRequest = { isBottomSheetOpen = false },
 							sheetState = modelSheetState,
 							containerColor = Color.White,
 							content = {
 								when (filterType.value) {
 									FilterType.LOCATION -> {
-										LocationFilterForm(
+										LocationFilter(
 											uiState.locationRange,
 											::updateLocationFilter
 										) { closeBottomSheet() }
@@ -368,10 +370,10 @@ fun ListingPost(
 			modifier = Modifier
 				.fillMaxWidth(1.0f)
 				.padding(
-					dimensionResource(id = R.dimen.s),
-					dimensionResource(id = R.dimen.s),
-					dimensionResource(id = R.dimen.s),
-					dimensionResource(id = R.dimen.xs),
+					start = dimensionResource(id = R.dimen.s),
+					top = dimensionResource(id = R.dimen.s),
+					bottom = dimensionResource(id = R.dimen.s),
+					end = dimensionResource(id = R.dimen.xs),
 				),
 			verticalArrangement = Arrangement.spacedBy(dimensionResource(id = R.dimen.xs))
 
@@ -434,6 +436,7 @@ fun ListingPost(
 					)
 				}
 			}
+			Spacer(modifier = Modifier.height(dimensionResource(R.dimen.m)))
 			Row(
 				modifier = Modifier
 					.fillMaxWidth(1.0f),
@@ -477,7 +480,7 @@ fun ListingPost(
 			Row(
 				modifier = Modifier
 					.height(40.dp),
-				horizontalArrangement = Arrangement.SpaceBetween
+				horizontalArrangement = Arrangement.SpaceBetween,
 			) {
 				SecondaryButton(
 					modifier = Modifier
