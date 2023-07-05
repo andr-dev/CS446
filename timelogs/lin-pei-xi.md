@@ -10,3 +10,4 @@
 |    06-26-2023  |   2h   |    Fixed some coding format and recreated some objects in the ui to make it more similar to figma mock |
 |    06-27-2023  |   1h   |    Cleaned code, made some minor modifications to chat listing page |
 |    07-04-2023  |   3h   |    Made adjustments to the UI of chat listing, resolved all comments |
+|    07-06-2023  |   1h   |    Continued to resolve comments, added loaded preview, resolved detekt issues, and edited some ui features |
