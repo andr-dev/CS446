@@ -71,7 +71,7 @@ fun HomePageView(
 					text = stringResource(id = R.string.view_sublets),
 					style = MaterialTheme.typography.titleMedium,
 				)
-				ViewSwitch(isListView = isListView, viewModel = viewModel)
+				ViewSwitch(isListView = isListView)
 			}
 		},
 		content = { padding: PaddingValues ->
@@ -98,7 +98,6 @@ fun HomePageView(
 fun ViewSwitch(
 	modifier: Modifier = Modifier,
 	isListView: MutableState<Boolean>,
-	viewModel: HomePageViewModel,
 ) {
 	Row(
 		modifier = modifier
