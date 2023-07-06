@@ -1,11 +1,19 @@
-use diesel::{QueryDsl, RunQueryDsl};
+use diesel::{ExpressionMethods, QueryDsl, RunQueryDsl};
 use okapi::openapi3::OpenApi;
 use rand::Rng;
 use rocket::{get, post, serde::json::Json, Route, State};
 use rocket_okapi::{openapi, openapi_get_routes_spec};
 
 use super::{
-    model::user::{CreateUserRequest, CreateUserResponse},
+    model::user::{
+        ChangePasswordUserRequest,
+        ChangePasswordUserResponse,
+        CreateUserRequest,
+        CreateUserResponse,
+        GetUserResponse,
+        UpdateUserRequest,
+        UpdateUserResponse,
+    },
     utils::hash_password,
 };
 use crate::{
@@ -50,15 +58,78 @@ fn user_create(
 }
 
 #[openapi(tag = "User")]
-#[get("/email")]
-fn user_email(state: &State<AppState>, user: AuthenticatedUser) -> ServiceResult<String> {
+#[get("/get")]
+fn user_get(state: &State<AppState>, user: AuthenticatedUser) -> ServiceResult<GetUserResponse> {
     let mut dbcon = state.pool.get()?;
 
     let user: User = users::dsl::users.find(user.user_id).first(&mut dbcon).unwrap();
 
-    Ok(Json(user.email))
+    Ok(Json(GetUserResponse {
+        first_name: user.first_name,
+        last_name: user.last_name,
+        email: user.email,
+        gender: user.gender,
+    }))
+}
+
+#[openapi(tag = "User")]
+#[post("/update", format = "json", data = "<update_user_request>")]
+fn user_update(
+    state: &State<AppState>,
+    user: AuthenticatedUser,
+    update_user_request: Json<UpdateUserRequest>,
+) -> ServiceResult<UpdateUserResponse> {
+    let mut dbcon = state.pool.get()?;
+
+    if let Some(first_name) = &update_user_request.first_name {
+        diesel::update(users::dsl::users)
+            .filter(users::dsl::user_id.eq(user.user_id))
+            .set(users::dsl::first_name.eq(first_name))
+            .execute(&mut dbcon)?;
+    }
+
+    if let Some(last_name) = &update_user_request.last_name {
+        diesel::update(users::dsl::users)
+            .filter(users::dsl::user_id.eq(user.user_id))
+            .set(users::dsl::last_name.eq(last_name))
+            .execute(&mut dbcon)?;
+    }
+
+    if let Some(gender) = &update_user_request.gender {
+        diesel::update(users::dsl::users)
+            .filter(users::dsl::user_id.eq(user.user_id))
+            .set(users::dsl::gender.eq(gender))
+            .execute(&mut dbcon)?;
+    }
+
+    Ok(Json(UpdateUserResponse {}))
+}
+
+#[openapi(tag = "User")]
+#[post("/change_password", format = "json", data = "<change_password_user_request>")]
+fn user_change_password(
+    state: &State<AppState>,
+    user: AuthenticatedUser,
+    change_password_user_request: Json<ChangePasswordUserRequest>,
+) -> ServiceResult<ChangePasswordUserResponse> {
+    let mut dbcon = state.pool.get()?;
+
+    let user: User = users::dsl::users.find(user.user_id).first(&mut dbcon).unwrap();
+
+    if user.password_hash != hash_password(&change_password_user_request.password_old) {
+        return Err(ServiceError::InternalError);
+    }
+
+    let password_hash = hash_password(&change_password_user_request.password_new);
+
+    diesel::update(users::dsl::users)
+        .filter(users::dsl::user_id.eq(user.user_id))
+        .set(users::dsl::password_hash.eq(password_hash))
+        .execute(&mut dbcon)?;
+
+    Ok(Json(ChangePasswordUserResponse {}))
 }
 
 pub fn routes() -> (Vec<Route>, OpenApi) {
-    openapi_get_routes_spec![user_create, user_email]
+    openapi_get_routes_spec![user_change_password, user_create, user_get, user_update]
 }
