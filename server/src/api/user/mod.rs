@@ -20,7 +20,7 @@ use crate::{
     api::token::AuthenticatedUser,
     db::{
         model::users::{NewUser, User},
-        schema::users,
+        schema::{listings, users},
     },
     error::{ServiceError, ServiceResult},
     state::AppState,
@@ -64,11 +64,20 @@ fn user_get(state: &State<AppState>, user: AuthenticatedUser) -> ServiceResult<G
 
     let user: User = users::dsl::users.find(user.user_id).first(&mut dbcon).unwrap();
 
+    let listing_ids: Vec<i32> = listings::dsl::listings
+        .select(listings::dsl::listing_id)
+        .filter(listings::owner_user_id.eq(user.user_id))
+        .load::<i32>(&mut dbcon)?;
+
+    debug_assert!(listing_ids.len() <= 1);
+
     Ok(Json(GetUserResponse {
         first_name: user.first_name,
         last_name: user.last_name,
         email: user.email,
         gender: user.gender,
+
+        listing_id: listing_ids.first().copied(),
     }))
 }
 
