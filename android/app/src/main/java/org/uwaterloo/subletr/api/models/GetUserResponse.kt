@@ -26,6 +26,7 @@ import com.squareup.moshi.JsonClass
  * @param lastName 
  * @param email 
  * @param gender 
+ * @param listingId 
  */
 
 
@@ -41,7 +42,10 @@ data class GetUserResponse (
     val email: kotlin.String,
 
     @Json(name = "gender")
-    val gender: kotlin.String
+    val gender: kotlin.String,
+
+    @Json(name = "listing_id")
+    val listingId: kotlin.Int? = null
 
 )
 
