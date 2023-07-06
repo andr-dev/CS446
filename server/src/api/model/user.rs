@@ -21,6 +21,8 @@ pub struct GetUserResponse {
     pub last_name: String,
     pub email: String,
     pub gender: String,
+
+    pub listing_id: Option<i32>,
 }
 
 #[derive(JsonSchema, Serialize, Deserialize, Clone, PartialEq)]
