@@ -12,3 +12,6 @@
 | Jun 19th | 2 hours | finished UI and added endpoint api for listing page |
 | Jun 20th | 4 hours | update reviews on Listing Page |
 | Jun 26th | 1 hours | Fixing Listing page not update bug  |
+| July 1st | 5 hours | create default filter and location filter  |
+| July 2nd | 3.5 hours | create Price filter and update reviews  |
+| July 3nd | 1.5 hours | fixing Padding on filter's bottom sheet  |
