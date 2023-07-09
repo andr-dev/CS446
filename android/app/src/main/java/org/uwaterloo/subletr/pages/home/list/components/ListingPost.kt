@@ -59,7 +59,7 @@ fun ListingPost(
 			.clip(
 				RoundedCornerShape(
 					dimensionResource(id = R.dimen.xxs)
-				)
+				),
 			)
 			.background(secondaryButtonBackgroundColor)
 	) {
@@ -72,12 +72,12 @@ fun ListingPost(
 					bottom = dimensionResource(id = R.dimen.s),
 					end = dimensionResource(id = R.dimen.xs),
 				),
-			verticalArrangement = Arrangement.spacedBy(dimensionResource(id = R.dimen.xs))
+			verticalArrangement = Arrangement.spacedBy(dimensionResource(id = R.dimen.xs)),
 
 		) {
 			Row(
 				modifier = Modifier
-					.fillMaxWidth(1.0f)
+					.fillMaxWidth(1.0f),
 
 			) {
 				if (listingImage != null) {
@@ -101,12 +101,12 @@ fun ListingPost(
 						contentScale = ContentScale.Crop,
 					)
 				}
-				Spacer(modifier = Modifier.width(dimensionResource(id = R.dimen.s)))
+				Spacer(modifier = Modifier.width(dimensionResource(id = R.dimen.s)),)
 				Column(
 					modifier = Modifier
 						.fillMaxWidth(1.0f),
 					horizontalAlignment = Alignment.Start,
-					verticalArrangement = Arrangement.spacedBy(dimensionResource(id = R.dimen.xxxs))
+					verticalArrangement = Arrangement.spacedBy(dimensionResource(id = R.dimen.xxxs)),
 
 				) {
 					Text(
@@ -114,7 +114,7 @@ fun ListingPost(
 						style = listingTitleFont,
 						overflow = TextOverflow.Clip,
 						textAlign = TextAlign.Start,
-						maxLines = 1
+						maxLines = 1,
 					)
 					Text(
 						stringResource(
@@ -144,7 +144,7 @@ fun ListingPost(
 						id = R.drawable.bed_solid_gray_16,
 					),
 					contentDescription = stringResource(id = R.string.bed_icon),
-					tint = secondaryTextColor
+					tint = secondaryTextColor,
 				)
 				Text(
 					pluralStringResource(
@@ -154,7 +154,7 @@ fun ListingPost(
 					),
 					style = listingDescriptionFont,
 				)
-				Spacer(modifier = Modifier.width(dimensionResource(id = R.dimen.xs)))
+				Spacer(modifier = Modifier.width(dimensionResource(id = R.dimen.xs)),)
 				Icon(
 					painter = painterResource(
 						id =
@@ -162,11 +162,11 @@ fun ListingPost(
 							ResidenceType.apartment -> R.drawable.apartment_solid_gray_16
 							ResidenceType.other -> R.drawable.other_houses_solid_gray_16
 							else -> R.drawable.home_outline_gray_16
-						}
+						},
 
 					),
 					contentDescription = stringResource(R.string.home_icon),
-					tint = secondaryTextColor
+					tint = secondaryTextColor,
 				)
 				Text(
 					text = listingSummary.residenceType.value,
@@ -184,14 +184,14 @@ fun ListingPost(
 						.fillMaxHeight(1.0f),
 					colors = ButtonDefaults.buttonColors(
 						containerColor = darkerGrayButtonColor,
-						contentColor = Color.Black
+						contentColor = Color.Black,
 					),
 					onClick = detailsNavigation,
 				) {
 
 					Text(
 						stringResource(id = R.string.view_details),
-						style = MaterialTheme.typography.bodyLarge
+						style = MaterialTheme.typography.bodyLarge,
 					)
 
 				}
@@ -201,11 +201,11 @@ fun ListingPost(
 						.width(dimensionResource(id = R.dimen.xxxl)),
 					colors = ButtonDefaults.buttonColors(
 						containerColor = darkerGrayButtonColor,
-						contentColor = Color.Black
+						contentColor = Color.Black,
 					),
 					iconId = R.drawable.chat_bubble_outline_gray_24,
 					onClick = { /*TODO*/ },
-					contentDescription = stringResource(id = R.string.chat_icon)
+					contentDescription = stringResource(id = R.string.chat_icon),
 				)
 				ButtonWithIcon(
 					modifier = Modifier
@@ -213,11 +213,11 @@ fun ListingPost(
 						.width(dimensionResource(id = R.dimen.xxxl)),
 					colors = ButtonDefaults.buttonColors(
 						containerColor = darkerGrayButtonColor,
-						contentColor = Color.Black
+						contentColor = Color.Black,
 					),
 					iconId = R.drawable.star_outline_black_26,
 					onClick = { /*TODO*/ },
-					contentDescription = stringResource(id = R.string.chat_icon)
+					contentDescription = stringResource(id = R.string.chat_icon),
 				)
 			}
 		}
