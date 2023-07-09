@@ -120,6 +120,7 @@ fun HomeListChildView(
 				)
 			}
 		}
+
 		fun updateLocationFilter(newVal: HomeListUiState.LocationRange) {
 			viewModel.locationRangeFilterStream.onNext(newVal)
 		}
@@ -141,13 +142,11 @@ fun HomeListChildView(
 		}
 
 		fun closeBottomSheet() {
-//			TODO: Add scroll to top
 			coroutineScope.launch {
 				isBottomSheetOpen = false
 			}
-
-
 		}
+
 		Scaffold(
 			modifier = modifier
 				.fillMaxSize(1.0f),
