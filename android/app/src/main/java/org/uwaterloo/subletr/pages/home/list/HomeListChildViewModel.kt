@@ -12,7 +12,8 @@ import kotlinx.coroutines.runBlocking
 import org.uwaterloo.subletr.api.apis.ListingsApi
 import org.uwaterloo.subletr.api.models.GetListingsResponse
 import org.uwaterloo.subletr.api.models.ListingSummary
-import org.uwaterloo.subletr.enums.RoomRange
+import org.uwaterloo.subletr.enums.Gender
+import org.uwaterloo.subletr.enums.HousingType
 import org.uwaterloo.subletr.infrastructure.SubletrChildViewModel
 import org.uwaterloo.subletr.navigation.NavigationDestination
 import org.uwaterloo.subletr.services.INavigationService
@@ -24,15 +25,21 @@ import kotlin.jvm.optionals.getOrNull
 class HomeListChildViewModel @Inject constructor(
 	private val listingsApi: ListingsApi,
 	private val navigationService: INavigationService,
-): SubletrChildViewModel<HomeListUiState>() {
+) : SubletrChildViewModel<HomeListUiState>() {
 	val navHostController: NavHostController get() = navigationService.navHostController
 
 	val locationRangeFilterStream: BehaviorSubject<HomeListUiState.LocationRange> =
 		BehaviorSubject.createDefault(HomeListUiState.LocationRange())
 	val priceRangeFilterStream: BehaviorSubject<HomeListUiState.PriceRange> =
 		BehaviorSubject.createDefault(HomeListUiState.PriceRange())
-	val roomRangeFilterStream: BehaviorSubject<RoomRange> =
-		BehaviorSubject.createDefault(RoomRange.NOFILTER)
+	val roomRangeFilterStream: BehaviorSubject<HomeListUiState.RoomRange> =
+		BehaviorSubject.createDefault(HomeListUiState.RoomRange())
+	val genderFilterStream: BehaviorSubject<Gender> =
+		BehaviorSubject.createDefault(Gender.OTHER)
+
+	val houseTypeFilterStream: BehaviorSubject<HousingType> =
+		BehaviorSubject.createDefault(HousingType.OTHER)
+
 
 	val listingPagingParamsStream: BehaviorSubject<ListingPagingParams> =
 		BehaviorSubject.createDefault(
@@ -56,6 +63,8 @@ class HomeListChildViewModel @Inject constructor(
 		locationRangeFilterStream.distinctUntilChanged(),
 		priceRangeFilterStream.distinctUntilChanged(),
 		roomRangeFilterStream.distinctUntilChanged(),
+		genderFilterStream.distinctUntilChanged(),
+		houseTypeFilterStream.distinctUntilChanged(),
 		listingPagingParamsStream
 			.distinctUntilChanged { t1, t2 ->
 				t1.pageNumber == t2.pageNumber
@@ -127,20 +136,21 @@ class HomeListChildViewModel @Inject constructor(
 		.observeOn(Schedulers.io())
 		.onErrorResumeWith(Observable.never())
 
-	private val listingItemsStream: Observable<HomeListUiState.ListingItemsModel> = Observable.combineLatest(
-		listingsStream,
-		imagesStream,
-		::Pair
-	).map {
-		HomeListUiState.ListingItemsModel(
-			listings = it.first.listingParams.listingPagingParams.previousListingItemsModel.listings +
-				it.first.listingsResponse.listings,
-			likedListings = it.first.listingParams.listingPagingParams.previousListingItemsModel.likedListings +
-				it.first.listingsResponse.liked,
-			listingsImages = it.first.listingParams.listingPagingParams.previousListingItemsModel.listingsImages +
-				it.second,
-		)
-	}
+	private val listingItemsStream: Observable<HomeListUiState.ListingItemsModel> =
+		Observable.combineLatest(
+			listingsStream,
+			imagesStream,
+			::Pair
+		).map {
+			HomeListUiState.ListingItemsModel(
+				listings = it.first.listingParams.listingPagingParams.previousListingItemsModel.listings +
+					it.first.listingsResponse.listings,
+				likedListings = it.first.listingParams.listingPagingParams.previousListingItemsModel.likedListings +
+					it.first.listingsResponse.liked,
+				listingsImages = it.first.listingParams.listingPagingParams.previousListingItemsModel.listingsImages +
+					it.second,
+			)
+		}
 
 	// To ensure that view does not force an api call on every subscription
 	private val internalUiStateStream: Observable<Unit> = Observable.combineLatest(
@@ -148,20 +158,30 @@ class HomeListChildViewModel @Inject constructor(
 		priceRangeFilterStream,
 		roomRangeFilterStream,
 		listingItemsStream,
+		genderFilterStream,
+		houseTypeFilterStream,
 		infoTextStringIdStream,
-	) { locationRange: HomeListUiState.LocationRange,
-		priceRange: HomeListUiState.PriceRange,
-		roomRange: RoomRange,
-		listings: HomeListUiState.ListingItemsModel,
-		infoTextStringId: Optional<Int>
+
+		) {
+			locationRange: HomeListUiState.LocationRange,
+			priceRange: HomeListUiState.PriceRange,
+			roomRange: HomeListUiState.RoomRange,
+			listings: HomeListUiState.ListingItemsModel,
+			genderPreference: Gender,
+			houseTypePreference: HousingType,
+			infoTextStringId: Optional<Int>,
 		->
-		uiStateStream.onNext(HomeListUiState.Loaded(
-			locationRange = locationRange,
-			priceRange = priceRange,
-			roomRange = roomRange,
-			listingItems = listings,
-			infoTextStringId = infoTextStringId.getOrNull()
-		))
+		uiStateStream.onNext(
+			HomeListUiState.Loaded(
+				locationRange = locationRange,
+				priceRange = priceRange,
+				roomRange = roomRange,
+				listingItems = listings,
+				genderPreference = genderPreference,
+				houseTypePreference = houseTypePreference,
+				infoTextStringId = infoTextStringId.getOrNull(),
+			)
+		)
 	}
 
 	override val uiStateStream: BehaviorSubject<HomeListUiState> =
@@ -174,9 +194,13 @@ class HomeListChildViewModel @Inject constructor(
 	data class GetListingParams(
 		val locationRange: HomeListUiState.LocationRange,
 		val priceRange: HomeListUiState.PriceRange,
-		val roomRange: RoomRange,
+		val roomRange: HomeListUiState.RoomRange,
+		val genderFilterStream: Gender,
+		val housingTypeFilterStream: HousingType,
 		val listingPagingParams: ListingPagingParams,
-	)
+
+
+		)
 
 	data class ListingPagingParams(
 		val previousListingItemsModel: HomeListUiState.ListingItemsModel,

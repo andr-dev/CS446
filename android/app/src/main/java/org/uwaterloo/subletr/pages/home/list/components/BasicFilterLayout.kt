@@ -4,15 +4,20 @@ import androidx.annotation.StringRes
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Divider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LocalTextStyle
@@ -30,12 +35,16 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import org.uwaterloo.subletr.R
 import org.uwaterloo.subletr.components.button.PrimaryButton
+import org.uwaterloo.subletr.components.button.SecondaryButton
 import org.uwaterloo.subletr.theme.SubletrLightColorScheme
 import org.uwaterloo.subletr.theme.filterBoldFont
+import org.uwaterloo.subletr.theme.secondaryButtonBackgroundColor
 import org.uwaterloo.subletr.theme.secondaryTextColor
+import org.uwaterloo.subletr.theme.subletrPink
 import org.uwaterloo.subletr.theme.textFieldBackgroundColor
 
 
@@ -44,7 +53,7 @@ fun BasicFilterLayout(
 	modifier: Modifier = Modifier,
 	@StringRes titleId: Int,
 	closeAction: () -> Unit,
-	content: @Composable (() -> Unit)? = null,
+	content: @Composable (() -> Unit),
 	updateFilterAndClose: () -> Unit,
 	clearAction: () -> Unit,
 	revertInput: () -> Unit,
@@ -126,7 +135,7 @@ fun BasicFilterLayout(
 
 		}
 	) { paddingValues ->
-		Column(
+		Box(
 			modifier = Modifier
 				.padding(
 					top = paddingValues.calculateTopPadding(),
@@ -186,7 +195,28 @@ fun TextFieldWithErrorIndication(
 
 		)
 }
+@Composable
+fun defaultFilterButton(
+	modifier: Modifier = Modifier,
+	isSelected: Boolean,
+	onClick: () -> Unit,
+	text: String,
+) {
+	SecondaryButton(
+		modifier = modifier
+			.defaultMinSize(minWidth = 1.dp, minHeight = 1.dp),
+		onClick = onClick,
+		contentPadding = PaddingValues(
+			horizontal = dimensionResource(id = R.dimen.s),
+			vertical = dimensionResource(id = R.dimen.xs),
+		),
+		content = { Text(text = text, color = if (isSelected) Color.White else Color.Black) },
+		colors = ButtonDefaults.buttonColors(
+			containerColor = if (isSelected) subletrPink else secondaryButtonBackgroundColor,
+		),
+	)
 
+}
 fun verifyNewBoundVal(
 	newVal: String,
 	lowerBound: String? = null,
