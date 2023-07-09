@@ -129,6 +129,14 @@
     <string name="km">km</string>
     <string name="show_sublets">Show sublets</string>
     <string name="price_range">Price Range</string>
+    <string name="bedrooms_for_sublet">Bedrooms for sublet</string>
+    <string name="bedrooms_in_property">Bedrooms in property</string>
+    <string name="bathrooms">Bathrooms</string>
+    <string name="any">Any</string>
+    <string name="five_plus">5+</string>
+    <string name="roommate_preference">Roommate Preference</string>
+    <string name="Apartment">Apartment</string>
+
 
 
 

@@ -33,7 +33,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
 import org.uwaterloo.subletr.R
-import org.uwaterloo.subletr.enums.RoomRange
+import org.uwaterloo.subletr.enums.Gender
+import org.uwaterloo.subletr.enums.HousingType
 import org.uwaterloo.subletr.pages.home.list.HomeListChildView
 import org.uwaterloo.subletr.pages.home.list.HomeListUiState
 import org.uwaterloo.subletr.pages.home.map.HomeMapChildView
@@ -209,12 +210,14 @@ fun LoginPageViewLoadedPreview() {
 			uiState = HomeListUiState.Loaded(
 				locationRange = HomeListUiState.LocationRange(),
 				priceRange = HomeListUiState.PriceRange(),
-				roomRange = RoomRange.NOFILTER,
+				roomRange = HomeListUiState.RoomRange(),
 				listingItems = HomeListUiState.ListingItemsModel(
 					listings = emptyList(),
 					likedListings = emptySet(),
 					listingsImages = emptyList(),
 				),
+				genderPreference = Gender.OTHER,
+				houseTypePreference = HousingType.OTHER,
 				infoTextStringId = null,
 			),
 		)

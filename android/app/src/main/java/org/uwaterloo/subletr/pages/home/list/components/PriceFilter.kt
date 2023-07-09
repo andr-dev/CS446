@@ -1,11 +1,13 @@
 package org.uwaterloo.subletr.pages.home.list.components
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.material3.Divider
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -22,7 +24,7 @@ import org.uwaterloo.subletr.pages.home.list.HomeListUiState
 import org.uwaterloo.subletr.theme.secondaryTextColor
 
 @Composable
-fun PriceFilterForm(
+fun PriceFilter(
 	currentPriceRange: HomeListUiState.PriceRange,
 	updatePriceFilter: (HomeListUiState.PriceRange) -> Unit,
 	closeAction: () -> Unit,
@@ -46,40 +48,50 @@ fun PriceFilterForm(
 		titleId = R.string.price_range,
 		closeAction = closeAction,
 		content = {
-			Row(
-				modifier = Modifier
-					.fillMaxWidth(1.0f)
-					.padding(top = dimensionResource(id = R.dimen.l)),
-				verticalAlignment = Alignment.CenterVertically,
-				horizontalArrangement = Arrangement.SpaceBetween,
+			Column(
+				modifier = Modifier.fillMaxWidth(1.0f).wrapContentHeight()
 			) {
+				Row(
+					modifier = Modifier
+						.fillMaxWidth(1.0f)
+						.padding(top = dimensionResource(id = R.dimen.l)),
+					verticalAlignment = Alignment.CenterVertically,
+					horizontalArrangement = Arrangement.SpaceBetween,
+				) {
 
-				TextFieldWithErrorIndication(
-					value = lowerBoundText,
-					onValueChange = {
-						lowerBoundText = it
-						lowerTextFieldError =
-							!verifyNewBoundVal(newVal = lowerBoundText, upperBound = upperboundText)
-					},
-					isError = lowerTextFieldError,
-					placeholderString = stringResource(id = R.string.minimum),
-				)
-				Divider(
-					modifier = Modifier.width(width = dimensionResource(id = R.dimen.m)),
-					color = secondaryTextColor,
-					thickness = dimensionResource(id = R.dimen.xxxxs),
-				)
-				TextFieldWithErrorIndication(
-					value = upperboundText,
-					onValueChange = {
-						upperboundText = it
-						upperTextFieldError =
-							!verifyNewBoundVal(newVal = upperboundText, lowerBound = lowerBoundText)
-					},
-					isError = upperTextFieldError,
-					placeholderString = stringResource(id = R.string.maximum),
-
+					TextFieldWithErrorIndication(
+						value = lowerBoundText,
+						onValueChange = {
+							lowerBoundText = it
+							lowerTextFieldError =
+								!verifyNewBoundVal(
+									newVal = lowerBoundText,
+									upperBound = upperboundText
+								)
+						},
+						isError = lowerTextFieldError,
+						placeholderString = stringResource(id = R.string.minimum),
 					)
+					Divider(
+						modifier = Modifier.width(width = dimensionResource(id = R.dimen.m)),
+						color = secondaryTextColor,
+						thickness = dimensionResource(id = R.dimen.xxxxs),
+					)
+					TextFieldWithErrorIndication(
+						value = upperboundText,
+						onValueChange = {
+							upperboundText = it
+							upperTextFieldError =
+								!verifyNewBoundVal(
+									newVal = upperboundText,
+									lowerBound = lowerBoundText
+								)
+						},
+						isError = upperTextFieldError,
+						placeholderString = stringResource(id = R.string.maximum),
+
+						)
+				}
 			}
 		},
 		clearAction = {
