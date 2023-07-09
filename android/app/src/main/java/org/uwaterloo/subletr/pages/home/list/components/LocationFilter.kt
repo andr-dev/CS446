@@ -73,7 +73,7 @@ fun LocationFilter(
 			Column(
 				modifier = Modifier
 					.fillMaxWidth(1.0f)
-					.wrapContentHeight()
+					.wrapContentHeight(),
 			) {
 				RangeSlider(
 					modifier = Modifier

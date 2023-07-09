@@ -32,11 +32,8 @@ fun PropertyTypeFilter(
 	BasicFilterLayout(
 		modifier = Modifier.height(280.dp),
 		titleId = R.string.roommate_preference,
-
 		content = {
 			Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.xs)))
-
-
 			LazyVerticalGrid(
 				columns = GridCells.Fixed(3),
 				horizontalArrangement = Arrangement.spacedBy(dimensionResource(id = R.dimen.xs)),
@@ -77,8 +74,6 @@ fun PropertyTypeFilter(
 			updateHousingFilter(housingPref)
 			closeAction()
 		},
-
-
 		)
 
 }

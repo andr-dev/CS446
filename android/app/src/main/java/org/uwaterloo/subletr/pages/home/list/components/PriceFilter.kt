@@ -49,7 +49,9 @@ fun PriceFilter(
 		closeAction = closeAction,
 		content = {
 			Column(
-				modifier = Modifier.fillMaxWidth(1.0f).wrapContentHeight()
+				modifier = Modifier
+					.fillMaxWidth(1.0f)
+					.wrapContentHeight(),
 			) {
 				Row(
 					modifier = Modifier
