@@ -40,6 +40,10 @@
             </intent-filter>
         </service>
 
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="${MAPS_API_KEY}" />
+
         <provider
             android:name=".utils.ComposeFileProvider"
             android:authorities="org.uwaterloo.subletr.fileprovider"
