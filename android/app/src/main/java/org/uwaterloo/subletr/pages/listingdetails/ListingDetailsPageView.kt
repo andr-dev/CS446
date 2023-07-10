@@ -1,5 +1,6 @@
 package org.uwaterloo.subletr.pages.listingdetails
 
+import android.view.MotionEvent
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
@@ -33,19 +34,33 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.rxjava3.subscribeAsState
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
+import androidx.compose.ui.input.pointer.pointerInteropFilter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.google.android.gms.maps.model.CameraPosition
+import com.google.android.gms.maps.model.LatLng
+import com.google.maps.android.compose.CameraPositionState
+import com.google.maps.android.compose.GoogleMap
+import com.google.maps.android.compose.Marker
+import com.google.maps.android.compose.MarkerState
+import com.google.maps.android.compose.rememberCameraPositionState
 import kotlinx.coroutines.launch
 import org.uwaterloo.subletr.R
 import org.uwaterloo.subletr.api.models.ListingDetails
@@ -114,11 +129,23 @@ fun ListingDetailsPageView(
 				initialPage = 0,
 				initialPageOffsetFraction = 0f,
 			) { imageCount }
+			val cameraPositionState = rememberCameraPositionState {
+				position = CameraPosition.fromLatLngZoom(SINGAPORE, 10f)
+			}
+			var columnScrollingEnabled by remember { mutableStateOf(true) }
+			LaunchedEffect(cameraPositionState.isMoving) {
+				if (!cameraPositionState.isMoving) {
+					columnScrollingEnabled = true
+				}
+			}
 			Column(
 				modifier = Modifier
 					.padding(top = paddingValues.calculateTopPadding())
 					.fillMaxSize(fraction = 1.0f)
-					.verticalScroll(scrollState),
+					.verticalScroll(
+						state = scrollState,
+						enabled = columnScrollingEnabled,
+					),
 				horizontalAlignment = Alignment.CenterHorizontally,
 				verticalArrangement = Arrangement.Center,
 			) {
@@ -440,6 +467,20 @@ fun ListingDetailsPageView(
 					value = uiState.listingDetails.description,
 					onValueChange = {},
 				)
+
+				Spacer(
+					modifier = Modifier.height(dimensionResource(id = R.dimen.xs)),
+				)
+
+				GoogleMapComposable(
+					cameraPositionState = cameraPositionState,
+					disableColumnScrolling = { columnScrollingEnabled = false },
+					position = null,
+				)
+
+				Spacer(
+					modifier = Modifier.height(dimensionResource(id = R.dimen.xs)),
+				)
 			}
 		}
 	}
@@ -449,7 +490,7 @@ fun ListingDetailsPageView(
 fun ImageBoxPlaceholder(
 	modifier: Modifier = Modifier,
 	contentAlignment: Alignment = Alignment.Center,
-	content: @Composable () -> Unit
+	content: @Composable () -> Unit,
 ) {
 	Box(
 		modifier = modifier
@@ -461,7 +502,40 @@ fun ImageBoxPlaceholder(
 	}
 }
 
+@OptIn(ExperimentalComposeUiApi::class)
+@Composable
+fun GoogleMapComposable(
+	modifier: Modifier = Modifier,
+	cameraPositionState: CameraPositionState,
+	disableColumnScrolling: () -> Unit,
+	position: LatLng?,
+) {
+	GoogleMap(
+		modifier = modifier
+			.size(dimensionResource(id = R.dimen.listing_details_image))
+			.pointerInteropFilter(
+				onTouchEvent = {
+					when (it.action) {
+						MotionEvent.ACTION_DOWN -> {
+							disableColumnScrolling()
+							false
+						}
+
+						else -> true
+					}
+				}
+			),
+		cameraPositionState = cameraPositionState
+	) {
+		Marker(
+			state = MarkerState(position = position ?: SINGAPORE),
+		)
+	}
+}
+
 private const val ELEMENT_WIDTH = 0.9f
+/* TODO figure out address to LatLng */
+private val SINGAPORE = LatLng(1.35, 103.87)
 /* TODO localize date format */
 private val dateFormat = DateTimeFormatter.ofPattern("MM/dd/yyyy")
 

@@ -7,6 +7,7 @@ plugins {
 	id 'com.google.dagger.hilt.android'
 	id 'kotlin-kapt'
 	id 'io.gitlab.arturbosch.detekt'
+	id 'com.google.android.libraries.mapsplatform.secrets-gradle-plugin' version '2.0.1' apply false
 }
 
 android {
@@ -21,6 +22,9 @@ android {
 		versionName "1.0"
 
 		testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+		Properties properties = new Properties()
+		properties.load(project.rootProject.file('local.properties').newDataInputStream())
+		manifestPlaceholders = [MAPS_API_KEY: "${properties.getProperty('MAPS_API_KEY')}"]
 	}
 	buildTypes {
 		release {
@@ -66,8 +70,10 @@ dependencies {
 	implementation "com.squareup.moshi:moshi-adapters:1.13.0"
 	implementation "com.squareup.okhttp3:okhttp:4.10.0"
 	implementation "com.google.android.gms:play-services-location:21.0.1"
+	implementation 'com.google.android.gms:play-services-maps:18.1.0'
 	implementation 'com.google.android.material:material:1.9.0'
 	implementation 'com.google.dagger:hilt-android:2.46.1'
+	implementation 'com.google.maps.android:maps-compose:2.11.4'
 	implementation 'com.google.firebase:firebase-analytics:21.3.0'
 	implementation 'com.google.firebase:firebase-messaging:23.1.2'
 	implementation 'com.google.gms:google-services:4.3.15'
