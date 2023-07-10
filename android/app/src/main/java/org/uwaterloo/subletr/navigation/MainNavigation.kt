@@ -27,7 +27,7 @@ fun MainNavigation(
 ) {
 	val startingDestination: NavigationDestination =
 		if (ApiClient.accessToken == null) NavigationDestination.LOGIN
-		else NavigationDestination.HOME
+		else NavigationDestination.ACCOUNT
 
 	NavHost(
 		navController = navHostController,

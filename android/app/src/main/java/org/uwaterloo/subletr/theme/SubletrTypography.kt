@@ -146,6 +146,17 @@ val headerSecondaryTitle
 		textAlign = TextAlign.Center,
 	)
 
+val accountHeadingSmallFont
+	@Composable
+	get() = TextStyle(
+		color = Color.Gray,
+		fontFamily = FontFamily.Default,
+		fontWeight = FontWeight.Normal,
+		fontSize = 16.sp,
+		lineHeight = 24.sp,
+		letterSpacing = 0.5.sp
+	)
+
 val SubletrTypography = Typography(
 	bodyLarge = TextStyle(
 		color = Color.Black,
