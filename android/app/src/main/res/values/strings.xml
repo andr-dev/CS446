@@ -27,8 +27,8 @@
     <string name="already_have_an_account">Already have an account?</string>
     <string name="hide_password">Hide Password</string>
     <string name="show_password">Show Password</string>
-    <string name="change_password">Change Password</string>
-    <string name="manage_by_sublet">Manage by Sublet</string>
+    <string name="change_password">Change password</string>
+    <string name="manage_my_sublet">Manage my sublet</string>
     <string name="other_settings">Other Settings</string>
     <string name="drop_down_arrow">Drop Down Arrow</string>
     <string name="drop_up_arrow">Drop Up Arrow</string>
@@ -153,4 +153,21 @@
     <string name="message_ellipses">Message…</string>
     <string name="dates">Dates</string>
     <string name="only_show_favourites">Only show favourites</string>
+    <string name="full_name">Full name</string>
+    <string name="edit">edit</string>
+    <string name="save">Save</string>
+    <string name="cancel">Cancel</string>
+    <string name="prefer_not_to_say">Prefer not to say</string>
+    <string name="other_gender">Other gender</string>
+    <string name="personal_info">Personal information</string>
+    <string name="my_sublet">My sublet</string>
+    <string name="view_public_profile">View my public profile</string>
+    <string name="create_listing">Create a listing</string>
+    <string name="display">Display</string>
+    <string name="notifications">Notifications</string>
+    <string name="avatar">avatar</string>
+
+
+
+
 </resources>
