@@ -193,7 +193,6 @@ fun HomeListChildView(
 
 				item {
 					Column() {
-
 						LazyRow(
 							modifier = Modifier
 								.fillMaxWidth(1.0f),
