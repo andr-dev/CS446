@@ -11,6 +11,7 @@ sealed interface AccountPageUiState {
 		val firstName: String,
 		val gender: Gender,
 		val settings: List<Setting>,
+		val listingId: Int?,
 	) : AccountPageUiState
 
 	data class Setting(
