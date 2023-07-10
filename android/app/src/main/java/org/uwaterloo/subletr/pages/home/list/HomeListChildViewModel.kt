@@ -36,7 +36,6 @@ class HomeListChildViewModel @Inject constructor(
 		BehaviorSubject.createDefault(HomeListUiState.RoomRange())
 	val genderFilterStream: BehaviorSubject<Gender> =
 		BehaviorSubject.createDefault(Gender.OTHER)
-
 	val houseTypeFilterStream: BehaviorSubject<HousingType> =
 		BehaviorSubject.createDefault(HousingType.OTHER)
 

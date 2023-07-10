@@ -38,7 +38,7 @@ fun RoommateFilter(
 			Row(
 				modifier = Modifier.fillMaxWidth(1.0f),
 				verticalAlignment = Alignment.CenterVertically,
-				horizontalArrangement = Arrangement.spacedBy(16.dp),
+				horizontalArrangement = Arrangement.spacedBy(dimensionResource(id = R.dimen.s)),
 			) {
 
 				defaultFilterButton(
