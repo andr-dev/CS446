@@ -25,3 +25,4 @@
 | 2023-06-30 | 5.0 hour(s) | Fix infinite scrolling bug and add ChildView and ChildViewModels |
 | 2023-07-02 | 4.0 hour(s) | Add location service and review PRs |
 | 2023-07-05 | 1.0 hour(s) | Add an example to deliverable 4 (arch style examples) |
+| 2023-07-10 | 3.0 hour(s) | Fix examples for deliverable 4 (arch style examples) and review PRs |
