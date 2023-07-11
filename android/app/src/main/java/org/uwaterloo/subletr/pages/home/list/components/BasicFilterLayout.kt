@@ -34,7 +34,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import org.uwaterloo.subletr.R
 import org.uwaterloo.subletr.components.button.PrimaryButton
@@ -204,7 +203,7 @@ fun defaultFilterButton(
 ) {
 	SecondaryButton(
 		modifier = modifier
-			.defaultMinSize(minWidth = 1.dp, minHeight = 1.dp),
+			.defaultMinSize(minWidth = dimensionResource(id = R.dimen.xxxxs), minHeight = dimensionResource(id = R.dimen.xxxxs)),
 		onClick = onClick,
 		contentPadding = PaddingValues(
 			horizontal = dimensionResource(id = R.dimen.s),
