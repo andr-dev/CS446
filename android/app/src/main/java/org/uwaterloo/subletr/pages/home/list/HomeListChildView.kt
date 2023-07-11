@@ -216,60 +216,25 @@ fun HomeListChildView(
 									contentDescription = stringResource(id = R.string.filter_menu),
 								)
 							}
-							item {
-								FilterButton(
-									filterName = stringResource(id = R.string.location),
-									onClick = {
-										filterType.value = FilterType.LOCATION
-										coroutineScope.launch {
-											isBottomSheetOpen = true
+							listOf(
+								FilterType.LOCATION,
+								FilterType.PRICE,
+								FilterType.ROOMS,
+								FilterType.PROPERTY_TYPE,
+								FilterType.ROOMMATE
+							).map {
+								item {
+									FilterButton(
+										filterName = stringResource(id = it.stringId),
+										onClick = {
+											filterType.value = it
+											coroutineScope.launch {
+												isBottomSheetOpen = true
 
-										}
-									},
-
+											}
+										},
 									)
-							}
-							item {
-								FilterButton(
-									filterName = stringResource(id = R.string.price),
-									onClick = {
-										filterType.value = FilterType.PRICE
-										coroutineScope.launch {
-											isBottomSheetOpen = true
-										}
-									}
-								)
-							}
-							item {
-								FilterButton(
-									filterName = stringResource(id = R.string.rooms)
-								) {
-									filterType.value = FilterType.ROOMS
-									coroutineScope.launch {
-										isBottomSheetOpen = true
-									}
 								}
-							}
-							item {
-								FilterButton(
-									filterName = stringResource(id = R.string.property_type)
-								) {
-									filterType.value = FilterType.PROPERTY_TYPE
-									coroutineScope.launch {
-										isBottomSheetOpen = true
-									}
-								}
-							}
-							item {
-								FilterButton(
-									filterName = stringResource(id = R.string.roommate),
-									onClick = {
-										filterType.value = FilterType.ROOMMATE
-										coroutineScope.launch {
-											isBottomSheetOpen = true
-										}
-									}
-								)
 							}
 						}
 
@@ -281,6 +246,7 @@ fun HomeListChildView(
 								containerColor = Color.White,
 								content = {
 									when (filterType.value) {
+//										TODO: Add favour filter
 										FilterType.LOCATION -> {
 											LocationFilter(
 												currentLocationRange = uiState.locationRange,
