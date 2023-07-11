@@ -48,11 +48,6 @@ fun PriceFilter(
 		titleId = R.string.price_range,
 		closeAction = closeAction,
 		content = {
-			Column(
-				modifier = Modifier
-					.fillMaxWidth(1.0f)
-					.wrapContentHeight(),
-			) {
 				Row(
 					modifier = Modifier
 						.fillMaxWidth(1.0f)
@@ -94,7 +89,6 @@ fun PriceFilter(
 
 						)
 				}
-			}
 		},
 		clearAction = {
 			lowerBoundText = ""
