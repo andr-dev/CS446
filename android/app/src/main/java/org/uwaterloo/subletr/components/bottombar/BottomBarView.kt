@@ -55,7 +55,7 @@ fun BottomBarView(
 					},
 					onClick = {
 						viewModel.navHostController.navigate(
-							it.name,
+							it.fullNavPath,
 							navOptions {
 								popUpTo(
 									id = viewModel.navHostController.graph.findStartDestination().id
