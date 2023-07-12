@@ -19,3 +19,4 @@
 | June 28th | 2 hours (15:30 - 17:30) | Delivery 3 work and minor Android changes |
 | July 3rd | 2 hours  | Add indicator dots to support the multiple images for each listing's details |
 | July 5th | 5 hours  | Get Google API key, work on putting map into listing details and deliverable 4 work |
+| July 10th | 2 hours  | Deliverable 4 work - diagram and content |
