@@ -21,3 +21,6 @@
 | Jun 26th | 3 hours (13:00 - 16:00) | Created backend architecture diagram          |
 | Jun 28th | 2 hours (11:00 - 13:00) | Finished microservice switch + updated readme |
 | Jun 28th | 2 hours (17:00 - 19:00) | Implemented pagination for listings list      |
+| Jul 6th  | 4 hours (11:00 - 15:00) | Added user get / update endpoints             |
+| Jul 12th | 2 hours (13:00 - 15:00) | Finalized listings definitions on backend     |
+
