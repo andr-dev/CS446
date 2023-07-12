@@ -24,13 +24,21 @@ import com.squareup.moshi.JsonClass
  * 
  *
  * @param address 
+ * @param longitude 
+ * @param latitude 
+ * @param distanceMeters 
  * @param price 
- * @param rooms 
+ * @param roomsAvailable 
+ * @param roomsTotal 
+ * @param bathroomsAvailable 
+ * @param bathroomsEnsuite 
+ * @param bathroomsTotal 
  * @param leaseStart 
  * @param leaseEnd 
  * @param description 
  * @param imgIds 
  * @param residenceType 
+ * @param gender 
  * @param ownerUserId 
  */
 
@@ -40,11 +48,32 @@ data class ListingDetails (
     @Json(name = "address")
     val address: kotlin.String,
 
+    @Json(name = "longitude")
+    val longitude: kotlin.Float,
+
+    @Json(name = "latitude")
+    val latitude: kotlin.Float,
+
+    @Json(name = "distance_meters")
+    val distanceMeters: kotlin.Float,
+
     @Json(name = "price")
     val price: kotlin.Int,
 
-    @Json(name = "rooms")
-    val rooms: kotlin.Int,
+    @Json(name = "rooms_available")
+    val roomsAvailable: kotlin.Int,
+
+    @Json(name = "rooms_total")
+    val roomsTotal: kotlin.Int,
+
+    @Json(name = "bathrooms_available")
+    val bathroomsAvailable: kotlin.Int,
+
+    @Json(name = "bathrooms_ensuite")
+    val bathroomsEnsuite: kotlin.Int,
+
+    @Json(name = "bathrooms_total")
+    val bathroomsTotal: kotlin.Int,
 
     @Json(name = "lease_start")
     val leaseStart: java.time.OffsetDateTime,
@@ -60,6 +89,9 @@ data class ListingDetails (
 
     @Json(name = "residence_type")
     val residenceType: ResidenceType,
+
+    @Json(name = "gender")
+    val gender: kotlin.String,
 
     @Json(name = "owner_user_id")
     val ownerUserId: kotlin.Int
