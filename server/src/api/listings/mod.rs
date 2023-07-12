@@ -26,6 +26,7 @@ use super::{
         ListingSummary,
     },
     token::AuthenticatedUser,
+    utils::distance_meters,
 };
 use crate::{
     db::{
@@ -75,19 +76,82 @@ fn listings_create(
 fn listings_list(state: &State<AppState>, listings_request: GetListingsRequest) -> ServiceResult<GetListingsResponse> {
     let mut dbcon = state.pool.get()?;
 
-    let fetched_listings: (Vec<Listing>, i64) = listings::dsl::listings
+    let db_request = listings::dsl::listings
         .filter(listings::price.ge(listings_request.price_min.map(|x| x as i32).unwrap_or(i32::MIN)))
         .filter(listings::price.le(listings_request.price_max.map(|x| x as i32).unwrap_or(i32::MAX)))
-        .filter(listings::rooms.ge(listings_request.rooms_min.map(|x| x as i32).unwrap_or(i32::MIN)))
-        .filter(listings::rooms.le(listings_request.rooms_max.map(|x| x as i32).unwrap_or(i32::MAX)))
-        .paginate(listings_request.page_number.into(), listings_request.page_size.into())
-        .map_err(|e| match e {
-            PaginationError::InvalidLimit => ServiceError::InvalidFieldError {
-                field: "page_size",
-                reason: format!("invalid"),
-            },
-        })?
-        .load(&mut dbcon)?;
+        .filter(
+            listings::rooms_available.ge(listings_request
+                .rooms_available_min
+                .map(|x| x as i32)
+                .unwrap_or(i32::MIN)),
+        )
+        .filter(
+            listings::rooms_available.le(listings_request
+                .rooms_available_max
+                .map(|x| x as i32)
+                .unwrap_or(i32::MAX)),
+        )
+        .filter(listings::rooms_total.ge(listings_request.rooms_total_min.map(|x| x as i32).unwrap_or(i32::MIN)))
+        .filter(listings::rooms_total.le(listings_request.rooms_total_max.map(|x| x as i32).unwrap_or(i32::MAX)))
+        .filter(
+            listings::bathrooms_available.ge(listings_request
+                .bathrooms_available_min
+                .map(|x| x as i32)
+                .unwrap_or(i32::MIN)),
+        )
+        .filter(
+            listings::bathrooms_available.le(listings_request
+                .bathrooms_available_max
+                .map(|x| x as i32)
+                .unwrap_or(i32::MAX)),
+        )
+        .filter(
+            listings::bathrooms_total.ge(listings_request
+                .bathrooms_total_min
+                .map(|x| x as i32)
+                .unwrap_or(i32::MIN)),
+        )
+        .filter(
+            listings::bathrooms_total.le(listings_request
+                .bathrooms_total_max
+                .map(|x| x as i32)
+                .unwrap_or(i32::MAX)),
+        )
+        .filter(
+            listings::bathrooms_ensuite.ge(listings_request
+                .bathrooms_ensuite_min
+                .map(|x| x as i32)
+                .unwrap_or(i32::MIN)),
+        )
+        .filter(
+            listings::bathrooms_ensuite.le(listings_request
+                .bathrooms_ensuite_max
+                .map(|x| x as i32)
+                .unwrap_or(i32::MAX)),
+        );
+
+    let fetched_listings: (Vec<Listing>, i64) = if let Some(gender) = listings_request.gender {
+        db_request
+            .filter(listings::gender.eq(gender))
+            .paginate(listings_request.page_number.into(), listings_request.page_size.into())
+            .map_err(|e| match e {
+                PaginationError::InvalidLimit => ServiceError::InvalidFieldError {
+                    field: "page_size",
+                    reason: format!("invalid"),
+                },
+            })?
+            .load(&mut dbcon)?
+    } else {
+        db_request
+            .paginate(listings_request.page_number.into(), listings_request.page_size.into())
+            .map_err(|e| match e {
+                PaginationError::InvalidLimit => ServiceError::InvalidFieldError {
+                    field: "page_size",
+                    reason: format!("invalid"),
+                },
+            })?
+            .load(&mut dbcon)?
+    };
 
     let pages = fetched_listings.1.try_into().or(Err(ServiceError::InternalError))?;
 
@@ -95,13 +159,39 @@ fn listings_list(state: &State<AppState>, listings_request: GetListingsRequest) 
         listings: fetched_listings
             .0
             .into_iter()
-            .flat_map(|l| {
-                listings_images::dsl::listings_images
+            .map(|l| {
+                let listing_images = listings_images::dsl::listings_images
                     .filter(listings_images::listing_id.eq(l.listing_id))
-                    .load::<ListingImage>(&mut dbcon)
-                    .map(|listing_images| {
-                        ListingSummary::try_from_db(l, listing_images.into_iter().map(|li| li.image_id).collect())
-                    })
+                    .load::<ListingImage>(&mut dbcon)?;
+
+                let distance_meters = distance_meters(
+                    listings_request.longitude,
+                    listings_request.latitude,
+                    l.longitude,
+                    l.latitude,
+                )?;
+
+                if distance_meters >= listings_request.distance_meters_min.unwrap_or(f32::MIN)
+                    && distance_meters <= listings_request.distance_meters_max.unwrap_or(f32::MAX)
+                {
+                    Ok(Some(ListingSummary::try_from_db(
+                        l,
+                        distance_meters,
+                        listing_images.into_iter().map(|li| li.image_id).collect(),
+                    )?))
+                } else {
+                    Ok(None)
+                }
+            })
+            .filter_map(|result| match result {
+                Ok(loption) => {
+                    if let Some(l) = loption {
+                        Some(Ok(l))
+                    } else {
+                        None
+                    }
+                },
+                Err(e) => Some(Err(e)),
             })
             .collect::<Result<Vec<ListingSummary>, ServiceError>>()?,
         pages,
@@ -125,8 +215,16 @@ fn listings_details(
             .filter(listings_images::listing_id.eq(l.listing_id))
             .load(&mut dbcon)?;
 
+        let longitude = l.longitude;
+        let latitude = l.latitude;
+
         Ok(Json(GetListingDetailsResponse {
-            details: ListingDetails::try_from_db(l, listing_images.into_iter().map(|li| li.image_id).collect())?,
+            details: ListingDetails::try_from_db(
+                l,
+                distance_meters(details_request.longitude, details_request.latitude, longitude, latitude)
+                    .map_err(|_| ServiceError::InternalError)?,
+                listing_images.into_iter().map(|li| li.image_id).collect(),
+            )?,
             favourited: false,
         }))
     } else {
