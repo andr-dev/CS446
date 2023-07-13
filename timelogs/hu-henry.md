@@ -20,3 +20,4 @@
 | July 3rd | 2 hours  | Add indicator dots to support the multiple images for each listing's details |
 | July 5th | 5 hours  | Get Google API key, work on putting map into listing details and deliverable 4 work |
 | July 10th | 2 hours  | Deliverable 4 work - diagram and content |
+| July 12th | 4 hours  | Try to implement Places Autocomplete from Google Maps API, need to resolv hilt and constructor injection issues |
