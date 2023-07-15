@@ -370,6 +370,8 @@ class ListingsApi(basePath: kotlin.String = defaultBasePath, client: OkHttpClien
      * @param bathroomsTotalMax  (optional)
      * @param bathroomsEnsuiteMin  (optional)
      * @param bathroomsEnsuiteMax  (optional)
+     * @param leaseStart  (optional)
+     * @param leaseEnd  (optional)
      * @param gender  (optional)
      * @return GetListingsResponse
      * @throws IllegalStateException If the request is not correctly configured
@@ -380,8 +382,8 @@ class ListingsApi(basePath: kotlin.String = defaultBasePath, client: OkHttpClien
      */
     @Suppress("UNCHECKED_CAST")
     @Throws(IllegalStateException::class, IOException::class, UnsupportedOperationException::class, ClientException::class, ServerException::class)
-    suspend fun listingsList(longitude: kotlin.Float, latitude: kotlin.Float, pageNumber: kotlin.Int, pageSize: kotlin.Int, distanceMetersMin: kotlin.Float? = null, distanceMetersMax: kotlin.Float? = null, priceMin: kotlin.Int? = null, priceMax: kotlin.Int? = null, roomsAvailableMin: kotlin.Int? = null, roomsAvailableMax: kotlin.Int? = null, roomsTotalMin: kotlin.Int? = null, roomsTotalMax: kotlin.Int? = null, bathroomsAvailableMin: kotlin.Int? = null, bathroomsAvailableMax: kotlin.Int? = null, bathroomsTotalMin: kotlin.Int? = null, bathroomsTotalMax: kotlin.Int? = null, bathroomsEnsuiteMin: kotlin.Int? = null, bathroomsEnsuiteMax: kotlin.Int? = null, gender: kotlin.String? = null) : GetListingsResponse = withContext(Dispatchers.IO) {
-        val localVarResponse = listingsListWithHttpInfo(longitude = longitude, latitude = latitude, pageNumber = pageNumber, pageSize = pageSize, distanceMetersMin = distanceMetersMin, distanceMetersMax = distanceMetersMax, priceMin = priceMin, priceMax = priceMax, roomsAvailableMin = roomsAvailableMin, roomsAvailableMax = roomsAvailableMax, roomsTotalMin = roomsTotalMin, roomsTotalMax = roomsTotalMax, bathroomsAvailableMin = bathroomsAvailableMin, bathroomsAvailableMax = bathroomsAvailableMax, bathroomsTotalMin = bathroomsTotalMin, bathroomsTotalMax = bathroomsTotalMax, bathroomsEnsuiteMin = bathroomsEnsuiteMin, bathroomsEnsuiteMax = bathroomsEnsuiteMax, gender = gender)
+    suspend fun listingsList(longitude: kotlin.Float, latitude: kotlin.Float, pageNumber: kotlin.Int, pageSize: kotlin.Int, distanceMetersMin: kotlin.Float? = null, distanceMetersMax: kotlin.Float? = null, priceMin: kotlin.Int? = null, priceMax: kotlin.Int? = null, roomsAvailableMin: kotlin.Int? = null, roomsAvailableMax: kotlin.Int? = null, roomsTotalMin: kotlin.Int? = null, roomsTotalMax: kotlin.Int? = null, bathroomsAvailableMin: kotlin.Int? = null, bathroomsAvailableMax: kotlin.Int? = null, bathroomsTotalMin: kotlin.Int? = null, bathroomsTotalMax: kotlin.Int? = null, bathroomsEnsuiteMin: kotlin.Int? = null, bathroomsEnsuiteMax: kotlin.Int? = null, leaseStart: kotlin.String? = null, leaseEnd: kotlin.String? = null, gender: kotlin.String? = null) : GetListingsResponse = withContext(Dispatchers.IO) {
+        val localVarResponse = listingsListWithHttpInfo(longitude = longitude, latitude = latitude, pageNumber = pageNumber, pageSize = pageSize, distanceMetersMin = distanceMetersMin, distanceMetersMax = distanceMetersMax, priceMin = priceMin, priceMax = priceMax, roomsAvailableMin = roomsAvailableMin, roomsAvailableMax = roomsAvailableMax, roomsTotalMin = roomsTotalMin, roomsTotalMax = roomsTotalMax, bathroomsAvailableMin = bathroomsAvailableMin, bathroomsAvailableMax = bathroomsAvailableMax, bathroomsTotalMin = bathroomsTotalMin, bathroomsTotalMax = bathroomsTotalMax, bathroomsEnsuiteMin = bathroomsEnsuiteMin, bathroomsEnsuiteMax = bathroomsEnsuiteMax, leaseStart = leaseStart, leaseEnd = leaseEnd, gender = gender)
 
         return@withContext when (localVarResponse.responseType) {
             ResponseType.Success -> (localVarResponse as Success<*>).data as GetListingsResponse
@@ -419,6 +421,8 @@ class ListingsApi(basePath: kotlin.String = defaultBasePath, client: OkHttpClien
      * @param bathroomsTotalMax  (optional)
      * @param bathroomsEnsuiteMin  (optional)
      * @param bathroomsEnsuiteMax  (optional)
+     * @param leaseStart  (optional)
+     * @param leaseEnd  (optional)
      * @param gender  (optional)
      * @return ApiResponse<GetListingsResponse?>
      * @throws IllegalStateException If the request is not correctly configured
@@ -426,8 +430,8 @@ class ListingsApi(basePath: kotlin.String = defaultBasePath, client: OkHttpClien
      */
     @Suppress("UNCHECKED_CAST")
     @Throws(IllegalStateException::class, IOException::class)
-    suspend fun listingsListWithHttpInfo(longitude: kotlin.Float, latitude: kotlin.Float, pageNumber: kotlin.Int, pageSize: kotlin.Int, distanceMetersMin: kotlin.Float?, distanceMetersMax: kotlin.Float?, priceMin: kotlin.Int?, priceMax: kotlin.Int?, roomsAvailableMin: kotlin.Int?, roomsAvailableMax: kotlin.Int?, roomsTotalMin: kotlin.Int?, roomsTotalMax: kotlin.Int?, bathroomsAvailableMin: kotlin.Int?, bathroomsAvailableMax: kotlin.Int?, bathroomsTotalMin: kotlin.Int?, bathroomsTotalMax: kotlin.Int?, bathroomsEnsuiteMin: kotlin.Int?, bathroomsEnsuiteMax: kotlin.Int?, gender: kotlin.String?) : ApiResponse<GetListingsResponse?> = withContext(Dispatchers.IO) {
-        val localVariableConfig = listingsListRequestConfig(longitude = longitude, latitude = latitude, pageNumber = pageNumber, pageSize = pageSize, distanceMetersMin = distanceMetersMin, distanceMetersMax = distanceMetersMax, priceMin = priceMin, priceMax = priceMax, roomsAvailableMin = roomsAvailableMin, roomsAvailableMax = roomsAvailableMax, roomsTotalMin = roomsTotalMin, roomsTotalMax = roomsTotalMax, bathroomsAvailableMin = bathroomsAvailableMin, bathroomsAvailableMax = bathroomsAvailableMax, bathroomsTotalMin = bathroomsTotalMin, bathroomsTotalMax = bathroomsTotalMax, bathroomsEnsuiteMin = bathroomsEnsuiteMin, bathroomsEnsuiteMax = bathroomsEnsuiteMax, gender = gender)
+    suspend fun listingsListWithHttpInfo(longitude: kotlin.Float, latitude: kotlin.Float, pageNumber: kotlin.Int, pageSize: kotlin.Int, distanceMetersMin: kotlin.Float?, distanceMetersMax: kotlin.Float?, priceMin: kotlin.Int?, priceMax: kotlin.Int?, roomsAvailableMin: kotlin.Int?, roomsAvailableMax: kotlin.Int?, roomsTotalMin: kotlin.Int?, roomsTotalMax: kotlin.Int?, bathroomsAvailableMin: kotlin.Int?, bathroomsAvailableMax: kotlin.Int?, bathroomsTotalMin: kotlin.Int?, bathroomsTotalMax: kotlin.Int?, bathroomsEnsuiteMin: kotlin.Int?, bathroomsEnsuiteMax: kotlin.Int?, leaseStart: kotlin.String?, leaseEnd: kotlin.String?, gender: kotlin.String?) : ApiResponse<GetListingsResponse?> = withContext(Dispatchers.IO) {
+        val localVariableConfig = listingsListRequestConfig(longitude = longitude, latitude = latitude, pageNumber = pageNumber, pageSize = pageSize, distanceMetersMin = distanceMetersMin, distanceMetersMax = distanceMetersMax, priceMin = priceMin, priceMax = priceMax, roomsAvailableMin = roomsAvailableMin, roomsAvailableMax = roomsAvailableMax, roomsTotalMin = roomsTotalMin, roomsTotalMax = roomsTotalMax, bathroomsAvailableMin = bathroomsAvailableMin, bathroomsAvailableMax = bathroomsAvailableMax, bathroomsTotalMin = bathroomsTotalMin, bathroomsTotalMax = bathroomsTotalMax, bathroomsEnsuiteMin = bathroomsEnsuiteMin, bathroomsEnsuiteMax = bathroomsEnsuiteMax, leaseStart = leaseStart, leaseEnd = leaseEnd, gender = gender)
 
         return@withContext request<Unit, GetListingsResponse>(
             localVariableConfig
@@ -455,10 +459,12 @@ class ListingsApi(basePath: kotlin.String = defaultBasePath, client: OkHttpClien
      * @param bathroomsTotalMax  (optional)
      * @param bathroomsEnsuiteMin  (optional)
      * @param bathroomsEnsuiteMax  (optional)
+     * @param leaseStart  (optional)
+     * @param leaseEnd  (optional)
      * @param gender  (optional)
      * @return RequestConfig
      */
-    fun listingsListRequestConfig(longitude: kotlin.Float, latitude: kotlin.Float, pageNumber: kotlin.Int, pageSize: kotlin.Int, distanceMetersMin: kotlin.Float?, distanceMetersMax: kotlin.Float?, priceMin: kotlin.Int?, priceMax: kotlin.Int?, roomsAvailableMin: kotlin.Int?, roomsAvailableMax: kotlin.Int?, roomsTotalMin: kotlin.Int?, roomsTotalMax: kotlin.Int?, bathroomsAvailableMin: kotlin.Int?, bathroomsAvailableMax: kotlin.Int?, bathroomsTotalMin: kotlin.Int?, bathroomsTotalMax: kotlin.Int?, bathroomsEnsuiteMin: kotlin.Int?, bathroomsEnsuiteMax: kotlin.Int?, gender: kotlin.String?) : RequestConfig<Unit> {
+    fun listingsListRequestConfig(longitude: kotlin.Float, latitude: kotlin.Float, pageNumber: kotlin.Int, pageSize: kotlin.Int, distanceMetersMin: kotlin.Float?, distanceMetersMax: kotlin.Float?, priceMin: kotlin.Int?, priceMax: kotlin.Int?, roomsAvailableMin: kotlin.Int?, roomsAvailableMax: kotlin.Int?, roomsTotalMin: kotlin.Int?, roomsTotalMax: kotlin.Int?, bathroomsAvailableMin: kotlin.Int?, bathroomsAvailableMax: kotlin.Int?, bathroomsTotalMin: kotlin.Int?, bathroomsTotalMax: kotlin.Int?, bathroomsEnsuiteMin: kotlin.Int?, bathroomsEnsuiteMax: kotlin.Int?, leaseStart: kotlin.String?, leaseEnd: kotlin.String?, gender: kotlin.String?) : RequestConfig<Unit> {
         val localVariableBody = null
         val localVariableQuery: MultiValueMap = mutableMapOf<kotlin.String, kotlin.collections.List<kotlin.String>>()
             .apply {
@@ -505,6 +511,12 @@ class ListingsApi(basePath: kotlin.String = defaultBasePath, client: OkHttpClien
                 }
                 if (bathroomsEnsuiteMax != null) {
                     put("bathrooms_ensuite_max", listOf(bathroomsEnsuiteMax.toString()))
+                }
+                if (leaseStart != null) {
+                    put("lease_start", listOf(leaseStart.toString()))
+                }
+                if (leaseEnd != null) {
+                    put("lease_end", listOf(leaseEnd.toString()))
                 }
                 if (gender != null) {
                     put("gender", listOf(gender.toString()))
