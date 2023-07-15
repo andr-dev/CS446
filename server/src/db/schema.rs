@@ -25,6 +25,13 @@ diesel::table! {
 }
 
 diesel::table! {
+    listings_favourites (user_id, listing_id) {
+        user_id -> Integer,
+        listing_id -> Integer,
+    }
+}
+
+diesel::table! {
     listings_images (image_id) {
         image_id -> Text,
         extension -> Text,
@@ -45,11 +52,14 @@ diesel::table! {
 }
 
 diesel::joinable!(listings -> users (owner_user_id));
+diesel::joinable!(listings_favourites -> listings (listing_id));
+diesel::joinable!(listings_favourites -> users (user_id));
 diesel::joinable!(listings_images -> listings (listing_id));
 diesel::joinable!(listings_images -> users (user_id));
 
 diesel::allow_tables_to_appear_in_same_query!(
     listings,
+    listings_favourites,
     listings_images,
     users,
 );
