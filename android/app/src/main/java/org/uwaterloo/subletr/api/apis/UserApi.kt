@@ -23,6 +23,8 @@ import org.uwaterloo.subletr.api.models.ChangePasswordUserRequest
 import org.uwaterloo.subletr.api.models.CreateUserRequest
 import org.uwaterloo.subletr.api.models.CreateUserResponse
 import org.uwaterloo.subletr.api.models.GetUserResponse
+import org.uwaterloo.subletr.api.models.Null
+import org.uwaterloo.subletr.api.models.RateUserRequest
 import org.uwaterloo.subletr.api.models.UpdateUserRequest
 
 import com.squareup.moshi.Json
@@ -256,6 +258,152 @@ class UserApi(basePath: kotlin.String = defaultBasePath, client: OkHttpClient = 
         return RequestConfig(
             method = RequestMethod.GET,
             path = "/user/get",
+            query = localVariableQuery,
+            headers = localVariableHeaders,
+            requiresAuthentication = true,
+            body = localVariableBody
+        )
+    }
+
+    /**
+     * 
+     * 
+     * @param userId 
+     * @return kotlin.Float
+     * @throws IllegalStateException If the request is not correctly configured
+     * @throws IOException Rethrows the OkHttp execute method exception
+     * @throws UnsupportedOperationException If the API returns an informational or redirection response
+     * @throws ClientException If the API returns a client error response
+     * @throws ServerException If the API returns a server error response
+     */
+    @Suppress("UNCHECKED_CAST")
+    @Throws(IllegalStateException::class, IOException::class, UnsupportedOperationException::class, ClientException::class, ServerException::class)
+    suspend fun userGetRating(userId: kotlin.Int) : kotlin.Float = withContext(Dispatchers.IO) {
+        val localVarResponse = userGetRatingWithHttpInfo(userId = userId)
+
+        return@withContext when (localVarResponse.responseType) {
+            ResponseType.Success -> (localVarResponse as Success<*>).data as kotlin.Float
+            ResponseType.Informational -> throw UnsupportedOperationException("Client does not support Informational responses.")
+            ResponseType.Redirection -> throw UnsupportedOperationException("Client does not support Redirection responses.")
+            ResponseType.ClientError -> {
+                val localVarError = localVarResponse as ClientError<*>
+                throw ClientException("Client error : ${localVarError.statusCode} ${localVarError.message.orEmpty()}", localVarError.statusCode, localVarResponse)
+            }
+            ResponseType.ServerError -> {
+                val localVarError = localVarResponse as ServerError<*>
+                throw ServerException("Server error : ${localVarError.statusCode} ${localVarError.message.orEmpty()}", localVarError.statusCode, localVarResponse)
+            }
+        }
+    }
+
+    /**
+     * 
+     * 
+     * @param userId 
+     * @return ApiResponse<kotlin.Float?>
+     * @throws IllegalStateException If the request is not correctly configured
+     * @throws IOException Rethrows the OkHttp execute method exception
+     */
+    @Suppress("UNCHECKED_CAST")
+    @Throws(IllegalStateException::class, IOException::class)
+    suspend fun userGetRatingWithHttpInfo(userId: kotlin.Int) : ApiResponse<kotlin.Float?> = withContext(Dispatchers.IO) {
+        val localVariableConfig = userGetRatingRequestConfig(userId = userId)
+
+        return@withContext request<Unit, kotlin.Float>(
+            localVariableConfig
+        )
+    }
+
+    /**
+     * To obtain the request config of the operation userGetRating
+     *
+     * @param userId 
+     * @return RequestConfig
+     */
+    fun userGetRatingRequestConfig(userId: kotlin.Int) : RequestConfig<Unit> {
+        val localVariableBody = null
+        val localVariableQuery: MultiValueMap = mutableMapOf<kotlin.String, kotlin.collections.List<kotlin.String>>()
+            .apply {
+                put("user_id", listOf(userId.toString()))
+            }
+        val localVariableHeaders: MutableMap<String, String> = mutableMapOf()
+        localVariableHeaders["Accept"] = "application/json"
+
+        return RequestConfig(
+            method = RequestMethod.GET,
+            path = "/user/get_rating",
+            query = localVariableQuery,
+            headers = localVariableHeaders,
+            requiresAuthentication = true,
+            body = localVariableBody
+        )
+    }
+
+    /**
+     * 
+     * 
+     * @param rateUserRequest 
+     * @return Null
+     * @throws IllegalStateException If the request is not correctly configured
+     * @throws IOException Rethrows the OkHttp execute method exception
+     * @throws UnsupportedOperationException If the API returns an informational or redirection response
+     * @throws ClientException If the API returns a client error response
+     * @throws ServerException If the API returns a server error response
+     */
+    @Suppress("UNCHECKED_CAST")
+    @Throws(IllegalStateException::class, IOException::class, UnsupportedOperationException::class, ClientException::class, ServerException::class)
+    suspend fun userRate(rateUserRequest: RateUserRequest) : Null = withContext(Dispatchers.IO) {
+        val localVarResponse = userRateWithHttpInfo(rateUserRequest = rateUserRequest)
+
+        return@withContext when (localVarResponse.responseType) {
+            ResponseType.Success -> (localVarResponse as Success<*>).data as Null
+            ResponseType.Informational -> throw UnsupportedOperationException("Client does not support Informational responses.")
+            ResponseType.Redirection -> throw UnsupportedOperationException("Client does not support Redirection responses.")
+            ResponseType.ClientError -> {
+                val localVarError = localVarResponse as ClientError<*>
+                throw ClientException("Client error : ${localVarError.statusCode} ${localVarError.message.orEmpty()}", localVarError.statusCode, localVarResponse)
+            }
+            ResponseType.ServerError -> {
+                val localVarError = localVarResponse as ServerError<*>
+                throw ServerException("Server error : ${localVarError.statusCode} ${localVarError.message.orEmpty()}", localVarError.statusCode, localVarResponse)
+            }
+        }
+    }
+
+    /**
+     * 
+     * 
+     * @param rateUserRequest 
+     * @return ApiResponse<Null?>
+     * @throws IllegalStateException If the request is not correctly configured
+     * @throws IOException Rethrows the OkHttp execute method exception
+     */
+    @Suppress("UNCHECKED_CAST")
+    @Throws(IllegalStateException::class, IOException::class)
+    suspend fun userRateWithHttpInfo(rateUserRequest: RateUserRequest) : ApiResponse<Null?> = withContext(Dispatchers.IO) {
+        val localVariableConfig = userRateRequestConfig(rateUserRequest = rateUserRequest)
+
+        return@withContext request<RateUserRequest, Null>(
+            localVariableConfig
+        )
+    }
+
+    /**
+     * To obtain the request config of the operation userRate
+     *
+     * @param rateUserRequest 
+     * @return RequestConfig
+     */
+    fun userRateRequestConfig(rateUserRequest: RateUserRequest) : RequestConfig<RateUserRequest> {
+        val localVariableBody = rateUserRequest
+        val localVariableQuery: MultiValueMap = mutableMapOf()
+        val localVariableHeaders: MutableMap<String, String> = mutableMapOf()
+        localVariableHeaders["Content-Type"] = "application/json"
+        localVariableHeaders["Accept"] = "application/json"
+
+        return RequestConfig(
+            method = RequestMethod.POST,
+            path = "/user/rate",
             query = localVariableQuery,
             headers = localVariableHeaders,
             requiresAuthentication = true,
