@@ -19,6 +19,7 @@ import org.uwaterloo.subletr.api.models.ResidenceType
 import org.uwaterloo.subletr.enums.Gender
 import org.uwaterloo.subletr.enums.HousingType
 import org.uwaterloo.subletr.infrastructure.SubletrViewModel
+import org.uwaterloo.subletr.services.ILocationService
 import org.uwaterloo.subletr.services.INavigationService
 import org.uwaterloo.subletr.utils.toBase64String
 import javax.inject.Inject
@@ -27,6 +28,7 @@ import javax.inject.Inject
 class CreateListingPageViewModel @Inject constructor(
 	private val listingsApi: ListingsApi,
 	val navigationService: INavigationService,
+	private val locationService: ILocationService,
 ) : SubletrViewModel<CreateListingPageUiState>() {
 	val navHostController: NavHostController get() = navigationService.navHostController
 
@@ -107,6 +109,7 @@ class CreateListingPageViewModel @Inject constructor(
 						}
 					}.awaitAll()
 
+					val location = locationService.getLocation()
 					listingsApi.listingsCreate(
 						CreateListingRequest(
 							addressLine = it.address.addressLine,
@@ -119,9 +122,8 @@ class CreateListingPageViewModel @Inject constructor(
 							description = it.description,
 							residenceType = ResidenceType.house,
 							imgIds = imgIds,
-//							TODO: Update location value using Location Service
-							latitude = 0f,
-							longitude = 0f,
+							latitude = location!!.latitude.toFloat(),
+							longitude = location.longitude.toFloat(),
 //							TODO: Update UI to allow the inputs of these newly added values
 							bathroomsAvailable = 0,
 							bathroomsEnsuite = 0,
