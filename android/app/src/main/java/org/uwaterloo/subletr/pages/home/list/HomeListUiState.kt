@@ -45,6 +45,7 @@ sealed interface HomeListUiState: HomePageUiState {
 		val listingItems: ListingItemsModel,
 		val genderPreference: Gender,
 		val houseTypePreference: HousingType,
+		val filterFavourite: Boolean,
 		val dateRange: DateRange,
 		@StringRes val infoTextStringId: Int?,
 	) : HomeListUiState

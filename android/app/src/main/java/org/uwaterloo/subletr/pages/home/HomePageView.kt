@@ -239,6 +239,7 @@ fun LoginPageViewLoadedPreview() {
 				genderPreference = Gender.OTHER,
 				houseTypePreference = HousingType.OTHER,
 				dateRange = HomeListUiState.DateRange(),
+				filterFavourite = false,
 				infoTextStringId = null,
 			),
 		)

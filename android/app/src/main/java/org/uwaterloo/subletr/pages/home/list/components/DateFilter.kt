@@ -62,12 +62,12 @@ fun DateFilter(
 	val datePickerBottomSheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
 
 	BasicFilterLayout(
-		modifier = Modifier.height(400.dp),
+		modifier = Modifier.height(240.dp),
 		titleId = R.string.dates,
 		closeAction = closeAction,
 		content = {
 			Column(modifier = Modifier.fillMaxWidth(1.0f)) {
-				Spacer(modifier = Modifier.height(16.dp))
+				Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.s)))
 				Row(
 					modifier = Modifier.fillMaxWidth(),
 					horizontalArrangement = Arrangement.spacedBy(dimensionResource(id = R.dimen.s)),
