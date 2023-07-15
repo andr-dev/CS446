@@ -4,6 +4,14 @@ use rand::Rng;
 use rocket::{get, post, serde::json::Json, Route, State};
 use rocket_okapi::{openapi, openapi_get_routes_spec};
 
+mod rating;
+use rating::{
+    okapi_add_operation_for_user_get_rating_,
+    okapi_add_operation_for_user_rate_,
+    user_get_rating,
+    user_rate,
+};
+
 use super::{
     model::user::{
         ChangePasswordUserRequest,
@@ -140,5 +148,12 @@ fn user_change_password(
 }
 
 pub fn routes() -> (Vec<Route>, OpenApi) {
-    openapi_get_routes_spec![user_change_password, user_create, user_get, user_update]
+    openapi_get_routes_spec![
+        user_change_password,
+        user_create,
+        user_get,
+        user_get_rating,
+        user_rate,
+        user_update
+    ]
 }
