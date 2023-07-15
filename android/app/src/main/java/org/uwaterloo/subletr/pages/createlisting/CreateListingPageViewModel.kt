@@ -1,5 +1,6 @@
 package org.uwaterloo.subletr.pages.createlisting
 
+import android.content.res.Resources
 import android.graphics.Bitmap
 import android.util.Log
 import androidx.navigation.NavHostController
@@ -15,6 +16,7 @@ import org.uwaterloo.subletr.api.apis.ListingsApi
 import org.uwaterloo.subletr.api.models.CreateListingRequest
 import org.uwaterloo.subletr.api.models.ListingsImagesCreateRequest
 import org.uwaterloo.subletr.api.models.ResidenceType
+import org.uwaterloo.subletr.enums.Gender
 import org.uwaterloo.subletr.enums.HousingType
 import org.uwaterloo.subletr.infrastructure.SubletrViewModel
 import org.uwaterloo.subletr.services.INavigationService
@@ -112,12 +114,21 @@ class CreateListingPageViewModel @Inject constructor(
 							addressPostalcode = it.address.addressPostalCode,
 							addressCountry = it.address.addressCountry,
 							price = it.price,
-							rooms = it.numBedrooms,
 							leaseStart = it.startDate,
 							leaseEnd = it.endDate,
 							description = it.description,
 							residenceType = ResidenceType.house,
 							imgIds = imgIds,
+//							TODO: Update location value using Location Service
+							latitude = 0f,
+							longitude = 0f,
+//							TODO: Update UI to allow the inputs of these newly added values
+							bathroomsAvailable = 0,
+							bathroomsEnsuite = 0,
+							bathroomsTotal = 0,
+							roomsAvailable = 0,
+							roomsTotal = 0,
+							gender = Resources.getSystem().getString(Gender.OTHER.stringId),
 						)
 					)
 				}

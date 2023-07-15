@@ -23,19 +23,23 @@ import javax.inject.Inject
 class ListingDetailsPageViewModel @Inject constructor(
 	private val listingsApi: ListingsApi,
 	savedStateHandle: SavedStateHandle,
-	private val navigationService: INavigationService
+	private val navigationService: INavigationService,
 ) : SubletrViewModel<ListingDetailsPageUiState>() {
 	val navHostController: NavHostController get() = navigationService.navHostController
 
 	private val listingIdStream: BehaviorSubject<Int> =
 		BehaviorSubject.createDefault(checkNotNull(savedStateHandle["listingId"]))
-	private val imageIdsStream: BehaviorSubject<List<String>> = BehaviorSubject.createDefault(emptyList())
+	private val imageIdsStream: BehaviorSubject<List<String>> =
+		BehaviorSubject.createDefault(emptyList())
 	val favouritedStream: BehaviorSubject<Boolean> = BehaviorSubject.createDefault(false)
-	private val isFetchingImagesStream: BehaviorSubject<Boolean> = BehaviorSubject.createDefault(false)
+	private val isFetchingImagesStream: BehaviorSubject<Boolean> =
+		BehaviorSubject.createDefault(false)
 	private val listingDetailsStream: Observable<Result<ListingDetails>> = listingIdStream.map {
 		runCatching {
 			runBlocking {
-				val listing = listingsApi.listingsDetails(it)
+				//							TODO: Update location value using Location Service
+				val listing =
+					listingsApi.listingsDetails(listingId = it, longitude = 0f, latitude = 0f)
 				favouritedStream.onNext(listing.favourited)
 				imageIdsStream.onNext(listing.details.imgIds)
 				listing.details
@@ -81,16 +85,15 @@ class ListingDetailsPageViewModel @Inject constructor(
 		favouritedStream,
 		imagesStream,
 		isFetchingImagesStream,
-	) {
-		listingDetails, favourited, images, isFetchingImages ->
-			listingDetails.getOrNull()?.let {
-				return@combineLatest ListingDetailsPageUiState.Loaded(
-					it,
-					favourited,
-					images,
-					isFetchingImages,
-				)
-			}
+	) { listingDetails, favourited, images, isFetchingImages ->
+		listingDetails.getOrNull()?.let {
+			return@combineLatest ListingDetailsPageUiState.Loaded(
+				it,
+				favourited,
+				images,
+				isFetchingImages,
+			)
+		}
 		return@combineLatest ListingDetailsPageUiState.Loading
 	}
 }

@@ -149,8 +149,8 @@ fun ListingPost(
 				Text(
 					pluralStringResource(
 						id = R.plurals.n_bedrooms,
-						count = listingSummary.rooms,
-						listingSummary.rooms,
+						count = listingSummary.roomsAvailable,
+						listingSummary.roomsAvailable,
 					),
 					style = listingDescriptionFont,
 				)

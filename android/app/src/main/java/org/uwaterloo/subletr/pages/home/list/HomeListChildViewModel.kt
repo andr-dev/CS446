@@ -1,5 +1,6 @@
 package org.uwaterloo.subletr.pages.home.list
 
+import android.content.res.Resources
 import android.graphics.Bitmap
 import androidx.navigation.NavHostController
 import io.reactivex.rxjava3.core.Observable
@@ -82,12 +83,29 @@ class HomeListChildViewModel @Inject constructor(
 					runBlocking {
 						// TODO: Change to use filter values
 						listingsApi.listingsList(
-							priceMin = getListingParams.priceRange.lowerBound,
-							priceMax = getListingParams.priceRange.upperBound,
-							roomsMin = null,
-							roomsMax = null,
+							//							TODO: Update location value using Location Service
+							longitude = 0f,
+							latitude = 0f,
 							pageNumber = getListingParams.listingPagingParams.pageNumber,
 							pageSize = LISTING_PAGE_SIZE,
+							distanceMetersMin = getListingParams.locationRange.lowerBound?.toFloat(),
+							distanceMetersMax = getListingParams.locationRange.upperBound?.toFloat(),
+							priceMin = getListingParams.priceRange.lowerBound,
+							priceMax = getListingParams.priceRange.upperBound,
+							roomsAvailableMin = getListingParams.roomRange.bedroomForSublet,
+							roomsAvailableMax = setMaxRoom(getListingParams.roomRange.bedroomForSublet),
+							roomsTotalMin = getListingParams.roomRange.bedroomInProperty,
+							roomsTotalMax = setMaxRoom(getListingParams.roomRange.bedroomForSublet),
+							bathroomsAvailableMin = null,
+							bathroomsAvailableMax = null,
+							bathroomsTotalMin = getListingParams.roomRange.bathroom,
+							bathroomsTotalMax = setMaxRoom(getListingParams.roomRange.bathroom),
+							bathroomsEnsuiteMin = if (getListingParams.roomRange.ensuiteBathroom) 1 else null,
+							bathroomsEnsuiteMax = null,
+							gender = Resources.getSystem()
+								.getString(getListingParams.gender.stringId),
+							leaseStart = null,
+							leaseEnd = null,
 						)
 					}
 				}.onSuccess {
@@ -196,8 +214,8 @@ class HomeListChildViewModel @Inject constructor(
 		val locationRange: HomeListUiState.LocationRange,
 		val priceRange: HomeListUiState.PriceRange,
 		val roomRange: HomeListUiState.RoomRange,
-		val genderFilterStream: Gender,
-		val housingTypeFilterStream: HousingType,
+		val gender: Gender,
+		val housingType: HousingType,
 		val listingPagingParams: ListingPagingParams,
 
 
@@ -220,5 +238,12 @@ class HomeListChildViewModel @Inject constructor(
 
 	companion object {
 		const val LISTING_PAGE_SIZE = 5
+	}
+
+	private fun setMaxRoom(roomNum: Int?): Int? {
+		return if (roomNum == 5) {
+			null
+		} else roomNum
+
 	}
 }
