@@ -1,5 +1,6 @@
 use std::collections::HashSet;
 
+use chrono::{NaiveDate, NaiveTime};
 use diesel::{ExpressionMethods, QueryDsl, RunQueryDsl};
 use okapi::openapi3::OpenApi;
 use rand::Rng;
@@ -128,6 +129,20 @@ fn listings_list(state: &State<AppState>, listings_request: GetListingsRequest) 
                 .bathrooms_ensuite_max
                 .map(|x| x as i32)
                 .unwrap_or(i32::MAX)),
+        )
+        .filter(
+            listings::lease_start.ge(listings_request
+                .lease_start
+                .map(|lsf| lsf.0)
+                .unwrap_or(NaiveDate::MIN)
+                .and_time(NaiveTime::default())),
+        )
+        .filter(
+            listings::lease_end.le(listings_request
+                .lease_end
+                .map(|lsf| lsf.0)
+                .unwrap_or(NaiveDate::MAX)
+                .and_time(NaiveTime::default())),
         );
 
     let fetched_listings: (Vec<Listing>, i64) = if let Some(gender) = listings_request.gender {

@@ -5,6 +5,7 @@ use rocket::FromForm;
 use rocket_okapi::JsonSchema;
 use serde::{Deserialize, Serialize};
 
+use super::NaiveDateForm;
 use crate::{
     db::model::listings::{Listing, NewListing},
     error::ServiceError,
@@ -14,7 +15,7 @@ use crate::{
 pub struct GetListingsRequest {
     pub longitude: f32,
     pub latitude: f32,
-    
+
     pub distance_meters_min: Option<f32>,
     pub distance_meters_max: Option<f32>,
 
@@ -32,6 +33,9 @@ pub struct GetListingsRequest {
     pub bathrooms_total_max: Option<u16>,
     pub bathrooms_ensuite_min: Option<u16>,
     pub bathrooms_ensuite_max: Option<u16>,
+
+    pub lease_start: Option<NaiveDateForm>,
+    pub lease_end: Option<NaiveDateForm>,
 
     pub gender: Option<String>,
 
