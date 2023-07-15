@@ -1,5 +1,6 @@
 package org.uwaterloo.subletr.pages.home.list
 
+import android.content.res.Resources
 import android.graphics.Bitmap
 import android.util.Log
 import androidx.navigation.NavHostController
@@ -85,7 +86,7 @@ class HomeListChildViewModel @Inject constructor(
 						Log.d("lowerBound",getListingParams.locationRange.lowerBound?.toFloat().toString())
 						// TODO: Change to use filter values
 						listingsApi.listingsList(
-//						TODO: ADDING LOCATION VALUE
+							// TODO: Update location value using Location Service
 							longitude = 0f,
 							latitude = 0f,
 							pageNumber = getListingParams.listingPagingParams.pageNumber,
@@ -104,7 +105,8 @@ class HomeListChildViewModel @Inject constructor(
 							bathroomsTotalMax = setMaxRoom(getListingParams.roomRange.bathroom),
 							bathroomsEnsuiteMin = if (getListingParams.roomRange.ensuiteBathroom) 1 else null,
 							bathroomsEnsuiteMax = null,
-							gender = null,
+							gender = Resources.getSystem()
+								.getString(getListingParams.gender.stringId),
 							leaseStart = null,
 							leaseEnd = null,
 						)
