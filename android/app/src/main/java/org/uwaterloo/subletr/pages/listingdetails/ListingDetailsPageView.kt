@@ -67,6 +67,7 @@ import org.uwaterloo.subletr.api.models.ListingDetails
 import org.uwaterloo.subletr.api.models.ResidenceType
 import org.uwaterloo.subletr.components.button.PrimaryButton
 import org.uwaterloo.subletr.components.button.SecondaryButton
+import org.uwaterloo.subletr.enums.Gender
 import org.uwaterloo.subletr.theme.SubletrTheme
 import org.uwaterloo.subletr.theme.SubletrTypography
 import org.uwaterloo.subletr.theme.primaryTextColor
@@ -156,8 +157,7 @@ fun ListingDetailsPageView(
 						ImageBoxPlaceholder {
 							CircularProgressIndicator()
 						}
-					}
-					else if (uiState.images.isNotEmpty()) {
+					} else if (uiState.images.isNotEmpty()) {
 						Column(
 							modifier = Modifier,
 							verticalArrangement = Arrangement.spacedBy(dimensionResource(id = R.dimen.xs)),
@@ -229,8 +229,7 @@ fun ListingDetailsPageView(
 								contentDescription = stringResource(id = R.string.next_arrow),
 							)
 						}
-					}
-					else {
+					} else {
 						Image(
 							modifier = Modifier
 								.size(dimensionResource(id = R.dimen.listing_details_image))
@@ -287,10 +286,10 @@ fun ListingDetailsPageView(
 					) {
 						Text(
 							text =
-								if (uiState.favourited)
-									stringResource(id = R.string.unfavourite)
-								else
-									stringResource(id = R.string.favourite),
+							if (uiState.favourited)
+								stringResource(id = R.string.unfavourite)
+							else
+								stringResource(id = R.string.favourite),
 						)
 					}
 				}
@@ -364,7 +363,7 @@ fun ListingDetailsPageView(
 						style = SubletrTypography.displaySmall,
 					)
 					Text(
-						text = uiState.listingDetails.rooms.toString(),
+						text = uiState.listingDetails.roomsAvailable.toString(),
 						color = primaryTextColor,
 						style = SubletrTypography.displaySmall,
 					)
@@ -400,7 +399,7 @@ fun ListingDetailsPageView(
 					)
 					Text(
 						/* TODO listing details needs total rooms in house */
-						text = uiState.listingDetails.rooms.toString(),
+						text = uiState.listingDetails.roomsTotal.toString(),
 						color = primaryTextColor,
 						style = SubletrTypography.displaySmall,
 					)
@@ -534,8 +533,10 @@ fun GoogleMapComposable(
 }
 
 private const val ELEMENT_WIDTH = 0.9f
+
 /* TODO figure out address to LatLng */
 private val SINGAPORE = LatLng(1.35, 103.87)
+
 /* TODO localize date format */
 private val dateFormat = DateTimeFormatter.ofPattern("MM/dd/yyyy")
 
@@ -547,14 +548,22 @@ fun ListingDetailsPagePreview() {
 			uiState = ListingDetailsPageUiState.Loaded(
 				listingDetails = ListingDetails(
 					"10 University Ave.",
+					1f,
+					1f,
+					2f,
+					3,
 					1,
 					1,
+					1,
+					2,
+					3,
 					OffsetDateTime.now(),
 					OffsetDateTime.now(),
 					"description",
 					listOf("image"),
 					ResidenceType.apartment,
-					1,
+					stringResource(Gender.OTHER.stringId),
+					0,
 				),
 				favourited = true,
 				images = listOf(),
