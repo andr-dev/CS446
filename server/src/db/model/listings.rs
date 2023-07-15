@@ -1,7 +1,7 @@
 use chrono::NaiveDateTime;
 use diesel::{Insertable, Queryable};
 
-use crate::db::schema::{listings, listings_images};
+use crate::db::schema::{listings, listings_favourites, listings_images};
 
 #[derive(Queryable, Debug, Clone)]
 #[diesel(table_name = listings)]
@@ -67,4 +67,11 @@ pub struct NewListingImage<'a> {
     pub extension: &'a str,
     pub user_id: i32,
     pub listing_id: Option<i32>,
+}
+
+#[derive(Queryable, Insertable, Debug, Clone)]
+#[diesel(table_name = listings_favourites)]
+pub struct ListingFavourite {
+    pub user_id: i32,
+    pub listing_id: i32,
 }

@@ -19,6 +19,7 @@ use super::{
     model::listing::{
         CreateListingRequest,
         CreateListingResponse,
+        FavouriteListingRequest,
         GetListingDetailsRequest,
         GetListingDetailsResponse,
         GetListingsRequest,
@@ -31,9 +32,9 @@ use super::{
 };
 use crate::{
     db::{
-        model::listings::{Listing, ListingImage},
+        model::listings::{Listing, ListingFavourite, ListingImage},
         paginate::{Paginate, PaginationError},
-        schema::{listings, listings_images},
+        schema::{listings, listings_favourites, listings_images},
     },
     error::{ServiceError, ServiceResult},
     state::AppState,
@@ -70,6 +71,80 @@ fn listings_create(
     }
 
     Ok(Json(CreateListingResponse { listing_id }))
+}
+
+#[openapi(tag = "Listings")]
+#[get("/details?<details_request..>")]
+fn listings_details(
+    state: &State<AppState>,
+    user: AuthenticatedUser,
+    details_request: GetListingDetailsRequest,
+) -> ServiceResult<GetListingDetailsResponse> {
+    let mut dbcon = state.pool.get()?;
+
+    if let Ok(l) = listings::dsl::listings
+        .find(details_request.listing_id)
+        .first::<Listing>(&mut dbcon)
+    {
+        let listing_images: Vec<ListingImage> = listings_images::dsl::listings_images
+            .filter(listings_images::listing_id.eq(l.listing_id))
+            .load(&mut dbcon)?;
+
+        let longitude = l.longitude;
+        let latitude = l.latitude;
+
+        let favourited: Vec<(i32, i32)> = listings_favourites::dsl::listings_favourites
+            .find((user.user_id, l.listing_id))
+            .load(&mut dbcon)?;
+
+        Ok(Json(GetListingDetailsResponse {
+            details: ListingDetails::try_from_db(
+                l,
+                distance_meters(details_request.longitude, details_request.latitude, longitude, latitude)
+                    .map_err(|_| ServiceError::InternalError)?,
+                listing_images.into_iter().map(|li| li.image_id).collect(),
+            )?,
+            favourited: !favourited.is_empty(),
+        }))
+    } else {
+        Err(ServiceError::NotFound)
+    }
+}
+
+#[openapi(tag = "Listings")]
+#[post("/favourite", format = "json", data = "<listing_request>")]
+fn listings_favourite(
+    state: &State<AppState>,
+    user: AuthenticatedUser,
+    listing_request: Json<FavouriteListingRequest>,
+) -> ServiceResult<()> {
+    let mut dbcon = state.pool.get()?;
+
+    diesel::insert_into(listings_favourites::table)
+        .values(ListingFavourite {
+            user_id: user.user_id,
+            listing_id: listing_request.listing_id,
+        })
+        .execute(&mut dbcon)?;
+
+    Ok(Json(()))
+}
+
+#[openapi(tag = "Listings")]
+#[post("/unfavourite", format = "json", data = "<listing_request>")]
+fn listings_unfavourite(
+    state: &State<AppState>,
+    user: AuthenticatedUser,
+    listing_request: Json<FavouriteListingRequest>,
+) -> ServiceResult<()> {
+    let mut dbcon = state.pool.get()?;
+
+    diesel::delete(listings_favourites::table)
+        .filter(listings_favourites::dsl::user_id.eq(user.user_id))
+        .filter(listings_favourites::dsl::listing_id.eq(listing_request.listing_id))
+        .execute(&mut dbcon)?;
+
+    Ok(Json(()))
 }
 
 #[openapi(tag = "Listings")]
@@ -214,45 +289,14 @@ fn listings_list(state: &State<AppState>, listings_request: GetListingsRequest) 
     }))
 }
 
-#[openapi(tag = "Listings")]
-#[get("/details?<details_request..>")]
-fn listings_details(
-    state: &State<AppState>,
-    details_request: GetListingDetailsRequest,
-) -> ServiceResult<GetListingDetailsResponse> {
-    let mut dbcon = state.pool.get()?;
-
-    if let Ok(l) = listings::dsl::listings
-        .find(details_request.listing_id)
-        .first::<Listing>(&mut dbcon)
-    {
-        let listing_images: Vec<ListingImage> = listings_images::dsl::listings_images
-            .filter(listings_images::listing_id.eq(l.listing_id))
-            .load(&mut dbcon)?;
-
-        let longitude = l.longitude;
-        let latitude = l.latitude;
-
-        Ok(Json(GetListingDetailsResponse {
-            details: ListingDetails::try_from_db(
-                l,
-                distance_meters(details_request.longitude, details_request.latitude, longitude, latitude)
-                    .map_err(|_| ServiceError::InternalError)?,
-                listing_images.into_iter().map(|li| li.image_id).collect(),
-            )?,
-            favourited: false,
-        }))
-    } else {
-        Err(ServiceError::NotFound)
-    }
-}
-
 pub fn routes() -> (Vec<Route>, OpenApi) {
     openapi_get_routes_spec![
         listings_create,
         listings_details,
-        listings_images_get,
+        listings_favourite,
         listings_images_create,
+        listings_images_get,
         listings_list,
+        listings_unfavourite,
     ]
 }

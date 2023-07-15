@@ -275,3 +275,8 @@ pub struct ListingsImagesCreateRequest {
 pub struct ListingsImagesCreateResponse {
     pub image_id: String,
 }
+
+#[derive(JsonSchema, Deserialize, Clone, PartialEq)]
+pub struct FavouriteListingRequest {
+    pub listing_id: i32,
+}
