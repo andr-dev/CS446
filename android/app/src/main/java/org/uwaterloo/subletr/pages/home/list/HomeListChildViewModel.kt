@@ -16,6 +16,7 @@ import org.uwaterloo.subletr.api.models.ListingSummary
 import org.uwaterloo.subletr.enums.Gender
 import org.uwaterloo.subletr.enums.HousingType
 import org.uwaterloo.subletr.infrastructure.SubletrChildViewModel
+import org.uwaterloo.subletr.navigation.NavigationDestination
 import org.uwaterloo.subletr.services.ILocationService
 import org.uwaterloo.subletr.services.INavigationService
 import org.uwaterloo.subletr.utils.base64ToBitmap
@@ -82,13 +83,13 @@ class HomeListChildViewModel @Inject constructor(
 			ListingParamsAndResultResponse(
 				listingParams = getListingParams,
 				listingsResponse = runCatching {
+
 					runBlocking {
-						Log.d("lowerBound",getListingParams.locationRange.lowerBound?.toFloat().toString())
+						val location = locationService.getLocation()
 						// TODO: Change to use filter values
 						listingsApi.listingsList(
-							// TODO: Update location value using Location Service
-							longitude = 0f,
-							latitude = 0f,
+							longitude = location!!.longitude.toFloat(),
+							latitude = location.latitude.toFloat(),
 							pageNumber = getListingParams.listingPagingParams.pageNumber,
 							pageSize = LISTING_PAGE_SIZE,
 							distanceMetersMin = getListingParams.locationRange.lowerBound?.toFloat(),

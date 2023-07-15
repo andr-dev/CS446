@@ -110,6 +110,7 @@ class CreateListingPageViewModel @Inject constructor(
 						}
 					}.awaitAll()
 
+					val location = locationService.getLocation()
 					listingsApi.listingsCreate(
 						CreateListingRequest(
 							addressLine = it.address.addressLine,
@@ -122,9 +123,8 @@ class CreateListingPageViewModel @Inject constructor(
 							description = it.description,
 							residenceType = ResidenceType.house,
 							imgIds = imgIds,
-							// TODO: Update location value using Location Service
-							latitude = 0f,
-							longitude = 0f,
+							latitude = location!!.latitude.toFloat(),
+							longitude = location.longitude.toFloat(),
 							// TODO: Update UI to allow the inputs of these newly added values
 							bathroomsAvailable = 0,
 							bathroomsEnsuite = 0,

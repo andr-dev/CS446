@@ -25,6 +25,7 @@ class ListingDetailsPageViewModel @Inject constructor(
 	private val listingsApi: ListingsApi,
 	savedStateHandle: SavedStateHandle,
 	private val navigationService: INavigationService,
+	private val locationService: ILocationService,
 ) : SubletrViewModel<ListingDetailsPageUiState>() {
 	val navHostController: NavHostController get() = navigationService.navHostController
 
@@ -38,9 +39,13 @@ class ListingDetailsPageViewModel @Inject constructor(
 	private val listingDetailsStream: Observable<Result<ListingDetails>> = listingIdStream.map {
 		runCatching {
 			runBlocking {
-				// TODO: Update location value using Location Service
+				val location = locationService.getLocation()
 				val listing =
-					listingsApi.listingsDetails(listingId = it, longitude = 0f, latitude = 0f)
+					listingsApi.listingsDetails(
+						listingId = it,
+						longitude = location!!.longitude.toFloat(),
+						latitude = location.latitude.toFloat()
+					)
 				favouritedStream.onNext(listing.favourited)
 				imageIdsStream.onNext(listing.details.imgIds)
 				listing.details
