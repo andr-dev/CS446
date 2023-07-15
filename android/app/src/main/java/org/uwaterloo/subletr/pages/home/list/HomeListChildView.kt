@@ -58,6 +58,7 @@ import org.uwaterloo.subletr.enums.Gender
 import org.uwaterloo.subletr.enums.HousingType
 import org.uwaterloo.subletr.navigation.NavigationDestination
 import org.uwaterloo.subletr.pages.home.list.components.DateFilter
+import org.uwaterloo.subletr.pages.home.list.components.FavourFilter
 import org.uwaterloo.subletr.pages.home.list.components.ListingPost
 import org.uwaterloo.subletr.pages.home.list.components.LocationFilter
 import org.uwaterloo.subletr.pages.home.list.components.PriceFilter
@@ -146,6 +147,9 @@ fun HomeListChildView(
 		fun updateDateFilter(newVal: HomeListUiState.DateRange) {
 			viewModel.dateFilterStream.onNext(newVal)
 		}
+		fun updateFavouriteFilter(newVal: Boolean) {
+			viewModel.favouriteFilterStream.onNext(newVal)
+		}
 
 		fun closeBottomSheet() {
 			coroutineScope.launch {
@@ -224,6 +228,7 @@ fun HomeListChildView(
 							}
 							listOf(
 								FilterType.LOCATION,
+								FilterType.FAVOURITE,
 								FilterType.PRICE,
 								FilterType.ROOMS,
 								FilterType.PROPERTY_TYPE,
@@ -290,7 +295,11 @@ fun HomeListChildView(
 											updateGenderFilter = ::updateGenderFilter,
 											closeAction = ::closeBottomSheet
 										)
-
+										FilterType.FAVOURITE -> FavourFilter(
+											currentFavourite = uiState.filterFavourite,
+											updateFavouriteFilter = :: updateFavouriteFilter,
+											closeAction = ::closeBottomSheet
+										)
 										FilterType.ALL -> TODO()
 
 									}
@@ -431,6 +440,8 @@ private fun HomeListViewPreview() {
 				houseTypePreference = HousingType.OTHER,
 				dateRange = HomeListUiState.DateRange(),
 				infoTextStringId = null,
+				filterFavourite = false,
+
 			)
 		)
 	}
