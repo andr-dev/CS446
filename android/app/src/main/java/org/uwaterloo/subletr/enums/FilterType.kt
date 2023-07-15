@@ -9,5 +9,6 @@ enum class FilterType (@StringRes val stringId: Int) {
 	ROOMS(R.string.rooms),
 	PROPERTY_TYPE(R.string.property_type),
 	ROOMMATE(R.string.roommate),
+	DATES(R.string.dates),
 	ALL(R.string.all_filters),
 }

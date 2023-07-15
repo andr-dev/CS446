@@ -33,6 +33,11 @@ sealed interface HomeListUiState: HomePageUiState {
 		var ensuiteBathroom: Boolean = false,
 
 	)
+
+	data class DateRange(
+		var startingDate: String? = null,
+		var endingDate: String? = null,
+	)
 	data class Loaded(
 		val locationRange: LocationRange,
 		val priceRange: PriceRange,
@@ -40,6 +45,7 @@ sealed interface HomeListUiState: HomePageUiState {
 		val listingItems: ListingItemsModel,
 		val genderPreference: Gender,
 		val houseTypePreference: HousingType,
+		val dateRange: DateRange,
 		@StringRes val infoTextStringId: Int?,
 	) : HomeListUiState
 
