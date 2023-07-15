@@ -41,6 +41,14 @@ diesel::table! {
 }
 
 diesel::table! {
+    user_ratings (user_id, rater_user_id) {
+        user_id -> Integer,
+        rater_user_id -> Integer,
+        rating -> Integer,
+    }
+}
+
+diesel::table! {
     users (user_id) {
         user_id -> Integer,
         first_name -> Text,
@@ -61,5 +69,6 @@ diesel::allow_tables_to_appear_in_same_query!(
     listings,
     listings_favourites,
     listings_images,
+    user_ratings,
     users,
 );
