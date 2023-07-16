@@ -119,23 +119,25 @@ fun DateFilter(
 									if (!datePickerBottomSheetState.isVisible) {
 										openDatePicker = false
 									}
-									startButtonText = if (dateRangePickerState.selectedStartDateMillis != null) {
-										displayDateFormatter.formatDate(
-											dateRangePickerState.selectedStartDateMillis,
-											locale = Locale.getDefault()
-										)!!
-									} else {
-										""
+									startButtonText =
+										if (dateRangePickerState.selectedStartDateMillis != null) {
+											displayDateFormatter.formatDate(
+												dateRangePickerState.selectedStartDateMillis,
+												locale = Locale.getDefault()
+											)!!
+										} else {
+											""
 
-									}
-									endButtonText = if (dateRangePickerState.selectedEndDateMillis != null) {
-										displayDateFormatter.formatDate(
-											dateRangePickerState.selectedEndDateMillis,
-											locale = Locale.getDefault()
-										)!!
-									} else {
-										""
-									}
+										}
+									endButtonText =
+										if (dateRangePickerState.selectedEndDateMillis != null) {
+											displayDateFormatter.formatDate(
+												dateRangePickerState.selectedEndDateMillis,
+												locale = Locale.getDefault()
+											)!!
+										} else {
+											""
+										}
 								}
 						},
 					)
@@ -148,7 +150,6 @@ fun DateFilter(
 			endButtonText = ""
 		},
 		updateFilterAndClose = {
-//			TODO: Check if the end date is after the start date
 			val newStartingDate = SimpleDateFormat("MM/dd/yyyy").parse(startButtonText)
 			val newEndingDate = SimpleDateFormat("MM/dd/yyyy").parse(endButtonText)
 			updateDateFilter(
@@ -161,8 +162,7 @@ fun DateFilter(
 						newEndingDate.toInstant().atOffset(ZoneOffset.UTC).format(
 							storeDateFormatISO
 						) else null,
-				),
-
+					),
 				)
 			closeAction()
 		},
