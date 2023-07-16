@@ -2,7 +2,6 @@ package org.uwaterloo.subletr.pages.home.list
 
 import android.graphics.Bitmap
 import androidx.navigation.NavHostController
-import androidx.navigation.navOptions
 import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.schedulers.Schedulers
 import io.reactivex.rxjava3.subjects.BehaviorSubject
@@ -15,7 +14,6 @@ import org.uwaterloo.subletr.api.models.ListingSummary
 import org.uwaterloo.subletr.enums.Gender
 import org.uwaterloo.subletr.enums.HousingType
 import org.uwaterloo.subletr.infrastructure.SubletrChildViewModel
-import org.uwaterloo.subletr.navigation.NavigationDestination
 import org.uwaterloo.subletr.services.INavigationService
 import org.uwaterloo.subletr.utils.base64ToBitmap
 import java.util.Optional
@@ -78,7 +76,7 @@ class HomeListChildViewModel @Inject constructor(
 		::GetListingParams
 	)
 		.map { getListingParams: GetListingParams ->
-			ListingParamsAndResponse(
+			ListingParamsAndResultResponse(
 				listingParams = getListingParams,
 				listingsResponse = runCatching {
 					runBlocking {
@@ -95,18 +93,22 @@ class HomeListChildViewModel @Inject constructor(
 				}.onSuccess {
 					totalNumberOfPagesStream.onNext(it.pages)
 				}.onFailure {
-					navHostController.navigate(
-						route = NavigationDestination.LOGIN.rootNavPath,
-						navOptions = navOptions {
-							popUpTo(navHostController.graph.id)
-						},
-					)
+					uiStateStream.onNext(HomeListUiState.Failed)
 				}
+			)
+		}
+		.filter {
+			it.listingsResponse.isSuccess
+		}
+		.map {
+			ListingParamsAndResponse(
+				listingParams = it.listingParams,
+				listingsResponse = it.listingsResponse
 					.getOrDefault(
 						GetListingsResponse(
 							listings = emptyList(),
-							liked = emptySet(),
 							pages = 0,
+							liked = emptySet(),
 						)
 					)
 			)
@@ -138,16 +140,16 @@ class HomeListChildViewModel @Inject constructor(
 	private val listingItemsStream: Observable<HomeListUiState.ListingItemsModel> =
 		Observable.combineLatest(
 			listingsStream,
-			imagesStream,
-			::Pair
-		).map {
+			imagesStream
+		) { listingParamsAndResponse, images ->
 			HomeListUiState.ListingItemsModel(
-				listings = it.first.listingParams.listingPagingParams.previousListingItemsModel.listings +
-					it.first.listingsResponse.listings,
-				likedListings = it.first.listingParams.listingPagingParams.previousListingItemsModel.likedListings +
-					it.first.listingsResponse.liked,
-				listingsImages = it.first.listingParams.listingPagingParams.previousListingItemsModel.listingsImages +
-					it.second,
+				listings = listingParamsAndResponse.listingParams.listingPagingParams.previousListingItemsModel.listings +
+					listingParamsAndResponse.listingsResponse.listings,
+				likedListings = listingParamsAndResponse.listingParams.listingPagingParams.previousListingItemsModel.likedListings +
+					listingParamsAndResponse.listingsResponse.liked,
+				listingsImages =
+				listingParamsAndResponse.listingParams.listingPagingParams.previousListingItemsModel.listingsImages +
+					images,
 			)
 		}
 
@@ -204,6 +206,11 @@ class HomeListChildViewModel @Inject constructor(
 	data class ListingPagingParams(
 		val previousListingItemsModel: HomeListUiState.ListingItemsModel,
 		val pageNumber: Int,
+	)
+
+	data class ListingParamsAndResultResponse(
+		val listingParams: GetListingParams,
+		val listingsResponse: Result<GetListingsResponse>,
 	)
 
 	data class ListingParamsAndResponse(

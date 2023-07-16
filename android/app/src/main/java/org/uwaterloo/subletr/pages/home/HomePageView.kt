@@ -19,6 +19,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -32,9 +33,11 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.navOptions
 import org.uwaterloo.subletr.R
 import org.uwaterloo.subletr.enums.Gender
 import org.uwaterloo.subletr.enums.HousingType
+import org.uwaterloo.subletr.navigation.NavigationDestination
 import org.uwaterloo.subletr.pages.home.list.HomeListChildView
 import org.uwaterloo.subletr.pages.home.list.HomeListUiState
 import org.uwaterloo.subletr.pages.home.map.HomeMapChildView
@@ -72,21 +75,39 @@ fun HomePageView(
 					text = stringResource(id = R.string.view_sublets),
 					style = MaterialTheme.typography.titleMedium,
 				)
-				ViewSwitch(isListView = isListView, viewModel = viewModel)
+				ViewSwitch(isListView = isListView)
 			}
 		},
 		content = { padding: PaddingValues ->
-			if (uiState is HomeListUiState) {
-				HomeListChildView(
-					modifier = Modifier.padding(padding),
-					viewModel = viewModel.homeListChildViewModel,
-					uiState = uiState,
-				)
-			} else if (uiState is HomeMapUiState) {
-				HomeMapChildView(
-					modifier = Modifier.padding(padding),
-					viewModel = viewModel.homeMapChildViewModel,
-				)
+			when (uiState) {
+				is HomeListUiState.Failed -> {
+					LaunchedEffect(key1 = true) {
+						viewModel.navHostController.navigate(
+							route = NavigationDestination.LOGIN.rootNavPath,
+							navOptions = navOptions {
+								popUpTo(viewModel.navHostController.graph.id) {
+									saveState = true
+								}
+								launchSingleTop = true
+							},
+						)
+					}
+				}
+
+				is HomeListUiState -> {
+					HomeListChildView(
+						modifier = Modifier.padding(padding),
+						viewModel = viewModel.homeListChildViewModel,
+						uiState = uiState,
+					)
+				}
+
+				is HomeMapUiState -> {
+					HomeMapChildView(
+						modifier = Modifier.padding(padding),
+						viewModel = viewModel.homeMapChildViewModel,
+					)
+				}
 			}
 		},
 		bottomBar = {
@@ -99,7 +120,6 @@ fun HomePageView(
 fun ViewSwitch(
 	modifier: Modifier = Modifier,
 	isListView: MutableState<Boolean>,
-	viewModel: HomePageViewModel,
 ) {
 	Row(
 		modifier = modifier

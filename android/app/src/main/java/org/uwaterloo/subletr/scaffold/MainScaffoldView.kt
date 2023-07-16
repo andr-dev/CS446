@@ -10,6 +10,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.compose.currentBackStackEntryAsState
+import org.uwaterloo.subletr.api.infrastructure.ApiClient
 import org.uwaterloo.subletr.components.bottombar.BottomBarView
 import org.uwaterloo.subletr.navigation.MainNavigation
 import org.uwaterloo.subletr.navigation.NavigationDestination
@@ -21,7 +22,9 @@ fun MainScaffoldView(
 	viewModel: MainScaffoldViewModel = hiltViewModel(),
 ) {
 	val snackbarHostState: SnackbarHostState = remember { SnackbarHostState() }
-	var currentDestination: NavigationDestination = NavigationDestination.LOGIN
+	var currentDestination: NavigationDestination =
+		if (ApiClient.accessToken == null) NavigationDestination.LOGIN
+		else NavigationDestination.HOME
 
 	NavigationDestination.values().forEach {
 		if (
