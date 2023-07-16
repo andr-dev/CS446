@@ -147,6 +147,7 @@ fun HomeListChildView(
 		fun updateDateFilter(newVal: HomeListUiState.DateRange) {
 			viewModel.dateFilterStream.onNext(newVal)
 		}
+
 		fun updateFavouriteFilter(newVal: Boolean) {
 			viewModel.favouriteFilterStream.onNext(newVal)
 		}
@@ -233,7 +234,7 @@ fun HomeListChildView(
 								FilterType.ROOMS,
 								FilterType.PROPERTY_TYPE,
 								FilterType.ROOMMATE,
-									FilterType.DATES,
+								FilterType.DATES,
 							).map {
 								item {
 									FilterButton(
@@ -258,7 +259,6 @@ fun HomeListChildView(
 								containerColor = Color.White,
 								content = {
 									when (filterType.value) {
-//										TODO: Add favour filter
 										FilterType.LOCATION -> {
 											LocationFilter(
 												currentLocationRange = uiState.locationRange,
@@ -266,12 +266,14 @@ fun HomeListChildView(
 												closeAction = ::closeBottomSheet
 											)
 										}
+
 										FilterType.DATES -> DateFilter(
 											currentDateRange = uiState.dateRange,
-											updateDateFilter = ::updateDateFilter ,
+											updateDateFilter = ::updateDateFilter,
 											coroutineScope = coroutineScope,
 											closeAction = ::closeBottomSheet
 										)
+
 										FilterType.PRICE -> PriceFilter(
 											currentPriceRange = uiState.priceRange,
 											updatePriceFilter = ::updatePriceFilter,
@@ -295,11 +297,13 @@ fun HomeListChildView(
 											updateGenderFilter = ::updateGenderFilter,
 											closeAction = ::closeBottomSheet
 										)
+
 										FilterType.FAVOURITE -> FavourFilter(
 											currentFavourite = uiState.filterFavourite,
-											updateFavouriteFilter = :: updateFavouriteFilter,
+											updateFavouriteFilter = ::updateFavouriteFilter,
 											closeAction = ::closeBottomSheet
 										)
+
 										FilterType.ALL -> TODO()
 
 									}
@@ -442,7 +446,7 @@ private fun HomeListViewPreview() {
 				infoTextStringId = null,
 				filterFavourite = false,
 
-			)
+				)
 		)
 	}
 }
