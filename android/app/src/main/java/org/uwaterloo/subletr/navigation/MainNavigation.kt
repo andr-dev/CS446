@@ -24,13 +24,13 @@ fun MainNavigation(
 	modifier: Modifier = Modifier,
 	navHostController: NavHostController = rememberNavController(),
 ) {
-	val startingDestination =
-		if (ApiClient.accessToken == null) NavigationDestination.LOGIN.fullNavPath
-		else NavigationDestination.HOME.fullNavPath
+	val startingDestination: NavigationDestination =
+		if (ApiClient.accessToken == null) NavigationDestination.LOGIN
+		else NavigationDestination.HOME
 
 	NavHost(
 		navController = navHostController,
-		startDestination = startingDestination,
+		startDestination = startingDestination.fullNavPath,
 	) {
 		composable(NavigationDestination.LOGIN.fullNavPath) {
 			LoginPageView(

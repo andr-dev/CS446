@@ -59,7 +59,7 @@ class LoginPageViewModel @Inject constructor(
 			}
 				.onSuccess {
 					authenticationService.setAccessToken(it.token)
-					navHostController.navigate(NavigationDestination.HOME.rootNavPath)
+					navHostController.navigate(NavigationDestination.HOME.fullNavPath)
 				}
 				.onFailure {
 					infoTextStringIdStream.onNext(

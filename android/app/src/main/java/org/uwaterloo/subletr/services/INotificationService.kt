@@ -1,4 +1,3 @@
 package org.uwaterloo.subletr.services
 
-interface INotificationService {
-}
+interface INotificationService

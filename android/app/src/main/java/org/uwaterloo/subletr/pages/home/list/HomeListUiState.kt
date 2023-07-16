@@ -6,8 +6,6 @@ import org.uwaterloo.subletr.api.models.ListingSummary
 import org.uwaterloo.subletr.enums.Gender
 import org.uwaterloo.subletr.enums.HousingType
 import org.uwaterloo.subletr.pages.home.HomePageUiState
-import java.util.Optional
-import java.util.prefs.AbstractPreferences
 
 sealed interface HomeListUiState: HomePageUiState {
 	object Loading : HomeListUiState
@@ -44,4 +42,6 @@ sealed interface HomeListUiState: HomePageUiState {
 		val houseTypePreference: HousingType,
 		@StringRes val infoTextStringId: Int?,
 	) : HomeListUiState
+
+	object Failed : HomeListUiState
 }
