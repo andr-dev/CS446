@@ -23,4 +23,5 @@
 | Jun 28th | 2 hours (17:00 - 19:00) | Implemented pagination for listings list      |
 | Jul 6th  | 4 hours (11:00 - 15:00) | Added user get / update endpoints             |
 | Jul 12th | 2 hours (13:00 - 15:00) | Finalized listings definitions on backend     |
+| Jul 15th | 1 hour  (12:00 - 13:00) | Updated GetListingsRequest endpoint           |
 
