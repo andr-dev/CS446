@@ -141,7 +141,7 @@ fn listings_list(state: &State<AppState>, listings_request: GetListingsRequest) 
             listings::lease_end.le(listings_request
                 .lease_end
                 .map(|lsf| lsf.0)
-                .unwrap_or(NaiveDate::MAX)
+                .unwrap_or(NaiveDate::from_isoywd(3000, 1, chrono::Weekday::Mon))
                 .and_time(NaiveTime::default())),
         );
 
