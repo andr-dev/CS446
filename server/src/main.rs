@@ -14,6 +14,8 @@ use cors::CORS;
 mod db;
 mod error;
 
+mod geocode;
+
 mod state;
 use state::AppState;
 

@@ -7,6 +7,7 @@ use serde::{Deserialize, Serialize};
 
 use super::NaiveDateForm;
 use crate::{
+    api::utils::format_address,
     db::model::listings::{Listing, NewListing},
     error::ServiceError,
 };
@@ -70,10 +71,7 @@ impl ListingSummary {
     pub fn try_from_db(l: Listing, distance_meters: f32, img_ids: Vec<String>) -> Result<Self, ServiceError> {
         Ok(ListingSummary {
             listing_id: l.listing_id,
-            address: format!(
-                "{}, {} {}, {}",
-                l.address_line, l.address_city, l.address_postalcode, l.address_country
-            ),
+            address: format_address(l.address_line, l.address_city, l.address_postalcode, l.address_country),
             distance_meters,
             price: TryInto::<u16>::try_into(l.price).map_err(|e| ServiceError::InvalidFieldError {
                 field: "price",

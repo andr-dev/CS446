@@ -8,6 +8,7 @@ use rocket::{
 use schemars::JsonSchema;
 
 pub mod auth;
+pub mod geocode;
 pub mod listing;
 pub mod user;
 

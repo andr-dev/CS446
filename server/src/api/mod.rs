@@ -6,6 +6,7 @@ use crate::error::ServiceResult;
 
 mod auth;
 mod constants;
+mod geocode;
 mod listings;
 mod model;
 mod token;
@@ -36,6 +37,7 @@ pub fn rocket() -> Rocket<Build> {
 
         "" => openapi_get_routes_spec![ping, time],
         "/auth" => auth::routes(),
+        "/geocode" => geocode::routes(),
         "/listings" => listings::routes(),
         "/user" => user::routes(),
     };

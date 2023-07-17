@@ -22,7 +22,7 @@ use crate::{
 #[openapi(tag = "Listings")]
 #[get("/images/<image_id>")]
 pub async fn listings_images_get(
-    state: &State<AppState>,
+    state: &State<AppState<'_>>,
     _user: AuthenticatedUser,
     image_id: String,
 ) -> ServiceResult<String> {
@@ -53,7 +53,7 @@ pub async fn listings_images_get(
 #[openapi(tag = "Listings")]
 #[post("/images/create", format = "json", data = "<create_request>")]
 pub async fn listings_images_create(
-    state: &State<AppState>,
+    state: &State<AppState<'_>>,
     user: AuthenticatedUser,
     create_request: Json<ListingsImagesCreateRequest>,
 ) -> ServiceResult<ListingsImagesCreateResponse> {

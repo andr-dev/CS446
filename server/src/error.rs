@@ -2,6 +2,8 @@ use rocket::{http::Status, response::Responder, serde::json::Json, Request};
 use rocket_okapi::{okapi::schemars::schema_for, response::OpenApiResponderInner, util::add_schema_response};
 use thiserror::Error;
 
+use crate::geocode::GeocodingError;
+
 #[derive(Error, Debug)]
 pub enum ServiceError {
     #[error("SerdeJson Error {source:?}")]
@@ -30,6 +32,9 @@ pub enum ServiceError {
 
     #[error("Authentication Error")]
     AuthenticationError,
+
+    #[error("Geocoding Error")]
+    GeocodingError(#[from] GeocodingError),
 
     #[error("Not Found Error")]
     NotFound,
@@ -62,6 +67,7 @@ impl<'r, 'o: 'r> Responder<'r, 'o> for ServiceError {
             ServiceError::InvalidFieldError { field, reason } => {
                 Json(format!("Invalid field {}, reason: {}", field, reason)).respond_to(req)
             },
+            ServiceError::GeocodingError(e) => Json(e.to_string()).respond_to(req),
             ServiceError::InternalError => Status::InternalServerError.respond_to(req),
             ServiceError::NotFound => Status::NotFound.respond_to(req),
             ServiceError::Forbidden => Status::Forbidden.respond_to(req),
