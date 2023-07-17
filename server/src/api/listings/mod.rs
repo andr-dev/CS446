@@ -120,7 +120,7 @@ fn listings_favourite(
     state: &State<AppState>,
     user: AuthenticatedUser,
     listing_request: Json<FavouriteListingRequest>,
-) -> ServiceResult<()> {
+) -> ServiceResult<String> {
     let mut dbcon = state.pool.get()?;
 
     diesel::insert_into(listings_favourites::table)
@@ -130,7 +130,7 @@ fn listings_favourite(
         })
         .execute(&mut dbcon)?;
 
-    Ok(Json(()))
+    Ok(Json("OK".to_owned()))
 }
 
 #[openapi(tag = "Listings")]
@@ -139,7 +139,7 @@ fn listings_unfavourite(
     state: &State<AppState>,
     user: AuthenticatedUser,
     listing_request: Json<FavouriteListingRequest>,
-) -> ServiceResult<()> {
+) -> ServiceResult<String> {
     let mut dbcon = state.pool.get()?;
 
     diesel::delete(listings_favourites::table)
@@ -147,7 +147,7 @@ fn listings_unfavourite(
         .filter(listings_favourites::dsl::listing_id.eq(listing_request.listing_id))
         .execute(&mut dbcon)?;
 
-    Ok(Json(()))
+    Ok(Json("OK".to_owned()))
 }
 
 #[openapi(tag = "Listings")]

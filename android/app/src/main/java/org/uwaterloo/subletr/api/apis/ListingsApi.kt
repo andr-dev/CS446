@@ -26,7 +26,6 @@ import org.uwaterloo.subletr.api.models.GetListingDetailsResponse
 import org.uwaterloo.subletr.api.models.GetListingsResponse
 import org.uwaterloo.subletr.api.models.ListingsImagesCreateRequest
 import org.uwaterloo.subletr.api.models.ListingsImagesCreateResponse
-import org.uwaterloo.subletr.api.models.Null
 
 import com.squareup.moshi.Json
 
@@ -212,7 +211,7 @@ class ListingsApi(basePath: kotlin.String = defaultBasePath, client: OkHttpClien
      * 
      * 
      * @param favouriteListingRequest 
-     * @return Null
+     * @return kotlin.String
      * @throws IllegalStateException If the request is not correctly configured
      * @throws IOException Rethrows the OkHttp execute method exception
      * @throws UnsupportedOperationException If the API returns an informational or redirection response
@@ -221,11 +220,11 @@ class ListingsApi(basePath: kotlin.String = defaultBasePath, client: OkHttpClien
      */
     @Suppress("UNCHECKED_CAST")
     @Throws(IllegalStateException::class, IOException::class, UnsupportedOperationException::class, ClientException::class, ServerException::class)
-    suspend fun listingsFavourite(favouriteListingRequest: FavouriteListingRequest) : Null = withContext(Dispatchers.IO) {
+    suspend fun listingsFavourite(favouriteListingRequest: FavouriteListingRequest) : kotlin.String = withContext(Dispatchers.IO) {
         val localVarResponse = listingsFavouriteWithHttpInfo(favouriteListingRequest = favouriteListingRequest)
 
         return@withContext when (localVarResponse.responseType) {
-            ResponseType.Success -> (localVarResponse as Success<*>).data as Null
+            ResponseType.Success -> (localVarResponse as Success<*>).data as kotlin.String
             ResponseType.Informational -> throw UnsupportedOperationException("Client does not support Informational responses.")
             ResponseType.Redirection -> throw UnsupportedOperationException("Client does not support Redirection responses.")
             ResponseType.ClientError -> {
@@ -243,16 +242,16 @@ class ListingsApi(basePath: kotlin.String = defaultBasePath, client: OkHttpClien
      * 
      * 
      * @param favouriteListingRequest 
-     * @return ApiResponse<Null?>
+     * @return ApiResponse<kotlin.String?>
      * @throws IllegalStateException If the request is not correctly configured
      * @throws IOException Rethrows the OkHttp execute method exception
      */
     @Suppress("UNCHECKED_CAST")
     @Throws(IllegalStateException::class, IOException::class)
-    suspend fun listingsFavouriteWithHttpInfo(favouriteListingRequest: FavouriteListingRequest) : ApiResponse<Null?> = withContext(Dispatchers.IO) {
+    suspend fun listingsFavouriteWithHttpInfo(favouriteListingRequest: FavouriteListingRequest) : ApiResponse<kotlin.String?> = withContext(Dispatchers.IO) {
         val localVariableConfig = listingsFavouriteRequestConfig(favouriteListingRequest = favouriteListingRequest)
 
-        return@withContext request<FavouriteListingRequest, Null>(
+        return@withContext request<FavouriteListingRequest, kotlin.String>(
             localVariableConfig
         )
     }
@@ -615,7 +614,7 @@ class ListingsApi(basePath: kotlin.String = defaultBasePath, client: OkHttpClien
      * 
      * 
      * @param favouriteListingRequest 
-     * @return Null
+     * @return kotlin.String
      * @throws IllegalStateException If the request is not correctly configured
      * @throws IOException Rethrows the OkHttp execute method exception
      * @throws UnsupportedOperationException If the API returns an informational or redirection response
@@ -624,11 +623,11 @@ class ListingsApi(basePath: kotlin.String = defaultBasePath, client: OkHttpClien
      */
     @Suppress("UNCHECKED_CAST")
     @Throws(IllegalStateException::class, IOException::class, UnsupportedOperationException::class, ClientException::class, ServerException::class)
-    suspend fun listingsUnfavourite(favouriteListingRequest: FavouriteListingRequest) : Null = withContext(Dispatchers.IO) {
+    suspend fun listingsUnfavourite(favouriteListingRequest: FavouriteListingRequest) : kotlin.String = withContext(Dispatchers.IO) {
         val localVarResponse = listingsUnfavouriteWithHttpInfo(favouriteListingRequest = favouriteListingRequest)
 
         return@withContext when (localVarResponse.responseType) {
-            ResponseType.Success -> (localVarResponse as Success<*>).data as Null
+            ResponseType.Success -> (localVarResponse as Success<*>).data as kotlin.String
             ResponseType.Informational -> throw UnsupportedOperationException("Client does not support Informational responses.")
             ResponseType.Redirection -> throw UnsupportedOperationException("Client does not support Redirection responses.")
             ResponseType.ClientError -> {
@@ -646,16 +645,16 @@ class ListingsApi(basePath: kotlin.String = defaultBasePath, client: OkHttpClien
      * 
      * 
      * @param favouriteListingRequest 
-     * @return ApiResponse<Null?>
+     * @return ApiResponse<kotlin.String?>
      * @throws IllegalStateException If the request is not correctly configured
      * @throws IOException Rethrows the OkHttp execute method exception
      */
     @Suppress("UNCHECKED_CAST")
     @Throws(IllegalStateException::class, IOException::class)
-    suspend fun listingsUnfavouriteWithHttpInfo(favouriteListingRequest: FavouriteListingRequest) : ApiResponse<Null?> = withContext(Dispatchers.IO) {
+    suspend fun listingsUnfavouriteWithHttpInfo(favouriteListingRequest: FavouriteListingRequest) : ApiResponse<kotlin.String?> = withContext(Dispatchers.IO) {
         val localVariableConfig = listingsUnfavouriteRequestConfig(favouriteListingRequest = favouriteListingRequest)
 
-        return@withContext request<FavouriteListingRequest, Null>(
+        return@withContext request<FavouriteListingRequest, kotlin.String>(
             localVariableConfig
         )
     }
