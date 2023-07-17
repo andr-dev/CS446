@@ -188,7 +188,15 @@ val OnDarkSubletrCustomColorPalette = SubletrCustomColorPalette(
 	textFieldBorderColor = getTextFieldBorderColor(darkTheme = true),
 )
 
-val notificationGreen = Color(0xFF6ABC95)
+val notificationGreen
+	@Composable
+	get() = if (isSystemInDarkTheme()) {
+		notificationGreenDark
+	} else {
+		notificationGreenLight
+	}
+private val notificationGreenLight = Color(0xFF6ABC95)
+private val notificationGreenDark = Color(0xFF6ABC95)
 
 internal val SubletrDarkColorScheme = darkColorScheme(
 	primary = subletrPinkDark,
