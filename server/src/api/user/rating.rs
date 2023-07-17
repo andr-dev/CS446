@@ -18,7 +18,7 @@ pub fn user_rate(
     state: &State<AppState>,
     user: AuthenticatedUser,
     rate_request: Json<RateUserRequest>,
-) -> ServiceResult<()> {
+) -> ServiceResult<String> {
     if rate_request.rating < 1 || rate_request.rating > 5 {
         return Err(ServiceError::InvalidFieldError {
             field: "rating",
@@ -39,7 +39,7 @@ pub fn user_rate(
         .set(user_ratings::rating.eq(Into::<i32>::into(rate_request.rating)))
         .execute(&mut dbcon)?;
 
-    Ok(Json(()))
+    Ok(Json("OK".to_owned()))
 }
 
 #[openapi(tag = "User")]
