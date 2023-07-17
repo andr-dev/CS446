@@ -282,7 +282,7 @@ fun ListingDetailsPageView(
 
 					SecondaryButton(
 						onClick = {
-							viewModel.favouritedStream.onNext(!uiState.favourited)
+							viewModel.toggleFavourite(!uiState.favourited)
 						},
 					) {
 						Text(
