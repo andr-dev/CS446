@@ -97,7 +97,7 @@ class HomeListChildViewModel @Inject constructor(
 							roomsAvailableMin = getListingParams.roomRange.bedroomForSublet,
 							roomsAvailableMax = setMaxRoom(getListingParams.roomRange.bedroomForSublet),
 							roomsTotalMin = getListingParams.roomRange.bedroomInProperty,
-							roomsTotalMax = setMaxRoom(getListingParams.roomRange.bedroomForSublet),
+							roomsTotalMax = setMaxRoom(getListingParams.roomRange.bedroomInProperty),
 							bathroomsAvailableMin = null,
 							bathroomsAvailableMax = null,
 							bathroomsTotalMin = getListingParams.roomRange.bathroom,
