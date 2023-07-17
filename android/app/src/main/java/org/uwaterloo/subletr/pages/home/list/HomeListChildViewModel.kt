@@ -85,11 +85,10 @@ class HomeListChildViewModel @Inject constructor(
 				listingsResponse = runCatching {
 
 					runBlocking {
-						val location = locationService.getLocation()
-						// TODO: Change to use filter values
+						// TODO: Change to use filter values + latitude + longitude
 						listingsApi.listingsList(
-							longitude = location!!.longitude.toFloat(),
-							latitude = location.latitude.toFloat(),
+							longitude = 0f,
+							latitude = 0f,
 							pageNumber = getListingParams.listingPagingParams.pageNumber,
 							pageSize = LISTING_PAGE_SIZE,
 							distanceMetersMin = getListingParams.locationRange.lowerBound?.toFloat(),
@@ -106,8 +105,7 @@ class HomeListChildViewModel @Inject constructor(
 							bathroomsTotalMax = setMaxRoom(getListingParams.roomRange.bathroom),
 							bathroomsEnsuiteMin = if (getListingParams.roomRange.ensuiteBathroom) 1 else null,
 							bathroomsEnsuiteMax = null,
-							gender = Resources.getSystem()
-								.getString(getListingParams.gender.stringId),
+							gender = "Female",
 							leaseStart = null,
 							leaseEnd = null,
 						)
@@ -220,8 +218,6 @@ class HomeListChildViewModel @Inject constructor(
 		val gender: Gender,
 		val housingType: HousingType,
 		val listingPagingParams: ListingPagingParams,
-
-
 		)
 
 	data class ListingPagingParams(

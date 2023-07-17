@@ -123,8 +123,6 @@ class CreateListingPageViewModel @Inject constructor(
 							description = it.description,
 							residenceType = ResidenceType.house,
 							imgIds = imgIds,
-							latitude = location!!.latitude.toFloat(),
-							longitude = location.longitude.toFloat(),
 							// TODO: Update UI to allow the inputs of these newly added values
 							bathroomsAvailable = 0,
 							bathroomsEnsuite = 0,
