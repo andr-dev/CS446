@@ -16,6 +16,7 @@ use images::{
 };
 
 use super::{
+    geocode::address_reverse,
     model::listing::{
         CreateListingRequest,
         CreateListingResponse,
@@ -28,7 +29,7 @@ use super::{
         ListingSummary,
     },
     token::AuthenticatedUser,
-    utils::distance_meters,
+    utils::{distance_meters, format_address},
 };
 use crate::{
     db::{
@@ -42,8 +43,8 @@ use crate::{
 
 #[openapi(tag = "Listings")]
 #[post("/create", format = "json", data = "<listing_request>")]
-fn listings_create(
-    state: &State<AppState>,
+async fn listings_create(
+    state: &State<AppState<'_>>,
     user: AuthenticatedUser,
     listing_request: Json<CreateListingRequest>,
 ) -> ServiceResult<CreateListingResponse> {
@@ -59,11 +60,26 @@ fn listings_create(
 
     let listing_id: i32 = rand::thread_rng().gen();
 
-    let latitude = todo!();
-    let longitude = todo!();
+    let opencage = state.opencage.write().await;
+
+    let location = address_reverse(
+        opencage,
+        format_address(
+            listing_request.address_line.to_owned(),
+            listing_request.address_city.to_owned(),
+            listing_request.address_postalcode.to_owned(),
+            listing_request.address_country.to_owned(),
+        ),
+    )
+    .await?;
 
     diesel::insert_into(listings::table)
-        .values(&listing_request.try_into_new_listing(listing_id, user.user_id, latitude, longitude)?)
+        .values(&listing_request.try_into_new_listing(
+            listing_id,
+            user.user_id,
+            location.latitude,
+            location.longitude,
+        )?)
         .execute(&mut dbcon)?;
 
     for img_id in &listing_request.img_ids {
