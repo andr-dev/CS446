@@ -1,4 +1,4 @@
-@file:Suppress("MagicNumber", "TooManyFunctions")
+@file:Suppress("MagicNumber")
 
 package org.uwaterloo.subletr.theme
 
