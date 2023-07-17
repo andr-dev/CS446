@@ -59,4 +59,8 @@ enum class NavigationDestination(
 	CREATE_LISTING(
 		rootNavPath = "home/createlisting",
 	),
+	INDIVIDUAL_CHAT_PAGE(
+		rootNavPath = "chat/individual",
+		fullNavPath = "chat/individual/{userId}",
+	),
 }

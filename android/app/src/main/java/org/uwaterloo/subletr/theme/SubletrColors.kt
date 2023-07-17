@@ -69,6 +69,27 @@ val darkerGrayButtonColor
 	}
 private val darkerGrayButtonColorLight = Color((0xFFE5E5E5))
 private val darkerGrayButtonColorDark = Color((0xFFE5E5E5))
+
+val primaryBackgroundColor
+	@Composable
+	get() = if (isSystemInDarkTheme()) {
+		primaryBackgroundColorDark
+	} else {
+		primaryBackgroundColorLight
+	}
+private val primaryBackgroundColorLight = Color((0xFFFFFFFF))
+private val primaryBackgroundColorDark = Color((0xFF000000))
+
+val secondaryBackgroundColor
+	@Composable
+	get() = if (isSystemInDarkTheme()) {
+		secondaryBackgroundColorDark
+	} else {
+		secondaryBackgroundColorLight
+	}
+private val secondaryBackgroundColorLight = Color((0xFFF0F0F0))
+private val secondaryBackgroundColorDark = Color((0xFFF0F0F0))
+
 val secondaryButtonBackgroundColor
 	@Composable
 	get() = if (isSystemInDarkTheme()) {
@@ -99,6 +120,16 @@ val textFieldBorderColor
 	}
 private val textFieldBorderColorLight = Color((0xFFE5E5E5))
 private val textFieldBorderColorDark = Color((0xFFE5E5E5))
+
+val sendButtonColor
+	@Composable
+	get() = if (isSystemInDarkTheme()) {
+		sendButtonColorDark
+	} else {
+		sendButtonColorLight
+	}
+private val sendButtonColorLight = Color((0xFF3797f0))
+private val sendButtonColorDark = Color((0xFF3797f0))
 
 val Purple900 = Color(0xFF4A148C)
 val Purple500 = Color(0xFF9C27B0)
