@@ -219,8 +219,6 @@ pub struct CreateListingRequest {
     pub address_city: String,
     pub address_postalcode: String,
     pub address_country: String,
-    pub longitude: f32,
-    pub latitude: f32,
     pub price: i32,
     pub rooms_available: i32,
     pub rooms_total: i32,
@@ -236,15 +234,21 @@ pub struct CreateListingRequest {
 }
 
 impl CreateListingRequest {
-    pub fn try_into_new_listing<'a>(&'a self, listing_id: i32, user_id: i32) -> Result<NewListing<'a>, ServiceError> {
+    pub fn try_into_new_listing<'a>(
+        &'a self,
+        listing_id: i32,
+        user_id: i32,
+        latitude: f32,
+        longitude: f32,
+    ) -> Result<NewListing<'a>, ServiceError> {
         Ok(NewListing {
             listing_id,
             address_line: &self.address_line,
             address_city: &self.address_city,
             address_postalcode: &self.address_postalcode,
             address_country: &self.address_country,
-            longitude: self.longitude,
-            latitude: self.latitude,
+            longitude,
+            latitude,
             price: self.price.into(),
             rooms_available: self.rooms_available.into(),
             rooms_total: self.rooms_total.into(),

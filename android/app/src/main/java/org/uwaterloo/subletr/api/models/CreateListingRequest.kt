@@ -27,8 +27,6 @@ import com.squareup.moshi.JsonClass
  * @param addressCity 
  * @param addressPostalcode 
  * @param addressCountry 
- * @param longitude 
- * @param latitude 
  * @param price 
  * @param roomsAvailable 
  * @param roomsTotal 
@@ -57,12 +55,6 @@ data class CreateListingRequest (
 
     @Json(name = "address_country")
     val addressCountry: kotlin.String,
-
-    @Json(name = "longitude")
-    val longitude: kotlin.Float,
-
-    @Json(name = "latitude")
-    val latitude: kotlin.Float,
 
     @Json(name = "price")
     val price: kotlin.Int,

@@ -59,8 +59,11 @@ fn listings_create(
 
     let listing_id: i32 = rand::thread_rng().gen();
 
+    let latitude = todo!();
+    let longitude = todo!();
+
     diesel::insert_into(listings::table)
-        .values(&listing_request.try_into_new_listing(listing_id, user.user_id)?)
+        .values(&listing_request.try_into_new_listing(listing_id, user.user_id, latitude, longitude)?)
         .execute(&mut dbcon)?;
 
     for img_id in &listing_request.img_ids {
