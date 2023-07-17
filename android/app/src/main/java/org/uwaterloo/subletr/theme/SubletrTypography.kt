@@ -91,6 +91,61 @@ val timeToDestinationFont
 		textAlign = TextAlign.Center
 	)
 
+val myChatBubbleFont
+	@Composable
+	get() = TextStyle(
+		color = textOnSubletrPink,
+		fontFamily = FontFamily.Default,
+		fontWeight = FontWeight.Normal,
+		fontSize = 16.sp,
+		letterSpacing = 0.sp,
+		textAlign = TextAlign.Center,
+	)
+
+val otherChatBubbleFont
+	@Composable
+	get() = TextStyle(
+		color = primaryTextColor,
+		fontFamily = FontFamily.Default,
+		fontWeight = FontWeight.Normal,
+		fontSize = 16.sp,
+		letterSpacing = 0.sp,
+		textAlign = TextAlign.Center,
+	)
+
+val avatarTextFont
+	@Composable
+	get() = TextStyle(
+		color = primaryTextColor,
+		fontFamily = FontFamily.Default,
+		fontWeight = FontWeight.Normal,
+		fontSize = 20.sp,
+		letterSpacing = 0.sp,
+		textAlign = TextAlign.Center,
+	)
+
+val headerPrimaryTitle
+	@Composable
+	get() = TextStyle(
+		color = primaryTextColor,
+		fontFamily = FontFamily.Default,
+		fontWeight = FontWeight.Bold,
+		fontSize = 16.sp,
+		letterSpacing = 0.sp,
+		textAlign = TextAlign.Center,
+	)
+
+val headerSecondaryTitle
+	@Composable
+	get() = TextStyle(
+		color = primaryTextColor,
+		fontFamily = FontFamily.Default,
+		fontWeight = FontWeight.Normal,
+		fontSize = 12.sp,
+		letterSpacing = 0.sp,
+		textAlign = TextAlign.Center,
+	)
+
 val SubletrTypography = Typography(
 	bodyLarge = TextStyle(
 		color = Color.Black,
