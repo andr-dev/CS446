@@ -28,7 +28,7 @@ import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import org.uwaterloo.subletr.R
-import org.uwaterloo.subletr.pages.home.list.HomeListUiState
+import org.uwaterloo.subletr.pages.home.HomePageUiState
 import org.uwaterloo.subletr.theme.SubletrLightColorScheme
 import org.uwaterloo.subletr.theme.darkerGrayButtonColor
 import org.uwaterloo.subletr.theme.filterBoldFont
@@ -42,8 +42,8 @@ const val MAX_LOCATION_RANGE = 50
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun LocationFilter(
-	currentLocationRange: HomeListUiState.LocationRange,
-	updateLocationFilter: (HomeListUiState.LocationRange) -> Unit,
+	currentLocationRange: HomePageUiState.LocationRange,
+	updateLocationFilter: (HomePageUiState.LocationRange) -> Unit,
 	closeAction: () -> Unit,
 ) {
 	val lowerBound =
@@ -201,7 +201,7 @@ fun LocationFilter(
 		updateFilterAndClose = {
 			if (!lowerTextFieldError && !upperTextFieldError) {
 				updateLocationFilter(
-					HomeListUiState.LocationRange(
+					HomePageUiState.LocationRange(
 						lowerBoundText.toIntOrNull(),
 						upperboundText.toIntOrNull(),
 					)

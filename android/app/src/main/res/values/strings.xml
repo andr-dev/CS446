@@ -136,6 +136,17 @@
     <string name="five_plus">5+</string>
     <string name="roommate_preference">Roommate Preference</string>
     <string name="all_filters">All Filters</string>
+    <string name="address_city_postal_code">Address, City, Postal Code</string>
+    <string name="search">Search</string>
+    <string name="my_location">My Location</string>
+    <string name="walk">Walk</string>
+    <string name="bike">Bike</string>
+    <string name="bus">Bus</string>
+    <string name="all_transport">All Transport</string>
+    <string name="google_maps_view">Google Maps View</string>
+    <string name="time_to_destination_integer_minutes">Time to destination: &lt; %d minutes</string>
+    <string name="n_minutes">%d minutes</string>
+    <string name="time">Time</string>
     <string name="dates">Dates</string>
     <string name="only_show_favourites">Only show favourites</string>
 </resources>

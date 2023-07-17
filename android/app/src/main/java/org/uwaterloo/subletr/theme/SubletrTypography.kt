@@ -81,6 +81,16 @@ val filterRegularFont
 		textAlign = TextAlign.Center
 	)
 
+val timeToDestinationFont
+	@Composable
+	get() = TextStyle(
+		fontFamily = FontFamily.Default,
+		fontWeight = FontWeight.Normal,
+		fontSize = 18.sp,
+		letterSpacing = 0.sp,
+		textAlign = TextAlign.Center
+	)
+
 val SubletrTypography = Typography(
 	bodyLarge = TextStyle(
 		color = Color.Black,

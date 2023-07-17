@@ -1,13 +1,11 @@
 package org.uwaterloo.subletr.pages.home.list.components
 
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.material3.Divider
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -20,13 +18,13 @@ import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import org.uwaterloo.subletr.R
-import org.uwaterloo.subletr.pages.home.list.HomeListUiState
+import org.uwaterloo.subletr.pages.home.HomePageUiState
 import org.uwaterloo.subletr.theme.secondaryTextColor
 
 @Composable
 fun PriceFilter(
-	currentPriceRange: HomeListUiState.PriceRange,
-	updatePriceFilter: (HomeListUiState.PriceRange) -> Unit,
+	currentPriceRange: HomePageUiState.PriceRange,
+	updatePriceFilter: (HomePageUiState.PriceRange) -> Unit,
 	closeAction: () -> Unit,
 ) {
 	var lowerBoundText by remember {
@@ -99,7 +97,7 @@ fun PriceFilter(
 		updateFilterAndClose = {
 			if (!lowerTextFieldError && !upperTextFieldError) {
 				updatePriceFilter(
-					HomeListUiState.PriceRange(
+					HomePageUiState.PriceRange(
 						lowerBoundText.toIntOrNull(),
 						upperboundText.toIntOrNull()
 					)

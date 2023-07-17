@@ -21,7 +21,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import org.uwaterloo.subletr.R
 import org.uwaterloo.subletr.components.switch.PrimarySwitch
-import org.uwaterloo.subletr.pages.home.list.HomeListUiState
+import org.uwaterloo.subletr.pages.home.HomePageUiState
 import org.uwaterloo.subletr.theme.filterRegularFont
 import org.uwaterloo.subletr.theme.secondaryButtonBackgroundColor
 import org.uwaterloo.subletr.theme.secondaryTextColor
@@ -30,8 +30,8 @@ import org.uwaterloo.subletr.theme.textOnSubletrPink
 
 @Composable
 fun RoomFilter(
-	currentRoomRange: HomeListUiState.RoomRange,
-	updateRoomFilter: (HomeListUiState.RoomRange) -> Unit,
+	currentRoomRange: HomePageUiState.RoomRange,
+	updateRoomFilter: (HomePageUiState.RoomRange) -> Unit,
 	closeAction: () -> Unit,
 ) {
 	var bedroomForSublet by remember {
@@ -215,7 +215,7 @@ fun RoomFilter(
 		},
 		updateFilterAndClose = {
 			updateRoomFilter(
-				HomeListUiState.RoomRange(
+				HomePageUiState.RoomRange(
 					bedroomForSublet = bedroomForSublet,
 					bedroomInProperty = bedroomInProperty,
 					bathroom = bathroom,
