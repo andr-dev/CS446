@@ -5,7 +5,8 @@ use rocket_okapi::{openapi, openapi_get_routes_spec};
 use tokio::sync::RwLockWriteGuard;
 
 use super::{
-    model::geocode::{ReverseGeocodeRequest, ReverseGeocodeResponse},
+    model::geocode::{ForwardGeocodeRequest, ForwardGeocodeResponse},
+    token::AuthenticatedUser,
     utils::format_address,
 };
 use crate::{
@@ -14,14 +15,14 @@ use crate::{
     state::AppState,
 };
 
-pub async fn address_reverse(
+pub async fn geocode_address(
     opencage: RwLockWriteGuard<'_, Opencage<'_>>,
     address: String,
-) -> Result<ReverseGeocodeResponse, ServiceError> {
+) -> Result<ForwardGeocodeResponse, ServiceError> {
     let response: Vec<Point> = opencage.forward(&address).await?;
 
     if let Some(point) = response.first() {
-        Ok(ReverseGeocodeResponse {
+        Ok(ForwardGeocodeResponse {
             latitude: point.0.y as f32,
             longitude: point.0.x as f32,
         })
@@ -31,11 +32,12 @@ pub async fn address_reverse(
 }
 
 #[openapi(tag = "Geocode")]
-#[get("/reverse?<geocode_request..>")]
-async fn reverse_geocode(
+#[get("/forward?<geocode_request..>")]
+async fn forward_geocode(
     state: &State<AppState<'_>>,
-    geocode_request: ReverseGeocodeRequest,
-) -> ServiceResult<ReverseGeocodeResponse> {
+    _user: AuthenticatedUser,
+    geocode_request: ForwardGeocodeRequest,
+) -> ServiceResult<ForwardGeocodeResponse> {
     let opencage = state.opencage.write().await;
 
     let address = format_address(
@@ -45,9 +47,9 @@ async fn reverse_geocode(
         geocode_request.address_country,
     );
 
-    address_reverse(opencage, address).await.map(|resp| Json(resp))
+    geocode_address(opencage, address).await.map(|resp| Json(resp))
 }
 
 pub fn routes() -> (Vec<Route>, OpenApi) {
-    openapi_get_routes_spec![reverse_geocode]
+    openapi_get_routes_spec![forward_geocode]
 }
