@@ -139,6 +139,14 @@
     <string name="five_plus">5+</string>
     <string name="roommate_preference">Roommate Preference</string>
     <string name="all_filters">All Filters</string>
+    <string name="watcard_verification">Watcard Verification</string>
+    <string name="watcard_verification_txt2">verify you are a student</string>
+    <string name="watcard_verification_txt1">Please upload your watcard to</string>
+    <string name="submit">Submit</string>
+    <string name="add_watcard">Add Watcard</string>
+    <string name="cancel">Cancel</string>
+    <string name="plus">+</string>
+    <string name="pending_verification">Pending Verification ...</string>
     <string name="address_city_postal_code">Address, City, Postal Code</string>
     <string name="search">Search</string>
     <string name="my_location">My Location</string>
@@ -158,7 +166,6 @@
     <string name="full_name">Full name</string>
     <string name="edit">edit</string>
     <string name="save">Save</string>
-    <string name="cancel">Cancel</string>
     <string name="prefer_not_to_say">Prefer not to say</string>
     <string name="other_gender">Other gender</string>
     <string name="personal_info">Personal information</string>
@@ -182,14 +189,12 @@
     <string name="listing">"Listing"</string>
     <string name="leave_a_review">"Leave a review"</string>
     <string name="submit_rating">"Submit rating"</string>
-    <string name="watcard_verification">Watcard Verification</string>
     <string name="upload_image">Upload Image</string>
     <string name="no_watcard_uploaded">No Watcard Uploaded</string>
     <string name="about_sublessor">"About the sublessor "</string>
     <string name="verified_student_short">"Verified student"</string>
     <string name="map">"Map"</string>
     <string name="rating">"Rating"</string>
-
 
 
 </resources>
