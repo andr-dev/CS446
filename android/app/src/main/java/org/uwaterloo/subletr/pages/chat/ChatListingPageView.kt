@@ -4,6 +4,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
@@ -18,6 +19,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
 import org.uwaterloo.subletr.theme.textOnSubletrPink
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -32,6 +34,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
 import org.uwaterloo.subletr.R
 import org.uwaterloo.subletr.pages.account.AccountPageUiState
+import org.uwaterloo.subletr.pages.home.ViewSwitch
 import org.uwaterloo.subletr.pages.home.list.HomeListUiState
 import org.uwaterloo.subletr.services.NavigationService
 import org.uwaterloo.subletr.theme.SubletrTheme
@@ -58,40 +61,45 @@ fun ChatListingPageView(
 			CircularProgressIndicator()
 		}
 	} else if (uiState is ChatListingPageUiState.Loaded) {
-		LazyColumn(modifier = modifier) {
-			item {
-				Box(
+		Scaffold(
+			modifier = modifier,
+			topBar = {
+				Row(
 					modifier = Modifier
-						.fillMaxWidth()
-						.height(dimensionResource(id = R.dimen.xxl))
-						.padding(horizontal = dimensionResource(id = R.dimen.s))
-						.background(Color.Transparent),
-					contentAlignment = Alignment.BottomStart,
+						.fillMaxWidth(1.0f)
+						.padding(
+							start = dimensionResource(id = R.dimen.s),
+						),
+					verticalAlignment = Alignment.CenterVertically,
 				) {
 					Text(
-						stringResource(id = R.string.messages),
+						text = stringResource(id = R.string.messages),
 						style = MaterialTheme.typography.titleMedium,
 					)
 				}
-			}
-			item {
-				DisplayEntries(uiState.contacts)
-			}
-		}
-		if (uiState.contacts.isEmpty()) {
-			Column(
-				modifier = modifier
-					.fillMaxSize()
-					.background(Color.Transparent),
-				horizontalAlignment = Alignment.CenterHorizontally,
-				verticalArrangement = Arrangement.Center,
-			) {
-				Text(
-					stringResource(id = R.string.empty_chat),
-					color = primaryTextColor,
-				)
-			}
-		}
+			},
+			content = { padding: PaddingValues ->
+
+				if (uiState.contacts.isEmpty()) {
+					Column(
+						modifier = modifier
+							.fillMaxSize()
+							.padding(padding)
+							.background(Color.Transparent),
+						horizontalAlignment = Alignment.CenterHorizontally,
+						verticalArrangement = Arrangement.Center,
+					) {
+						Text(
+							stringResource(id = R.string.empty_chat),
+							color = primaryTextColor,
+						)
+					}
+				} else {
+					Column(modifier = modifier.padding(padding)) {
+						DisplayEntries(uiState.contacts)
+					}
+				}
+			})
 	}
 }
 
@@ -195,11 +203,13 @@ fun ChatListLoadingPreview() {
 @Preview(showBackground = true)
 @Composable
 fun ChatListLoadedPreview() {
+	val contact : Contact = Contact("Alex Lin", List(1){"test dialog"}, true)
+	val contacts = List(2){contact }
 	SubletrTheme {
 		ChatListingPageView(
 			modifier = Modifier,
 			viewModel = ChatListingPageViewModel(NavigationService()),
-			uiState = ChatListingPageUiState.Loaded(contacts = emptyList())
+			uiState = ChatListingPageUiState.Loaded(contacts = contacts)
 		)
 	}
 }
