@@ -14,7 +14,7 @@ import org.uwaterloo.subletr.api.models.ListingSummary
 import org.uwaterloo.subletr.enums.Gender
 import org.uwaterloo.subletr.enums.HousingType
 import org.uwaterloo.subletr.infrastructure.SubletrChildViewModel
-import org.uwaterloo.subletr.services.ILocationService
+import org.uwaterloo.subletr.pages.home.HomePageUiState
 import org.uwaterloo.subletr.services.INavigationService
 import org.uwaterloo.subletr.utils.UWATERLOO_LATITUDE
 import org.uwaterloo.subletr.utils.UWATERLOO_LONGITUDE
@@ -26,16 +26,15 @@ import kotlin.jvm.optionals.getOrNull
 class HomeListChildViewModel @Inject constructor(
 	private val listingsApi: ListingsApi,
 	private val navigationService: INavigationService,
-	private val locationService: ILocationService,
 ) : SubletrChildViewModel<HomeListUiState>() {
 	val navHostController: NavHostController get() = navigationService.navHostController
 
-	val locationRangeFilterStream: BehaviorSubject<HomeListUiState.LocationRange> =
-		BehaviorSubject.createDefault(HomeListUiState.LocationRange())
-	val priceRangeFilterStream: BehaviorSubject<HomeListUiState.PriceRange> =
-		BehaviorSubject.createDefault(HomeListUiState.PriceRange())
-	val roomRangeFilterStream: BehaviorSubject<HomeListUiState.RoomRange> =
-		BehaviorSubject.createDefault(HomeListUiState.RoomRange())
+	val locationRangeFilterStream: BehaviorSubject<HomePageUiState.LocationRange> =
+		BehaviorSubject.createDefault(HomePageUiState.LocationRange())
+	val priceRangeFilterStream: BehaviorSubject<HomePageUiState.PriceRange> =
+		BehaviorSubject.createDefault(HomePageUiState.PriceRange())
+	val roomRangeFilterStream: BehaviorSubject<HomePageUiState.RoomRange> =
+		BehaviorSubject.createDefault(HomePageUiState.RoomRange())
 	val genderFilterStream: BehaviorSubject<Gender> =
 		BehaviorSubject.createDefault(Gender.OTHER)
 	val houseTypeFilterStream: BehaviorSubject<HousingType> =
@@ -48,7 +47,7 @@ class HomeListChildViewModel @Inject constructor(
 	val listingPagingParamsStream: BehaviorSubject<ListingPagingParams> =
 		BehaviorSubject.createDefault(
 			ListingPagingParams(
-				previousListingItemsModel = HomeListUiState.ListingItemsModel(
+				previousListingItemsModel = HomePageUiState.ListingItemsModel(
 					listings = mutableListOf(),
 					likedListings = mutableSetOf(),
 					listingsImages = mutableListOf(),
@@ -88,7 +87,6 @@ class HomeListChildViewModel @Inject constructor(
 			ListingParamsAndResultResponse(
 				listingParams = getListingParams,
 				listingsResponse = runCatching {
-
 					runBlocking {
 						// TODO: Change to use filter values + latitude + longitude
 						listingsApi.listingsList(
@@ -162,12 +160,12 @@ class HomeListChildViewModel @Inject constructor(
 		.observeOn(Schedulers.io())
 		.onErrorResumeWith(Observable.never())
 
-	private val listingItemsStream: Observable<HomeListUiState.ListingItemsModel> =
+	private val listingItemsStream: Observable<HomePageUiState.ListingItemsModel> =
 		Observable.combineLatest(
 			listingsStream,
 			imagesStream
 		) { listingParamsAndResponse, images ->
-			HomeListUiState.ListingItemsModel(
+			HomePageUiState.ListingItemsModel(
 				listings = listingParamsAndResponse.listingParams.listingPagingParams.previousListingItemsModel.listings +
 					listingParamsAndResponse.listingsResponse.listings,
 				likedListings = listingParamsAndResponse.listingParams.listingPagingParams.previousListingItemsModel.likedListings +
@@ -190,10 +188,10 @@ class HomeListChildViewModel @Inject constructor(
 		favouriteFilterStream,
 		infoTextStringIdStream,
 		) {
-			locationRange: HomeListUiState.LocationRange,
-			priceRange: HomeListUiState.PriceRange,
-			roomRange: HomeListUiState.RoomRange,
-			listings: HomeListUiState.ListingItemsModel,
+			locationRange: HomePageUiState.LocationRange,
+			priceRange: HomePageUiState.PriceRange,
+			roomRange: HomePageUiState.RoomRange,
+			listings: HomePageUiState.ListingItemsModel,
 			genderPreference: Gender,
 			houseTypePreference: HousingType,
 			dateRange: HomeListUiState.DateRange,
@@ -223,18 +221,18 @@ class HomeListChildViewModel @Inject constructor(
 	}
 
 	data class GetListingParams(
-		val locationRange: HomeListUiState.LocationRange,
-		val priceRange: HomeListUiState.PriceRange,
-		val roomRange: HomeListUiState.RoomRange,
+		val locationRange: HomePageUiState.LocationRange,
+		val priceRange: HomePageUiState.PriceRange,
+		val roomRange: HomePageUiState.RoomRange,
 		val gender: Gender,
 		val housingType: HousingType,
 		val dateRange: HomeListUiState.DateRange,
 		val filterFavourite: Boolean,
 		val listingPagingParams: ListingPagingParams,
-		)
+	)
 
 	data class ListingPagingParams(
-		val previousListingItemsModel: HomeListUiState.ListingItemsModel,
+		val previousListingItemsModel: HomePageUiState.ListingItemsModel,
 		val pageNumber: Int,
 	)
 

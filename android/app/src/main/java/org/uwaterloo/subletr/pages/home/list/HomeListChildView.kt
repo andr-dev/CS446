@@ -57,6 +57,7 @@ import org.uwaterloo.subletr.enums.FilterType
 import org.uwaterloo.subletr.enums.Gender
 import org.uwaterloo.subletr.enums.HousingType
 import org.uwaterloo.subletr.navigation.NavigationDestination
+import org.uwaterloo.subletr.pages.home.HomePageUiState
 import org.uwaterloo.subletr.pages.home.list.components.DateFilter
 import org.uwaterloo.subletr.pages.home.list.components.FavouriteFilter
 import org.uwaterloo.subletr.pages.home.list.components.ListingPost
@@ -65,7 +66,6 @@ import org.uwaterloo.subletr.pages.home.list.components.PriceFilter
 import org.uwaterloo.subletr.pages.home.list.components.PropertyTypeFilter
 import org.uwaterloo.subletr.pages.home.list.components.RoomFilter
 import org.uwaterloo.subletr.pages.home.list.components.RoommateFilter
-import org.uwaterloo.subletr.services.LocationService
 import org.uwaterloo.subletr.services.NavigationService
 import org.uwaterloo.subletr.theme.SubletrTheme
 import org.uwaterloo.subletr.theme.filterTextFont
@@ -124,15 +124,15 @@ fun HomeListChildView(
 			}
 		}
 
-		fun updateLocationFilter(newVal: HomeListUiState.LocationRange) {
+		fun updateLocationFilter(newVal: HomePageUiState.LocationRange) {
 			viewModel.locationRangeFilterStream.onNext(newVal)
 		}
 
-		fun updatePriceFilter(newVal: HomeListUiState.PriceRange) {
+		fun updatePriceFilter(newVal: HomePageUiState.PriceRange) {
 			viewModel.priceRangeFilterStream.onNext(newVal)
 		}
 
-		fun updateRoomFilter(newVal: HomeListUiState.RoomRange) {
+		fun updateRoomFilter(newVal: HomePageUiState.RoomRange) {
 			viewModel.roomRangeFilterStream.onNext(newVal)
 		}
 
@@ -429,13 +429,12 @@ private fun HomeListViewPreview() {
 			viewModel = HomeListChildViewModel(
 				ListingsApi(),
 				NavigationService(context = LocalContext.current),
-				LocationService(context = LocalContext.current),
 			),
 			uiState = HomeListUiState.Loaded(
-				locationRange = HomeListUiState.LocationRange(null, null),
-				priceRange = HomeListUiState.PriceRange(null, null),
-				roomRange = HomeListUiState.RoomRange(),
-				listingItems = HomeListUiState.ListingItemsModel(
+				locationRange = HomePageUiState.LocationRange(null, null),
+				priceRange = HomePageUiState.PriceRange(null, null),
+				roomRange = HomePageUiState.RoomRange(),
+				listingItems = HomePageUiState.ListingItemsModel(
 					listings = emptyList(),
 					likedListings = emptySet(),
 					listingsImages = emptyList(),
@@ -445,8 +444,7 @@ private fun HomeListViewPreview() {
 				dateRange = HomeListUiState.DateRange(),
 				infoTextStringId = null,
 				filterFavourite = false,
-
-				)
+			)
 		)
 	}
 }
