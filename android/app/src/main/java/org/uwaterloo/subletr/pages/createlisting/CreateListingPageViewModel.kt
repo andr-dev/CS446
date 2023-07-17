@@ -110,7 +110,6 @@ class CreateListingPageViewModel @Inject constructor(
 						}
 					}.awaitAll()
 
-					val location = locationService.getLocation()
 					listingsApi.listingsCreate(
 						CreateListingRequest(
 							addressLine = it.address.addressLine,
@@ -129,7 +128,7 @@ class CreateListingPageViewModel @Inject constructor(
 							bathroomsTotal = 0,
 							roomsAvailable = 0,
 							roomsTotal = 0,
-							gender = Resources.getSystem().getString(Gender.OTHER.stringId),
+							gender = "Female",
 						)
 					)
 				}
