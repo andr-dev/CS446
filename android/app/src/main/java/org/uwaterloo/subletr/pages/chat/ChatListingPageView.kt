@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.CircularProgressIndicator
@@ -95,8 +96,10 @@ fun ChatListingPageView(
 						)
 					}
 				} else {
-					Column(modifier = modifier.padding(padding)) {
-						DisplayEntries(uiState.contacts)
+					LazyColumn(modifier = modifier.padding(padding)) {
+						items(items = uiState.contacts) { contact: Contact ->
+							ListItem(contact = contact)
+						}
 					}
 				}
 			}
@@ -105,7 +108,9 @@ fun ChatListingPageView(
 }
 
 @Composable
-fun ListItem(name : String, lastMsg : String) {
+fun ListItem(contact : Contact) {
+	val name = contact.name
+	val lastMsg = contact.msg.last()
 	Box(
 		modifier = Modifier
 			.padding(
@@ -134,7 +139,10 @@ fun ListItem(name : String, lastMsg : String) {
 				Text(text = lastMsg,
 					style = MaterialTheme.typography.bodySmall)
 			}
-			Notification()
+			if (contact.unread > 0) {
+				Notification(contact.unread)
+			}
+			
 		}
 	}
 }
@@ -182,13 +190,6 @@ fun Notification(n : Int = 1) {
 				style = MaterialTheme.typography.labelLarge,
 			)
 		}
-	}
-}
-
-@Composable
-fun DisplayEntries(contacts : List<Contact>) {
-	contacts.forEach { contact ->
-		ListItem(name = contact.name, lastMsg = contact.msg.last())
 	}
 }
 

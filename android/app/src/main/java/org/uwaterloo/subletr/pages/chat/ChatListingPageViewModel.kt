@@ -19,5 +19,5 @@ class ChatListingPageViewModel @Inject constructor(
 data class Contact(
 	var name: String,
 	var msg: List<String>,
-	var unread : Boolean,
+	var unread : Int,
 )
