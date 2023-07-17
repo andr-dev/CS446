@@ -17,6 +17,8 @@ import org.uwaterloo.subletr.infrastructure.SubletrViewModel
 import org.uwaterloo.subletr.navigation.NavigationDestination
 import org.uwaterloo.subletr.services.ILocationService
 import org.uwaterloo.subletr.services.INavigationService
+import org.uwaterloo.subletr.utils.UWATERLOO_LATITUDE
+import org.uwaterloo.subletr.utils.UWATERLOO_LONGITUDE
 import org.uwaterloo.subletr.utils.base64ToBitmap
 import javax.inject.Inject
 
@@ -39,12 +41,11 @@ class ListingDetailsPageViewModel @Inject constructor(
 	private val listingDetailsStream: Observable<Result<ListingDetails>> = listingIdStream.map {
 		runCatching {
 			runBlocking {
-				val location = locationService.getLocation()
 				val listing =
 					listingsApi.listingsDetails(
 						listingId = it,
-						longitude = location!!.longitude.toFloat(),
-						latitude = location.latitude.toFloat()
+						longitude = UWATERLOO_LONGITUDE,
+						latitude = UWATERLOO_LATITUDE,
 					)
 				favouritedStream.onNext(listing.favourited)
 				imageIdsStream.onNext(listing.details.imgIds)

@@ -19,6 +19,8 @@ import org.uwaterloo.subletr.infrastructure.SubletrChildViewModel
 import org.uwaterloo.subletr.navigation.NavigationDestination
 import org.uwaterloo.subletr.services.ILocationService
 import org.uwaterloo.subletr.services.INavigationService
+import org.uwaterloo.subletr.utils.UWATERLOO_LATITUDE
+import org.uwaterloo.subletr.utils.UWATERLOO_LONGITUDE
 import org.uwaterloo.subletr.utils.base64ToBitmap
 import java.util.Optional
 import javax.inject.Inject
@@ -87,12 +89,14 @@ class HomeListChildViewModel @Inject constructor(
 					runBlocking {
 						// TODO: Change to use filter values + latitude + longitude
 						listingsApi.listingsList(
-							longitude = 0f,
-							latitude = 0f,
+							longitude = UWATERLOO_LONGITUDE,
+							latitude = UWATERLOO_LATITUDE,
 							pageNumber = getListingParams.listingPagingParams.pageNumber,
 							pageSize = LISTING_PAGE_SIZE,
-							distanceMetersMin = getListingParams.locationRange.lowerBound?.toFloat(),
-							distanceMetersMax = getListingParams.locationRange.upperBound?.toFloat(),
+							distanceMetersMin = getListingParams.locationRange.lowerBound?.let{
+								it.toFloat() } ?: null,
+							distanceMetersMax = getListingParams.locationRange.upperBound?.let{
+								it.toFloat() } ?: null,
 							priceMin = getListingParams.priceRange.lowerBound,
 							priceMax = getListingParams.priceRange.upperBound,
 							roomsAvailableMin = getListingParams.roomRange.bedroomForSublet,
@@ -130,7 +134,7 @@ class HomeListChildViewModel @Inject constructor(
 							pages = 0,
 							liked = emptySet(),
 						)
-					)
+					),
 			)
 		}
 		.onErrorResumeWith(Observable.never())
