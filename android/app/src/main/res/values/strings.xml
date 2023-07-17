@@ -182,6 +182,9 @@
     <string name="listing">"Listing"</string>
     <string name="leave_a_review">"Leave a review"</string>
     <string name="submit_rating">"Submit rating"</string>
+    <string name="watcard_verification">Watcard Verification</string>
+    <string name="upload_image">Upload Image</string>
+    <string name="no_watcard_uploaded">No Watcard Uploaded</string>
     <string name="about_sublessor">"About the sublessor "</string>
     <string name="verified_student_short">"Verified student"</string>
     <string name="map">"Map"</string>

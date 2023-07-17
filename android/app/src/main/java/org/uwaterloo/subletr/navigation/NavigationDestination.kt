@@ -14,6 +14,9 @@ enum class NavigationDestination(
 	CREATE_ACCOUNT(
 		rootNavPath = "createaccount",
 	),
+	VERIFY_WATCARD(
+		rootNavPath = "verifywatcard",
+	),
 	VERIFY_EMAIL(
 		rootNavPath = "verifyemail",
 		fullNavPath = "verifyemail/{userId}",
