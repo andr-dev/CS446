@@ -19,6 +19,7 @@ import org.uwaterloo.subletr.pages.home.HomePageView
 import org.uwaterloo.subletr.pages.individualchat.IndividualChatPageView
 import org.uwaterloo.subletr.pages.listingdetails.ListingDetailsPageView
 import org.uwaterloo.subletr.pages.login.LoginPageView
+import org.uwaterloo.subletr.pages.watcardverification.WatcardVerificationPageView
 import org.uwaterloo.subletr.pages.profile.ProfilePageView
 
 @Composable
@@ -41,6 +42,11 @@ fun MainNavigation(
 		}
 		composable(NavigationDestination.CREATE_ACCOUNT.fullNavPath) {
 			CreateAccountPageView(
+				modifier = modifier,
+			)
+		}
+		composable(NavigationDestination.VERIFY_WATCARD.rootNavPath) {
+			WatcardVerificationPageView(
 				modifier = modifier,
 			)
 		}
