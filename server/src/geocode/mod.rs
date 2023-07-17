@@ -1,0 +1,138 @@
+//! Modified from https://raw.githubusercontent.com/georust/geocoding/master/src/lib.rs
+use std::{fmt::Debug, num::ParseIntError};
+
+use geo_types::Point;
+use num_traits::Float;
+use reqwest::header::ToStrError;
+use rocket::async_trait;
+use thiserror::Error;
+
+pub mod opencage;
+
+static UA_STRING: &str = "Rust-Geocoding";
+
+/// Errors that can occur during geocoding operations
+#[derive(Error, Debug)]
+pub enum GeocodingError {
+    #[error("Forward geocoding failed")]
+    Forward,
+    #[error("Reverse geocoding failed")]
+    Reverse,
+    #[error("HTTP request error")]
+    Request(#[from] reqwest::Error),
+    #[error("Error converting headers to String")]
+    HeaderConversion(#[from] ToStrError),
+    #[error("Error converting int to String")]
+    ParseInt(#[from] ParseIntError),
+}
+
+/// Reverse-geocode a coordinate.
+///
+/// This trait represents the most simple and minimal implementation
+/// available from a given geocoding provider: some address formatted as
+/// Option<String>.
+///
+/// Examples
+///
+/// ```
+/// use geocoding::{Opencage, Point, Reverse};
+///
+/// let p = Point::new(2.12870, 41.40139);
+/// let oc = Opencage::new("dcdbf0d783374909b3debee728c7cc10".to_string());
+/// let res = oc.reverse(&p).unwrap();
+/// assert_eq!(
+///     res,
+///     Some("Carrer de Calatrava, 68, 08017 Barcelona, Spain".to_string())
+/// );
+/// ```
+#[async_trait]
+pub trait Reverse<T>
+where
+    T: Float + Debug,
+{
+    // NOTE TO IMPLEMENTERS: Point coordinates are lon, lat (x, y)
+    // You may have to provide these coordinates in reverse order,
+    // depending on the provider's requirements (see e.g. OpenCage)
+    async fn reverse(&self, point: &Point<T>) -> Result<Option<String>, GeocodingError>;
+}
+
+/// Forward-geocode a coordinate.
+///
+/// This trait represents the most simple and minimal implementation available
+/// from a given geocoding provider: It returns a `Vec` of zero or more
+/// `Points`.
+///
+/// Examples
+///
+/// ```
+/// use geocoding::{Coordinate, Forward, Opencage, Point};
+///
+/// let oc = Opencage::new("dcdbf0d783374909b3debee728c7cc10".to_string());
+/// let address = "Schwabing, München";
+/// let res: Vec<Point<f64>> = oc.forward(address).unwrap();
+/// assert_eq!(
+///     res,
+///     vec![Point(Coordinate { x: 11.5884858, y: 48.1700887 })]
+/// );
+/// ```
+
+#[async_trait]
+pub trait Forward<T>
+where
+    T: Float + Debug,
+{
+    // NOTE TO IMPLEMENTERS: while returned provider point data may not be in
+    // lon, lat (x, y) order, Geocoding requires this order in its output Point
+    // data. Please pay attention when using returned data to construct Points
+    async fn forward(&self, address: &str) -> Result<Vec<Point<T>>, GeocodingError>;
+}
+
+/// Used to specify a bounding box to search within when forward-geocoding
+///
+/// - `minimum` refers to the **bottom-left** or **south-west** corner of the
+///   bounding box
+/// - `maximum` refers to the **top-right** or **north-east** corner of the
+///   bounding box.
+#[derive(Copy, Clone, Debug)]
+pub struct InputBounds<T>
+where
+    T: Float + Debug,
+{
+    pub minimum_lonlat: Point<T>,
+    pub maximum_lonlat: Point<T>,
+}
+
+impl<T> InputBounds<T>
+where
+    T: Float + Debug,
+{
+    /// Create a new `InputBounds` struct by passing 2 `Point`s defining:
+    /// - minimum (bottom-left) longitude and latitude coordinates
+    /// - maximum (top-right) longitude and latitude coordinates
+    pub fn new<U>(minimum_lonlat: U, maximum_lonlat: U) -> InputBounds<T>
+    where
+        U: Into<Point<T>>,
+    {
+        InputBounds {
+            minimum_lonlat: minimum_lonlat.into(),
+            maximum_lonlat: maximum_lonlat.into(),
+        }
+    }
+}
+
+/// Convert borrowed input bounds into the correct String representation
+impl<T> From<InputBounds<T>> for String
+where
+    T: Float + Debug,
+{
+    fn from(ip: InputBounds<T>) -> String {
+        // Return in lon, lat order
+        format!(
+            "{},{},{},{}",
+            ip.minimum_lonlat.x().to_f64().unwrap(),
+            ip.minimum_lonlat.y().to_f64().unwrap(),
+            ip.maximum_lonlat.x().to_f64().unwrap(),
+            ip.maximum_lonlat.y().to_f64().unwrap()
+        )
+    }
+}

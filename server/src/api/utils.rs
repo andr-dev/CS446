@@ -11,6 +11,18 @@ pub(super) fn hash_password(password: &String) -> String {
     HEXLOWER.encode(context.finish().as_ref())
 }
 
+pub fn format_address(
+    address_line: String,
+    address_city: String,
+    address_postalcode: String,
+    address_country: String,
+) -> String {
+    format!(
+        "{}, {} {}, {}",
+        address_line, address_city, address_postalcode, address_country
+    )
+}
+
 /// Modified from (https://github.com/srishanbhattarai/geoutils)
 ///
 /// Compute the Vincenty Inverse formula on two points 'start' and 'end'.
