@@ -23,7 +23,6 @@ import org.uwaterloo.subletr.api.models.ChangePasswordUserRequest
 import org.uwaterloo.subletr.api.models.CreateUserRequest
 import org.uwaterloo.subletr.api.models.CreateUserResponse
 import org.uwaterloo.subletr.api.models.GetUserResponse
-import org.uwaterloo.subletr.api.models.Null
 import org.uwaterloo.subletr.api.models.RateUserRequest
 import org.uwaterloo.subletr.api.models.UpdateUserRequest
 
@@ -343,7 +342,7 @@ class UserApi(basePath: kotlin.String = defaultBasePath, client: OkHttpClient = 
      * 
      * 
      * @param rateUserRequest 
-     * @return Null
+     * @return kotlin.String
      * @throws IllegalStateException If the request is not correctly configured
      * @throws IOException Rethrows the OkHttp execute method exception
      * @throws UnsupportedOperationException If the API returns an informational or redirection response
@@ -352,11 +351,11 @@ class UserApi(basePath: kotlin.String = defaultBasePath, client: OkHttpClient = 
      */
     @Suppress("UNCHECKED_CAST")
     @Throws(IllegalStateException::class, IOException::class, UnsupportedOperationException::class, ClientException::class, ServerException::class)
-    suspend fun userRate(rateUserRequest: RateUserRequest) : Null = withContext(Dispatchers.IO) {
+    suspend fun userRate(rateUserRequest: RateUserRequest) : kotlin.String = withContext(Dispatchers.IO) {
         val localVarResponse = userRateWithHttpInfo(rateUserRequest = rateUserRequest)
 
         return@withContext when (localVarResponse.responseType) {
-            ResponseType.Success -> (localVarResponse as Success<*>).data as Null
+            ResponseType.Success -> (localVarResponse as Success<*>).data as kotlin.String
             ResponseType.Informational -> throw UnsupportedOperationException("Client does not support Informational responses.")
             ResponseType.Redirection -> throw UnsupportedOperationException("Client does not support Redirection responses.")
             ResponseType.ClientError -> {
@@ -374,16 +373,16 @@ class UserApi(basePath: kotlin.String = defaultBasePath, client: OkHttpClient = 
      * 
      * 
      * @param rateUserRequest 
-     * @return ApiResponse<Null?>
+     * @return ApiResponse<kotlin.String?>
      * @throws IllegalStateException If the request is not correctly configured
      * @throws IOException Rethrows the OkHttp execute method exception
      */
     @Suppress("UNCHECKED_CAST")
     @Throws(IllegalStateException::class, IOException::class)
-    suspend fun userRateWithHttpInfo(rateUserRequest: RateUserRequest) : ApiResponse<Null?> = withContext(Dispatchers.IO) {
+    suspend fun userRateWithHttpInfo(rateUserRequest: RateUserRequest) : ApiResponse<kotlin.String?> = withContext(Dispatchers.IO) {
         val localVariableConfig = userRateRequestConfig(rateUserRequest = rateUserRequest)
 
-        return@withContext request<RateUserRequest, Null>(
+        return@withContext request<RateUserRequest, kotlin.String>(
             localVariableConfig
         )
     }
