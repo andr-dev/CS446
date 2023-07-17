@@ -1,6 +1,5 @@
 package org.uwaterloo.subletr.pages.createlisting
 
-import android.content.res.Resources
 import android.graphics.Bitmap
 import android.util.Log
 import androidx.navigation.NavHostController
@@ -16,7 +15,6 @@ import org.uwaterloo.subletr.api.apis.ListingsApi
 import org.uwaterloo.subletr.api.models.CreateListingRequest
 import org.uwaterloo.subletr.api.models.ListingsImagesCreateRequest
 import org.uwaterloo.subletr.api.models.ResidenceType
-import org.uwaterloo.subletr.enums.Gender
 import org.uwaterloo.subletr.enums.HousingType
 import org.uwaterloo.subletr.infrastructure.SubletrViewModel
 import org.uwaterloo.subletr.services.ILocationService
@@ -56,7 +54,8 @@ class CreateListingPageViewModel @Inject constructor(
 	val startDateStream: BehaviorSubject<String> = BehaviorSubject.createDefault("")
 	val endDateStream: BehaviorSubject<String> = BehaviorSubject.createDefault("")
 
-	val imagesBitmapStream: BehaviorSubject<MutableList<Bitmap?>> = BehaviorSubject.createDefault(mutableListOf())
+	val imagesBitmapStream: BehaviorSubject<MutableList<Bitmap?>> =
+		BehaviorSubject.createDefault(mutableListOf())
 
 	private val imagesStream: Observable<List<String>> = imagesBitmapStream
 		.observeOn(Schedulers.computation())
@@ -78,8 +77,7 @@ class CreateListingPageViewModel @Inject constructor(
 		endDateStream,
 		imagesBitmapStream,
 		imagesStream,
-	) {
-			address, description, price, numBedrooms, startDate, endDate, imagesBitmap, images ->
+	) { address, description, price, numBedrooms, startDate, endDate, imagesBitmap, images ->
 		CreateListingPageUiState.Loaded(
 			address = address,
 			description = description,
@@ -93,7 +91,8 @@ class CreateListingPageViewModel @Inject constructor(
 		)
 	}
 
-	val createListingStream: PublishSubject<CreateListingPageUiState.Loaded> = PublishSubject.create()
+	val createListingStream: PublishSubject<CreateListingPageUiState.Loaded> =
+		PublishSubject.create()
 
 	init {
 		createListingStream.map {
@@ -109,7 +108,6 @@ class CreateListingPageViewModel @Inject constructor(
 						}
 					}.awaitAll()
 
-					val location = locationService.getLocation()
 					listingsApi.listingsCreate(
 						CreateListingRequest(
 							addressLine = it.address.addressLine,
@@ -122,15 +120,16 @@ class CreateListingPageViewModel @Inject constructor(
 							description = it.description,
 							residenceType = ResidenceType.house,
 							imgIds = imgIds,
-							latitude = location!!.latitude.toFloat(),
-							longitude = location.longitude.toFloat(),
+							roomsAvailable = it.numBedrooms,
+// TODO: ADDING LOCATION
+							latitude = 0f,
+							longitude = 0f,
 //							TODO: Update UI to allow the inputs of these newly added values
 							bathroomsAvailable = 0,
 							bathroomsEnsuite = 0,
 							bathroomsTotal = 0,
-							roomsAvailable = 0,
 							roomsTotal = 0,
-							gender = Resources.getSystem().getString(Gender.OTHER.stringId),
+							gender = "Female",
 						)
 					)
 				}

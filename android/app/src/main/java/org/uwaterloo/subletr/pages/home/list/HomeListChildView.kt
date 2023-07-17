@@ -63,6 +63,7 @@ import org.uwaterloo.subletr.pages.home.list.components.PriceFilter
 import org.uwaterloo.subletr.pages.home.list.components.PropertyTypeFilter
 import org.uwaterloo.subletr.pages.home.list.components.RoomFilter
 import org.uwaterloo.subletr.pages.home.list.components.RoommateFilter
+import org.uwaterloo.subletr.services.LocationService
 import org.uwaterloo.subletr.services.NavigationService
 import org.uwaterloo.subletr.theme.SubletrTheme
 import org.uwaterloo.subletr.theme.filterTextFont
@@ -403,6 +404,7 @@ private fun HomeListViewPreview() {
 			viewModel = HomeListChildViewModel(
 				ListingsApi(),
 				NavigationService(context = LocalContext.current),
+				LocationService(context = LocalContext.current),
 			),
 			uiState = HomeListUiState.Loaded(
 				locationRange = HomeListUiState.LocationRange(null, null),

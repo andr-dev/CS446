@@ -39,12 +39,12 @@ class ListingDetailsPageViewModel @Inject constructor(
 	private val listingDetailsStream: Observable<Result<ListingDetails>> = listingIdStream.map {
 		runCatching {
 			runBlocking {
-				val location = locationService.getLocation()
+//				TODO: Adding location
 				val listing =
 					listingsApi.listingsDetails(
 						listingId = it,
-						longitude = location!!.longitude.toFloat(),
-						latitude = location.latitude.toFloat()
+						longitude = 0f,
+						latitude = 0f,
 					)
 				favouritedStream.onNext(listing.favourited)
 				imageIdsStream.onNext(listing.details.imgIds)
