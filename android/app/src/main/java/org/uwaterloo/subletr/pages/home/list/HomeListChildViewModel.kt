@@ -1,7 +1,7 @@
 package org.uwaterloo.subletr.pages.home.list
 
-import android.content.res.Resources
 import android.graphics.Bitmap
+import android.util.Log
 import androidx.navigation.NavHostController
 import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.schedulers.Schedulers
@@ -15,7 +15,6 @@ import org.uwaterloo.subletr.api.models.ListingSummary
 import org.uwaterloo.subletr.enums.Gender
 import org.uwaterloo.subletr.enums.HousingType
 import org.uwaterloo.subletr.infrastructure.SubletrChildViewModel
-import org.uwaterloo.subletr.navigation.NavigationDestination
 import org.uwaterloo.subletr.services.ILocationService
 import org.uwaterloo.subletr.services.INavigationService
 import org.uwaterloo.subletr.utils.base64ToBitmap
@@ -82,13 +81,13 @@ class HomeListChildViewModel @Inject constructor(
 			ListingParamsAndResultResponse(
 				listingParams = getListingParams,
 				listingsResponse = runCatching {
-
 					runBlocking {
-						val location = locationService.getLocation()
+						Log.d("lowerBound",getListingParams.locationRange.lowerBound?.toFloat().toString())
 						// TODO: Change to use filter values
 						listingsApi.listingsList(
-							longitude = location!!.longitude.toFloat(),
-							latitude = location.latitude.toFloat(),
+//						TODO: ADDING LOCATION VALUE
+							longitude = 0f,
+							latitude = 0f,
 							pageNumber = getListingParams.listingPagingParams.pageNumber,
 							pageSize = LISTING_PAGE_SIZE,
 							distanceMetersMin = getListingParams.locationRange.lowerBound?.toFloat(),
@@ -105,8 +104,7 @@ class HomeListChildViewModel @Inject constructor(
 							bathroomsTotalMax = setMaxRoom(getListingParams.roomRange.bathroom),
 							bathroomsEnsuiteMin = if (getListingParams.roomRange.ensuiteBathroom) 1 else null,
 							bathroomsEnsuiteMax = null,
-							gender = Resources.getSystem()
-								.getString(getListingParams.gender.stringId),
+							gender = null,
 							leaseStart = null,
 							leaseEnd = null,
 						)
@@ -183,7 +181,6 @@ class HomeListChildViewModel @Inject constructor(
 		genderFilterStream,
 		houseTypeFilterStream,
 		infoTextStringIdStream,
-
 		) {
 			locationRange: HomeListUiState.LocationRange,
 			priceRange: HomeListUiState.PriceRange,
