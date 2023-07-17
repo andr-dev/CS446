@@ -8,7 +8,6 @@ import org.uwaterloo.subletr.infrastructure.SubletrViewModel
 
 @HiltViewModel
 class ChatListingPageViewModel @Inject constructor(
-	navigationService: INavigationService,
 ) : SubletrViewModel<ChatListingPageUiState>() {
 	override val uiStateStream: BehaviorSubject<ChatListingPageUiState> = BehaviorSubject.createDefault(
 		ChatListingPageUiState.Loaded(

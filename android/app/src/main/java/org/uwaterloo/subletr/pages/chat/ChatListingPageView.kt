@@ -38,6 +38,7 @@ import org.uwaterloo.subletr.pages.home.ViewSwitch
 import org.uwaterloo.subletr.pages.home.list.HomeListUiState
 import org.uwaterloo.subletr.services.NavigationService
 import org.uwaterloo.subletr.theme.SubletrTheme
+import org.uwaterloo.subletr.theme.notificationGreen
 import org.uwaterloo.subletr.theme.primaryTextColor
 import org.uwaterloo.subletr.theme.secondaryButtonBackgroundColor
 import org.uwaterloo.subletr.theme.subletrPink
@@ -79,7 +80,6 @@ fun ChatListingPageView(
 				}
 			},
 			content = { padding: PaddingValues ->
-
 				if (uiState.contacts.isEmpty()) {
 					Column(
 						modifier = modifier
@@ -99,7 +99,8 @@ fun ChatListingPageView(
 						DisplayEntries(uiState.contacts)
 					}
 				}
-			})
+			}
+		)
 	}
 }
 
@@ -119,25 +120,22 @@ fun ListItem(name : String, lastMsg : String) {
 				)
 			)
 			.background(secondaryButtonBackgroundColor),
-		) {
-			Row(verticalAlignment = Alignment.CenterVertically) {
-				Icon(name = name)
-				Column(
-					modifier = Modifier
-						.weight(1f)
-						.padding(vertical = dimensionResource(id = R.dimen.s)),
-					verticalArrangement = Arrangement.Center,
-				)
-
-				{
-					Text(text = name,
-						style = MaterialTheme.typography.titleSmall)
-					Text(text = lastMsg,
-						style = MaterialTheme.typography.bodySmall)
-				}
-				Notification()
+	) {
+		Row(verticalAlignment = Alignment.CenterVertically) {
+			Icon(name = name)
+			Column(
+				modifier = Modifier
+					.weight(1f)
+					.padding(vertical = dimensionResource(id = R.dimen.s)),
+				verticalArrangement = Arrangement.Center,
+			) {
+				Text(text = name,
+					style = MaterialTheme.typography.titleSmall)
+				Text(text = lastMsg,
+					style = MaterialTheme.typography.bodySmall)
 			}
-
+			Notification()
+		}
 	}
 }
 
@@ -175,7 +173,7 @@ fun Notification(n : Int = 1) {
 			modifier = Modifier
 				.width(dimensionResource(id = R.dimen.l))
 				.height(dimensionResource(id = R.dimen.l))
-				.background(Color(0xFF6ABC95)),
+				.background(notificationGreen),
 			contentAlignment = Alignment.Center,
 		) {
 			Text(
@@ -189,8 +187,8 @@ fun Notification(n : Int = 1) {
 
 @Composable
 fun DisplayEntries(contacts : List<Contact>) {
-	(contacts.indices).forEach { i ->
-		ListItem(name = contacts[i].name, lastMsg = contacts[i].msg.last())
+	contacts.forEach { contact ->
+		ListItem(name = contact.name, lastMsg = contact.msg.last())
 	}
 }
 
@@ -203,13 +201,11 @@ fun ChatListLoadingPreview() {
 @Preview(showBackground = true)
 @Composable
 fun ChatListLoadedPreview() {
-	val contact : Contact = Contact("Alex Lin", List(1){"test dialog"}, true)
-	val contacts = List(2){contact }
 	SubletrTheme {
 		ChatListingPageView(
 			modifier = Modifier,
-			viewModel = ChatListingPageViewModel(NavigationService()),
-			uiState = ChatListingPageUiState.Loaded(contacts = contacts)
+			viewModel = ChatListingPageViewModel(),
+			uiState = ChatListingPageUiState.Loaded(contacts = emptyList())
 		)
 	}
 }
