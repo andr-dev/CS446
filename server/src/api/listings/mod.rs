@@ -16,7 +16,7 @@ use images::{
 };
 
 use super::{
-    geocode::address_reverse,
+    geocode::geocode_address,
     model::listing::{
         CreateListingRequest,
         CreateListingResponse,
@@ -62,7 +62,7 @@ async fn listings_create(
 
     let opencage = state.opencage.write().await;
 
-    let location = address_reverse(
+    let location = geocode_address(
         opencage,
         format_address(
             listing_request.address_line.to_owned(),

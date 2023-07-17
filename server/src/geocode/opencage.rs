@@ -79,9 +79,6 @@ where
 // OpenCage has a custom rate-limit header, indicating remaining calls
 // header! { (XRatelimitRemaining, "X-RateLimit-Remaining") => [i32] }
 static XRL: &str = "x-ratelimit-remaining";
-/// Use this constant if you don't need to restrict a `forward_full` call with a
-/// bounding box
-pub static NOBOX: Option<InputBounds<f64>> = None::<InputBounds<f64>>;
 
 /// An instance of the Opencage Geocoding service
 pub struct Opencage<'a> {
