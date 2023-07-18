@@ -317,7 +317,7 @@ fun HomeListChildView(
 
 				items(uiState.listingItems.listings.size) {
 					val listingSummary = uiState.listingItems.listings[it]
-					val listingImage = uiState.listingItems.listingsImages[it]
+					val listingImage = if (uiState.listingItems.listingsImages.size > it ) uiState.listingItems.listingsImages[it] else null
 					ListingPost(
 						listingSummary = listingSummary,
 						listingImage = listingImage,
@@ -330,7 +330,6 @@ fun HomeListChildView(
 				}
 			}
 		}
-
 	}
 }
 
