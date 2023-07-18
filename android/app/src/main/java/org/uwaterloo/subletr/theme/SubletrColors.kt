@@ -121,16 +121,6 @@ val textFieldBorderColor
 private val textFieldBorderColorLight = Color((0xFFE5E5E5))
 private val textFieldBorderColorDark = Color((0xFFE5E5E5))
 
-val sendButtonColor
-	@Composable
-	get() = if (isSystemInDarkTheme()) {
-		sendButtonColorDark
-	} else {
-		sendButtonColorLight
-	}
-private val sendButtonColorLight = Color((0xFF3797f0))
-private val sendButtonColorDark = Color((0xFF3797f0))
-
 val Purple900 = Color(0xFF4A148C)
 val Purple500 = Color(0xFF9C27B0)
 
