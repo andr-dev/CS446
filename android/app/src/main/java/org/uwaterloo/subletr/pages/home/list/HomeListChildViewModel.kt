@@ -1,8 +1,6 @@
 package org.uwaterloo.subletr.pages.home.list
 
-import android.content.res.Resources
 import android.graphics.Bitmap
-import android.util.Log
 import androidx.navigation.NavHostController
 import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.schedulers.Schedulers
@@ -16,7 +14,6 @@ import org.uwaterloo.subletr.api.models.ListingSummary
 import org.uwaterloo.subletr.enums.Gender
 import org.uwaterloo.subletr.enums.HousingType
 import org.uwaterloo.subletr.infrastructure.SubletrChildViewModel
-import org.uwaterloo.subletr.navigation.NavigationDestination
 import org.uwaterloo.subletr.services.ILocationService
 import org.uwaterloo.subletr.services.INavigationService
 import org.uwaterloo.subletr.utils.UWATERLOO_LATITUDE
@@ -43,6 +40,10 @@ class HomeListChildViewModel @Inject constructor(
 		BehaviorSubject.createDefault(Gender.OTHER)
 	val houseTypeFilterStream: BehaviorSubject<HousingType> =
 		BehaviorSubject.createDefault(HousingType.OTHER)
+	val dateFilterStream: BehaviorSubject<HomeListUiState.DateRange> =
+		BehaviorSubject.createDefault(HomeListUiState.DateRange())
+	val favouriteFilterStream: BehaviorSubject<Boolean> =
+		BehaviorSubject.createDefault(false)
 
 	val listingPagingParamsStream: BehaviorSubject<ListingPagingParams> =
 		BehaviorSubject.createDefault(
@@ -68,6 +69,8 @@ class HomeListChildViewModel @Inject constructor(
 		roomRangeFilterStream.distinctUntilChanged(),
 		genderFilterStream.distinctUntilChanged(),
 		houseTypeFilterStream.distinctUntilChanged(),
+		dateFilterStream.distinctUntilChanged(),
+		favouriteFilterStream.distinctUntilChanged(),
 		listingPagingParamsStream
 			.distinctUntilChanged { t1, t2 ->
 				t1.pageNumber == t2.pageNumber
@@ -93,10 +96,8 @@ class HomeListChildViewModel @Inject constructor(
 							latitude = UWATERLOO_LATITUDE,
 							pageNumber = getListingParams.listingPagingParams.pageNumber,
 							pageSize = LISTING_PAGE_SIZE,
-							distanceMetersMin = getListingParams.locationRange.lowerBound?.let{
-								it.toFloat() } ?: null,
-							distanceMetersMax = getListingParams.locationRange.upperBound?.let{
-								it.toFloat() } ?: null,
+							distanceMetersMin = getListingParams.locationRange.lowerBound?.toFloat(),
+							distanceMetersMax = getListingParams.locationRange.upperBound?.toFloat(),
 							priceMin = getListingParams.priceRange.lowerBound,
 							priceMax = getListingParams.priceRange.upperBound,
 							roomsAvailableMin = getListingParams.roomRange.bedroomForSublet,
@@ -185,6 +186,8 @@ class HomeListChildViewModel @Inject constructor(
 		listingItemsStream,
 		genderFilterStream,
 		houseTypeFilterStream,
+		dateFilterStream,
+		favouriteFilterStream,
 		infoTextStringIdStream,
 		) {
 			locationRange: HomeListUiState.LocationRange,
@@ -193,6 +196,8 @@ class HomeListChildViewModel @Inject constructor(
 			listings: HomeListUiState.ListingItemsModel,
 			genderPreference: Gender,
 			houseTypePreference: HousingType,
+			dateRange: HomeListUiState.DateRange,
+			filterFavourite: Boolean,
 			infoTextStringId: Optional<Int>,
 		->
 		uiStateStream.onNext(
@@ -203,6 +208,8 @@ class HomeListChildViewModel @Inject constructor(
 				listingItems = listings,
 				genderPreference = genderPreference,
 				houseTypePreference = houseTypePreference,
+				dateRange = dateRange,
+				filterFavourite = filterFavourite,
 				infoTextStringId = infoTextStringId.getOrNull(),
 			)
 		)
@@ -221,6 +228,8 @@ class HomeListChildViewModel @Inject constructor(
 		val roomRange: HomeListUiState.RoomRange,
 		val gender: Gender,
 		val housingType: HousingType,
+		val dateRange: HomeListUiState.DateRange,
+		val filterFavourite: Boolean,
 		val listingPagingParams: ListingPagingParams,
 		)
 

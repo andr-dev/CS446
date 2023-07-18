@@ -26,7 +26,7 @@ import org.uwaterloo.subletr.theme.subletrPink
 import org.uwaterloo.subletr.theme.textOnSubletrPink
 
 @Composable
-fun FavourFilter(
+fun FavouriteFilter(
 	currentFavourite: Boolean,
 	updateFavouriteFilter: (Boolean) -> Unit,
 	closeAction: () -> Unit,
@@ -48,7 +48,7 @@ fun FavourFilter(
 				verticalAlignment = Alignment.CenterVertically,
 			) {
 				Text(
-					text = stringResource(id = R.string.favoured),
+					text = stringResource(id = R.string.only_show_favourites),
 					style = filterRegularFont,
 					color = secondaryTextColor,
 				)

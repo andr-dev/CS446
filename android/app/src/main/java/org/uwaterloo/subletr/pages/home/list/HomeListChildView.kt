@@ -58,7 +58,7 @@ import org.uwaterloo.subletr.enums.Gender
 import org.uwaterloo.subletr.enums.HousingType
 import org.uwaterloo.subletr.navigation.NavigationDestination
 import org.uwaterloo.subletr.pages.home.list.components.DateFilter
-import org.uwaterloo.subletr.pages.home.list.components.FavourFilter
+import org.uwaterloo.subletr.pages.home.list.components.FavouriteFilter
 import org.uwaterloo.subletr.pages.home.list.components.ListingPost
 import org.uwaterloo.subletr.pages.home.list.components.LocationFilter
 import org.uwaterloo.subletr.pages.home.list.components.PriceFilter
@@ -298,7 +298,7 @@ fun HomeListChildView(
 											closeAction = ::closeBottomSheet
 										)
 
-										FilterType.FAVOURITE -> FavourFilter(
+										FilterType.FAVOURITE -> FavouriteFilter(
 											currentFavourite = uiState.filterFavourite,
 											updateFavouriteFilter = ::updateFavouriteFilter,
 											closeAction = ::closeBottomSheet
