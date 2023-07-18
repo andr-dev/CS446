@@ -5,8 +5,10 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
@@ -39,7 +41,7 @@ import org.uwaterloo.subletr.services.NavigationService
 import org.uwaterloo.subletr.theme.SubletrTheme
 import org.uwaterloo.subletr.theme.primaryBackgroundColor
 import org.uwaterloo.subletr.theme.secondaryBackgroundColor
-import org.uwaterloo.subletr.theme.sendButtonColor
+import org.uwaterloo.subletr.theme.subletrPink
 
 @Composable
 fun IndividualChatPageView(
@@ -100,7 +102,11 @@ fun IndividualChatPageView(
 					horizontalArrangement = Arrangement.Center,
 				) {
 					RoundedTextField(
-						modifier = Modifier.padding(dimensionResource(id = R.dimen.m)),
+						modifier = Modifier
+							.padding(
+								vertical = dimensionResource(id = R.dimen.m),
+							)
+							.height(dimensionResource(id = R.dimen.xxl)),
 						value = uiState.message,
 						onValueChange = {
 							viewModel.messageStream.onNext(it)
@@ -114,19 +120,42 @@ fun IndividualChatPageView(
 							unfocusedIndicatorColor = Color.Transparent,
 							focusedIndicatorColor = Color.Transparent,
 						),
+						shape = RoundedCornerShape(
+							topStart = dimensionResource(id = R.dimen.xxl),
+							topEnd = dimensionResource(id = R.dimen.zero),
+							bottomEnd = dimensionResource(id = R.dimen.zero),
+							bottomStart = dimensionResource(id = R.dimen.xxl),
+						),
 					)
 
-					IconButton(
-						modifier = Modifier,
-						onClick = {},
+					Box(
+						modifier = Modifier
+							.clip(
+								RoundedCornerShape(
+									topStart = dimensionResource(id = R.dimen.zero),
+									topEnd = dimensionResource(id = R.dimen.xxl),
+									bottomEnd = dimensionResource(id = R.dimen.xxl),
+									bottomStart = dimensionResource(id = R.dimen.zero),
+								),
+							)
+							.height(dimensionResource(id = R.dimen.xxl)),
+						contentAlignment = Alignment.Center,
 					) {
-						Icon(
-							painter = painterResource(
-								id = R.drawable.send_solid_black_24,
-							),
-							contentDescription = stringResource(id = R.string.back_arrow),
-							tint = sendButtonColor,
-						)
+						IconButton(
+							modifier = Modifier
+								.background(color = primaryBackgroundColor)
+								.height(dimensionResource(id = R.dimen.xxl))
+								.aspectRatio(ratio = 1.0f),
+							onClick = {},
+						) {
+							Icon(
+								painter = painterResource(
+									id = R.drawable.send_solid_black_24,
+								),
+								contentDescription = stringResource(id = R.string.back_arrow),
+								tint = subletrPink,
+							)
+						}
 					}
 				}
 			}
