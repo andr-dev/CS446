@@ -27,7 +27,6 @@ class ListingDetailsPageViewModel @Inject constructor(
 	private val listingsApi: ListingsApi,
 	savedStateHandle: SavedStateHandle,
 	private val navigationService: INavigationService,
-	private val locationService: ILocationService,
 ) : SubletrViewModel<ListingDetailsPageUiState>() {
 	val navHostController: NavHostController get() = navigationService.navHostController
 

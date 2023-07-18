@@ -6,6 +6,7 @@ import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
 
 fun parseUTCDateTimeToLocal(dateTimeString: String): String {
+// TODO: localization
 	val formatter = DateTimeFormatter.ISO_LOCAL_DATE_TIME
 	val utcDateTime = LocalDateTime.parse(dateTimeString, formatter)
 

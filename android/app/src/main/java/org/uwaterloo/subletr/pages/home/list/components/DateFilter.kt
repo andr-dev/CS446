@@ -25,8 +25,8 @@ import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import org.uwaterloo.subletr.R
-import org.uwaterloo.subletr.pages.createlisting.DateInputButton
-import org.uwaterloo.subletr.pages.createlisting.DatePickerBottomSheet
+import org.uwaterloo.subletr.components.bottomsheet.DatePickerBottomSheet
+import org.uwaterloo.subletr.components.button.DateInputButton
 import org.uwaterloo.subletr.pages.home.list.HomeListUiState
 import org.uwaterloo.subletr.theme.textFieldBorderColor
 import org.uwaterloo.subletr.utils.parseUTCDateTimeToLocal
@@ -36,6 +36,7 @@ import java.time.format.DateTimeFormatter
 import java.util.Date
 import java.util.Locale
 
+@SuppressWarnings("CyclomaticComplexMethod")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DateFilter(
@@ -46,15 +47,17 @@ fun DateFilter(
 ) {
 	var startButtonText by remember {
 		mutableStateOf(
-			if (currentDateRange.startingDate == null) ""
-			else parseUTCDateTimeToLocal(currentDateRange.startingDate!!)
+			currentDateRange.startingDate?.let {
+				parseUTCDateTimeToLocal(it)
+			} ?: ""
 		)
 
 	}
 	var endButtonText by remember {
 		mutableStateOf(
-			if (currentDateRange.endingDate == null) ""
-			else parseUTCDateTimeToLocal(currentDateRange.endingDate!!)
+			currentDateRange.endingDate?.let {
+				parseUTCDateTimeToLocal(it)
+			} ?: ""
 		)
 	}
 	val dateRangePickerState = rememberDateRangePickerState()
@@ -90,7 +93,6 @@ fun DateFilter(
 							}
 						},
 					)
-
 					DateInputButton(
 						modifier = Modifier
 							.fillMaxWidth()
@@ -120,30 +122,22 @@ fun DateFilter(
 										openDatePicker = false
 									}
 									startButtonText =
-										if (dateRangePickerState.selectedStartDateMillis != null) {
-											displayDateFormatter.formatDate(
-												dateRangePickerState.selectedStartDateMillis,
-												locale = Locale.getDefault()
-											)!!
-										} else {
-											""
+										displayDateFormatter.formatDate(
+											dateRangePickerState.selectedStartDateMillis,
+											locale = Locale.getDefault()
+										) ?: ""
 
-										}
 									endButtonText =
-										if (dateRangePickerState.selectedEndDateMillis != null) {
-											displayDateFormatter.formatDate(
-												dateRangePickerState.selectedEndDateMillis,
-												locale = Locale.getDefault()
-											)!!
-										} else {
-											""
-										}
+										displayDateFormatter.formatDate(
+											dateRangePickerState.selectedEndDateMillis,
+											locale = Locale.getDefault()
+										) ?: ""
+
 								}
 						},
 					)
 				}
 			}
-
 		},
 		clearAction = {
 			startButtonText = ""
@@ -162,21 +156,22 @@ fun DateFilter(
 						newEndingDate.toInstant().atOffset(ZoneOffset.UTC).format(
 							storeDateFormatISO
 						) else null,
-					),
-				)
+				),
+			)
 			closeAction()
 		},
 		revertInput = {
 			startButtonText =
-				if (currentDateRange.startingDate == null) ""
-				else parseUTCDateTimeToLocal(currentDateRange.startingDate!!)
+				currentDateRange.startingDate?.let {
+					parseUTCDateTimeToLocal(it)
+				} ?: ""
 
 			endButtonText =
-				if (currentDateRange.endingDate == null) ""
-				else parseUTCDateTimeToLocal(currentDateRange.endingDate!!)
+				currentDateRange.endingDate?.let {
+					parseUTCDateTimeToLocal(it)
+				} ?: ""
 		}
 	)
-
 }
 
 @OptIn(ExperimentalMaterial3Api::class)

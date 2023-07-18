@@ -32,15 +32,11 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.BottomSheetDefaults
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DatePickerDefaults
-import androidx.compose.material3.DateRangePicker
-import androidx.compose.material3.DateRangePickerState
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -69,22 +65,19 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.semantics.LiveRegionMode
-import androidx.compose.ui.semantics.clearAndSetSemantics
-import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import org.uwaterloo.subletr.R
+import org.uwaterloo.subletr.components.bottomsheet.DatePickerBottomSheet
+import org.uwaterloo.subletr.components.button.DateInputButton
 import org.uwaterloo.subletr.components.button.PrimaryButton
 import org.uwaterloo.subletr.components.textfield.RoundedTextField
 import org.uwaterloo.subletr.enums.HousingType
 import org.uwaterloo.subletr.theme.SubletrTheme
 import org.uwaterloo.subletr.theme.secondaryTextColor
-import org.uwaterloo.subletr.theme.subletrPink
 import org.uwaterloo.subletr.theme.textFieldBackgroundColor
 import org.uwaterloo.subletr.theme.textFieldBorderColor
 import org.uwaterloo.subletr.theme.textOnSubletrPink
@@ -426,151 +419,6 @@ private val storeDateFormatISO: DateTimeFormatter = DateTimeFormatter.ISO_LOCAL_
 // TODO: localize date format
 @OptIn(ExperimentalMaterial3Api::class)
 private val displayDateFormatter = DatePickerDefaults.dateFormatter(selectedDateSkeleton = "MM/dd/yyyy")
-
-@Composable
-fun DateInputButton(modifier: Modifier, labelStringId: Int, value: String, onClick: () -> Unit) {
-	RoundedTextField(
-		modifier = modifier,
-		placeholder = {
-			Text(
-				text = stringResource(id = R.string.placeholder_date),
-				color = secondaryTextColor,
-			)
-		},
-		label = {
-			Text(
-				text = stringResource(id = labelStringId),
-				color = secondaryTextColor,
-			)
-		},
-		trailingIcon = {
-			IconButton(
-				onClick = onClick
-			) {
-				Icon(
-					painter = painterResource(
-						id = R.drawable.calendar_outline_gray_24
-					),
-					contentDescription = stringResource(id = R.string.open_date_picker),
-				)
-			}
-		},
-		value = value,
-		readOnly = true,
-		onValueChange = {},
-	)
-}
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun DatePickerBottomSheet(
-	bottomSheetState: SheetState,
-	state: DateRangePickerState,
-	onDismissRequest: () -> Unit,
-	onClick: () -> Unit,
-) {
-	ModalBottomSheet(
-		onDismissRequest = onDismissRequest,
-		sheetState = bottomSheetState,
-		content = {
-			Box(
-				modifier = Modifier
-					.fillMaxWidth()
-					.height(550.dp) // TODO: change this to not use explicit value
-					.background(Color.White)
-			) {
-				LeaseDatePicker(state, onClick)
-				Button(
-					onClick = onClick,
-					colors = ButtonDefaults.buttonColors(
-						containerColor = subletrPink,
-					),
-					modifier = Modifier
-						.align(Alignment.BottomCenter)
-						.padding(
-							start = dimensionResource(id = R.dimen.s),
-							end = dimensionResource(id = R.dimen.s),
-							bottom = dimensionResource(id = R.dimen.s)
-						)
-						.fillMaxWidth()
-						.height(dimensionResource(id = R.dimen.xl))
-				) {
-					Text(stringResource(id = R.string.done), color = textOnSubletrPink)
-				}
-			}
-		},
-		dragHandle = {}
-	)
-}
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun LeaseDatePicker(state: DateRangePickerState, onClick: () -> Unit) {
-	Column(modifier = Modifier.fillMaxSize(), verticalArrangement = Arrangement.Top) {
-		Row(
-			modifier = Modifier
-				.fillMaxWidth()
-				.padding(
-					start = dimensionResource(id = R.dimen.xs),
-					end = dimensionResource(id = R.dimen.xs)
-				),
-			verticalAlignment = Alignment.CenterVertically,
-			horizontalArrangement = Arrangement.SpaceBetween
-		) {
-			IconButton(onClick = onClick) {
-				Icon(Icons.Filled.Close, contentDescription = stringResource(id = R.string.close))
-			}
-		}
-
-		DateRangePicker(state = state,
-			modifier = Modifier.weight(1f),
-			title = {
-				Text(
-					text = stringResource(id = R.string.lease_start_end_dates),
-					modifier = Modifier
-						.padding(start = dimensionResource(id = R.dimen.l), end = dimensionResource(id = R.dimen.xs)),
-					color = secondaryTextColor,
-				)
-			},
-			headline = {
-				Row(
-					modifier = Modifier
-						.clearAndSetSemantics {
-							liveRegion = LiveRegionMode.Polite
-						}
-						.padding(start = dimensionResource(id = R.dimen.l)),
-					verticalAlignment = Alignment.CenterVertically,
-					horizontalArrangement = Arrangement.spacedBy(dimensionResource(id = R.dimen.xxs)),
-				) {
-					val dateFormatter = DatePickerDefaults.dateFormatter()
-					Text(
-						text =
-							if (state.selectedStartDateMillis != null )
-								dateFormatter.formatDate(state.selectedStartDateMillis, locale = Locale.getDefault())!!
-							else stringResource(id = R.string.start_date),
-						style = MaterialTheme.typography.displayLarge
-					)
-					Text(
-						text = stringResource(id = R.string.dash),
-						style = MaterialTheme.typography.displayLarge
-					)
-					Text(
-						text =
-							if (state.selectedEndDateMillis != null )
-								dateFormatter.formatDate(state.selectedEndDateMillis, locale = Locale.getDefault())!!
-							else stringResource(id = R.string.end_date),
-						style = MaterialTheme.typography.displayLarge
-					)
-				}
-			},
-			colors = DatePickerDefaults.colors(
-				containerColor = Color.White,
-				dayInSelectionRangeContainerColor = textFieldBackgroundColor,
-				selectedDayContainerColor = subletrPink,
-			)
-		)
-	}
-}
 
 @Composable
 fun ImageUploadMethodButton(

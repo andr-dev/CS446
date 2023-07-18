@@ -28,7 +28,6 @@ import javax.inject.Inject
 class CreateListingPageViewModel @Inject constructor(
 	private val listingsApi: ListingsApi,
 	val navigationService: INavigationService,
-	private val locationService: ILocationService,
 ) : SubletrViewModel<CreateListingPageUiState>() {
 	val navHostController: NavHostController get() = navigationService.navHostController
 
