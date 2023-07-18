@@ -68,6 +68,8 @@ import org.uwaterloo.subletr.api.models.ResidenceType
 import org.uwaterloo.subletr.components.button.PrimaryButton
 import org.uwaterloo.subletr.components.button.SecondaryButton
 import org.uwaterloo.subletr.enums.Gender
+import org.uwaterloo.subletr.pages.listingdetails.ListingDetailsPageUiState.Loading.getInfoDisplay
+import org.uwaterloo.subletr.pages.listingdetails.ListingDetailsPageUiState.Loading.toListOfInfo
 import org.uwaterloo.subletr.theme.SubletrTheme
 import org.uwaterloo.subletr.theme.SubletrTypography
 import org.uwaterloo.subletr.theme.primaryTextColor
@@ -76,7 +78,6 @@ import org.uwaterloo.subletr.theme.secondaryTextColor
 import org.uwaterloo.subletr.theme.textFieldBackgroundColor
 import org.uwaterloo.subletr.theme.textOnSubletrPink
 import java.time.OffsetDateTime
-import java.time.format.DateTimeFormatter
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -298,130 +299,7 @@ fun ListingDetailsPageView(
 					modifier = Modifier.height(dimensionResource(id = R.dimen.m)),
 				)
 
-				Row(
-					modifier = Modifier
-						.fillMaxWidth(ELEMENT_WIDTH),
-					verticalAlignment = Alignment.CenterVertically,
-					horizontalArrangement = Arrangement.SpaceBetween,
-				) {
-					Text(
-						text = stringResource(R.string.price),
-						style = SubletrTypography.displaySmall,
-					)
-					Text(
-						text = stringResource(
-							id = R.string.dollar_sign_n,
-							uiState.listingDetails.price,
-						),
-						color = primaryTextColor,
-						style = SubletrTypography.displaySmall,
-					)
-				}
-
-				Row(
-					modifier = Modifier
-						.fillMaxWidth(ELEMENT_WIDTH),
-					verticalAlignment = Alignment.CenterVertically,
-					horizontalArrangement = Arrangement.SpaceBetween,
-				) {
-					Text(
-						text = stringResource(R.string.start_date),
-						style = SubletrTypography.displaySmall,
-					)
-					Text(
-						text = uiState.listingDetails.leaseStart.format(dateFormat),
-						color = primaryTextColor,
-						style = SubletrTypography.displaySmall,
-					)
-				}
-
-				Row(
-					modifier = Modifier
-						.fillMaxWidth(ELEMENT_WIDTH),
-					verticalAlignment = Alignment.CenterVertically,
-					horizontalArrangement = Arrangement.SpaceBetween,
-				) {
-					Text(
-						text = stringResource(R.string.end_date),
-						style = SubletrTypography.displaySmall,
-					)
-					Text(
-						text = uiState.listingDetails.leaseEnd.format(dateFormat),
-						color = primaryTextColor,
-						style = SubletrTypography.displaySmall,
-					)
-				}
-
-				Row(
-					modifier = Modifier
-						.fillMaxWidth(ELEMENT_WIDTH),
-					verticalAlignment = Alignment.CenterVertically,
-					horizontalArrangement = Arrangement.SpaceBetween,
-				) {
-					Text(
-						text = stringResource(R.string.rooms),
-						style = SubletrTypography.displaySmall,
-					)
-					Text(
-						text = uiState.listingDetails.roomsAvailable.toString(),
-						color = primaryTextColor,
-						style = SubletrTypography.displaySmall,
-					)
-				}
-
-				Row(
-					modifier = Modifier
-						.fillMaxWidth(ELEMENT_WIDTH),
-					verticalAlignment = Alignment.CenterVertically,
-					horizontalArrangement = Arrangement.SpaceBetween,
-				) {
-					Text(
-						text = stringResource(R.string.ensuite_bathroom),
-						style = SubletrTypography.displaySmall,
-					)
-					Text(
-						/* TODO listing details needs ensuite bathroom info */
-						text = stringResource(R.string.no),
-						color = primaryTextColor,
-						style = SubletrTypography.displaySmall,
-					)
-				}
-
-				Row(
-					modifier = Modifier
-						.fillMaxWidth(ELEMENT_WIDTH),
-					verticalAlignment = Alignment.CenterVertically,
-					horizontalArrangement = Arrangement.SpaceBetween,
-				) {
-					Text(
-						text = stringResource(R.string.total_rooms_in_house),
-						style = SubletrTypography.displaySmall,
-					)
-					Text(
-						/* TODO listing details needs total rooms in house */
-						text = uiState.listingDetails.roomsTotal.toString(),
-						color = primaryTextColor,
-						style = SubletrTypography.displaySmall,
-					)
-				}
-
-				Row(
-					modifier = Modifier
-						.fillMaxWidth(ELEMENT_WIDTH),
-					verticalAlignment = Alignment.CenterVertically,
-					horizontalArrangement = Arrangement.SpaceBetween,
-				) {
-					Text(
-						text = stringResource(R.string.total_bathrooms_in_house),
-						style = SubletrTypography.displaySmall,
-					)
-					Text(
-						/* TODO listing details needs total bathrooms in house */
-						text = stringResource(R.string.no),
-						color = primaryTextColor,
-						style = SubletrTypography.displaySmall,
-					)
-				}
+				DetailsInfoColumn(listOfInfo = uiState.listingDetails.toListOfInfo())
 
 				Spacer(
 					modifier = Modifier.height(dimensionResource(id = R.dimen.s)),
@@ -486,6 +364,39 @@ fun ListingDetailsPageView(
 }
 
 @Composable
+fun DetailsInfoColumn(
+	modifier: Modifier = Modifier,
+	listOfInfo: ListingDetailsPageUiState.ListOfInfo,
+) {
+	Column(
+		modifier = modifier,
+	) {
+		listOfInfo.getInfoDisplay().forEach {
+			Row(
+				modifier = modifier
+					.fillMaxWidth(ELEMENT_WIDTH),
+				verticalAlignment = Alignment.CenterVertically,
+				horizontalArrangement = Arrangement.SpaceBetween,
+			) {
+				Text(
+					text = stringResource(id = it.first),
+					style = SubletrTypography.displaySmall,
+				)
+				Text(
+					text = when (it.first) {
+						R.string.price -> stringResource(id = R.string.dollar_sign_n, it.second)
+						R.string.ensuite_bathroom -> stringResource(id = it.second as Int)
+						else -> it.second.toString()
+					},
+					color = primaryTextColor,
+					style = SubletrTypography.displaySmall,
+				)
+			}
+		}
+	}
+}
+
+@Composable
 fun ImageBoxPlaceholder(
 	modifier: Modifier = Modifier,
 	contentAlignment: Alignment = Alignment.Center,
@@ -536,9 +447,6 @@ private const val ELEMENT_WIDTH = 0.9f
 
 /* TODO figure out address to LatLng */
 private val SINGAPORE = LatLng(1.35, 103.87)
-
-/* TODO localize date format */
-private val dateFormat = DateTimeFormatter.ofPattern("MM/dd/yyyy")
 
 @Preview(showBackground = true)
 @Composable
