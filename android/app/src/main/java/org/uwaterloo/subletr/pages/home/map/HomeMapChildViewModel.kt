@@ -37,6 +37,7 @@ class HomeMapChildViewModel @Inject constructor(
 				}
 				else true
 			}
+			.skip(1)
 			.debounce(1, TimeUnit.SECONDS)
 			.map {
 				if (it is HomeMapUiState.Loaded) {

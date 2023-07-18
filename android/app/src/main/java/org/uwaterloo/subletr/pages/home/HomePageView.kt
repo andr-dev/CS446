@@ -162,6 +162,7 @@ fun LoginPageViewLoadedPreview() {
 					listings = emptyList(),
 					likedListings = emptySet(),
 					listingsImages = emptyList(),
+					selectedListings = emptyList(),
 				),
 				filters = HomePageUiState.FiltersModel(
 					locationRange = HomePageUiState.LocationRange(),

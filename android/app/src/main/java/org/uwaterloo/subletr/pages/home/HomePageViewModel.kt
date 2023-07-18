@@ -24,6 +24,7 @@ import org.uwaterloo.subletr.services.INavigationService
 import org.uwaterloo.subletr.utils.UWATERLOO_LATITUDE
 import org.uwaterloo.subletr.utils.UWATERLOO_LONGITUDE
 import org.uwaterloo.subletr.utils.base64ToBitmap
+import java.lang.Integer.max
 import javax.inject.Inject
 
 @HiltViewModel
@@ -77,6 +78,7 @@ class HomePageViewModel @Inject constructor(
 							listings = emptyList(),
 							likedListings = emptySet(),
 							listingsImages = emptyList(),
+							selectedListings = emptyList(),
 						)
 					)
 				)
@@ -181,29 +183,54 @@ class HomePageViewModel @Inject constructor(
 									.previousListingItemsModel
 									.likedListings +
 									listingParamsAndResponse.listingsResponse.liked,
-								listingsImages =
-								listingParamsAndResponse.listingParams.listingPagingParams.previousListingItemsModel.listingsImages +
-									images,
+								listingsImages = listingParamsAndResponse
+									.listingParams.listingPagingParams.previousListingItemsModel.listingsImages +
+										images,
+								selectedListings = emptyList(),
 							),
 						)
 					)
 				}
 				HomePageUiState.HomePageViewType.MAP -> {
+					val newListings = listingParamsAndResponse.listingParams.listingPagingParams.previousListingItemsModel.listings +
+						listingParamsAndResponse.listingsResponse.listings
+					val newLikedListings = listingParamsAndResponse
+						.listingParams
+						.listingPagingParams
+						.previousListingItemsModel
+						.likedListings +
+						listingParamsAndResponse.listingsResponse.liked
+					val newListingImages = listingParamsAndResponse
+						.listingParams
+						.listingPagingParams
+						.previousListingItemsModel
+						.listingsImages +
+						images
+					val newSelectedListings = listingParamsAndResponse
+						.listingParams
+						.listingPagingParams
+						.previousListingItemsModel
+						.selectedListings +
+						List(
+							size = max(
+								newListings.size -
+									listingParamsAndResponse
+										.listingParams
+										.listingPagingParams
+										.previousListingItemsModel
+										.selectedListings
+										.size,
+								0)
+						) { false }
+
 					uiStateStream.onNext(
 						HomeMapUiState.Loaded(
 							filters = listingParamsAndResponse.listingParams.filters,
 							listingItems = HomePageUiState.ListingItemsModel(
-								listings = listingParamsAndResponse.listingParams.listingPagingParams.previousListingItemsModel.listings +
-									listingParamsAndResponse.listingsResponse.listings,
-								likedListings = listingParamsAndResponse
-									.listingParams
-									.listingPagingParams
-									.previousListingItemsModel
-									.likedListings +
-									listingParamsAndResponse.listingsResponse.liked,
-								listingsImages =
-								listingParamsAndResponse.listingParams.listingPagingParams.previousListingItemsModel.listingsImages +
-									images,
+								listings = newListings,
+								likedListings = newLikedListings,
+								listingsImages = newListingImages,
+								selectedListings = newSelectedListings,
 							),
 							transportationMethod = listingParamsAndResponse.listingParams.transportationMethod,
 							addressSearch = "",
@@ -265,6 +292,7 @@ class HomePageViewModel @Inject constructor(
 				listings = listOf(),
 				likedListings = setOf(),
 				listingsImages = listOf(),
+				selectedListings = emptyList(),
 			),
 			pageNumber = 0,
 		),

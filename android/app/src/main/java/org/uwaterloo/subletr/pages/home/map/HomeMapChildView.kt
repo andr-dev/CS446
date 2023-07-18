@@ -40,6 +40,8 @@ import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
+import com.google.android.gms.maps.model.CameraPosition
+import com.google.android.gms.maps.model.LatLng
 import com.google.maps.android.compose.GoogleMap
 import com.google.maps.android.compose.rememberCameraPositionState
 import kotlinx.coroutines.launch
@@ -67,7 +69,9 @@ fun HomeMapChildView(
 	uiState: HomeMapUiState,
 ) {
 	val coroutineScope = rememberCoroutineScope()
-	val cameraPositionState = rememberCameraPositionState()
+	val cameraPositionState = rememberCameraPositionState {
+		position = CameraPosition.fromLatLngZoom(WATERLOO, DEFAULT_ZOOM)
+	}
 	var scrollEnabled: Boolean by remember{ mutableStateOf(true) }
 	LaunchedEffect(cameraPositionState.isMoving) {
 		if (!cameraPositionState.isMoving) {
@@ -230,7 +234,17 @@ fun HomeMapChildView(
 							),
 						contentDescription = stringResource(id = R.string.google_maps_view),
 						cameraPositionState = cameraPositionState,
-					)
+					) {
+						// TODO: Add when ListingSummary is updated with coordinates
+//						uiState.listingItems.listings.forEachIndexed { index, listingSummary ->
+//							val selected = uiState.listingItems.selectedListings.getOrElse(index, {false})
+//							if (selected) {
+//								Marker(
+//									state = MarkerState(position = listingSummary),
+//								)
+//							}
+//						}
+					}
 				}
 				item {
 					Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.s)))
@@ -274,13 +288,30 @@ fun HomeMapChildView(
 				}
 				items(count = uiState.listingItems.listings.size) {
 					val listingSummary = uiState.listingItems.listings[it]
-					val listingImage = if (it < uiState.listingItems.listingsImages.size) {
-						uiState.listingItems.listingsImages[it]
-					} else null
+					val listingImage = uiState.listingItems.listingsImages.getOrNull(it)
+					val selected = uiState.listingItems.selectedListings.getOrElse(it) { false }
 					HomeMapListingItemView(
 						listingSummary = listingSummary,
 						listingImage = listingImage,
+						selected = selected,
 						viewModel = viewModel,
+						setSelected = { newSelected ->
+							viewModel.uiStateStream.onNext(
+								uiState.copy(
+									listingItems = uiState.listingItems.copy(
+										selectedListings = uiState.listingItems.selectedListings
+											.mapIndexed { index, b ->
+												if (it == index) {
+													newSelected
+												}
+												else {
+													b
+												}
+											}
+										),
+								)
+							)
+						}
 					)
 				}
 			}
@@ -289,6 +320,11 @@ fun HomeMapChildView(
 }
 
 const val MAX_DISTANCE_IN_MINUTES = 180.0f
+private const val DEFAULT_ZOOM = 12.0f
+private val WATERLOO = LatLng(
+	43.4643,
+	-80.5204,
+)
 
 @Preview
 @Composable

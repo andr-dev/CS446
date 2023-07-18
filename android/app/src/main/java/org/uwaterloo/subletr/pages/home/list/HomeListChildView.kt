@@ -364,9 +364,7 @@ fun HomeListChildView(
 
 				items(uiState.listingItems.listings.size) {
 					val listingSummary = uiState.listingItems.listings[it]
-					val listingImage = if (it < uiState.listingItems.listingsImages.size) {
-						uiState.listingItems.listingsImages[it]
-					} else null
+					val listingImage = uiState.listingItems.listingsImages.getOrNull(it)
 					ListingPost(
 						listingSummary = listingSummary,
 						listingImage = listingImage,
@@ -483,6 +481,7 @@ private fun HomeListViewPreview() {
 					listings = emptyList(),
 					likedListings = emptySet(),
 					listingsImages = emptyList(),
+					selectedListings = emptyList(),
 				),
 				filters = HomePageUiState.FiltersModel(
 					locationRange = HomePageUiState.LocationRange(null, null),
