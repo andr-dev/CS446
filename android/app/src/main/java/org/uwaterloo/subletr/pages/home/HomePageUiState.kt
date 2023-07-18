@@ -10,6 +10,7 @@ interface HomePageUiState {
 		val listings: List<ListingSummary>,
 		val likedListings: Set<String>,
 		val listingsImages: List<Bitmap?>,
+		val selectedListings: List<Boolean>,
 	)
 
 	data class LocationRange(

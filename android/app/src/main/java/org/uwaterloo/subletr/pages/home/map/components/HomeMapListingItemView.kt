@@ -1,8 +1,10 @@
 package org.uwaterloo.subletr.pages.home.map.components
 
 import android.graphics.Bitmap
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -44,8 +46,10 @@ import org.uwaterloo.subletr.pages.home.list.dateTimeFormatter
 import org.uwaterloo.subletr.pages.home.map.HomeMapChildViewModel
 import org.uwaterloo.subletr.theme.darkerGrayButtonColor
 import org.uwaterloo.subletr.theme.listingTitleFont
+import org.uwaterloo.subletr.theme.primaryBackgroundColor
 import org.uwaterloo.subletr.theme.primaryTextColor
 import org.uwaterloo.subletr.theme.secondaryButtonBackgroundColor
+import org.uwaterloo.subletr.theme.subletrPink
 import kotlin.math.roundToInt
 
 @Composable
@@ -53,15 +57,24 @@ fun HomeMapListingItemView(
 	modifier: Modifier = Modifier,
 	listingSummary: ListingSummary,
 	listingImage: Bitmap?,
+	selected: Boolean,
 	viewModel: HomeMapChildViewModel,
+	setSelected: (Boolean) -> Unit,
 ) {
 	Button(
 		modifier = modifier
 			.clip(RoundedCornerShape(size = dimensionResource(id = R.dimen.xxs)))
-			.padding(all = dimensionResource(id = R.dimen.xs)),
-		onClick = { /*TODO*/ },
+			.padding(all = dimensionResource(id = R.dimen.xs))
+			.border(
+				width = dimensionResource(id = R.dimen.xxxs),
+				shape = RoundedCornerShape(size = dimensionResource(id = R.dimen.xxs)),
+				color = if (selected) subletrPink else Color.Transparent,
+			),
+		onClick = {
+		  	setSelected(!selected)
+		},
 		colors = ButtonDefaults.buttonColors(
-			containerColor = secondaryButtonBackgroundColor,
+			containerColor = if (selected) primaryBackgroundColor else secondaryButtonBackgroundColor,
 			contentColor = primaryTextColor,
 		),
 		shape = RoundedCornerShape(size = dimensionResource(id = R.dimen.xxs)),
@@ -139,6 +152,7 @@ fun HomeMapListingItemView(
 						Text(
 							text = stringResource(
 								id = R.string.n_minutes,
+								// TODO: Fix variable when listingSummary is fixed
 								listingSummary.distanceMeters.roundToInt(),
 							),
 							style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Bold),
@@ -169,8 +183,12 @@ fun HomeMapListingItemView(
 						.fillMaxWidth(0.5f)
 						.fillMaxHeight(1.0f),
 					colors = ButtonDefaults.buttonColors(
-						containerColor = darkerGrayButtonColor,
+						containerColor = if (selected) primaryBackgroundColor else darkerGrayButtonColor,
 						contentColor = Color.Black,
+					),
+					border = BorderStroke(
+						width = dimensionResource(id = R.dimen.xxxs),
+						color = if (selected) primaryTextColor else Color.Transparent,
 					),
 					onClick = {
 						viewModel.navHostController.navigate(
@@ -185,10 +203,18 @@ fun HomeMapListingItemView(
 				}
 				Box(
 					modifier = Modifier
-						.clip(CircleShape),
+						.clip(CircleShape)
+						.border(
+							width = dimensionResource(id = R.dimen.xxxs),
+							shape = CircleShape,
+							color = if (selected) primaryTextColor else Color.Transparent,
+						),
 				) {
 					IconButton(
-						modifier = Modifier.background(color = darkerGrayButtonColor),
+						modifier = Modifier
+							.background(
+								color = if (selected) primaryBackgroundColor else darkerGrayButtonColor,
+							),
 						onClick = { /*TODO*/ },
 					) {
 						Icon(
@@ -199,10 +225,18 @@ fun HomeMapListingItemView(
 				}
 				Box(
 					modifier = Modifier
-						.clip(CircleShape),
+						.clip(CircleShape)
+						.border(
+							width = dimensionResource(id = R.dimen.xxxs),
+							shape = CircleShape,
+							color = if (selected) primaryTextColor else Color.Transparent,
+						),
 				) {
 					IconButton(
-						modifier = Modifier.background(color = darkerGrayButtonColor),
+						modifier = Modifier
+							.background(
+								color = if (selected) primaryBackgroundColor else darkerGrayButtonColor,
+							),
 						onClick = {
 							  /*TODO*/
 						},

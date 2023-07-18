@@ -8,8 +8,8 @@ interface HomeMapUiState: HomePageUiState {
 	data class Loaded(
 		val addressSearch: String,
 		val transportationMethod: HomePageUiState.TransportationMethod,
+		val timeToDestination: Float,
 		val filters: HomePageUiState.FiltersModel,
 		val listingItems: HomePageUiState.ListingItemsModel,
-		val timeToDestination: Float,
 	) : HomeMapUiState
 }
