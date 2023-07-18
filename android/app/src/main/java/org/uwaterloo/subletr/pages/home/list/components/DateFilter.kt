@@ -27,7 +27,7 @@ import kotlinx.coroutines.launch
 import org.uwaterloo.subletr.R
 import org.uwaterloo.subletr.components.bottomsheet.DatePickerBottomSheet
 import org.uwaterloo.subletr.components.button.DateInputButton
-import org.uwaterloo.subletr.pages.home.list.HomeListUiState
+import org.uwaterloo.subletr.pages.home.HomePageUiState
 import org.uwaterloo.subletr.theme.textFieldBorderColor
 import org.uwaterloo.subletr.utils.parseUTCDateTimeToLocal
 import java.text.SimpleDateFormat
@@ -40,8 +40,8 @@ import java.util.Locale
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DateFilter(
-	currentDateRange: HomeListUiState.DateRange,
-	updateDateFilter: (HomeListUiState.DateRange) -> Unit,
+	currentDateRange: HomePageUiState.DateRange,
+	updateDateFilter: (HomePageUiState.DateRange) -> Unit,
 	coroutineScope: CoroutineScope,
 	closeAction: () -> Unit,
 ) {
@@ -147,7 +147,7 @@ fun DateFilter(
 			val newStartingDate = SimpleDateFormat("MM/dd/yyyy").parse(startButtonText)
 			val newEndingDate = SimpleDateFormat("MM/dd/yyyy").parse(endButtonText)
 			updateDateFilter(
-				HomeListUiState.DateRange(
+				HomePageUiState.DateRange(
 					startingDate = if (newStartingDate is Date)
 						newStartingDate.toInstant().atOffset(ZoneOffset.UTC).format(
 							storeDateFormatISO

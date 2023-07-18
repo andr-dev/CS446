@@ -15,6 +15,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListState
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -24,11 +26,11 @@ import androidx.compose.material3.SliderDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.rxjava3.subscribeAsState
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
@@ -43,10 +45,13 @@ import com.google.maps.android.compose.rememberCameraPositionState
 import kotlinx.coroutines.launch
 import org.uwaterloo.subletr.R
 import org.uwaterloo.subletr.components.textfield.RoundedTextField
+import org.uwaterloo.subletr.pages.home.HomePageUiState
+import org.uwaterloo.subletr.pages.home.HomePageViewModel
 import org.uwaterloo.subletr.pages.home.map.components.HomeMapFiltersRowView
 import org.uwaterloo.subletr.pages.home.map.components.HomeMapListingItemView
 import org.uwaterloo.subletr.services.LocationService
 import org.uwaterloo.subletr.services.LocationService.Companion.locationPermissions
+import org.uwaterloo.subletr.services.NavigationService
 import org.uwaterloo.subletr.theme.SubletrTheme
 import org.uwaterloo.subletr.theme.secondaryTextColor
 import org.uwaterloo.subletr.theme.subletrPink
@@ -59,10 +64,7 @@ import kotlin.math.roundToInt
 fun HomeMapChildView(
 	modifier: Modifier = Modifier,
 	viewModel: HomeMapChildViewModel,
-	uiState: HomeMapUiState = viewModel
-		.uiStateStream
-		.subscribeAsState(initial = HomeMapUiState.Loading)
-		.value,
+	uiState: HomeMapUiState,
 ) {
 	val coroutineScope = rememberCoroutineScope()
 	val cameraPositionState = rememberCameraPositionState()
@@ -108,10 +110,39 @@ fun HomeMapChildView(
 			}
 		}
 		else if (uiState is HomeMapUiState.Loaded) {
+			val listState: LazyListState = rememberLazyListState()
+			val lastItemIsShowing by remember {
+				derivedStateOf {
+					if (listState.layoutInfo.totalItemsCount == 0) {
+						false
+					} else {
+						listState.layoutInfo.visibleItemsInfo.lastOrNull()?.index == listState.layoutInfo.totalItemsCount - 1
+					}
+				}
+			}
+
+			LaunchedEffect(key1 = lastItemIsShowing) {
+				if (lastItemIsShowing) {
+					viewModel.getListingParamsStream.onNext(
+						HomePageViewModel.GetListingParams(
+							filters = uiState.filters,
+							transportationMethod = uiState.transportationMethod,
+							listingPagingParams = HomePageViewModel.ListingPagingParams(
+								previousListingItemsModel = uiState.listingItems,
+								pageNumber = listState.layoutInfo.totalItemsCount
+									.floorDiv(HomePageViewModel.LISTING_PAGE_SIZE)
+							),
+							homePageView = HomePageUiState.HomePageViewType.MAP,
+						)
+					)
+				}
+			}
+
 			LazyColumn(
 				modifier = Modifier.padding(
 					paddingValues = paddingValues,
 				),
+				state = listState,
 				userScrollEnabled = scrollEnabled,
 			) {
 				item {
@@ -121,7 +152,11 @@ fun HomeMapChildView(
 							.padding(horizontal = dimensionResource(id = R.dimen.xs)),
 						value = uiState.addressSearch,
 						onValueChange = {
-							viewModel.addressSearchStream.onNext(it)
+							viewModel.uiStateStream.onNext(
+								uiState.copy(
+									addressSearch = it,
+								),
+							)
 						},
 						placeholder = {
 							Text(
@@ -154,7 +189,15 @@ fun HomeMapChildView(
 					HomeMapFiltersRowView(
 						modifier = Modifier,
 						uiState = uiState,
-						viewModel = viewModel,
+						updateTransportationMethod = {
+							viewModel.getListingParamsStream.onNext(
+								HomePageViewModel.GetListingParams(
+									filters = uiState.filters,
+									transportationMethod = it,
+									homePageView = HomePageUiState.HomePageViewType.MAP,
+								)
+							)
+						},
 					)
 				}
 				item {
@@ -196,7 +239,13 @@ fun HomeMapChildView(
 					Slider(
 						modifier = Modifier.padding(horizontal = dimensionResource(id = R.dimen.m)),
 						value = uiState.timeToDestination,
-						onValueChange = {viewModel.timeToDestinationStream.onNext(it)},
+						onValueChange = {
+							viewModel.uiStateStream.onNext(
+								uiState.copy(
+									timeToDestination = it,
+								)
+							)
+						},
 						colors = SliderDefaults.colors(
 							thumbColor = subletrPink,
 							activeTrackColor = subletrPink,
@@ -214,7 +263,7 @@ fun HomeMapChildView(
 						Text(
 							text = stringResource(
 								id = R.string.time_to_destination_integer_minutes,
-								uiState.timeToDestination.roundToInt(),
+								(uiState.timeToDestination).roundToInt(),
 							),
 							style = timeToDestinationFont,
 						)
@@ -224,8 +273,15 @@ fun HomeMapChildView(
 					Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.s)))
 				}
 				items(count = uiState.listingItems.listings.size) {
-					// TODO: Add Image Support
-					HomeMapListingItemView(listingSummary = uiState.listingItems.listings[it])
+					val listingSummary = uiState.listingItems.listings[it]
+					val listingImage = if (it < uiState.listingItems.listingsImages.size) {
+						uiState.listingItems.listingsImages[it]
+					} else null
+					HomeMapListingItemView(
+						listingSummary = listingSummary,
+						listingImage = listingImage,
+						viewModel = viewModel,
+					)
 				}
 			}
 		}
@@ -234,13 +290,14 @@ fun HomeMapChildView(
 
 const val MAX_DISTANCE_IN_MINUTES = 180.0f
 
-	@Preview
+@Preview
 @Composable
 fun HomeMapChildViewLoadingPreview() {
 	SubletrTheme {
 		HomeMapChildView(
 			viewModel = HomeMapChildViewModel(
-				locationService = LocationService(context = LocalContext.current)
+				locationService = LocationService(context = LocalContext.current),
+				navigationService = NavigationService(context = LocalContext.current),
 			),
 			uiState = HomeMapUiState.Loading,
 		)

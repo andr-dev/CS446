@@ -20,7 +20,7 @@ import androidx.compose.ui.res.stringResource
 import org.uwaterloo.subletr.R
 import org.uwaterloo.subletr.components.button.SegmentedIconButton
 import org.uwaterloo.subletr.components.button.SegmentedIconButtonPosition
-import org.uwaterloo.subletr.pages.home.map.HomeMapChildViewModel
+import org.uwaterloo.subletr.pages.home.HomePageUiState
 import org.uwaterloo.subletr.pages.home.map.HomeMapUiState
 import org.uwaterloo.subletr.theme.secondaryButtonBackgroundColor
 import org.uwaterloo.subletr.theme.subletrPink
@@ -30,7 +30,7 @@ import org.uwaterloo.subletr.theme.unselectedGray
 fun HomeMapFiltersRowView(
 	modifier: Modifier,
 	uiState: HomeMapUiState.Loaded,
-	viewModel: HomeMapChildViewModel,
+	updateTransportationMethod: (HomePageUiState.TransportationMethod) -> Unit,
 ) {
 	Row(
 		modifier = modifier
@@ -61,46 +61,46 @@ fun HomeMapFiltersRowView(
 		) {
 			SegmentedIconButton(
 				onClick = {
-					viewModel.transportationMethodStream.onNext(HomeMapUiState.TransportationMethod.WALK)
+					updateTransportationMethod(HomePageUiState.TransportationMethod.WALK)
 				},
 				iconPainter = painterResource(id = R.drawable.directions_walk_solid_gray_24),
 				iconContentDescription = stringResource(id = R.string.walk),
 				selectedTint = subletrPink,
 				unselectedTint = unselectedGray,
-				selected = uiState.transportationMethod == HomeMapUiState.TransportationMethod.WALK,
+				selected = uiState.transportationMethod == HomePageUiState.TransportationMethod.WALK,
 				position = SegmentedIconButtonPosition.START,
 			)
 			SegmentedIconButton(
 				onClick = {
-					viewModel.transportationMethodStream.onNext(HomeMapUiState.TransportationMethod.BIKE)
+					updateTransportationMethod(HomePageUiState.TransportationMethod.BIKE)
 				},
 				iconPainter = painterResource(id = R.drawable.directions_bike_solid_gray_24),
 				iconContentDescription = stringResource(id = R.string.bike),
 				selectedTint = subletrPink,
 				unselectedTint = unselectedGray,
-				selected = uiState.transportationMethod == HomeMapUiState.TransportationMethod.BIKE,
+				selected = uiState.transportationMethod == HomePageUiState.TransportationMethod.BIKE,
 				position = SegmentedIconButtonPosition.MIDDLE,
 			)
 			SegmentedIconButton(
 				onClick = {
-					viewModel.transportationMethodStream.onNext(HomeMapUiState.TransportationMethod.BUS)
+					updateTransportationMethod(HomePageUiState.TransportationMethod.BUS)
 				},
 				iconPainter = painterResource(id = R.drawable.directions_bus_solid_gray_24),
 				iconContentDescription = stringResource(id = R.string.bus),
 				selectedTint = subletrPink,
 				unselectedTint = unselectedGray,
-				selected = uiState.transportationMethod == HomeMapUiState.TransportationMethod.BUS,
+				selected = uiState.transportationMethod == HomePageUiState.TransportationMethod.BUS,
 				position = SegmentedIconButtonPosition.MIDDLE,
 			)
 			SegmentedIconButton(
 				onClick = {
-					viewModel.transportationMethodStream.onNext(HomeMapUiState.TransportationMethod.ALL)
+					updateTransportationMethod(HomePageUiState.TransportationMethod.ALL)
 				},
 				iconPainter = painterResource(id = R.drawable.map_outline_black_24),
 				iconContentDescription = stringResource(id = R.string.all_transport),
 				selectedTint = subletrPink,
 				unselectedTint = unselectedGray,
-				selected = uiState.transportationMethod == HomeMapUiState.TransportationMethod.ALL,
+				selected = uiState.transportationMethod == HomePageUiState.TransportationMethod.ALL,
 				position = SegmentedIconButtonPosition.END,
 			)
 		}

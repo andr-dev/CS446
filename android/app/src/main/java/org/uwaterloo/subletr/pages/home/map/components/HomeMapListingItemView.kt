@@ -1,5 +1,6 @@
 package org.uwaterloo.subletr.pages.home.map.components
 
+import android.graphics.Bitmap
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -27,6 +28,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
@@ -37,7 +39,9 @@ import androidx.compose.ui.text.style.TextOverflow
 import org.uwaterloo.subletr.R
 import org.uwaterloo.subletr.api.models.ListingSummary
 import org.uwaterloo.subletr.components.button.SecondaryButton
+import org.uwaterloo.subletr.navigation.NavigationDestination
 import org.uwaterloo.subletr.pages.home.list.dateTimeFormatter
+import org.uwaterloo.subletr.pages.home.map.HomeMapChildViewModel
 import org.uwaterloo.subletr.theme.darkerGrayButtonColor
 import org.uwaterloo.subletr.theme.listingTitleFont
 import org.uwaterloo.subletr.theme.primaryTextColor
@@ -48,6 +52,8 @@ import kotlin.math.roundToInt
 fun HomeMapListingItemView(
 	modifier: Modifier = Modifier,
 	listingSummary: ListingSummary,
+	listingImage: Bitmap?,
+	viewModel: HomeMapChildViewModel,
 ) {
 	Button(
 		modifier = modifier
@@ -71,19 +77,34 @@ fun HomeMapListingItemView(
 					.padding(top = dimensionResource(id = R.dimen.xxs)),
 				verticalAlignment = Alignment.CenterVertically,
 			) {
-				Image(
-					modifier = Modifier
-						.height(dimensionResource(id = R.dimen.xxxl))
-						.width(dimensionResource(id = R.dimen.xxxl))
-						.clip(
-							shape = RoundedCornerShape(size = dimensionResource(id = R.dimen.xxs)),
+				if (listingImage != null) {
+					Image(
+						modifier = Modifier
+							.height(dimensionResource(id = R.dimen.xxxl))
+							.width(dimensionResource(id = R.dimen.xxxl))
+							.clip(
+								shape = RoundedCornerShape(size = dimensionResource(id = R.dimen.xxs)),
+							),
+						bitmap = listingImage.asImageBitmap(),
+						contentDescription = stringResource(id = R.string.listing_image),
+						contentScale = ContentScale.Crop,
+					)
+				}
+				else {
+					Image(
+						modifier = Modifier
+							.height(dimensionResource(id = R.dimen.xxxl))
+							.width(dimensionResource(id = R.dimen.xxxl))
+							.clip(
+								shape = RoundedCornerShape(size = dimensionResource(id = R.dimen.xxs)),
+							),
+						painter = painterResource(
+							id = R.drawable.room,
 						),
-					painter = painterResource(
-						id = R.drawable.room,
-					),
-					contentDescription = stringResource(id = R.string.listing_image),
-					contentScale = ContentScale.Crop,
-				)
+						contentDescription = stringResource(id = R.string.listing_image),
+						contentScale = ContentScale.Crop,
+					)
+				}
 				Spacer(modifier = Modifier.width(dimensionResource(id = R.dimen.xs)))
 				Column(
 					modifier = Modifier,
@@ -151,7 +172,11 @@ fun HomeMapListingItemView(
 						containerColor = darkerGrayButtonColor,
 						contentColor = Color.Black,
 					),
-					onClick = { /*TODO*/ },
+					onClick = {
+						viewModel.navHostController.navigate(
+							route = "${NavigationDestination.LISTING_DETAILS.rootNavPath}/${listingSummary.listingId}"
+						)
+					},
 				) {
 					Text(
 						stringResource(id = R.string.view_details),
@@ -178,7 +203,9 @@ fun HomeMapListingItemView(
 				) {
 					IconButton(
 						modifier = Modifier.background(color = darkerGrayButtonColor),
-						onClick = { /*TODO*/ },
+						onClick = {
+							  /*TODO*/
+						},
 					) {
 						Icon(
 							painter = painterResource(id = R.drawable.star_outline_black_26),

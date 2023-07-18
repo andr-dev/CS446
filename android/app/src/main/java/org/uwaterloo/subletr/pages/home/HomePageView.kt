@@ -86,7 +86,6 @@ fun HomePageView(
 						)
 					}
 				}
-
 				is HomeListUiState -> {
 					HomeListChildView(
 						modifier = Modifier.padding(padding),
@@ -94,11 +93,11 @@ fun HomePageView(
 						uiState = uiState,
 					)
 				}
-
 				is HomeMapUiState -> {
 					HomeMapChildView(
 						modifier = Modifier.padding(padding),
 						viewModel = viewModel.homeMapChildViewModel,
+						uiState = uiState,
 					)
 				}
 			}
@@ -159,19 +158,21 @@ fun LoginPageViewLoadedPreview() {
 	SubletrTheme {
 		HomePageView(
 			uiState = HomeListUiState.Loaded(
-				locationRange = HomePageUiState.LocationRange(),
-				priceRange = HomePageUiState.PriceRange(),
-				roomRange = HomePageUiState.RoomRange(),
 				listingItems = HomePageUiState.ListingItemsModel(
 					listings = emptyList(),
 					likedListings = emptySet(),
 					listingsImages = emptyList(),
 				),
-				genderPreference = Gender.OTHER,
-				houseTypePreference = HousingType.OTHER,
-				dateRange = HomeListUiState.DateRange(),
-				filterFavourite = false,
-				infoTextStringId = null,
+				filters = HomePageUiState.FiltersModel(
+					locationRange = HomePageUiState.LocationRange(),
+					priceRange = HomePageUiState.PriceRange(),
+					roomRange = HomePageUiState.RoomRange(),
+					gender = Gender.OTHER,
+					housingType = HousingType.OTHER,
+					dateRange = HomePageUiState.DateRange(),
+					favourite = false,
+					timeToDestination = null,
+				),
 			),
 		)
 	}
