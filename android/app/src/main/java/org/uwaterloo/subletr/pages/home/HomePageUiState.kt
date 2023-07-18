@@ -2,6 +2,8 @@ package org.uwaterloo.subletr.pages.home
 
 import android.graphics.Bitmap
 import org.uwaterloo.subletr.api.models.ListingSummary
+import org.uwaterloo.subletr.enums.Gender
+import org.uwaterloo.subletr.enums.HousingType
 
 interface HomePageUiState {
 	data class ListingItemsModel (
@@ -26,4 +28,43 @@ interface HomePageUiState {
 		var bathroom: Int? = null,
 		var ensuiteBathroom: Boolean = false,
 	)
+
+	data class DateRange(
+		var startingDate: String? = null,
+		var endingDate: String? = null,
+	)
+
+	data class FiltersModel(
+		val locationRange: LocationRange,
+		val priceRange: PriceRange,
+		val roomRange: RoomRange,
+		val gender: Gender,
+		val housingType: HousingType,
+		val dateRange: DateRange,
+		val favourite: Boolean,
+		val timeToDestination: Float?,
+	)
+
+	enum class TransportationMethod {
+		WALK,
+		BIKE,
+		BUS,
+		ALL,
+	}
+
+	enum class HomePageViewType {
+		LIST,
+		MAP,
+	}
+}
+
+fun HomePageUiState.FiltersModel.deepEquals(item: HomePageUiState.FiltersModel): Boolean {
+	return this.locationRange == item.locationRange &&
+			this.priceRange == item.priceRange &&
+			this.roomRange == item.roomRange &&
+			this.gender == item.gender &&
+			this.housingType == item.housingType &&
+			this.dateRange == item.dateRange &&
+			this.favourite == item.favourite &&
+			this.timeToDestination == this.timeToDestination
 }
