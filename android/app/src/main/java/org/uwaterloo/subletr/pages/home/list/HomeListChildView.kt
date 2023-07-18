@@ -116,7 +116,7 @@ fun HomeListChildView(
 				viewModel.getListingParamsStream.onNext(
 					HomePageViewModel.GetListingParams(
 						filters = uiState.filters,
-						transportationMethod = HomePageUiState.TransportationMethod.ALL,
+						transportationMethod = HomePageUiState.TransportationMethod.WALK,
 						listingPagingParams = HomePageViewModel.ListingPagingParams(
 								previousListingItemsModel = uiState.listingItems,
 								pageNumber = listState.layoutInfo.totalItemsCount
@@ -132,7 +132,7 @@ fun HomeListChildView(
 			viewModel.getListingParamsStream.onNext(
 				HomePageViewModel.GetListingParams(
 					filters = uiState.filters.copy(locationRange = newVal),
-					transportationMethod = HomePageUiState.TransportationMethod.ALL,
+					transportationMethod = HomePageUiState.TransportationMethod.WALK,
 					homePageView = HomePageUiState.HomePageViewType.LIST,
 				)
 			)
@@ -142,7 +142,7 @@ fun HomeListChildView(
 			viewModel.getListingParamsStream.onNext(
 				HomePageViewModel.GetListingParams(
 					filters = uiState.filters.copy(priceRange = newVal),
-					transportationMethod = HomePageUiState.TransportationMethod.ALL,
+					transportationMethod = HomePageUiState.TransportationMethod.WALK,
 					homePageView = HomePageUiState.HomePageViewType.LIST,
 				)
 			)
@@ -152,7 +152,7 @@ fun HomeListChildView(
 			viewModel.getListingParamsStream.onNext(
 				HomePageViewModel.GetListingParams(
 					filters = uiState.filters.copy(roomRange = newVal),
-					transportationMethod = HomePageUiState.TransportationMethod.ALL,
+					transportationMethod = HomePageUiState.TransportationMethod.WALK,
 					homePageView = HomePageUiState.HomePageViewType.LIST,
 				)
 			)
@@ -162,7 +162,7 @@ fun HomeListChildView(
 			viewModel.getListingParamsStream.onNext(
 				HomePageViewModel.GetListingParams(
 					filters = uiState.filters.copy(gender = newVal),
-					transportationMethod = HomePageUiState.TransportationMethod.ALL,
+					transportationMethod = HomePageUiState.TransportationMethod.WALK,
 					homePageView = HomePageUiState.HomePageViewType.LIST,
 				)
 			)
@@ -172,7 +172,7 @@ fun HomeListChildView(
 			viewModel.getListingParamsStream.onNext(
 				HomePageViewModel.GetListingParams(
 					filters = uiState.filters.copy(housingType = newVal),
-					transportationMethod = HomePageUiState.TransportationMethod.ALL,
+					transportationMethod = HomePageUiState.TransportationMethod.WALK,
 					homePageView = HomePageUiState.HomePageViewType.LIST,
 				)
 			)
@@ -182,7 +182,7 @@ fun HomeListChildView(
 			viewModel.getListingParamsStream.onNext(
 				HomePageViewModel.GetListingParams(
 					filters = uiState.filters.copy(dateRange = newVal),
-					transportationMethod = HomePageUiState.TransportationMethod.ALL,
+					transportationMethod = HomePageUiState.TransportationMethod.WALK,
 					homePageView = HomePageUiState.HomePageViewType.LIST,
 				)
 			)
@@ -192,7 +192,7 @@ fun HomeListChildView(
 			viewModel.getListingParamsStream.onNext(
 				HomePageViewModel.GetListingParams(
 					filters = uiState.filters.copy(favourite = newVal),
-					transportationMethod = HomePageUiState.TransportationMethod.ALL,
+					transportationMethod = HomePageUiState.TransportationMethod.WALK,
 					homePageView = HomePageUiState.HomePageViewType.LIST,
 				)
 			)

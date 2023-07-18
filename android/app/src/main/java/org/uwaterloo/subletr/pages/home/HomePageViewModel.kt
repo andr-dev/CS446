@@ -54,7 +54,7 @@ class HomePageViewModel @Inject constructor(
 				favourite = false,
 				timeToDestination = null,
 			),
-			transportationMethod = HomePageUiState.TransportationMethod.ALL,
+			transportationMethod = HomePageUiState.TransportationMethod.WALK,
 			homePageView = HomePageUiState.HomePageViewType.LIST,
 		)
 	)
@@ -256,7 +256,7 @@ class HomePageViewModel @Inject constructor(
 			uiStateStream.onNext(
 				HomeMapUiState.Loaded(
 					addressSearch = "",
-					transportationMethod = HomePageUiState.TransportationMethod.ALL,
+					transportationMethod = HomePageUiState.TransportationMethod.WALK,
 					filters = uiState.filters,
 					listingItems = uiState.listingItems,
 					timeToDestination = uiState.filters.timeToDestination
