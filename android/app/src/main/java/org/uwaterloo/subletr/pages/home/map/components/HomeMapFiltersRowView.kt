@@ -94,13 +94,13 @@ fun HomeMapFiltersRowView(
 			)
 			SegmentedIconButton(
 				onClick = {
-					updateTransportationMethod(HomePageUiState.TransportationMethod.ALL)
+					updateTransportationMethod(HomePageUiState.TransportationMethod.CAR)
 				},
-				iconPainter = painterResource(id = R.drawable.map_outline_black_24),
-				iconContentDescription = stringResource(id = R.string.all_transport),
+				iconPainter = painterResource(id = R.drawable.directions_car_solid_gray_24),
+				iconContentDescription = stringResource(id = R.string.car),
 				selectedTint = subletrPink,
 				unselectedTint = unselectedGray,
-				selected = uiState.transportationMethod == HomePageUiState.TransportationMethod.ALL,
+				selected = uiState.transportationMethod == HomePageUiState.TransportationMethod.CAR,
 				position = SegmentedIconButtonPosition.END,
 			)
 		}

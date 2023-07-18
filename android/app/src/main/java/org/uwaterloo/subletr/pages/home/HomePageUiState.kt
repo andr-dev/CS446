@@ -50,7 +50,7 @@ interface HomePageUiState {
 		WALK,
 		BIKE,
 		BUS,
-		ALL,
+		CAR,
 	}
 
 	enum class HomePageViewType {
