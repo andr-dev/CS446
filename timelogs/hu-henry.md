@@ -22,3 +22,4 @@
 | July 10th | 2 hours  | Deliverable 4 work - diagram and content |
 | July 12th | 4 hours  | Try to implement Places Autocomplete from Google Maps API, need to resolv hilt and constructor injection issues |
 | July 16th | 7 hours  | Worked on Places Autocomplete for creating sublet post, as well as finding its latitude and longitude for tje details map display |
+| July 18th | 6 hours | Added display for new fields in listing details, added listing favourite/unfavourite from listing details, worked on map latitude, longitude and location approximation and attempted to fix location services |
