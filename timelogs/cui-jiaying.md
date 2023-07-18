@@ -15,3 +15,8 @@
 | July 1st | 5 hours | create default filter and location filter  |
 | July 2nd | 3.5 hours | create Price filter and update reviews  |
 | July 3nd | 1.5 hours | fixing Padding on filter's bottom sheet  |
+| July 9th | 3 hours | adding room, roommate, gender filter  |
+| July 11th | 0.5 hours | update review  |
+| July 15th | 2.5 hours | add date and favourite filter |
+| July 16th | 7 hours | sync with backend to update api calls and look into location service|
+| July 17th | 1 hours | update review and update api calls|
