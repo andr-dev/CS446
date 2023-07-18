@@ -5,6 +5,7 @@ use rocket_okapi::{openapi, openapi_get_routes_spec};
 use tokio::sync::RwLockWriteGuard;
 
 use super::{
+    constants::GEOCODE_MAX_DECIMALS,
     model::geocode::{ForwardGeocodeRequest, ForwardGeocodeResponse},
     token::AuthenticatedUser,
     utils::format_address,
@@ -22,9 +23,11 @@ pub async fn geocode_address(
     let response: Vec<Point> = opencage.forward(&address).await?;
 
     if let Some(point) = response.first() {
+        let round = 10i32.pow(GEOCODE_MAX_DECIMALS) as f32;
+
         Ok(ForwardGeocodeResponse {
-            latitude: point.0.y as f32,
-            longitude: point.0.x as f32,
+            latitude: (point.0.y as f32 * round).round() / round,
+            longitude: (point.0.x as f32 * round).round() / round,
         })
     } else {
         Err(ServiceError::GeocodingError(GeocodingError::Forward))

@@ -46,7 +46,7 @@ use crate::{
 async fn listings_create(
     state: &State<AppState<'_>>,
     user: AuthenticatedUser,
-    listing_request: Json<CreateListingRequest>,
+    mut listing_request: Json<CreateListingRequest>,
 ) -> ServiceResult<CreateListingResponse> {
     let mut dbcon = state.pool.get()?;
 
@@ -61,6 +61,11 @@ async fn listings_create(
     let listing_id: i32 = rand::thread_rng().gen();
 
     let opencage = state.opencage.write().await;
+
+    listing_request.address_line = listing_request.address_line.trim().to_owned();
+    listing_request.address_city = listing_request.address_city.trim().to_owned();
+    listing_request.address_postalcode = listing_request.address_postalcode.trim().to_owned();
+    listing_request.address_country = listing_request.address_country.trim().to_owned();
 
     let location = geocode_address(
         opencage,
