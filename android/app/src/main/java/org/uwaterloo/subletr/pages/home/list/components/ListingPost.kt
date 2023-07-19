@@ -95,7 +95,7 @@ fun ListingPost(
 							.height(dimensionResource(id = R.dimen.xxxl))
 							.width(dimensionResource(id = R.dimen.xxxl)),
 						painter = painterResource(
-							id = R.drawable.room,
+							id = R.drawable.default_listing_image,
 						),
 						contentDescription = stringResource(id = R.string.listing_image),
 						contentScale = ContentScale.Crop,

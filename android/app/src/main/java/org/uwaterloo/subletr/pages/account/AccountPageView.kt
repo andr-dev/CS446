@@ -602,7 +602,6 @@ fun AccountPageView(
 						defaultElevation = dimensionResource(id = R.dimen.xxs),
 					),
 					onClick = {
-						Log.d("here", "${uiState.listingId}")
 					},
 					colors = CardDefaults.cardColors(
 						containerColor = squaredTextFieldBackgroundColor,
@@ -684,7 +683,7 @@ fun AccountPageView(
 											.height(dimensionResource(id = R.dimen.xxxl))
 											.width(dimensionResource(id = R.dimen.xxxl)),
 										painter = painterResource(
-											id = R.drawable.room,
+											id = R.drawable.default_listing_image,
 										),
 										contentDescription = stringResource(id = R.string.listing_image),
 										contentScale = ContentScale.Crop,
