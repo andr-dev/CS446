@@ -33,7 +33,8 @@ class HomeMapChildViewModel @Inject constructor(
 		uiStateStream
 			.distinctUntilChanged { first, second ->
 				if (first is HomeMapUiState.Loaded && second is HomeMapUiState.Loaded) {
-					first.timeToDestination == second.timeToDestination
+					first.timeToDestination == second.timeToDestination &&
+						first.addressSearch == second.addressSearch
 				}
 				else true
 			}
@@ -45,6 +46,7 @@ class HomeMapChildViewModel @Inject constructor(
 						HomePageViewModel.GetListingParams(
 							filters = it.filters.copy(
 								timeToDestination = it.timeToDestination,
+								addressSearch = it.addressSearch.ifEmpty { null },
 							),
 							transportationMethod = it.transportationMethod,
 							homePageView = HomePageUiState.HomePageViewType.MAP,

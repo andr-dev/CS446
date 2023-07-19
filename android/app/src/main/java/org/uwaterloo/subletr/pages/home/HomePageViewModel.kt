@@ -2,6 +2,7 @@ package org.uwaterloo.subletr.pages.home
 
 import android.graphics.Bitmap
 import androidx.navigation.NavHostController
+import com.google.android.gms.maps.model.LatLng
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.schedulers.Schedulers
@@ -9,6 +10,7 @@ import io.reactivex.rxjava3.subjects.BehaviorSubject
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.runBlocking
+import org.uwaterloo.subletr.api.apis.GeocodeApi
 import org.uwaterloo.subletr.api.apis.ListingsApi
 import org.uwaterloo.subletr.api.models.GetListingsResponse
 import org.uwaterloo.subletr.api.models.ListingSummary
@@ -33,6 +35,7 @@ class HomePageViewModel @Inject constructor(
 	val homeListChildViewModel: HomeListChildViewModel,
 	val homeMapChildViewModel: HomeMapChildViewModel,
 	private val listingsApi: ListingsApi,
+	private val geocodeApi: GeocodeApi,
 ) : SubletrViewModel<HomePageUiState>(
 	homeListChildViewModel,
 	homeMapChildViewModel,
@@ -53,6 +56,7 @@ class HomePageViewModel @Inject constructor(
 				dateRange = HomePageUiState.DateRange(),
 				favourite = false,
 				timeToDestination = null,
+				addressSearch = null,
 			),
 			transportationMethod = HomePageUiState.TransportationMethod.WALK,
 			homePageView = HomePageUiState.HomePageViewType.LIST,
@@ -70,6 +74,9 @@ class HomePageViewModel @Inject constructor(
 				first.filters.deepEquals(second.filters) &&
 				first.transportationMethod == second.transportationMethod
 		}
+		/*
+		 * Enforce removing all previous listings when fetching first page
+		 */
 		.map {
 			if (it.listingPagingParams.pageNumber == 0) {
 				it.copy(
@@ -87,15 +94,53 @@ class HomePageViewModel @Inject constructor(
 				it
 			}
 		}
+		/*
+		 * Retrieve LatLng from geocodeApi if addressSearch is defined
+		 */
+		.map { getListingParams ->
+			if (getListingParams.filters.addressSearch != null) {
+				val splitAddress = getListingParams.filters.addressSearch.split(",").toTypedArray()
+				runCatching {
+					runBlocking {
+						geocodeApi.forwardGeocode(
+							addressLine = if (splitAddress.isNotEmpty()) splitAddress[0] else "",
+							addressCity = if (splitAddress.size >= 2) splitAddress[1] else "",
+							addressPostalcode = if (splitAddress.size >= 3) splitAddress[2] else "",
+							addressCountry = if (splitAddress.size >= 4) splitAddress[3] else "Canada",
+						)
+					}
+				}
+					.getOrNull()
+					?.let {
+						return@map getListingParams.copy(
+							computedLatLng = LatLng(
+								it.latitude.toDouble(),
+								it.longitude.toDouble(),
+							)
+						)
+					}
+				return@map getListingParams
+			}
+			else {
+				return@map getListingParams
+			}
+		}
+		/*
+		 * Actually make Api call
+		 */
 		.map { getListingParams: GetListingParams ->
 			ListingParamsAndResultResponse(
 				listingParams = getListingParams,
 				listingsResponse = runCatching {
 					runBlocking {
-						// TODO: Change to use filter values + latitude + longitude
 						listingsApi.listingsList(
-							longitude = UWATERLOO_LONGITUDE,
-							latitude = UWATERLOO_LATITUDE,
+							longitude =
+							if (getListingParams.computedLatLng != null)
+								getListingParams.computedLatLng.longitude.toFloat()
+							else UWATERLOO_LONGITUDE,
+							latitude = if (getListingParams.computedLatLng != null)
+								getListingParams.computedLatLng.latitude.toFloat()
+							else UWATERLOO_LATITUDE,
 							pageNumber = getListingParams.listingPagingParams.pageNumber,
 							pageSize = LISTING_PAGE_SIZE,
 							distanceMetersMin = getListingParams.filters.locationRange.lowerBound?.toFloat(),
@@ -233,7 +278,7 @@ class HomePageViewModel @Inject constructor(
 								selectedListings = newSelectedListings,
 							),
 							transportationMethod = listingParamsAndResponse.listingParams.transportationMethod,
-							addressSearch = "",
+							addressSearch = listingParamsAndResponse.listingParams.filters.addressSearch ?: "",
 							timeToDestination = listingParamsAndResponse.listingParams.filters.timeToDestination
 								?: MAX_DISTANCE_IN_MINUTES
 						)
@@ -296,6 +341,7 @@ class HomePageViewModel @Inject constructor(
 			),
 			pageNumber = 0,
 		),
+		val computedLatLng: LatLng? = null,
 	)
 
 	data class ListingPagingParams(

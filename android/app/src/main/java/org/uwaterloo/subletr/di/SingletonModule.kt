@@ -8,6 +8,7 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import okhttp3.OkHttpClient
 import org.uwaterloo.subletr.api.apis.AuthenticationApi
+import org.uwaterloo.subletr.api.apis.GeocodeApi
 import org.uwaterloo.subletr.api.apis.ListingsApi
 import org.uwaterloo.subletr.api.apis.ServerApi
 import org.uwaterloo.subletr.api.apis.UserApi
@@ -53,6 +54,12 @@ object SingletonModule {
 	@Provides
 	fun provideUserApi(httpClient: OkHttpClient): UserApi {
 		return UserApi(basePath = apiBaseUrl, client = httpClient)
+	}
+
+	@Singleton
+	@Provides
+	fun provideGeocodeApi(httpClient: OkHttpClient): GeocodeApi {
+		return GeocodeApi(basePath = apiBaseUrl, client = httpClient)
 	}
 
 	@Singleton

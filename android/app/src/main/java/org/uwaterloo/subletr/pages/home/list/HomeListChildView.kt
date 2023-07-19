@@ -492,7 +492,8 @@ private fun HomeListViewPreview() {
 					dateRange = HomePageUiState.DateRange(),
 					favourite = false,
 					timeToDestination = null,
-				)
+					addressSearch = null,
+				),
 			),
 		)
 	}

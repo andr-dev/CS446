@@ -44,6 +44,7 @@ interface HomePageUiState {
 		val dateRange: DateRange,
 		val favourite: Boolean,
 		val timeToDestination: Float?,
+		val addressSearch: String?,
 	)
 
 	enum class TransportationMethod {
@@ -67,5 +68,6 @@ fun HomePageUiState.FiltersModel.deepEquals(item: HomePageUiState.FiltersModel):
 			this.housingType == item.housingType &&
 			this.dateRange == item.dateRange &&
 			this.favourite == item.favourite &&
-			this.timeToDestination == this.timeToDestination
+			this.timeToDestination == item.timeToDestination &&
+			this.addressSearch == item.addressSearch
 }

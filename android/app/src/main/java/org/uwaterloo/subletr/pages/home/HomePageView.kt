@@ -173,6 +173,7 @@ fun LoginPageViewLoadedPreview() {
 					dateRange = HomePageUiState.DateRange(),
 					favourite = false,
 					timeToDestination = null,
+					addressSearch = null,
 				),
 			),
 		)
