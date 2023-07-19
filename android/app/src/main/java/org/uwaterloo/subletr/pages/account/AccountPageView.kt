@@ -203,9 +203,7 @@ fun AccountPageView(
 					modifier = Modifier
 						.fillMaxWidth(ELEMENT_WIDTH)
 						.height(dimensionResource(id = R.dimen.xl)),
-					onClick = {
-						viewModel.checkAuth()
-					},
+					onClick = {},
 				) {
 					Text(
 						text = stringResource(id = R.string.manage_by_sublet),

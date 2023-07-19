@@ -46,8 +46,4 @@ class AccountPageViewModel @Inject constructor(
 			navHostController
 			.navigate(NavigationDestination.LOGIN.rootNavPath)
 	}
-
-	fun checkAuth() {
-		authenticationService.isAuthenticatedUser()
-	}
 }
