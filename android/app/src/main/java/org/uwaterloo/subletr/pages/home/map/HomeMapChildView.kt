@@ -32,6 +32,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.pointer.pointerInteropFilter
@@ -43,6 +44,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
 import com.google.maps.android.compose.GoogleMap
+import com.google.maps.android.compose.Marker
+import com.google.maps.android.compose.MarkerState
 import com.google.maps.android.compose.rememberCameraPositionState
 import kotlinx.coroutines.launch
 import org.uwaterloo.subletr.R
@@ -59,6 +62,8 @@ import org.uwaterloo.subletr.theme.secondaryTextColor
 import org.uwaterloo.subletr.theme.subletrPink
 import org.uwaterloo.subletr.theme.timeToDestinationFont
 import org.uwaterloo.subletr.theme.unselectedGray
+import org.uwaterloo.subletr.utils.UWATERLOO_LATITUDE
+import org.uwaterloo.subletr.utils.UWATERLOO_LONGITUDE
 import kotlin.math.roundToInt
 
 @OptIn(ExperimentalComposeUiApi::class)
@@ -70,7 +75,11 @@ fun HomeMapChildView(
 ) {
 	val coroutineScope = rememberCoroutineScope()
 	val cameraPositionState = rememberCameraPositionState {
-		position = CameraPosition.fromLatLngZoom(WATERLOO, DEFAULT_ZOOM)
+		position = CameraPosition.fromLatLngZoom(
+			LatLng(
+				UWATERLOO_LATITUDE.toDouble(),
+				UWATERLOO_LONGITUDE.toDouble(),
+			), DEFAULT_ZOOM)
 	}
 	var scrollEnabled: Boolean by remember{ mutableStateOf(true) }
 	LaunchedEffect(cameraPositionState.isMoving) {
@@ -108,7 +117,10 @@ fun HomeMapChildView(
 			Column(
 				modifier = Modifier.padding(
 					paddingValues = paddingValues,
-				),
+				)
+					.fillMaxSize(fraction = 1.0f),
+				horizontalAlignment = Alignment.CenterHorizontally,
+				verticalArrangement = Arrangement.Center,
 			) {
 				CircularProgressIndicator()
 			}
@@ -235,15 +247,19 @@ fun HomeMapChildView(
 						contentDescription = stringResource(id = R.string.google_maps_view),
 						cameraPositionState = cameraPositionState,
 					) {
-						// TODO: Add when ListingSummary is updated with coordinates
-//						uiState.listingItems.listings.forEachIndexed { index, listingSummary ->
-//							val selected = uiState.listingItems.selectedListings.getOrElse(index, {false})
-//							if (selected) {
-//								Marker(
-//									state = MarkerState(position = listingSummary),
-//								)
-//							}
-//						}
+						uiState.listingItems.listings.forEachIndexed { index, listingSummary ->
+							val selected = uiState.listingItems.selectedListings.getOrElse(index, {false})
+							if (selected) {
+								Marker(
+									state = MarkerState(
+										position = LatLng(
+											listingSummary.latitude.toDouble(),
+											listingSummary.longitude.toDouble(),
+										)
+									),
+								)
+							}
+						}
 					}
 				}
 				item {
@@ -321,10 +337,6 @@ fun HomeMapChildView(
 
 const val MAX_DISTANCE_IN_MINUTES = 180.0f
 private const val DEFAULT_ZOOM = 12.0f
-private val WATERLOO = LatLng(
-	43.4643,
-	-80.5204,
-)
 
 @Preview
 @Composable
