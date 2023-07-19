@@ -35,6 +35,9 @@ class AuthenticationService(
 		}
 	}
 
+	/*
+	* Only run after application init
+	* */
 	override fun isAuthenticatedUser(): AuthenticatedUser? {
 		val token = ApiClient.accessToken
 		return if (accessTokenExists() && token != null) {
