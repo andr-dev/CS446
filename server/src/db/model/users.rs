@@ -1,6 +1,6 @@
 use diesel::{Insertable, Queryable};
 
-use crate::db::schema::{user_ratings, users};
+use crate::db::schema::{user_avatars, user_ratings, users};
 
 #[derive(Queryable, Debug)]
 #[diesel(table_name = users)]
@@ -30,4 +30,12 @@ pub struct UserRating {
     pub user_id: i32,
     pub rater_user_id: i32,
     pub rating: i32,
+}
+
+#[derive(Queryable, Insertable, Debug, Clone)]
+#[diesel(table_name = user_avatars)]
+pub struct UserAvatar {
+    pub user_id: i32,
+    pub image_id: String,
+    pub extension: String,
 }
