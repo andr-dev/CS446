@@ -25,6 +25,8 @@ import org.uwaterloo.subletr.api.models.CreateUserResponse
 import org.uwaterloo.subletr.api.models.GetUserResponse
 import org.uwaterloo.subletr.api.models.RateUserRequest
 import org.uwaterloo.subletr.api.models.UpdateUserRequest
+import org.uwaterloo.subletr.api.models.UserAvatarUpdateRequest
+import org.uwaterloo.subletr.api.models.UserAvatarUpdateResponse
 
 import com.squareup.moshi.Json
 
@@ -50,6 +52,149 @@ class UserApi(basePath: kotlin.String = defaultBasePath, client: OkHttpClient = 
         val defaultBasePath: String by lazy {
             System.getProperties().getProperty(ApiClient.baseUrlKey, "/api")
         }
+    }
+
+    /**
+     * 
+     * 
+     * @param userId 
+     * @return kotlin.String
+     * @throws IllegalStateException If the request is not correctly configured
+     * @throws IOException Rethrows the OkHttp execute method exception
+     * @throws UnsupportedOperationException If the API returns an informational or redirection response
+     * @throws ClientException If the API returns a client error response
+     * @throws ServerException If the API returns a server error response
+     */
+    @Suppress("UNCHECKED_CAST")
+    @Throws(IllegalStateException::class, IOException::class, UnsupportedOperationException::class, ClientException::class, ServerException::class)
+    suspend fun userAvatarGet(userId: kotlin.Int) : kotlin.String = withContext(Dispatchers.IO) {
+        val localVarResponse = userAvatarGetWithHttpInfo(userId = userId)
+
+        return@withContext when (localVarResponse.responseType) {
+            ResponseType.Success -> (localVarResponse as Success<*>).data as kotlin.String
+            ResponseType.Informational -> throw UnsupportedOperationException("Client does not support Informational responses.")
+            ResponseType.Redirection -> throw UnsupportedOperationException("Client does not support Redirection responses.")
+            ResponseType.ClientError -> {
+                val localVarError = localVarResponse as ClientError<*>
+                throw ClientException("Client error : ${localVarError.statusCode} ${localVarError.message.orEmpty()}", localVarError.statusCode, localVarResponse)
+            }
+            ResponseType.ServerError -> {
+                val localVarError = localVarResponse as ServerError<*>
+                throw ServerException("Server error : ${localVarError.statusCode} ${localVarError.message.orEmpty()}", localVarError.statusCode, localVarResponse)
+            }
+        }
+    }
+
+    /**
+     * 
+     * 
+     * @param userId 
+     * @return ApiResponse<kotlin.String?>
+     * @throws IllegalStateException If the request is not correctly configured
+     * @throws IOException Rethrows the OkHttp execute method exception
+     */
+    @Suppress("UNCHECKED_CAST")
+    @Throws(IllegalStateException::class, IOException::class)
+    suspend fun userAvatarGetWithHttpInfo(userId: kotlin.Int) : ApiResponse<kotlin.String?> = withContext(Dispatchers.IO) {
+        val localVariableConfig = userAvatarGetRequestConfig(userId = userId)
+
+        return@withContext request<Unit, kotlin.String>(
+            localVariableConfig
+        )
+    }
+
+    /**
+     * To obtain the request config of the operation userAvatarGet
+     *
+     * @param userId 
+     * @return RequestConfig
+     */
+    fun userAvatarGetRequestConfig(userId: kotlin.Int) : RequestConfig<Unit> {
+        val localVariableBody = null
+        val localVariableQuery: MultiValueMap = mutableMapOf()
+        val localVariableHeaders: MutableMap<String, String> = mutableMapOf()
+        localVariableHeaders["Accept"] = "application/json"
+
+        return RequestConfig(
+            method = RequestMethod.GET,
+            path = "/user/avatar/{user_id}".replace("{"+"user_id"+"}", encodeURIComponent(userId.toString())),
+            query = localVariableQuery,
+            headers = localVariableHeaders,
+            requiresAuthentication = true,
+            body = localVariableBody
+        )
+    }
+
+    /**
+     * 
+     * 
+     * @param userAvatarUpdateRequest 
+     * @return UserAvatarUpdateResponse
+     * @throws IllegalStateException If the request is not correctly configured
+     * @throws IOException Rethrows the OkHttp execute method exception
+     * @throws UnsupportedOperationException If the API returns an informational or redirection response
+     * @throws ClientException If the API returns a client error response
+     * @throws ServerException If the API returns a server error response
+     */
+    @Suppress("UNCHECKED_CAST")
+    @Throws(IllegalStateException::class, IOException::class, UnsupportedOperationException::class, ClientException::class, ServerException::class)
+    suspend fun userAvatarUpdate(userAvatarUpdateRequest: UserAvatarUpdateRequest) : UserAvatarUpdateResponse = withContext(Dispatchers.IO) {
+        val localVarResponse = userAvatarUpdateWithHttpInfo(userAvatarUpdateRequest = userAvatarUpdateRequest)
+
+        return@withContext when (localVarResponse.responseType) {
+            ResponseType.Success -> (localVarResponse as Success<*>).data as UserAvatarUpdateResponse
+            ResponseType.Informational -> throw UnsupportedOperationException("Client does not support Informational responses.")
+            ResponseType.Redirection -> throw UnsupportedOperationException("Client does not support Redirection responses.")
+            ResponseType.ClientError -> {
+                val localVarError = localVarResponse as ClientError<*>
+                throw ClientException("Client error : ${localVarError.statusCode} ${localVarError.message.orEmpty()}", localVarError.statusCode, localVarResponse)
+            }
+            ResponseType.ServerError -> {
+                val localVarError = localVarResponse as ServerError<*>
+                throw ServerException("Server error : ${localVarError.statusCode} ${localVarError.message.orEmpty()}", localVarError.statusCode, localVarResponse)
+            }
+        }
+    }
+
+    /**
+     * 
+     * 
+     * @param userAvatarUpdateRequest 
+     * @return ApiResponse<UserAvatarUpdateResponse?>
+     * @throws IllegalStateException If the request is not correctly configured
+     * @throws IOException Rethrows the OkHttp execute method exception
+     */
+    @Suppress("UNCHECKED_CAST")
+    @Throws(IllegalStateException::class, IOException::class)
+    suspend fun userAvatarUpdateWithHttpInfo(userAvatarUpdateRequest: UserAvatarUpdateRequest) : ApiResponse<UserAvatarUpdateResponse?> = withContext(Dispatchers.IO) {
+        val localVariableConfig = userAvatarUpdateRequestConfig(userAvatarUpdateRequest = userAvatarUpdateRequest)
+
+        return@withContext request<UserAvatarUpdateRequest, UserAvatarUpdateResponse>(
+            localVariableConfig
+        )
+    }
+
+    /**
+     * To obtain the request config of the operation userAvatarUpdate
+     *
+     * @param userAvatarUpdateRequest 
+     * @return RequestConfig
+     */
+    fun userAvatarUpdateRequestConfig(userAvatarUpdateRequest: UserAvatarUpdateRequest) : RequestConfig<UserAvatarUpdateRequest> {
+        val localVariableBody = userAvatarUpdateRequest
+        val localVariableQuery: MultiValueMap = mutableMapOf()
+        val localVariableHeaders: MutableMap<String, String> = mutableMapOf()
+        localVariableHeaders["Content-Type"] = "application/json"
+        localVariableHeaders["Accept"] = "application/json"
+
+        return RequestConfig(
+            method = RequestMethod.POST,
+            path = "/user/avatar/update",
+            query = localVariableQuery,
+            headers = localVariableHeaders,
+            requiresAuthentication = true,
+            body = localVariableBody
+        )
     }
 
     /**
