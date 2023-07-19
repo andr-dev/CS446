@@ -605,7 +605,7 @@ class ListingsApi(basePath: kotlin.String = defaultBasePath, client: OkHttpClien
             path = "/listings/list",
             query = localVariableQuery,
             headers = localVariableHeaders,
-            requiresAuthentication = false,
+            requiresAuthentication = true,
             body = localVariableBody
         )
     }

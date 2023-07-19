@@ -23,6 +23,28 @@ pub fn format_address(
     )
 }
 
+pub fn format_address_anonymous(
+    address_line: String,
+    address_city: String,
+    address_postalcode: String,
+    address_country: String,
+) -> String {
+    let mut address_line_iter = address_line.split_ascii_whitespace().peekable();
+
+    if let Some(s) = address_line_iter.peek() {
+        if s.chars().all(|c| c.is_numeric()) {
+            address_line_iter.next();
+        }
+    }
+
+    format_address(
+        address_line_iter.collect(),
+        address_city,
+        address_postalcode,
+        address_country,
+    )
+}
+
 /// Modified from (https://github.com/srishanbhattarai/geoutils)
 ///
 /// Compute the Vincenty Inverse formula on two points 'start' and 'end'.

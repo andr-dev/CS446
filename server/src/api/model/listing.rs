@@ -7,7 +7,7 @@ use serde::{Deserialize, Serialize};
 
 use super::NaiveDateForm;
 use crate::{
-    api::utils::format_address,
+    api::utils::{format_address, format_address_anonymous},
     db::model::listings::{Listing, NewListing},
     error::ServiceError,
 };
@@ -68,10 +68,19 @@ pub struct ListingSummary {
     pub residence_type: ResidenceType,
 }
 impl ListingSummary {
-    pub fn try_from_db(l: Listing, distance_meters: f32, img_ids: Vec<String>) -> Result<Self, ServiceError> {
+    pub fn try_from_db(
+        l: Listing,
+        user_id: i32,
+        distance_meters: f32,
+        img_ids: Vec<String>,
+    ) -> Result<Self, ServiceError> {
         Ok(ListingSummary {
             listing_id: l.listing_id,
-            address: format_address(l.address_line, l.address_city, l.address_postalcode, l.address_country),
+            address: if l.owner_user_id == user_id {
+                format_address(l.address_line, l.address_city, l.address_postalcode, l.address_country)
+            } else {
+                format_address_anonymous(l.address_line, l.address_city, l.address_postalcode, l.address_country)
+            },
             distance_meters,
             price: TryInto::<u16>::try_into(l.price).map_err(|e| ServiceError::InvalidFieldError {
                 field: "price",
@@ -172,7 +181,12 @@ pub struct ListingDetails {
 }
 
 impl ListingDetails {
-    pub fn try_from_db(l: Listing, distance_meters: f32, img_ids: Vec<String>) -> Result<Self, ServiceError> {
+    pub fn try_from_db(
+        l: Listing,
+        user_id: i32,
+        distance_meters: f32,
+        img_ids: Vec<String>,
+    ) -> Result<Self, ServiceError> {
         let description = l.listing_description.to_owned();
 
         let residence_type = ResidenceType::from_string(&l.residence_type).ok_or(ServiceError::InvalidFieldError {
@@ -187,7 +201,7 @@ impl ListingDetails {
 
         let owner_user_id = l.owner_user_id;
 
-        let ls = ListingSummary::try_from_db(l, distance_meters, img_ids)?;
+        let ls = ListingSummary::try_from_db(l, user_id, distance_meters, img_ids)?;
 
         Ok(ListingDetails {
             address: ls.address,

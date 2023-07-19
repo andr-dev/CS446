@@ -119,6 +119,7 @@ fn listings_details(
         Ok(Json(GetListingDetailsResponse {
             details: ListingDetails::try_from_db(
                 l,
+                user.user_id,
                 distance_meters(details_request.longitude, details_request.latitude, longitude, latitude)
                     .map_err(|_| ServiceError::InternalError)?,
                 listing_images.into_iter().map(|li| li.image_id).collect(),
@@ -168,7 +169,11 @@ fn listings_unfavourite(
 
 #[openapi(tag = "Listings")]
 #[get("/list?<listings_request..>")]
-fn listings_list(state: &State<AppState>, listings_request: GetListingsRequest) -> ServiceResult<GetListingsResponse> {
+fn listings_list(
+    state: &State<AppState>,
+    user: AuthenticatedUser,
+    listings_request: GetListingsRequest,
+) -> ServiceResult<GetListingsResponse> {
     let mut dbcon = state.pool.get()?;
 
     let db_request = listings::dsl::listings
@@ -285,6 +290,7 @@ fn listings_list(state: &State<AppState>, listings_request: GetListingsRequest) 
                 {
                     Ok(Some(ListingSummary::try_from_db(
                         l,
+                        user.user_id,
                         distance_meters,
                         listing_images.into_iter().map(|li| li.image_id).collect(),
                     )?))
