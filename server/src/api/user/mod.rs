@@ -29,6 +29,7 @@ use crate::{
     db::{
         model::users::{NewUser, User},
         schema::{listings, users},
+        schema_view::user_rating,
     },
     error::{ServiceError, ServiceResult},
     state::AppState,
@@ -72,6 +73,11 @@ fn user_get(state: &State<AppState>, user: AuthenticatedUser) -> ServiceResult<G
 
     let user: User = users::dsl::users.find(user.user_id).first(&mut dbcon).unwrap();
 
+    let rating: (i32, f32) = user_rating::dsl::user_rating
+        .filter(user_rating::user_id.eq(user.user_id))
+        .first(&mut dbcon)
+        .unwrap_or((0, 0.0));
+
     let listing_ids: Vec<i32> = listings::dsl::listings
         .select(listings::dsl::listing_id)
         .filter(listings::owner_user_id.eq(user.user_id))
@@ -86,6 +92,7 @@ fn user_get(state: &State<AppState>, user: AuthenticatedUser) -> ServiceResult<G
         gender: user.gender,
 
         listing_id: listing_ids.first().copied(),
+        rating: rating.1,
     }))
 }
 
