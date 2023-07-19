@@ -3,14 +3,11 @@ package org.uwaterloo.subletr.pages.account
 import android.graphics.Bitmap
 import android.util.Log
 import androidx.navigation.NavHostController
-import androidx.navigation.navOptions
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.schedulers.Schedulers
 import io.reactivex.rxjava3.subjects.BehaviorSubject
 import io.reactivex.rxjava3.subjects.PublishSubject
-import kotlinx.coroutines.async
-import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.runBlocking
 import org.uwaterloo.subletr.api.apis.ListingsApi
 import org.uwaterloo.subletr.api.apis.UserApi
@@ -26,7 +23,6 @@ import org.uwaterloo.subletr.utils.UWATERLOO_LONGITUDE
 import org.uwaterloo.subletr.utils.base64ToBitmap
 import java.util.Optional
 import javax.inject.Inject
-import kotlin.jvm.optionals.getOrDefault
 import kotlin.jvm.optionals.getOrNull
 
 @HiltViewModel
@@ -47,72 +43,76 @@ class AccountPageViewModel @Inject constructor(
 		BehaviorSubject.createDefault(Optional.empty())
 	private val listingDetailsStream: BehaviorSubject<Optional<ListingDetails>> =
 		BehaviorSubject.createDefault(Optional.empty())
-	private val listingImageIdStream: BehaviorSubject<Optional<String>> =
+	private val imageStream: BehaviorSubject<Optional<String>> =
 		BehaviorSubject.createDefault(Optional.empty())
 
 	private val userDetailsStream: Observable<Result<GetUserResponse>> =
 		BehaviorSubject.createDefault(Optional.empty<String>()).map {
-		runCatching {
 			runBlocking {
-				val userResponse = userApi.userGet()
-				firstNameStream.onNext(userResponse.firstName)
-				lastNameStream.onNext(userResponse.lastName)
-				genderStream.onNext(userResponse.gender)
-				if (userResponse.listingId != null) {
-					listingIdStream.onNext(Optional.of(userResponse.listingId))
+				runCatching {
+					userApi.userGet()
+				}.onSuccess { userResponse ->
+					firstNameStream.onNext(userResponse.firstName)
+					lastNameStream.onNext(userResponse.lastName)
+					genderStream.onNext(userResponse.gender)
 
-					val listing =
-						listingsApi.listingsDetails(
-							listingId = userResponse.listingId,
-							longitude = UWATERLOO_LONGITUDE,
-							latitude = UWATERLOO_LATITUDE,
-						)
-					listingDetailsStream.onNext(Optional.of(listing.details))
-					if (listing.details.imgIds.isNotEmpty()) {
-						listingImageIdStream.onNext(Optional.of(listing.details.imgIds.first()))
+					if (userResponse.listingId != null) {
+						listingIdStream.onNext(Optional.of(userResponse.listingId))
+						runCatching {
+							listingsApi.listingsDetails(
+								listingId = userResponse.listingId,
+								longitude = UWATERLOO_LONGITUDE,
+								latitude = UWATERLOO_LATITUDE,
+							)
+						}
+							.onSuccess { listing ->
+								listingDetailsStream.onNext(Optional.of(listing.details))
+								if (listing.details.imgIds.isNotEmpty()) {
+									val imageResponse = listingsApi.listingsImagesGet(
+										listing.details.imgIds.first(),
+									)
+
+									imageStream.onNext(Optional.of(imageResponse))
+								}
+							}
 					}
 				}
-
-				userResponse
 			}
-		}.onFailure {
-			Log.d("API ERROR", "Failed to get user details")
-//			navHostController.navigate(
-//				route = NavigationDestination.LOGIN.rootNavPath,
-//				navOptions = navOptions {
-//					popUpTo(navHostController.graph.id)
-//				},
-//			)
+				.onFailure {
+					Log.d("API ERROR", "Failed to get user details")
+//					navHostController.navigate(
+//						route = NavigationDestination.LOGIN.rootNavPath,
+//						navOptions = navOptions {
+//							popUpTo(navHostController.graph.id)
+//						},
+//					)
+				}
 		}
-	}
 		.onErrorResumeWith(Observable.never())
 		.subscribeOn(Schedulers.io())
 
-//	private val avatarStream: Observable<Result<String>> =
-//		BehaviorSubject.createDefault("").map {
-//			runCatching {
-//				runBlocking {
-//					authenticationService.a
-//					userApi.userAvatarGet()
-//				}
-//			}.onFailure {
-//				Log.d("API ERROR", "Failed to get user avatar")
-//			}
-//		}
-//			.onErrorResumeWith(Observable.never())
-//			.subscribeOn(Schedulers.io())
+	private val imageBitmapStream: Observable<Optional<Bitmap>> = imageStream.map {
+		val nullableVersion = it.getOrNull()
+		if (nullableVersion != null) {
+			Optional.of(nullableVersion.base64ToBitmap())
+		}
+		else {
+			Optional.empty<Bitmap>()
+		}
+	}
+		.observeOn(Schedulers.computation())
 
 
 	override val uiStateStream: Observable<AccountPageUiState> = Observable.combineLatest(
-		userDetailsStream,
 		lastNameStream,
 		firstNameStream,
 		genderStream,
 		settingsStream,
 		listingIdStream,
 		listingDetailsStream,
+		imageBitmapStream
 	) {
-			userDetails, lastName, firstName, gender, settings, listingId, listingDetails ->
+			lastName, firstName, gender, settings, listingId, listingDetails, imageBitmap ->
 		AccountPageUiState.Loaded(
 			lastName = lastName,
 			firstName = firstName,
@@ -120,7 +120,7 @@ class AccountPageViewModel @Inject constructor(
 			settings = settings,
 			listingId = listingId.getOrNull(),
 			listingDetails = listingDetails.getOrNull(),
-			listingImage = null,
+			listingImage = imageBitmap.getOrNull(),
 		)
 	}
 
@@ -150,6 +150,8 @@ class AccountPageViewModel @Inject constructor(
 			.subscribeOn(Schedulers.io())
 			.onErrorResumeWith(Observable.never())
 			.safeSubscribe()
+
+		userDetailsStream.safeSubscribe()
 	}
 
 	fun logout() {

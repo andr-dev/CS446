@@ -112,7 +112,7 @@ fun HomeMapListingItemView(
 								shape = RoundedCornerShape(size = dimensionResource(id = R.dimen.xxs)),
 							),
 						painter = painterResource(
-							id = R.drawable.room,
+							id = R.drawable.default_listing_image,
 						),
 						contentDescription = stringResource(id = R.string.listing_image),
 						contentScale = ContentScale.Crop,
