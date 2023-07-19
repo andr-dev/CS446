@@ -55,3 +55,13 @@ pub struct RateUserRequest {
 pub struct GetRatingUserRequest {
     pub user_id: i32,
 }
+
+#[derive(JsonSchema, Deserialize, Clone, PartialEq)]
+pub struct UserAvatarUpdateRequest {
+    pub avatar: String,
+}
+
+#[derive(JsonSchema, Serialize, Clone, PartialEq)]
+pub struct UserAvatarUpdateResponse {
+    pub avatar_id: String,
+}
