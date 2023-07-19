@@ -7,5 +7,8 @@ interface IAuthenticationService {
 	fun deleteAccessToken()
 	fun accessTokenExists(): Boolean
 	fun setAccessTokenFromInternalFile()
+	/*
+	* Only run after application init
+	* */
 	fun isAuthenticatedUser(): AuthenticatedUser?
 }
