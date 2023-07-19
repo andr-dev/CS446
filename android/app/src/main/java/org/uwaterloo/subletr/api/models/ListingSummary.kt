@@ -25,6 +25,8 @@ import com.squareup.moshi.JsonClass
  *
  * @param listingId 
  * @param address 
+ * @param longitude 
+ * @param latitude 
  * @param distanceMeters 
  * @param price 
  * @param roomsAvailable 
@@ -46,6 +48,12 @@ data class ListingSummary (
 
     @Json(name = "address")
     val address: kotlin.String,
+
+    @Json(name = "longitude")
+    val longitude: kotlin.Float,
+
+    @Json(name = "latitude")
+    val latitude: kotlin.Float,
 
     @Json(name = "distance_meters")
     val distanceMeters: kotlin.Float,

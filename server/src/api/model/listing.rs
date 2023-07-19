@@ -55,6 +55,8 @@ pub struct GetListingsResponse {
 pub struct ListingSummary {
     pub listing_id: i32,
     pub address: String,
+    pub longitude: f32,
+    pub latitude: f32,
     pub distance_meters: f32,
     pub price: u16,
     pub rooms_available: u16,
@@ -81,6 +83,8 @@ impl ListingSummary {
             } else {
                 format_address_anonymous(l.address_line, l.address_city, l.address_postalcode, l.address_country)
             },
+            longitude: l.longitude,
+            latitude: l.latitude,
             distance_meters,
             price: TryInto::<u16>::try_into(l.price).map_err(|e| ServiceError::InvalidFieldError {
                 field: "price",
