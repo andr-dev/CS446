@@ -12,3 +12,6 @@
 |    07-04-2023  |   3h   |    Made adjustments to the UI of chat listing, resolved all comments |
 |    07-06-2023  |   1h   |    Continued to resolve comments, added loaded preview, resolved detekt issues, and edited some ui features |
 |    07-06-2023  |   1h   |    Worked on delivery 4 documents |
+|    07-18-2023  |   2h   |    resolved comments for PR, resolved merge conflicts, worked on physical view of the page for watcard verificaton|
+|    07-19-2023  |   3h   |    resolved more comments, rebased PR #50 and further resolved conflicts, created basic ui for watcard confirmation |
+|    07-20-2023  |   3h   |    updated and finished ui for watcard to match figma, implemented to allow easy implementation of TODOs |
