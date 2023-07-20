@@ -46,7 +46,7 @@ fun ChangePasswordPageView(
 			) {
 				IconButton(
 					onClick = {
-						viewModel.navigationService.navHostController.popBackStack()
+						viewModel.navHostController.popBackStack()
 					}
 				) {
 					Icon(
@@ -83,7 +83,7 @@ fun ChangePasswordPageView(
 				modifier = Modifier
 					.padding(paddingValues = paddingValues)
 					.fillMaxSize(fraction = 1.0f),
-				verticalArrangement = Arrangement.Top,
+				verticalArrangement = Arrangement.Center,
 				horizontalAlignment = Alignment.CenterHorizontally,
 			) {
 				Spacer(
@@ -91,23 +91,15 @@ fun ChangePasswordPageView(
 						.height(dimensionResource(id = R.dimen.l)),
 				)
 
-				Row(
-					modifier = Modifier
-						.fillMaxWidth(fraction = ELEMENT_WIDTH)
-				) {
-					Text(
-						modifier = Modifier,
-						text = stringResource(id = R.string.old_password),
-						color = secondaryTextColor,
-					)
-				}
 				UnderlinedPasswordTextField(
+					modifier = Modifier.fillMaxWidth(fraction = ELEMENT_WIDTH),
 					value = uiState.oldPassword,
 					onValueChange = {
 						viewModel.oldPasswordStream.onNext(it)
 					},
-					placeholder = {
+					label = {
 						Text(
+							modifier = Modifier,
 							text = stringResource(id = R.string.old_password),
 							color = secondaryTextColor,
 						)
@@ -119,22 +111,13 @@ fun ChangePasswordPageView(
 						.height(dimensionResource(id = R.dimen.l)),
 				)
 
-				Row(
-					modifier = Modifier
-						.fillMaxWidth(fraction = ELEMENT_WIDTH)
-				) {
-					Text(
-						modifier = Modifier,
-						text = stringResource(id = R.string.new_password),
-						color = secondaryTextColor,
-					)
-				}
 				UnderlinedPasswordTextField(
+					modifier = Modifier.fillMaxWidth(fraction = ELEMENT_WIDTH),
 					value = uiState.newPassword,
 					onValueChange = {
 						viewModel.newPasswordStream.onNext(it)
 					},
-					placeholder = {
+					label = {
 						Text(
 							text = stringResource(id = R.string.new_password),
 							color = secondaryTextColor,
@@ -147,22 +130,13 @@ fun ChangePasswordPageView(
 						.height(dimensionResource(id = R.dimen.l)),
 				)
 
-				Row(
-					modifier = Modifier
-						.fillMaxWidth(fraction = ELEMENT_WIDTH)
-				) {
-					Text(
-						modifier = Modifier,
-						text = stringResource(id = R.string.confirm_new_password),
-						color = secondaryTextColor,
-					)
-				}
 				UnderlinedPasswordTextField(
+					modifier = Modifier.fillMaxWidth(fraction = ELEMENT_WIDTH),
 					value = uiState.confirmNewPassword,
 					onValueChange = {
 						viewModel.confirmNewPasswordStream.onNext(it)
 					},
-					placeholder = {
+					label = {
 						Text(
 							text = stringResource(id = R.string.confirm_new_password),
 							color = secondaryTextColor,
@@ -179,7 +153,9 @@ fun ChangePasswordPageView(
 					modifier = Modifier
 						.fillMaxWidth(ELEMENT_WIDTH)
 						.height(dimensionResource(id = R.dimen.xl)),
-					onClick = {},
+					onClick = {
+				  		viewModel.changePasswordStream.onNext(uiState)
+					},
 				) {
 					Text(
 						text = stringResource(id = R.string.change_password)
@@ -196,7 +172,7 @@ fun ChangePasswordPageView(
 	}
 }
 
-private const val ELEMENT_WIDTH = 0.75f
+private const val ELEMENT_WIDTH = 0.80f
 
 @Preview(showBackground = true)
 @Composable
