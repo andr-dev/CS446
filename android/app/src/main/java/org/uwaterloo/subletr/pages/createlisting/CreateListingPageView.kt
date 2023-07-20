@@ -37,7 +37,9 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DatePickerDefaults
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -62,6 +64,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -105,6 +108,9 @@ fun CreateListingPageView(
 	// TODO: change to streams and add to ViewModel and uiState
 	var startButtonText by remember { mutableStateOf("") }
 	var endButtonText by remember { mutableStateOf("") }
+
+	var autocompleteExpanded by remember { mutableStateOf(false) }
+	val focusManager = LocalFocusManager.current
 
 	var openDatePicker by rememberSaveable { mutableStateOf(false) }
 	val datePickerBottomSheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
@@ -164,31 +170,56 @@ fun CreateListingPageView(
 					modifier = Modifier.weight(weight = 2.0f)
 				)
 
-				RoundedTextField(
-					modifier = Modifier
-						.fillMaxWidth()
-						.border(
-							dimensionResource(id = R.dimen.xxxs),
-							textFieldBorderColor,
-							RoundedCornerShape(dimensionResource(id = R.dimen.xxxxl))
-						),
-					placeholder = {
-						Text(
-							text = stringResource(id = R.string.address_format_label),
-							color = secondaryTextColor,
-						)
-					},
-					label = {
-						Text(
-							text = stringResource(id = R.string.address),
-							color = secondaryTextColor,
-						)
-					},
-					value = uiState.address.fullAddress,
-					onValueChange = {
-						viewModel.fullAddressStream.onNext(it)
+				ExposedDropdownMenuBox(
+					modifier = Modifier,
+					expanded = autocompleteExpanded,
+					onExpandedChange = { autocompleteExpanded = true },
+				) {
+					RoundedTextField(
+						modifier = Modifier
+							.fillMaxWidth()
+							.menuAnchor()
+							.border(
+								dimensionResource(id = R.dimen.xxxs),
+								textFieldBorderColor,
+								RoundedCornerShape(dimensionResource(id = R.dimen.xxxxl))
+							),
+						placeholder = {
+							Text(
+								text = stringResource(id = R.string.address_format_label),
+								color = secondaryTextColor,
+							)
+						},
+						label = {
+							Text(
+								text = stringResource(id = R.string.address),
+								color = secondaryTextColor,
+							)
+						},
+						value = uiState.address.fullAddress,
+						onValueChange = {
+							viewModel.fullAddressStream.onNext(it)
+						}
+					)
+
+					ExposedDropdownMenu(
+						modifier = Modifier
+							.exposedDropdownSize(),
+						expanded = autocompleteExpanded,
+						onDismissRequest = { autocompleteExpanded = false },
+					) {
+						uiState.addressAutocompleteOptions.map { prediction ->
+							DropdownMenuItem(
+								text = { Text(text = prediction.getFullText(null).toString()) },
+								onClick = {
+									viewModel.fullAddressStream.onNext(prediction.getFullText(null).toString())
+									focusManager.clearFocus()
+									autocompleteExpanded = false
+								},
+							)
+						}
 					}
-				)
+				}
 
 				Spacer(
 					modifier = Modifier.weight(weight = 2.0f)
@@ -678,6 +709,7 @@ fun CreateListingPageLoadedPreview() {
 					addressPostalCode = "",
 					addressCountry = stringResource(id = R.string.canada),
 				),
+				addressAutocompleteOptions = ArrayList(),
 				description = "",
 				price = 0,
 				numBedrooms = 0,
