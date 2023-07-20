@@ -80,6 +80,7 @@
     <string name="bed_icon">Bed Icon</string>
     <string name="home_icon">Home Icon</string>
     <string name="favour_icon">favour Icon</string>
+    <string name="bedrooms">Bedrooms</string>
     <plurals name="n_bedrooms">
         <item quantity="one">%d Bedroom</item>
         <item quantity="other">%d Bedrooms</item>
@@ -98,7 +99,7 @@
     <string name="ensuite_bathroom">Ensuite bathroom</string>
     <string name="yes">Yes</string>
     <string name="no">No</string>
-    <string name="total_rooms_in_house">Total rooms in house</string>
+    <string name="total_bedrooms_in_house">Total bedrooms in house</string>
     <string name="total_bathrooms_in_house">Total bathrooms in house</string>
     <string name="description">Description</string>
     <string name="suite">Suite</string>
@@ -110,6 +111,7 @@
     <string name="create_new_listing">Create New Listing</string>
     <string name="address">Address</string>
     <string name="num_bedrooms"># of bedrooms</string>
+    <string name="num_bathrooms"># of bathrooms</string>
     <string name="create_post">Create Post</string>
     <string name="upload_images">Upload Images</string>
     <string name="address_format_label">Street Number, City, Postal Code</string>
@@ -200,4 +202,8 @@
     <string name="rating">"Rating"</string>
     <string name="image_not_supported">Image Not Supported</string>
     <string name="skip">Skip</string>
+    <string name="housing_type">Housing Type</string>
+    <string name="additional_information">Additional information</string>
+    <string name="bedrooms_in_unit">Bedrooms in unit</string>
+    <string name="bathrooms_in_unit">Bathrooms in unit</string>
 </resources>
