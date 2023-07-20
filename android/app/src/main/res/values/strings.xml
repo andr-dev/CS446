@@ -168,7 +168,10 @@
     <string name="use_device_settings">Use device settings</string>
     <string name="dark_mode">Dark mode</string>
     <string name="allow_chat_notifications">Allow chat notifications</string>
-
+    <string name="name_information_label">Enter the name that matches your student ID</string>
+    <string name="gender_select_label">Select your gender</string>
+    <string name="sublet_your_place">Sublet your place</string>
+    <string name="sublet_your_place_label">Start subletting your apartment to the Waterloo community</string>
 
 
 

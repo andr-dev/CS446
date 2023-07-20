@@ -15,8 +15,6 @@ sealed interface AccountPageUiState {
 		val listingDetails: ListingDetails?,
 		val listingImage: Bitmap?,
 		val avatarBitmap: Bitmap?,
-		val newAvatarBitmap: Bitmap?,
-		val newAvatarString: String?,
 	) : AccountPageUiState
 
 	data class Settings(

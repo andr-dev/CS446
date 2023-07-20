@@ -1,3 +1,5 @@
+@file:Suppress("ForbiddenComment")
+
 package org.uwaterloo.subletr.pages.account
 
 import android.content.Context
@@ -8,13 +10,13 @@ import android.os.Build
 import android.provider.MediaStore
 import android.util.Log
 import androidx.navigation.NavHostController
+import androidx.navigation.navOptions
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.schedulers.Schedulers
 import io.reactivex.rxjava3.subjects.BehaviorSubject
 import io.reactivex.rxjava3.subjects.PublishSubject
 import kotlinx.coroutines.runBlocking
-import org.uwaterloo.subletr.R
 import org.uwaterloo.subletr.api.apis.ListingsApi
 import org.uwaterloo.subletr.api.apis.UserApi
 import org.uwaterloo.subletr.api.models.GetUserResponse
@@ -66,8 +68,7 @@ class AccountPageViewModel @Inject constructor(
 		BehaviorSubject.createDefault(Optional.empty())
 	private val listingImageStream: BehaviorSubject<Optional<String>> =
 		BehaviorSubject.createDefault(Optional.empty())
-	val newAvatarBitmapStream: BehaviorSubject<Optional<Bitmap>> =
-		BehaviorSubject.createDefault(Optional.empty())
+	private val avatarStringStream = BehaviorSubject.createDefault(Optional.empty<String>())
 
 	private val userDetailsStream: Observable<Result<GetUserResponse>> =
 		BehaviorSubject.createDefault(Optional.empty<String>()).map {
@@ -82,9 +83,6 @@ class AccountPageViewModel @Inject constructor(
 							userResponse.gender,
 						)
 					)
-//					firstNameStream.onNext(userResponse.firstName)
-//					lastNameStream.onNext(userResponse.lastName)
-//					genderStream.onNext(userResponse.gender)
 
 					if (userResponse.listingId != null) {
 						listingIdStream.onNext(Optional.of(userResponse.listingId))
@@ -119,12 +117,12 @@ class AccountPageViewModel @Inject constructor(
 			}
 				.onFailure {
 					Log.d("API ERROR", "Failed to get user details")
-//					navHostController.navigate(
-//						route = NavigationDestination.LOGIN.rootNavPath,
-//						navOptions = navOptions {
-//							popUpTo(navHostController.graph.id)
-//						},
-//					)
+					navHostController.navigate(
+						route = NavigationDestination.LOGIN.rootNavPath,
+						navOptions = navOptions {
+							popUpTo(navHostController.graph.id)
+						},
+					)
 				}
 		}
 		.onErrorResumeWith(Observable.never())
@@ -141,8 +139,7 @@ class AccountPageViewModel @Inject constructor(
 	}
 		.observeOn(Schedulers.computation())
 
-	private val avatarStream: Observable<Optional<String>> =
-		BehaviorSubject.createDefault(Optional.empty<String>()).map {
+	private val avatarStream: Observable<Optional<String>> = avatarStringStream.map{
 			val user = authenticationService.isAuthenticatedUser()
 			if (user != null) {
 				var avatar = Optional.empty<String>()
@@ -174,20 +171,6 @@ class AccountPageViewModel @Inject constructor(
 	}
 		.observeOn(Schedulers.computation())
 
-	private val newAvatarStringStream: Observable<Optional<String>> = newAvatarBitmapStream
-		.observeOn(Schedulers.computation())
-		.map {
-			val nullableVersion = it.getOrNull()
-			if (nullableVersion != null) {
-				Optional.of(nullableVersion.toBase64String())
-			}
-			else {
-				Optional.empty<String>()
-			}
-		}
-		.observeOn(Schedulers.io())
-		.onErrorResumeWith(Observable.never())
-
 	override val uiStateStream: Observable<AccountPageUiState> = Observable.combineLatest(
 		personalInformationStream,
 		settingsStream,
@@ -195,10 +178,8 @@ class AccountPageViewModel @Inject constructor(
 		listingDetailsStream,
 		listingImageBitmapStream,
 		avatarBitmapStream,
-		newAvatarBitmapStream,
-		newAvatarStringStream,
 	) {
-			personalInformation, settings, listingId, listingDetails, listingImageBitmap, avatarBitmap, newAvatarBitmap, newAvatarString ->
+			personalInformation, settings, listingId, listingDetails, listingImageBitmap, avatarBitmap ->
 		AccountPageUiState.Loaded(
 			personalInformation = personalInformation,
 			settings = settings,
@@ -206,28 +187,23 @@ class AccountPageViewModel @Inject constructor(
 			listingDetails = listingDetails.getOrNull(),
 			listingImage = listingImageBitmap.getOrNull(),
 			avatarBitmap = avatarBitmap.getOrNull(),
-			newAvatarBitmap = newAvatarBitmap.getOrNull(),
-			newAvatarString = newAvatarString.getOrNull(),
 		)
 	}
 
 	val userUpdateStream: PublishSubject<AccountPageUiState.Loaded> = PublishSubject.create()
+	private val avatarUpdateStream: PublishSubject<Bitmap> = PublishSubject.create()
 
 	init {
 		userUpdateStream.map {
 			runCatching {
 				runBlocking {
-					if (it.newAvatarString != null) {
-						userApi.userAvatarUpdate(UserAvatarUpdateRequest(it.newAvatarString))
-					} else {
-						userApi.userUpdate(
-							UpdateUserRequest(
-								lastName = it.personalInformation.lastName,
-								firstName = it.personalInformation.firstName,
-								gender = it.personalInformation.gender,
-							)
+					userApi.userUpdate(
+						UpdateUserRequest(
+							lastName = it.personalInformation.lastName,
+							firstName = it.personalInformation.firstName,
+							gender = it.personalInformation.gender,
 						)
-					}
+					)
 				}
 			}
 				.onFailure {
@@ -238,22 +214,45 @@ class AccountPageViewModel @Inject constructor(
 			.onErrorResumeWith(Observable.never())
 			.safeSubscribe()
 
+		avatarUpdateStream
+			.observeOn(Schedulers.computation())
+			.map {
+				it.toBase64String()
+			}
+			.observeOn(Schedulers.io())
+			.map {
+				runCatching {
+					runBlocking {
+						userApi.userAvatarUpdate(UserAvatarUpdateRequest(it))
+					}
+				}
+					.onSuccess { _ ->
+						avatarStringStream.onNext(Optional.of(it))
+					}
+					.onFailure {
+						Log.d("API ERROR", "Avatar update failed")
+					}
+		}
+			.subscribeOn(Schedulers.io())
+			.onErrorResumeWith(Observable.never())
+			.safeSubscribe()
+
 		userDetailsStream.safeSubscribe()
 	}
 
 	fun updateAvatar(context: Context, imageUri: Uri) {
 		if (Build.VERSION.SDK_INT < 28) {
-
-			newAvatarBitmapStream.onNext(
-				Optional.of(MediaStore.Images.Media.getBitmap(context.contentResolver, imageUri))
+			avatarUpdateStream.onNext(
+				MediaStore.Images.Media.getBitmap(context.contentResolver, imageUri)
 			)
 		} else {
 			val source = ImageDecoder
 				.createSource(context.contentResolver, imageUri)
-			newAvatarBitmapStream.onNext(Optional.of(ImageDecoder.decodeBitmap(source)))
+			avatarUpdateStream.onNext(ImageDecoder.decodeBitmap(source))
 		}
 	}
 
+	// TODO: actually change theme when settings changed
 	fun setDefaultDisplayTheme(useDeviceTheme: Boolean) {
 		settingsService.setDefaultDisplayTheme(useDeviceTheme)
 	}
