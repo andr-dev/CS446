@@ -1,6 +1,12 @@
 package org.uwaterloo.subletr.pages.account
 
+import android.graphics.ImageDecoder
+import android.net.Uri
+import android.os.Build
+import android.provider.MediaStore
 import android.util.Log
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.animateFloatAsState
@@ -51,12 +57,15 @@ import androidx.compose.material3.RadioButton
 import androidx.compose.material3.RadioButtonDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextFieldDefaults
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.rxjava3.subscribeAsState
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -66,6 +75,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
@@ -75,7 +85,11 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import coil.compose.AsyncImage
+import coil.request.ImageRequest
+import kotlinx.coroutines.launch
 import org.uwaterloo.subletr.R
+import org.uwaterloo.subletr.components.bottomsheet.ImagePickerBottomSheet
 import org.uwaterloo.subletr.components.button.PrimaryButton
 import org.uwaterloo.subletr.components.button.SecondaryButton
 import org.uwaterloo.subletr.components.switch.PrimarySwitch
@@ -101,6 +115,8 @@ import org.uwaterloo.subletr.theme.subletrPink
 import org.uwaterloo.subletr.theme.textFieldBackgroundColor
 import org.uwaterloo.subletr.theme.textFieldBorderColor
 import org.uwaterloo.subletr.theme.textOnSubletrPink
+import org.uwaterloo.subletr.utils.ComposeFileProvider
+import java.util.Optional
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -113,9 +129,13 @@ fun AccountPageView(
 ) {
 	var nameExpanded by remember { mutableStateOf(false) }
 	var genderExpanded by remember { mutableStateOf(false) }
-	val initialFirstName = remember { mutableStateOf("") }
-	val initialLastName = remember { mutableStateOf("") }
-	val initialGender = remember { mutableStateOf("") }
+	val initialPersonalInformation = remember { mutableStateOf(
+		AccountPageUiState.PersonalInformation(
+			lastName = "",
+			firstName = "",
+			gender = "",
+		)
+	)}
 
 	if (uiState is AccountPageUiState.Loading) {
 		Column(
@@ -142,43 +162,72 @@ fun AccountPageView(
 				Box(
 					modifier = Modifier
 						.padding(dimensionResource(id = R.dimen.l))
-//						.clip(CircleShape),
 				) {
-					Image(
+					AsyncImage(
 						modifier = Modifier
 							.size(dimensionResource(id = R.dimen.xxxxxl))
 							.clip(RoundedCornerShape(dimensionResource(id = R.dimen.xxxxxl))),
-						painter = painterResource(
-							id = R.drawable.room,
-						),
-						contentDescription = stringResource(id = R.string.avatar),
+						model = ImageRequest.Builder(LocalContext.current)
+							.data(uiState.avatarBitmap)
+							.crossfade(false)
+							.build(),
+						placeholder = painterResource(R.drawable.room),
+						contentDescription = stringResource(R.string.avatar),
 						contentScale = ContentScale.Crop,
 						alpha = if (!nameExpanded && !genderExpanded) 1.0f else 0.3F,
 					)
-					Button(
+					UploadAvatar(
+						viewModel = viewModel,
+						uiState = uiState,
+						isEnabled = !nameExpanded && !genderExpanded,
 						modifier = Modifier
 							.size(dimensionResource(id = R.dimen.l))
-//							.padding(dimensionResource(id = R.dimen.xs))
 							.align(Alignment.BottomEnd),
-						shape = CircleShape,
-						contentPadding = PaddingValues(dimensionResource(id = R.dimen.xs)),
-						onClick = {}, //TODO
-						colors = ButtonDefaults.buttonColors(
-							containerColor = subletrPink,
-							contentColor = textOnSubletrPink,
-						),
-					) {
-						Icon(
-							modifier = Modifier.fillMaxSize(),
-							painter = painterResource(
-								id = R.drawable.edit_round_black_24
-							),
-							contentDescription = stringResource(id = R.string.upload_images),
-							tint = textOnSubletrPink
-						)
-					}
+					)
 				}
 			}
+//			item {
+//				Box(
+//					modifier = Modifier
+//						.padding(dimensionResource(id = R.dimen.l))
+//				) {
+//					Image(
+//						modifier = Modifier
+//							.size(dimensionResource(id = R.dimen.xxxxxl))
+//							.clip(RoundedCornerShape(dimensionResource(id = R.dimen.xxxxxl))),
+//						painter = painterResource(
+//							id = R.drawable.room,
+//						),
+//						contentDescription = stringResource(id = R.string.avatar),
+//						contentScale = ContentScale.Crop,
+//						alpha = if (!nameExpanded && !genderExpanded) 1.0f else 0.3F,
+//					)
+//					Button(
+//						modifier = Modifier
+//							.size(dimensionResource(id = R.dimen.l))
+////							.padding(dimensionResource(id = R.dimen.xs))
+//							.align(Alignment.BottomEnd),
+//						shape = CircleShape,
+//						contentPadding = PaddingValues(dimensionResource(id = R.dimen.xs)),
+//						onClick = {}, //TODO
+//						colors = ButtonDefaults.buttonColors(
+//							containerColor = subletrPink,
+//							contentColor = textOnSubletrPink,
+//							disabledContainerColor = darkerGrayButtonColor,
+//						),
+//						enabled = !nameExpanded && !genderExpanded,
+//					) {
+//						Icon(
+//							modifier = Modifier.fillMaxSize(),
+//							painter = painterResource(
+//								id = R.drawable.edit_round_black_24
+//							),
+//							contentDescription = stringResource(id = R.string.upload_images),
+//							tint = textOnSubletrPink
+//						)
+//					}
+//				}
+//			}
 
 			item {
 				Card(
@@ -196,7 +245,7 @@ fun AccountPageView(
 						contentColor = primaryTextColor,
 						disabledContentColor = darkerGrayButtonColor,
 					),
-					enabled = !nameExpanded && !genderExpanded, // TODO
+					enabled = !nameExpanded && !genderExpanded,
 				) {
 					Row(
 						modifier = Modifier
@@ -209,7 +258,6 @@ fun AccountPageView(
 							modifier = Modifier.fillMaxWidth(0.9f),
 							text = stringResource(id = R.string.view_public_profile),
 							color = if (!nameExpanded && !genderExpanded) primaryTextColor else darkerGrayButtonColor
-							// TODO: disabled color
 						)
 						Icon(
 							painter = painterResource(
@@ -227,7 +275,11 @@ fun AccountPageView(
 
 
 			item {
-				Divider(modifier = Modifier.fillMaxWidth(), thickness = 0.5.dp)
+				Divider(
+					modifier = Modifier.fillMaxWidth(),
+					thickness = dimensionResource(id = R.dimen.xxxxs),
+					color = secondaryButtonBackgroundColor,
+				)
 			}
 
 			item {
@@ -257,11 +309,9 @@ fun AccountPageView(
 						.fillMaxWidth(),
 					onClick = {
 						if (nameExpanded) {
-							viewModel.firstNameStream.onNext(initialFirstName.value)
-							viewModel.lastNameStream.onNext(initialLastName.value)
+							viewModel.personalInformationStream.onNext(initialPersonalInformation.value)
 						} else {
-							initialFirstName.value = uiState.firstName
-							initialLastName.value = uiState.lastName
+							initialPersonalInformation.value = uiState.personalInformation
 						}
 						nameExpanded = !nameExpanded
 				  	},
@@ -312,7 +362,7 @@ fun AccountPageView(
 							}
 						}
 						Text(
-							text = if (!nameExpanded) "${uiState.firstName} ${uiState.lastName}" else "Enter the name that matches your student ID",
+							text = if (!nameExpanded) "${uiState.personalInformation.firstName} ${uiState.personalInformation.lastName}" else "Enter the name that matches your student ID",
 							color = if (!genderExpanded) primaryTextColor else darkerGrayButtonColor,
 						)
 					}
@@ -338,7 +388,6 @@ fun AccountPageView(
 					Column(
 						modifier = Modifier
 							.fillMaxWidth()
-//							.background(Color.Black)
 							.padding(vertical = dimensionResource(id = R.dimen.s))
 					) {
 						SquaredTextField(
@@ -355,9 +404,15 @@ fun AccountPageView(
 									color = secondaryTextColor,
 								)
 							},
-							value = uiState.firstName,
+							value = uiState.personalInformation.firstName,
 							onValueChange = {
-								viewModel.firstNameStream.onNext(it)
+								viewModel.personalInformationStream.onNext(
+									AccountPageUiState.PersonalInformation(
+										lastName = uiState.personalInformation.lastName,
+										firstName = it,
+										gender = uiState.personalInformation.gender,
+									)
+								)
 							},
 						)
 						Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.s)))
@@ -376,9 +431,15 @@ fun AccountPageView(
 									color = secondaryTextColor,
 								)
 							},
-							value = uiState.lastName,
+							value = uiState.personalInformation.lastName,
 							onValueChange = {
-								viewModel.lastNameStream.onNext(it)
+								viewModel.personalInformationStream.onNext(
+									AccountPageUiState.PersonalInformation(
+										lastName = it,
+										firstName = uiState.personalInformation.firstName,
+										gender = uiState.personalInformation.gender,
+									)
+								)
 							},
 						)
 						Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.s)))
@@ -389,15 +450,18 @@ fun AccountPageView(
 								nameExpanded = !nameExpanded
 							},
 							onCancelClick = {
-								viewModel.lastNameStream.onNext(initialLastName.value)
-								viewModel.firstNameStream.onNext(initialFirstName.value)
+								viewModel.personalInformationStream.onNext(initialPersonalInformation.value)
 								nameExpanded = !nameExpanded
 							},
 						)
 
 						Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.s)))
 
-						Divider(modifier = Modifier.fillMaxWidth(), thickness = 0.5.dp)
+						Divider(
+							modifier = Modifier.fillMaxWidth(),
+							thickness = dimensionResource(id = R.dimen.xxxxs),
+							color = secondaryButtonBackgroundColor,
+						)
 					}
 				}
 			}
@@ -412,9 +476,9 @@ fun AccountPageView(
 						.fillMaxWidth(),
 					onClick = {
 						if (genderExpanded) {
-							viewModel.genderStream.onNext(initialGender.value)
+							viewModel.personalInformationStream.onNext(initialPersonalInformation.value)
 						} else {
-							initialGender.value = uiState.gender
+							initialPersonalInformation.value = uiState.personalInformation
 						}
 						genderExpanded = !genderExpanded
 				  	},
@@ -424,7 +488,7 @@ fun AccountPageView(
 						contentColor = primaryTextColor,
 						disabledContentColor = darkerGrayButtonColor,
 					),
-					enabled = !nameExpanded, // TODO
+					enabled = !nameExpanded,
 				) {
 					Column(
 						verticalArrangement = Arrangement.spacedBy(dimensionResource(id = R.dimen.xxxxs)),
@@ -465,7 +529,7 @@ fun AccountPageView(
 							}
 						}
 						Text(
-							text = if (!genderExpanded) uiState.gender else "Select your gender",
+							text = if (!genderExpanded) uiState.personalInformation.gender else "Select your gender",
 							color = if (!nameExpanded) primaryTextColor else darkerGrayButtonColor,
 						)
 					}
@@ -494,7 +558,19 @@ fun AccountPageView(
 							.fillMaxWidth()
 							.padding(top = 16.dp)
 					) {
-						GenderRadioButtons(uiState.gender, onChangeState = { viewModel.genderStream.onNext(it) } )
+						GenderRadioButtons(
+							uiState.personalInformation.gender,
+							onChangeState = {
+//								viewModel.genderStream.onNext(it)
+								viewModel.personalInformationStream.onNext(
+									AccountPageUiState.PersonalInformation(
+										lastName = uiState.personalInformation.lastName,
+										firstName = uiState.personalInformation.firstName,
+										gender = it,
+									)
+								)
+							},
+						)
 
 						Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.s)))
 
@@ -504,14 +580,18 @@ fun AccountPageView(
 								genderExpanded = !genderExpanded
 							},
 							onCancelClick = {
-								viewModel.genderStream.onNext(initialGender.value)
+								viewModel.personalInformationStream.onNext(initialPersonalInformation.value)
 								genderExpanded = !genderExpanded
 							},
 						)
 
 						Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.s)))
 
-						Divider(modifier = Modifier.fillMaxWidth(), thickness = 0.5.dp)
+						Divider(
+							modifier = Modifier.fillMaxWidth(),
+							thickness = dimensionResource(id = R.dimen.xxxxs),
+							color = secondaryButtonBackgroundColor,
+						)
 					}
 				}
 			}
@@ -570,7 +650,11 @@ fun AccountPageView(
 			}
 
 			item {
-				Divider(modifier = Modifier.fillMaxWidth(), thickness = 0.5.dp)
+				Divider(
+					modifier = Modifier.fillMaxWidth(),
+					thickness = dimensionResource(id = R.dimen.xxxxs),
+					color = secondaryButtonBackgroundColor,
+				)
 			}
 
 			item {
@@ -601,15 +685,12 @@ fun AccountPageView(
 					elevation = CardDefaults.elevatedCardElevation(
 						defaultElevation = dimensionResource(id = R.dimen.xxs),
 					),
-					onClick = {
-					},
 					colors = CardDefaults.cardColors(
 						containerColor = squaredTextFieldBackgroundColor,
 						disabledContainerColor = secondaryBackgroundColor,
 						contentColor = primaryTextColor,
 						disabledContentColor = darkerGrayButtonColor,
 					),
-					enabled = !nameExpanded && !genderExpanded,
 				) {
 					if (uiState.listingId == null) {
 						Row(
@@ -637,15 +718,15 @@ fun AccountPageView(
 									modifier = Modifier
 										.fillMaxWidth()
 										.align(Alignment.Start),
-	//									.height(dimensionResource(id = R.dimen.l)),
 									shape = RoundedCornerShape(dimensionResource(id = R.dimen.xs)),
-									onClick = { }, // TODO
+									onClick = {
+										viewModel.navHostController.navigate(NavigationDestination.CREATE_LISTING.fullNavPath)
+									},
 									enabled = !nameExpanded && !genderExpanded,
 								) {
 									Text(
 										stringResource(id = R.string.create_listing),
 										color = textOnSubletrPink,
-	//									style = filterBoldFont,
 									)
 								}
 							}
@@ -757,7 +838,11 @@ fun AccountPageView(
 			}
 
 			item {
-				Divider(modifier = Modifier.fillMaxWidth(), thickness = 0.5.dp)
+				Divider(
+					modifier = Modifier.fillMaxWidth(),
+					thickness = dimensionResource(id = R.dimen.xxxxs),
+					color = secondaryButtonBackgroundColor,
+				)
 			}
 
 			item {
@@ -778,11 +863,71 @@ fun AccountPageView(
 			}
 
 			item {
+				Row(
+					modifier = Modifier
+						.fillMaxWidth(),
+					verticalAlignment = Alignment.CenterVertically,
+					horizontalArrangement = Arrangement.SpaceBetween,
+				) {
+					Text(
+						text = stringResource(id = R.string.use_device_settings),
+						color = if (!nameExpanded && !genderExpanded) primaryTextColor else darkerGrayButtonColor,
+					)
+					PrimarySwitch(
+						checked = uiState.settings.useDeviceTheme,
+						onCheckedChange = {
+							viewModel.settingsStream.onNext(
+								AccountPageUiState.Settings(
+									useDeviceTheme = it,
+									useDarkMode = uiState.settings.useDarkMode,
+									allowChatNotifications = uiState.settings.allowChatNotifications,
+								)
+							)
+							viewModel.setDefaultDisplayTheme(it)
+						},
+						enabled = !nameExpanded && !genderExpanded,
+					)
+				}
+			}
+
+			item {
+				Row(
+					modifier = Modifier
+						.fillMaxWidth(),
+					verticalAlignment = Alignment.CenterVertically,
+					horizontalArrangement = Arrangement.SpaceBetween,
+				) {
+					Text(
+						text = stringResource(id = R.string.dark_mode),
+						color = if (!nameExpanded && !genderExpanded && !uiState.settings.useDeviceTheme) primaryTextColor else darkerGrayButtonColor,
+					)
+					PrimarySwitch(
+						checked = uiState.settings.useDarkMode,
+						onCheckedChange = {
+							viewModel.settingsStream.onNext(
+								AccountPageUiState.Settings(
+									useDeviceTheme = uiState.settings.useDeviceTheme,
+									useDarkMode = it,
+									allowChatNotifications = uiState.settings.allowChatNotifications,
+								)
+							)
+							viewModel.setDisplayMode(it)
+						},
+						enabled = !nameExpanded && !genderExpanded && !uiState.settings.useDeviceTheme,
+					)
+				}
+			}
+
+			item {
 				Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.s)))
 			}
 
 			item {
-				Divider(modifier = Modifier.fillMaxWidth(), thickness = 0.5.dp)
+				Divider(
+					modifier = Modifier.fillMaxWidth(),
+					thickness = dimensionResource(id = R.dimen.xxxxs),
+					color = secondaryButtonBackgroundColor,
+				)
 			}
 
 			item {
@@ -803,49 +948,32 @@ fun AccountPageView(
 			}
 
 			item {
-				Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.s)))
+				Row(
+					modifier = Modifier
+						.fillMaxWidth(),
+					verticalAlignment = Alignment.CenterVertically,
+					horizontalArrangement = Arrangement.SpaceBetween,
+				) {
+					Text(
+						text = stringResource(id = R.string.allow_chat_notifications),
+						color = if (!nameExpanded && !genderExpanded) primaryTextColor else darkerGrayButtonColor,
+					)
+					PrimarySwitch(
+						checked = uiState.settings.allowChatNotifications,
+						onCheckedChange = {
+							viewModel.settingsStream.onNext(
+								AccountPageUiState.Settings(
+									useDeviceTheme = uiState.settings.useDeviceTheme,
+									useDarkMode = uiState.settings.useDarkMode,
+									allowChatNotifications = it,
+								)
+							)
+							viewModel.setChatNotifications(it)
+						},
+						enabled = !nameExpanded && !genderExpanded,
+					)
+				}
 			}
-
-//			item {
-//				Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.m)))
-//			}
-//			itemsIndexed(
-//				items = uiState.settings,
-//			) { itemIndex, item ->
-//				Row(
-//					modifier = Modifier
-//						.fillMaxWidth(ELEMENT_WIDTH),
-//					verticalAlignment = Alignment.CenterVertically,
-//					horizontalArrangement = Arrangement.SpaceBetween,
-//				) {
-//					Text(
-//						text = stringResource(id = item.textStringId),
-//					)
-//					PrimarySwitch(
-//						checked = item.toggleState,
-//						onCheckedChange = {
-////							viewModel.updateUiState(
-////								uiState = AccountPageUiState.Loaded(
-////									lastName = uiState.lastName,
-////									firstName = uiState.firstName,
-////									gender = uiState.gender,
-////									settings = uiState.settings.mapIndexed { mapIndex, setting ->
-////										if (mapIndex == itemIndex) {
-////											AccountPageUiState.Setting(
-////												textStringId = setting.textStringId,
-////												it,
-////											)
-////										}
-////										else {
-////											setting
-////										}
-////									}
-////								)
-////							)
-//						}
-//					)
-//				}
-//			}
 
 			item {
 				Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.m)))
@@ -869,13 +997,11 @@ fun AccountPageView(
 			}
 
 			item {
-				Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.m)))
+				Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.s)))
 			}
 		}
 	}
 }
-
-private const val ELEMENT_WIDTH = 0.75f
 
 @Composable
 fun SaveCancelButtonsRow(onSaveClick: () -> Unit, onCancelClick: () -> Unit) {
@@ -1005,6 +1131,133 @@ fun GenderRadioButtons(selectedValue: String, onChangeState: (String) -> Unit) {
 	}
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun UploadAvatar(
+	viewModel: AccountPageViewModel,
+	uiState: AccountPageUiState.Loaded,
+	isEnabled: Boolean,
+	modifier: Modifier,
+) {
+	val coroutineScope = rememberCoroutineScope()
+	val context = LocalContext.current
+
+	var imageUri by remember { mutableStateOf<Uri?>(null) }
+	var hasImage by remember { mutableStateOf(false) }
+
+	var openImagePicker by rememberSaveable { mutableStateOf(false) }
+	val imagePickerBottomSheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
+
+	val imageSelectorLauncher = rememberLauncherForActivityResult(
+		contract = ActivityResultContracts.GetContent()
+	) {
+		imageUri = it
+		hasImage = true
+	}
+
+	val cameraLauncher = rememberLauncherForActivityResult(
+		contract = ActivityResultContracts.TakePicture(),
+	) {
+		hasImage = it
+	}
+	var avatarBitmap = uiState.avatarBitmap
+
+
+//		if (avatarBitmap != null) {
+//			Image(
+//				modifier = Modifier
+//					.size(dimensionResource(id = R.dimen.xxxxxl))
+//					.clip(RoundedCornerShape(dimensionResource(id = R.dimen.xxxxxl))),
+//				bitmap = avatarBitmap!!.asImageBitmap(),
+//				contentDescription = stringResource(id = R.string.avatar),
+//				contentScale = ContentScale.Crop,
+//				alpha = if (isEnabled) 1.0f else 0.3F,
+//			)
+//		} else {
+//			Image(
+//				modifier = Modifier
+//					.size(dimensionResource(id = R.dimen.xxxxxl))
+//					.clip(RoundedCornerShape(dimensionResource(id = R.dimen.xxxxxl))),
+//				painter = painterResource(
+//					id = R.drawable.room,
+//				),
+//				contentDescription = stringResource(id = R.string.avatar),
+//				contentScale = ContentScale.Crop,
+//				alpha = if (isEnabled) 1.0f else 0.3F,
+//			)
+//		}
+	Button(
+		modifier = modifier,
+		shape = CircleShape,
+		contentPadding = PaddingValues(dimensionResource(id = R.dimen.xs)),
+		onClick = {
+			coroutineScope.launch {
+				openImagePicker = true
+			}
+		},
+		colors = ButtonDefaults.buttonColors(
+			containerColor = subletrPink,
+			contentColor = textOnSubletrPink,
+			disabledContainerColor = darkerGrayButtonColor,
+		),
+		enabled = isEnabled,
+	) {
+		Icon(
+			modifier = Modifier.fillMaxSize(),
+			painter = painterResource(
+				id = R.drawable.edit_round_black_24
+			),
+			contentDescription = stringResource(id = R.string.upload_images),
+			tint = textOnSubletrPink
+		)
+	}
+
+	if (openImagePicker) {
+		ImagePickerBottomSheet(
+			bottomSheetState = imagePickerBottomSheetState,
+			onDismissRequest = { openImagePicker = false },
+			onTakePhotoClick = {
+				coroutineScope.launch { imagePickerBottomSheetState.hide() }.invokeOnCompletion {
+					if (!imagePickerBottomSheetState.isVisible) {
+						openImagePicker = false
+					}
+					val uri = ComposeFileProvider.getImageUri(context)
+					imageUri = uri
+					cameraLauncher.launch(uri)
+				}
+			},
+			onChooseImageClick = {
+				coroutineScope.launch { imagePickerBottomSheetState.hide() }.invokeOnCompletion {
+					if (!imagePickerBottomSheetState.isVisible) {
+						openImagePicker = false
+					}
+					imageSelectorLauncher.launch("image/*")
+				}
+			},
+		)
+	}
+
+	if (imageUri != null && hasImage) {
+		viewModel.updateAvatar(context, imageUri!!)
+//		if (Build.VERSION.SDK_INT < 28) {
+//			avatarBitmap = MediaStore.Images.Media.getBitmap(context.contentResolver, imageUri)
+//			viewModel.newAvatarBitmapStream.onNext(
+//				Optional.of(avatarBitmap)
+//			)
+//		} else {
+//			val source = ImageDecoder
+//				.createSource(context.contentResolver, imageUri!!)
+//			avatarBitmap = ImageDecoder.decodeBitmap(source)
+//			viewModel.newAvatarBitmapStream.onNext(Optional.of(avatarBitmap))
+//		}
+		viewModel.userUpdateStream.onNext(uiState)
+		imageUri = null
+		hasImage = false
+	}
+	Spacer(modifier = Modifier.width(dimensionResource(id = R.dimen.xs)))
+
+}
+
 @Preview(showBackground = true)
 @Composable
 fun AccountViewLoadingPreview() {
@@ -1017,22 +1270,22 @@ fun AccountPageViewLoadedPreview() {
 	SubletrTheme {
 		AccountPageView(
 			uiState = AccountPageUiState.Loaded(
-				lastName = "",
-				firstName = "",
-				gender = "",
-				settings = listOf(
-					AccountPageUiState.Setting(
-						textStringId = R.string.setting_1,
-						toggleState = false,
-					),
-					AccountPageUiState.Setting(
-						textStringId = R.string.setting_1,
-						toggleState = true,
-					)
+				personalInformation = AccountPageUiState.PersonalInformation(
+					lastName = "",
+					firstName = "",
+					gender = "",
+				),
+				settings = AccountPageUiState.Settings(
+					useDeviceTheme = false,
+					useDarkMode = false,
+					allowChatNotifications = false,
 				),
 				listingId = null,
 				listingDetails = null,
 				listingImage = null,
+				avatarBitmap = null,
+				newAvatarBitmap = null,
+				newAvatarString = null,
 			)
 		)
 	}

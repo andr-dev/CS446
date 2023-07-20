@@ -8,6 +8,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import org.uwaterloo.subletr.theme.darkerGrayButtonColor
+import org.uwaterloo.subletr.theme.secondaryButtonBackgroundColor
 import org.uwaterloo.subletr.theme.subletrPink
 import org.uwaterloo.subletr.theme.textOnSubletrPink
 
@@ -21,10 +23,13 @@ fun PrimarySwitch(
 	colors: SwitchColors = SwitchDefaults.colors(
 		checkedTrackColor = subletrPink,
 		checkedBorderColor = subletrPink,
-		uncheckedTrackColor = subletrPink,
-		uncheckedBorderColor = subletrPink,
+		uncheckedTrackColor = secondaryButtonBackgroundColor,
+		uncheckedBorderColor = secondaryButtonBackgroundColor,
 		checkedThumbColor = textOnSubletrPink,
 		uncheckedThumbColor = textOnSubletrPink,
+		disabledUncheckedTrackColor = secondaryButtonBackgroundColor,
+		disabledUncheckedThumbColor = textOnSubletrPink,
+		disabledUncheckedBorderColor = secondaryButtonBackgroundColor,
 	),
 	interactionSource: MutableInteractionSource = remember { MutableInteractionSource() },
 ) {

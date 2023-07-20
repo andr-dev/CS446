@@ -75,6 +75,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import org.uwaterloo.subletr.R
 import org.uwaterloo.subletr.components.bottomsheet.DatePickerBottomSheet
+import org.uwaterloo.subletr.components.bottomsheet.ImagePickerBottomSheet
 import org.uwaterloo.subletr.components.button.DateInputButton
 import org.uwaterloo.subletr.components.button.PrimaryButton
 import org.uwaterloo.subletr.components.textfield.RoundedTextField
@@ -483,54 +484,6 @@ fun ImageUploadMethodButton(
 			)
 		}
 	}
-}
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun ImagePickerBottomSheet(
-	bottomSheetState: SheetState,
-	onDismissRequest: () -> Unit,
-	onTakePhotoClick: () -> Unit,
-	onChooseImageClick: () -> Unit,
-) {
-	ModalBottomSheet(
-		modifier = Modifier,
-		onDismissRequest = onDismissRequest,
-		sheetState = bottomSheetState,
-		containerColor = Color.White,
-		dragHandle = { BottomSheetDefaults.DragHandle(
-			width = dimensionResource(id = R.dimen.xl)
-		)},
-		content = {
-			Box(
-				modifier = Modifier
-					.fillMaxWidth()
-					.height(dimensionResource(id = R.dimen.xxxxxxxl))
-					.background(Color.White)
-			) {
-				Row(
-					modifier = Modifier
-						.fillMaxWidth()
-						.fillMaxHeight()
-						.padding(horizontal = dimensionResource(id = R.dimen.l)),
-					horizontalArrangement = Arrangement.SpaceBetween,
-					verticalAlignment = Alignment.CenterVertically,
-				) {
-					ImageUploadMethodButton(
-						R.drawable.photo_camera_outline_black_64,
-						stringResource(id = R.string.take_photo),
-						onClick = onTakePhotoClick,
-					)
-
-					ImageUploadMethodButton(
-						R.drawable.photo_outline_black_64,
-						stringResource(id = R.string.choose_image),
-						onClick = onChooseImageClick,
-					)
-				}
-			}
-		},
-	)
 }
 
 @OptIn(ExperimentalMaterial3Api::class)

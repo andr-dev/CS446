@@ -36,7 +36,6 @@
     <string name="next_arrow">Next Arrow</string>
     <string name="prev_arrow">Prev Arrow</string>
     <string name="change_your_password">Change Your Password</string>
-    <string name="setting_1">Setting 1</string>
     <string name="verify">Verify</string>
     <string name="resend_code">Resend code</string>
     <string name="email_verification">Email Verification</string>
@@ -166,6 +165,9 @@
     <string name="display">Display</string>
     <string name="notifications">Notifications</string>
     <string name="avatar">avatar</string>
+    <string name="use_device_settings">Use device settings</string>
+    <string name="dark_mode">Dark mode</string>
+    <string name="allow_chat_notifications">Allow chat notifications</string>
 
 
 
