@@ -61,13 +61,11 @@ impl<'r, 'o: 'r> Responder<'r, 'o> for ServiceError {
     fn respond_to(self, req: &'r Request<'_>) -> rocket::response::Result<'o> {
         match self {
             ServiceError::AuthenticationError => Status::Unauthorized.respond_to(req),
-            ServiceError::SerdeJson { source } => Json(source.to_string()).respond_to(req),
-            ServiceError::Diesel { source } => Json(source.to_string()).respond_to(req),
-            ServiceError::R2D2 { source } => Json(source.to_string()).respond_to(req),
-            ServiceError::InvalidFieldError { field, reason } => {
-                Json(format!("Invalid field {}, reason: {}", field, reason)).respond_to(req)
-            },
-            ServiceError::GeocodingError(e) => Json(e.to_string()).respond_to(req),
+            ServiceError::SerdeJson { source: _ } => Status::InternalServerError.respond_to(req),
+            ServiceError::Diesel { source: _ } => Status::InternalServerError.respond_to(req),
+            ServiceError::R2D2 { source: _ } => Status::InternalServerError.respond_to(req),
+            ServiceError::InvalidFieldError { field: _, reason: _ } => Status::BadRequest.respond_to(req),
+            ServiceError::GeocodingError(_) => Status::InternalServerError.respond_to(req),
             ServiceError::InternalError => Status::InternalServerError.respond_to(req),
             ServiceError::NotFound => Status::NotFound.respond_to(req),
             ServiceError::Forbidden => Status::Forbidden.respond_to(req),
