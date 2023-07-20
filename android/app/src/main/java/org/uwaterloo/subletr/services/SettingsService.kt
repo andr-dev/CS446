@@ -4,16 +4,16 @@ package org.uwaterloo.subletr.services
 class SettingsService(
 	private val ioService: IIoService,
 ): ISettingsService {
-
-	override fun settingExists(filePath: String): Boolean {
-		return ioService.internalFileExists(filePath)
-	}
+	private var useDeviceTheme: Boolean = true
+	private var useDarkTheme: Boolean = false
+	private var allowChatNotifications: Boolean = true
 
 	override fun setDefaultDisplayTheme(useOSSetting: Boolean) {
 		ioService.writeStringToInternalFile(
 			fileName = DEFAULT_DISPLAY_SETTINGS_PATH,
 			input = useOSSetting.toString(),
 		)
+		useDeviceTheme = useOSSetting
 	}
 
 	override fun setDisplayTheme(useDarkMode: Boolean) {
@@ -21,6 +21,7 @@ class SettingsService(
 			fileName = DISPLAY_THEME_SETTINGS_PATH,
 			input = useDarkMode.toString(),
 		)
+		useDarkTheme = useDarkMode
 	}
 
 	override fun setChatNotifications(allowNotifications: Boolean) {
@@ -28,30 +29,19 @@ class SettingsService(
 			fileName = CHAT_NOTIFICATIONS_SETTINGS_PATH,
 			input = allowNotifications.toString(),
 		)
+		allowChatNotifications = allowNotifications
 	}
 
 	override fun getDefaultDisplayTheme(): Boolean {
-		return if (settingExists(DEFAULT_DISPLAY_SETTINGS_PATH)) {
-			ioService.readStringFromInternalFile(DEFAULT_DISPLAY_SETTINGS_PATH).toBoolean()
-		} else {
-			true
-		}
+		return useDeviceTheme
 	}
 
 	override fun getDisplayTheme(): Boolean {
-		return if (settingExists(DISPLAY_THEME_SETTINGS_PATH)) {
-			ioService.readStringFromInternalFile(DISPLAY_THEME_SETTINGS_PATH).toBoolean()
-		} else {
-			false
-		}
+		return useDarkTheme
 	}
 
 	override fun getChatNotifications(): Boolean {
-		return if (settingExists(CHAT_NOTIFICATIONS_SETTINGS_PATH)) {
-			ioService.readStringFromInternalFile(CHAT_NOTIFICATIONS_SETTINGS_PATH).toBoolean()
-		} else {
-			true
-		}
+		return allowChatNotifications
 	}
 
 	companion object {

@@ -1,15 +1,12 @@
+@file:Suppress("CyclomaticComplexMethod", "ForbiddenComment")
+
 package org.uwaterloo.subletr.pages.account
 
-import android.graphics.ImageDecoder
 import android.net.Uri
-import android.os.Build
-import android.provider.MediaStore
-import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.fadeIn
@@ -18,12 +15,9 @@ import androidx.compose.animation.scaleIn
 import androidx.compose.animation.scaleOut
 import androidx.compose.animation.shrinkVertically
 import androidx.compose.animation.slideInVertically
-import androidx.compose.animation.slideOutVertically
 import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -38,7 +32,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -46,20 +39,16 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.CardElevation
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.RadioButtonDefaults
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -70,9 +59,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.BlendMode
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
@@ -93,13 +80,10 @@ import org.uwaterloo.subletr.components.bottomsheet.ImagePickerBottomSheet
 import org.uwaterloo.subletr.components.button.PrimaryButton
 import org.uwaterloo.subletr.components.button.SecondaryButton
 import org.uwaterloo.subletr.components.switch.PrimarySwitch
-import org.uwaterloo.subletr.components.textfield.RoundedTextField
 import org.uwaterloo.subletr.components.textfield.SquaredTextField
 import org.uwaterloo.subletr.enums.Gender
 import org.uwaterloo.subletr.navigation.NavigationDestination
-import org.uwaterloo.subletr.pages.createlisting.CreateListingPageUiState
 import org.uwaterloo.subletr.pages.home.list.dateTimeFormatter
-import org.uwaterloo.subletr.theme.SubletrLightColorScheme
 import org.uwaterloo.subletr.theme.SubletrTheme
 import org.uwaterloo.subletr.theme.SubletrTypography
 import org.uwaterloo.subletr.theme.accountHeadingSmallFont
@@ -112,11 +96,9 @@ import org.uwaterloo.subletr.theme.secondaryButtonBackgroundColor
 import org.uwaterloo.subletr.theme.secondaryTextColor
 import org.uwaterloo.subletr.theme.squaredTextFieldBackgroundColor
 import org.uwaterloo.subletr.theme.subletrPink
-import org.uwaterloo.subletr.theme.textFieldBackgroundColor
 import org.uwaterloo.subletr.theme.textFieldBorderColor
 import org.uwaterloo.subletr.theme.textOnSubletrPink
 import org.uwaterloo.subletr.utils.ComposeFileProvider
-import java.util.Optional
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -129,13 +111,15 @@ fun AccountPageView(
 ) {
 	var nameExpanded by remember { mutableStateOf(false) }
 	var genderExpanded by remember { mutableStateOf(false) }
-	val initialPersonalInformation = remember { mutableStateOf(
-		AccountPageUiState.PersonalInformation(
-			lastName = "",
-			firstName = "",
-			gender = "",
+	val initialPersonalInformation = remember {
+		mutableStateOf(
+			AccountPageUiState.PersonalInformation(
+				lastName = "",
+				firstName = "",
+				gender = "",
+			)
 		)
-	)}
+	}
 
 	if (uiState is AccountPageUiState.Loading) {
 		Column(
@@ -146,18 +130,15 @@ fun AccountPageView(
 		) {
 			CircularProgressIndicator()
 		}
-	}
-	else if (uiState is AccountPageUiState.Loaded) {
+	} else if (uiState is AccountPageUiState.Loaded) {
 		LazyColumn(
 			modifier = modifier
 				.padding(horizontal = dimensionResource(id = R.dimen.m))
 				.fillMaxSize()
 				.imePadding(),
 			verticalArrangement = Arrangement.Top,
-//			verticalArrangement = Arrangement.spacedBy(dimensionResource(id = R.dimen.s)),
 			horizontalAlignment = Alignment.CenterHorizontally,
 		) {
-			// TODO IMAGE
 			item {
 				Box(
 					modifier = Modifier
@@ -171,14 +152,13 @@ fun AccountPageView(
 							.data(uiState.avatarBitmap)
 							.crossfade(false)
 							.build(),
-						placeholder = painterResource(R.drawable.room),
+						fallback = painterResource(R.drawable.default_avatar),
 						contentDescription = stringResource(R.string.avatar),
 						contentScale = ContentScale.Crop,
 						alpha = if (!nameExpanded && !genderExpanded) 1.0f else 0.3F,
 					)
 					UploadAvatar(
 						viewModel = viewModel,
-						uiState = uiState,
 						isEnabled = !nameExpanded && !genderExpanded,
 						modifier = Modifier
 							.size(dimensionResource(id = R.dimen.l))
@@ -186,48 +166,6 @@ fun AccountPageView(
 					)
 				}
 			}
-//			item {
-//				Box(
-//					modifier = Modifier
-//						.padding(dimensionResource(id = R.dimen.l))
-//				) {
-//					Image(
-//						modifier = Modifier
-//							.size(dimensionResource(id = R.dimen.xxxxxl))
-//							.clip(RoundedCornerShape(dimensionResource(id = R.dimen.xxxxxl))),
-//						painter = painterResource(
-//							id = R.drawable.room,
-//						),
-//						contentDescription = stringResource(id = R.string.avatar),
-//						contentScale = ContentScale.Crop,
-//						alpha = if (!nameExpanded && !genderExpanded) 1.0f else 0.3F,
-//					)
-//					Button(
-//						modifier = Modifier
-//							.size(dimensionResource(id = R.dimen.l))
-////							.padding(dimensionResource(id = R.dimen.xs))
-//							.align(Alignment.BottomEnd),
-//						shape = CircleShape,
-//						contentPadding = PaddingValues(dimensionResource(id = R.dimen.xs)),
-//						onClick = {}, //TODO
-//						colors = ButtonDefaults.buttonColors(
-//							containerColor = subletrPink,
-//							contentColor = textOnSubletrPink,
-//							disabledContainerColor = darkerGrayButtonColor,
-//						),
-//						enabled = !nameExpanded && !genderExpanded,
-//					) {
-//						Icon(
-//							modifier = Modifier.fillMaxSize(),
-//							painter = painterResource(
-//								id = R.drawable.edit_round_black_24
-//							),
-//							contentDescription = stringResource(id = R.string.upload_images),
-//							tint = textOnSubletrPink
-//						)
-//					}
-//				}
-//			}
 
 			item {
 				Card(
@@ -237,7 +175,7 @@ fun AccountPageView(
 						defaultElevation = dimensionResource(id = R.dimen.xxs),
 					),
 					onClick = {
-						// TODO
+						// TODO navigate to profile page
 					},
 					colors = CardDefaults.cardColors(
 						containerColor = squaredTextFieldBackgroundColor,
@@ -257,7 +195,8 @@ fun AccountPageView(
 						Text(
 							modifier = Modifier.fillMaxWidth(0.9f),
 							text = stringResource(id = R.string.view_public_profile),
-							color = if (!nameExpanded && !genderExpanded) primaryTextColor else darkerGrayButtonColor
+							color = if (!nameExpanded && !genderExpanded) primaryTextColor
+							else darkerGrayButtonColor
 						)
 						Icon(
 							painter = painterResource(
@@ -275,11 +214,7 @@ fun AccountPageView(
 
 
 			item {
-				Divider(
-					modifier = Modifier.fillMaxWidth(),
-					thickness = dimensionResource(id = R.dimen.xxxxs),
-					color = secondaryButtonBackgroundColor,
-				)
+				PageDivider()
 			}
 
 			item {
@@ -294,7 +229,8 @@ fun AccountPageView(
 					Text(
 						text = stringResource(id = R.string.personal_info),
 						style = SubletrTypography.displaySmall,
-						color = if (!nameExpanded && !genderExpanded) secondaryTextColor else darkerGrayButtonColor,
+						color = if (!nameExpanded && !genderExpanded) secondaryTextColor
+						else darkerGrayButtonColor,
 					)
 				}
 			}
@@ -309,12 +245,14 @@ fun AccountPageView(
 						.fillMaxWidth(),
 					onClick = {
 						if (nameExpanded) {
-							viewModel.personalInformationStream.onNext(initialPersonalInformation.value)
+							viewModel.personalInformationStream.onNext(
+								initialPersonalInformation.value
+							)
 						} else {
 							initialPersonalInformation.value = uiState.personalInformation
 						}
 						nameExpanded = !nameExpanded
-				  	},
+					},
 					colors = CardDefaults.cardColors(
 						containerColor = Color.Transparent,
 						disabledContainerColor = Color.Transparent,
@@ -334,12 +272,13 @@ fun AccountPageView(
 								modifier = Modifier.fillMaxWidth(0.9f),
 								text = stringResource(id = R.string.full_name),
 								style = accountHeadingSmallFont,
-								color = if (!genderExpanded) secondaryTextColor else darkerGrayButtonColor,
+								color = if (!genderExpanded) secondaryTextColor
+								else darkerGrayButtonColor,
 							)
 							AnimatedContent(
 								targetState = nameExpanded,
 								contentAlignment = Alignment.Center,
-								transitionSpec  = {
+								transitionSpec = {
 									scaleIn(animationSpec = tween(durationMillis = 150)) togetherWith
 										scaleOut(animationSpec = tween(durationMillis = 150))
 								}
@@ -351,6 +290,7 @@ fun AccountPageView(
 												id = R.drawable.close_solid_black_24
 											)
 										}
+
 										else -> {
 											painterResource(
 												id = R.drawable.edit_outline_black_24
@@ -362,7 +302,9 @@ fun AccountPageView(
 							}
 						}
 						Text(
-							text = if (!nameExpanded) "${uiState.personalInformation.firstName} ${uiState.personalInformation.lastName}" else "Enter the name that matches your student ID",
+							text = if (!nameExpanded)
+								"${uiState.personalInformation.firstName} ${uiState.personalInformation.lastName}"
+							else stringResource(id = R.string.name_information_label),
 							color = if (!genderExpanded) primaryTextColor else darkerGrayButtonColor,
 						)
 					}
@@ -373,18 +315,11 @@ fun AccountPageView(
 				val density = LocalDensity.current
 				AnimatedVisibility(
 					visible = nameExpanded,
-					enter = slideInVertically {
-						// Slide in from 40 dp from the top.
-						with(density) { -40.dp.roundToPx() }
-					} + expandVertically(
-						// Expand from the top.
-						expandFrom = Alignment.Top
-					) + fadeIn(
-						// Fade in with the initial alpha of 0.3f.
-						initialAlpha = 0.3f
-					),
+					enter = slideInVertically { with(density) { -40.dp.roundToPx() } }
+						+ expandVertically(expandFrom = Alignment.Top)
+						+ fadeIn(initialAlpha = 0.3f),
 					exit = shrinkVertically() + fadeOut(),
-				)  {
+				) {
 					Column(
 						modifier = Modifier
 							.fillMaxWidth()
@@ -450,18 +385,16 @@ fun AccountPageView(
 								nameExpanded = !nameExpanded
 							},
 							onCancelClick = {
-								viewModel.personalInformationStream.onNext(initialPersonalInformation.value)
+								viewModel.personalInformationStream.onNext(
+									initialPersonalInformation.value
+								)
 								nameExpanded = !nameExpanded
 							},
 						)
 
 						Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.s)))
 
-						Divider(
-							modifier = Modifier.fillMaxWidth(),
-							thickness = dimensionResource(id = R.dimen.xxxxs),
-							color = secondaryButtonBackgroundColor,
-						)
+						PageDivider()
 					}
 				}
 			}
@@ -481,8 +414,8 @@ fun AccountPageView(
 							initialPersonalInformation.value = uiState.personalInformation
 						}
 						genderExpanded = !genderExpanded
-				  	},
-					colors = CardDefaults.cardColors( // TODO
+					},
+					colors = CardDefaults.cardColors(
 						containerColor = Color.Transparent,
 						disabledContainerColor = Color.Transparent,
 						contentColor = primaryTextColor,
@@ -501,12 +434,13 @@ fun AccountPageView(
 								modifier = Modifier.fillMaxWidth(0.9f),
 								text = stringResource(id = R.string.gender),
 								style = accountHeadingSmallFont,
-								color = if (!nameExpanded) secondaryTextColor else darkerGrayButtonColor,
+								color = if (!nameExpanded) secondaryTextColor
+								else darkerGrayButtonColor,
 							)
 							AnimatedContent(
 								targetState = genderExpanded,
 								contentAlignment = Alignment.Center,
-								transitionSpec  = {
+								transitionSpec = {
 									scaleIn(animationSpec = tween(durationMillis = 150)) togetherWith
 										scaleOut(animationSpec = tween(durationMillis = 150))
 								}
@@ -518,6 +452,7 @@ fun AccountPageView(
 												id = R.drawable.close_solid_black_24
 											)
 										}
+
 										else -> {
 											painterResource(
 												id = R.drawable.edit_outline_black_24
@@ -529,7 +464,8 @@ fun AccountPageView(
 							}
 						}
 						Text(
-							text = if (!genderExpanded) uiState.personalInformation.gender else "Select your gender",
+							text = if (!genderExpanded) uiState.personalInformation.gender
+							else stringResource(id = R.string.gender_select_label),
 							color = if (!nameExpanded) primaryTextColor else darkerGrayButtonColor,
 						)
 					}
@@ -541,27 +477,19 @@ fun AccountPageView(
 				val density = LocalDensity.current
 				AnimatedVisibility(
 					visible = genderExpanded,
-					enter = slideInVertically {
-						// Slide in from 40 dp from the top.
-						with(density) { -40.dp.roundToPx() }
-					} + expandVertically(
-						// Expand from the top.
-						expandFrom = Alignment.Top
-					) + fadeIn(
-						// Fade in with the initial alpha of 0.3f.
-						initialAlpha = 0.3f
-					),
+					enter = slideInVertically { with(density) { -40.dp.roundToPx() } }
+						+ expandVertically(expandFrom = Alignment.Top)
+						+ fadeIn(initialAlpha = 0.3f),
 					exit = shrinkVertically() + fadeOut(),
 				) {
 					Column(
 						modifier = Modifier
 							.fillMaxWidth()
-							.padding(top = 16.dp)
+							.padding(top = dimensionResource(id = R.dimen.s))
 					) {
 						GenderRadioButtons(
 							uiState.personalInformation.gender,
 							onChangeState = {
-//								viewModel.genderStream.onNext(it)
 								viewModel.personalInformationStream.onNext(
 									AccountPageUiState.PersonalInformation(
 										lastName = uiState.personalInformation.lastName,
@@ -580,18 +508,16 @@ fun AccountPageView(
 								genderExpanded = !genderExpanded
 							},
 							onCancelClick = {
-								viewModel.personalInformationStream.onNext(initialPersonalInformation.value)
+								viewModel.personalInformationStream.onNext(
+									initialPersonalInformation.value
+								)
 								genderExpanded = !genderExpanded
 							},
 						)
 
 						Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.s)))
 
-						Divider(
-							modifier = Modifier.fillMaxWidth(),
-							thickness = dimensionResource(id = R.dimen.xxxxs),
-							color = secondaryButtonBackgroundColor,
-						)
+						PageDivider()
 					}
 				}
 			}
@@ -622,17 +548,19 @@ fun AccountPageView(
 						verticalAlignment = Alignment.CenterVertically
 					) {
 						Column(
-							 verticalArrangement = Arrangement.spacedBy(dimensionResource(id = R.dimen.xxxxs)),
-							 modifier = Modifier.fillMaxWidth(0.9f),
+							verticalArrangement = Arrangement.spacedBy(dimensionResource(id = R.dimen.xxxxs)),
+							modifier = Modifier.fillMaxWidth(0.9f),
 						) {
 							Text(
 								text = stringResource(id = R.string.password),
 								style = accountHeadingSmallFont,
-								color = if (!nameExpanded && !genderExpanded) secondaryTextColor else darkerGrayButtonColor,
+								color = if (!nameExpanded && !genderExpanded) secondaryTextColor
+								else darkerGrayButtonColor,
 							)
 							Text(
 								text = stringResource(id = R.string.change_password),
-								color = if (!nameExpanded && !genderExpanded) primaryTextColor else darkerGrayButtonColor,
+								color = if (!nameExpanded && !genderExpanded) primaryTextColor
+								else darkerGrayButtonColor,
 							)
 						}
 						Icon(
@@ -650,11 +578,7 @@ fun AccountPageView(
 			}
 
 			item {
-				Divider(
-					modifier = Modifier.fillMaxWidth(),
-					thickness = dimensionResource(id = R.dimen.xxxxs),
-					color = secondaryButtonBackgroundColor,
-				)
+				PageDivider()
 			}
 
 			item {
@@ -669,7 +593,8 @@ fun AccountPageView(
 					Text(
 						text = stringResource(id = R.string.my_sublet),
 						style = SubletrTypography.displaySmall,
-						color = if (!nameExpanded && !genderExpanded) secondaryTextColor else darkerGrayButtonColor,
+						color = if (!nameExpanded && !genderExpanded) secondaryTextColor
+						else darkerGrayButtonColor,
 					)
 				}
 			}
@@ -705,13 +630,15 @@ fun AccountPageView(
 								modifier = Modifier.fillMaxWidth(),
 							) {
 								Text(
-									text = "Sublet your place",
+									text = stringResource(id = R.string.sublet_your_place),
 									style = SubletrTypography.displayLarge,
-									color = if (!nameExpanded && !genderExpanded) primaryTextColor else darkerGrayButtonColor,
+									color = if (!nameExpanded && !genderExpanded) primaryTextColor
+									else darkerGrayButtonColor,
 								)
 								Text(
-									text = "Start subletting your apartment to the Waterloo community",
-									color = if (!nameExpanded && !genderExpanded) primaryTextColor else darkerGrayButtonColor,
+									text = stringResource(id = R.string.sublet_your_place_label),
+									color = if (!nameExpanded && !genderExpanded) primaryTextColor
+									else darkerGrayButtonColor,
 								)
 								Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.xs)))
 								PrimaryButton(
@@ -720,7 +647,9 @@ fun AccountPageView(
 										.align(Alignment.Start),
 									shape = RoundedCornerShape(dimensionResource(id = R.dimen.xs)),
 									onClick = {
-										viewModel.navHostController.navigate(NavigationDestination.CREATE_LISTING.fullNavPath)
+										viewModel.navHostController.navigate(
+											NavigationDestination.CREATE_LISTING.fullNavPath
+										)
 									},
 									enabled = !nameExpanded && !genderExpanded,
 								) {
@@ -746,8 +675,7 @@ fun AccountPageView(
 							Row(
 								modifier = Modifier
 									.fillMaxWidth(1.0f),
-
-								) {
+							) {
 								if (uiState.listingImage != null) {
 									Image(
 										modifier = Modifier
@@ -771,12 +699,14 @@ fun AccountPageView(
 										alpha = if (!nameExpanded && !genderExpanded) 1.0f else 0.3F,
 									)
 								}
-								Spacer(modifier = Modifier.width(dimensionResource(id = R.dimen.s)),)
+								Spacer(modifier = Modifier.width(dimensionResource(id = R.dimen.s)))
 								Column(
 									modifier = Modifier
 										.fillMaxWidth(1.0f),
 									horizontalAlignment = Alignment.Start,
-									verticalArrangement = Arrangement.spacedBy(dimensionResource(id = R.dimen.xxxs)),
+									verticalArrangement = Arrangement.spacedBy(
+										dimensionResource(id = R.dimen.xxxs)
+									),
 
 									) {
 									Text(
@@ -785,7 +715,8 @@ fun AccountPageView(
 										overflow = TextOverflow.Clip,
 										textAlign = TextAlign.Start,
 										maxLines = 1,
-										color = if (!nameExpanded && !genderExpanded) primaryTextColor else darkerGrayButtonColor,
+										color = if (!nameExpanded && !genderExpanded) primaryTextColor
+										else darkerGrayButtonColor,
 									)
 									Text(
 										stringResource(
@@ -793,7 +724,8 @@ fun AccountPageView(
 											uiState.listingDetails.price,
 										),
 										style = listingTitleFont,
-										color = if (!nameExpanded && !genderExpanded) primaryTextColor else darkerGrayButtonColor,
+										color = if (!nameExpanded && !genderExpanded) primaryTextColor
+										else darkerGrayButtonColor,
 									)
 									Text(
 										text = stringResource(
@@ -802,7 +734,8 @@ fun AccountPageView(
 											dateTimeFormatter(offsetDateTime = uiState.listingDetails.leaseEnd),
 										),
 										style = MaterialTheme.typography.bodyLarge,
-										color = if (!nameExpanded && !genderExpanded) primaryTextColor else darkerGrayButtonColor,
+										color = if (!nameExpanded && !genderExpanded) primaryTextColor
+										else darkerGrayButtonColor,
 									)
 								}
 							}
@@ -821,8 +754,9 @@ fun AccountPageView(
 						modifier = Modifier
 							.fillMaxWidth()
 							.height(dimensionResource(id = R.dimen.xl)),
-//						shape = RoundedCornerShape(dimensionResource(id = R.dimen.xs)),
-						onClick = { }, // TODO
+						onClick = {
+							// TODO: navigate to my sublet page
+						},
 						enabled = !nameExpanded && !genderExpanded,
 					) {
 						Text(
@@ -838,11 +772,7 @@ fun AccountPageView(
 			}
 
 			item {
-				Divider(
-					modifier = Modifier.fillMaxWidth(),
-					thickness = dimensionResource(id = R.dimen.xxxxs),
-					color = secondaryButtonBackgroundColor,
-				)
+				PageDivider()
 			}
 
 			item {
@@ -857,7 +787,8 @@ fun AccountPageView(
 					Text(
 						text = stringResource(id = R.string.display),
 						style = SubletrTypography.displaySmall,
-						color = if (!nameExpanded && !genderExpanded) secondaryTextColor else darkerGrayButtonColor,
+						color = if (!nameExpanded && !genderExpanded) secondaryTextColor
+						else darkerGrayButtonColor,
 					)
 				}
 			}
@@ -871,7 +802,8 @@ fun AccountPageView(
 				) {
 					Text(
 						text = stringResource(id = R.string.use_device_settings),
-						color = if (!nameExpanded && !genderExpanded) primaryTextColor else darkerGrayButtonColor,
+						color = if (!nameExpanded && !genderExpanded) primaryTextColor
+						else darkerGrayButtonColor,
 					)
 					PrimarySwitch(
 						checked = uiState.settings.useDeviceTheme,
@@ -899,7 +831,9 @@ fun AccountPageView(
 				) {
 					Text(
 						text = stringResource(id = R.string.dark_mode),
-						color = if (!nameExpanded && !genderExpanded && !uiState.settings.useDeviceTheme) primaryTextColor else darkerGrayButtonColor,
+						color = if (!nameExpanded && !genderExpanded && !uiState.settings.useDeviceTheme)
+							primaryTextColor
+						else darkerGrayButtonColor,
 					)
 					PrimarySwitch(
 						checked = uiState.settings.useDarkMode,
@@ -923,11 +857,7 @@ fun AccountPageView(
 			}
 
 			item {
-				Divider(
-					modifier = Modifier.fillMaxWidth(),
-					thickness = dimensionResource(id = R.dimen.xxxxs),
-					color = secondaryButtonBackgroundColor,
-				)
+				PageDivider()
 			}
 
 			item {
@@ -942,7 +872,8 @@ fun AccountPageView(
 					Text(
 						text = stringResource(id = R.string.notifications),
 						style = SubletrTypography.displaySmall,
-						color = if (!nameExpanded && !genderExpanded) secondaryTextColor else darkerGrayButtonColor,
+						color = if (!nameExpanded && !genderExpanded) secondaryTextColor
+						else darkerGrayButtonColor,
 					)
 				}
 			}
@@ -956,7 +887,8 @@ fun AccountPageView(
 				) {
 					Text(
 						text = stringResource(id = R.string.allow_chat_notifications),
-						color = if (!nameExpanded && !genderExpanded) primaryTextColor else darkerGrayButtonColor,
+						color = if (!nameExpanded && !genderExpanded) primaryTextColor
+						else darkerGrayButtonColor,
 					)
 					PrimarySwitch(
 						checked = uiState.settings.allowChatNotifications,
@@ -1001,6 +933,15 @@ fun AccountPageView(
 			}
 		}
 	}
+}
+
+@Composable
+fun PageDivider() {
+	Divider(
+		modifier = Modifier.fillMaxWidth(),
+		thickness = dimensionResource(id = R.dimen.xxxxs),
+		color = secondaryButtonBackgroundColor,
+	)
 }
 
 @Composable
@@ -1050,7 +991,8 @@ fun GenderRadioButtons(selectedValue: String, onChangeState: (String) -> Unit) {
 		stringResource(id = Gender.MALE.stringId),
 		stringResource(id = Gender.FEMALE.stringId),
 		stringResource(id = Gender.UNKNOWN.stringId),
-		stringResource(id = Gender.OTHER.stringId))
+		stringResource(id = Gender.OTHER.stringId)
+	)
 
 	val other = stringResource(id = Gender.OTHER.stringId)
 	val isSelectedItem: (String) -> Boolean = {
@@ -1095,18 +1037,11 @@ fun GenderRadioButtons(selectedValue: String, onChangeState: (String) -> Unit) {
 		val density = LocalDensity.current
 		AnimatedVisibility(
 			visible = isSelectedItem(other),
-			enter = slideInVertically {
-				// Slide in from 40 dp from the top.
-				with(density) { -40.dp.roundToPx() }
-			} + expandVertically(
-				// Expand from the top.
-				expandFrom = Alignment.Top
-			) + fadeIn(
-				// Fade in with the initial alpha of 0.3f.
-				initialAlpha = 0.3f
-			),
+			enter = slideInVertically { with(density) { -40.dp.roundToPx() } }
+				+ expandVertically(expandFrom = Alignment.Top)
+				+ fadeIn(initialAlpha = 0.3f),
 			exit = shrinkVertically() + fadeOut(),
-		)  {
+		) {
 			SquaredTextField(
 				modifier = Modifier
 					.fillMaxWidth()
@@ -1135,7 +1070,6 @@ fun GenderRadioButtons(selectedValue: String, onChangeState: (String) -> Unit) {
 @Composable
 fun UploadAvatar(
 	viewModel: AccountPageViewModel,
-	uiState: AccountPageUiState.Loaded,
 	isEnabled: Boolean,
 	modifier: Modifier,
 ) {
@@ -1160,32 +1094,7 @@ fun UploadAvatar(
 	) {
 		hasImage = it
 	}
-	var avatarBitmap = uiState.avatarBitmap
 
-
-//		if (avatarBitmap != null) {
-//			Image(
-//				modifier = Modifier
-//					.size(dimensionResource(id = R.dimen.xxxxxl))
-//					.clip(RoundedCornerShape(dimensionResource(id = R.dimen.xxxxxl))),
-//				bitmap = avatarBitmap!!.asImageBitmap(),
-//				contentDescription = stringResource(id = R.string.avatar),
-//				contentScale = ContentScale.Crop,
-//				alpha = if (isEnabled) 1.0f else 0.3F,
-//			)
-//		} else {
-//			Image(
-//				modifier = Modifier
-//					.size(dimensionResource(id = R.dimen.xxxxxl))
-//					.clip(RoundedCornerShape(dimensionResource(id = R.dimen.xxxxxl))),
-//				painter = painterResource(
-//					id = R.drawable.room,
-//				),
-//				contentDescription = stringResource(id = R.string.avatar),
-//				contentScale = ContentScale.Crop,
-//				alpha = if (isEnabled) 1.0f else 0.3F,
-//			)
-//		}
 	Button(
 		modifier = modifier,
 		shape = CircleShape,
@@ -1239,23 +1148,9 @@ fun UploadAvatar(
 
 	if (imageUri != null && hasImage) {
 		viewModel.updateAvatar(context, imageUri!!)
-//		if (Build.VERSION.SDK_INT < 28) {
-//			avatarBitmap = MediaStore.Images.Media.getBitmap(context.contentResolver, imageUri)
-//			viewModel.newAvatarBitmapStream.onNext(
-//				Optional.of(avatarBitmap)
-//			)
-//		} else {
-//			val source = ImageDecoder
-//				.createSource(context.contentResolver, imageUri!!)
-//			avatarBitmap = ImageDecoder.decodeBitmap(source)
-//			viewModel.newAvatarBitmapStream.onNext(Optional.of(avatarBitmap))
-//		}
-		viewModel.userUpdateStream.onNext(uiState)
 		imageUri = null
 		hasImage = false
 	}
-	Spacer(modifier = Modifier.width(dimensionResource(id = R.dimen.xs)))
-
 }
 
 @Preview(showBackground = true)
@@ -1284,10 +1179,7 @@ fun AccountPageViewLoadedPreview() {
 				listingDetails = null,
 				listingImage = null,
 				avatarBitmap = null,
-				newAvatarBitmap = null,
-				newAvatarString = null,
 			)
 		)
 	}
 }
-
