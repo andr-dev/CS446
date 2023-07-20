@@ -8,6 +8,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
 import androidx.core.view.WindowCompat
+import com.google.android.libraries.places.api.Places
 import dagger.hilt.android.AndroidEntryPoint
 import org.uwaterloo.subletr.scaffold.MainScaffoldView
 import org.uwaterloo.subletr.services.INavigationService
@@ -23,6 +24,7 @@ class MainActivity : ComponentActivity() {
 		super.onCreate(savedInstanceState)
 
 		WindowCompat.setDecorFitsSystemWindows(window, false)
+		Places.initialize(applicationContext, BuildConfig.MAPS_API_KEY)
 
 		setContent {
 			SubletrTheme {

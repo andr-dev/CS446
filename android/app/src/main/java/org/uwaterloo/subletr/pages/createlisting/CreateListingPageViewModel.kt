@@ -1,11 +1,22 @@
 package org.uwaterloo.subletr.pages.createlisting
 
-import android.content.res.Resources
+import android.content.Context
 import android.graphics.Bitmap
 import android.util.Log
 import androidx.navigation.NavHostController
+import com.google.android.gms.maps.model.LatLng
+import com.google.android.libraries.places.api.Places
+import com.google.android.libraries.places.api.model.AutocompletePrediction
+import com.google.android.libraries.places.api.model.AutocompleteSessionToken
+import com.google.android.libraries.places.api.model.PlaceTypes
+import com.google.android.libraries.places.api.model.RectangularBounds
+import com.google.android.libraries.places.api.net.FindAutocompletePredictionsRequest
+import com.google.android.libraries.places.api.net.FindAutocompletePredictionsResponse
+import com.google.android.libraries.places.api.net.PlacesClient
 import dagger.hilt.android.lifecycle.HiltViewModel
+import dagger.hilt.android.qualifiers.ApplicationContext
 import io.reactivex.rxjava3.core.Observable
+import io.reactivex.rxjava3.core.ObservableEmitter
 import io.reactivex.rxjava3.schedulers.Schedulers
 import io.reactivex.rxjava3.subjects.BehaviorSubject
 import io.reactivex.rxjava3.subjects.PublishSubject
@@ -16,22 +27,55 @@ import org.uwaterloo.subletr.api.apis.ListingsApi
 import org.uwaterloo.subletr.api.models.CreateListingRequest
 import org.uwaterloo.subletr.api.models.ListingsImagesCreateRequest
 import org.uwaterloo.subletr.api.models.ResidenceType
-import org.uwaterloo.subletr.enums.Gender
 import org.uwaterloo.subletr.enums.HousingType
 import org.uwaterloo.subletr.infrastructure.SubletrViewModel
-import org.uwaterloo.subletr.services.ILocationService
 import org.uwaterloo.subletr.services.INavigationService
+import org.uwaterloo.subletr.utils.CANADA
+import org.uwaterloo.subletr.utils.UWATERLOO_LATITUDE_DOUBLE
+import org.uwaterloo.subletr.utils.UWATERLOO_LONGITUDE_DOUBLE
 import org.uwaterloo.subletr.utils.toBase64String
+import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
 @HiltViewModel
 class CreateListingPageViewModel @Inject constructor(
 	private val listingsApi: ListingsApi,
 	val navigationService: INavigationService,
+	@ApplicationContext applicationContext: Context,
 ) : SubletrViewModel<CreateListingPageUiState>() {
 	val navHostController: NavHostController get() = navigationService.navHostController
+	private val autocompleteSessionToken: AutocompleteSessionToken = AutocompleteSessionToken.newInstance()
+	private val bounds: RectangularBounds = RectangularBounds.newInstance(
+		LatLng(UWATERLOO_LATITUDE_DOUBLE, UWATERLOO_LONGITUDE_DOUBLE),
+		LatLng(UWATERLOO_LATITUDE_DOUBLE, UWATERLOO_LONGITUDE_DOUBLE)
+	)
+	private val placesClient: PlacesClient = Places.createClient(applicationContext)
 
 	val fullAddressStream: BehaviorSubject<String> = BehaviorSubject.createDefault("")
+	private val addressAutocompleteStream: Observable<ArrayList<AutocompletePrediction>> = fullAddressStream
+		.debounce(1, TimeUnit.SECONDS, Schedulers.computation())
+		.flatMap {
+			Observable.create { emitter: ObservableEmitter<ArrayList<AutocompletePrediction>> ->
+			val request = FindAutocompletePredictionsRequest.builder()
+				.setLocationBias(bounds)
+				.setOrigin(LatLng(UWATERLOO_LATITUDE_DOUBLE, UWATERLOO_LONGITUDE_DOUBLE))
+				.setCountries(CANADA)
+				.setTypesFilter(listOf(PlaceTypes.ADDRESS))
+				.setSessionToken(autocompleteSessionToken)
+				.setQuery(it)
+				.build()
+			placesClient.findAutocompletePredictions(request)
+				.addOnSuccessListener { response: FindAutocompletePredictionsResponse ->
+					val predictions = ArrayList<AutocompletePrediction>()
+					for (prediction in response.autocompletePredictions) {
+						predictions.add(prediction)
+					}
+					emitter.onNext(predictions)
+				}.addOnFailureListener { exception: Exception? ->
+					emitter.onError(exception ?: RuntimeException())
+				}
+			}
+		}.subscribeOn(Schedulers.io())
 
 	private val addressStream: Observable<CreateListingPageUiState.AddressModel> = fullAddressStream
 		.observeOn(Schedulers.computation())
@@ -68,9 +112,9 @@ class CreateListingPageViewModel @Inject constructor(
 		.observeOn(Schedulers.io())
 		.onErrorResumeWith(Observable.never())
 
-
-	override val uiStateStream: Observable<CreateListingPageUiState> = Observable.combineLatest(
+	private val observables: List<Observable<*>> = listOf(
 		addressStream,
+		addressAutocompleteStream,
 		descriptionStream,
 		priceStream,
 		numBedroomsStream,
@@ -78,17 +122,24 @@ class CreateListingPageViewModel @Inject constructor(
 		endDateStream,
 		imagesBitmapStream,
 		imagesStream,
-	) { address, description, price, numBedrooms, startDate, endDate, imagesBitmap, images ->
+	)
+
+	override val uiStateStream: Observable<CreateListingPageUiState> = Observable.combineLatest(
+		observables
+	) {
+		observing ->
+		@Suppress("UNCHECKED_CAST")
 		CreateListingPageUiState.Loaded(
-			address = address,
-			description = description,
-			price = price,
-			numBedrooms = numBedrooms,
-			startDate = startDate,
-			endDate = endDate,
+			address = observing[0] as CreateListingPageUiState.AddressModel,
+			addressAutocompleteOptions = observing[1] as ArrayList<AutocompletePrediction>,
+			description = observing[2] as String,
+			price = observing[3] as Int,
+			numBedrooms = observing[4] as Int,
+			startDate = observing[5] as String,
+			endDate = observing[6] as String,
 			housingType = HousingType.OTHER,
-			imagesBitmap = imagesBitmap,
-			images = images,
+			imagesBitmap = observing[7] as MutableList<Bitmap?>,
+			images = observing[8] as List<String>,
 		)
 	}
 

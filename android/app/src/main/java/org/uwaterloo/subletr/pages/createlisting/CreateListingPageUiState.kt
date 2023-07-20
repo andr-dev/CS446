@@ -1,6 +1,7 @@
 package org.uwaterloo.subletr.pages.createlisting
 
 import android.graphics.Bitmap
+import com.google.android.libraries.places.api.model.AutocompletePrediction
 import org.uwaterloo.subletr.enums.HousingType
 
 sealed interface CreateListingPageUiState {
@@ -16,6 +17,7 @@ sealed interface CreateListingPageUiState {
 
 	data class Loaded(
 		val address: AddressModel,
+		val addressAutocompleteOptions: ArrayList<AutocompletePrediction>,
 		val description: String,
 		val price: Int,
 		val numBedrooms: Int,
