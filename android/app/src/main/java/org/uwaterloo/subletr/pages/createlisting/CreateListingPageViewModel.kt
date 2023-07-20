@@ -27,6 +27,9 @@ import org.uwaterloo.subletr.api.apis.ListingsApi
 import org.uwaterloo.subletr.api.models.CreateListingRequest
 import org.uwaterloo.subletr.api.models.ListingsImagesCreateRequest
 import org.uwaterloo.subletr.api.models.ResidenceType
+import org.uwaterloo.subletr.enums.EnsuiteBathroomOption
+import org.uwaterloo.subletr.enums.Gender
+import org.uwaterloo.subletr.enums.ListingForGenderOption
 import org.uwaterloo.subletr.enums.HousingType
 import org.uwaterloo.subletr.infrastructure.SubletrViewModel
 import org.uwaterloo.subletr.services.INavigationService
@@ -96,8 +99,17 @@ class CreateListingPageViewModel @Inject constructor(
 	val descriptionStream: BehaviorSubject<String> = BehaviorSubject.createDefault("")
 	val priceStream: BehaviorSubject<Int> = BehaviorSubject.createDefault(0)
 	val numBedroomsStream: BehaviorSubject<Int> = BehaviorSubject.createDefault(0)
+	val totalNumBedroomsStream: BehaviorSubject<Int> = BehaviorSubject.createDefault(0)
+	val numBathroomsStream: BehaviorSubject<Int> = BehaviorSubject.createDefault(0)
+	val bathroomsEnsuiteStream: BehaviorSubject<EnsuiteBathroomOption> =
+		BehaviorSubject.createDefault(EnsuiteBathroomOption.NO)
+	val totalNumBathroomsStream: BehaviorSubject<Int> = BehaviorSubject.createDefault(0)
+	val genderStream: BehaviorSubject<ListingForGenderOption> = BehaviorSubject.createDefault(ListingForGenderOption.ANY)
+	val housingTypeStream: BehaviorSubject<HousingType> = BehaviorSubject.createDefault(HousingType.OTHER)
 	val startDateStream: BehaviorSubject<String> = BehaviorSubject.createDefault("")
+	val startDateDisplayTextStream: BehaviorSubject<String> = BehaviorSubject.createDefault("")
 	val endDateStream: BehaviorSubject<String> = BehaviorSubject.createDefault("")
+	val endDateDisplayTextStream: BehaviorSubject<String> = BehaviorSubject.createDefault("")
 
 	val imagesBitmapStream: BehaviorSubject<MutableList<Bitmap?>> =
 		BehaviorSubject.createDefault(mutableListOf())
@@ -118,8 +130,16 @@ class CreateListingPageViewModel @Inject constructor(
 		descriptionStream,
 		priceStream,
 		numBedroomsStream,
+		totalNumBedroomsStream,
+		numBathroomsStream,
+		bathroomsEnsuiteStream,
+		totalNumBathroomsStream,
+		genderStream,
+		housingTypeStream,
 		startDateStream,
+		startDateDisplayTextStream,
 		endDateStream,
+		endDateDisplayTextStream,
 		imagesBitmapStream,
 		imagesStream,
 	)
@@ -135,11 +155,18 @@ class CreateListingPageViewModel @Inject constructor(
 			description = observing[2] as String,
 			price = observing[3] as Int,
 			numBedrooms = observing[4] as Int,
-			startDate = observing[5] as String,
-			endDate = observing[6] as String,
-			housingType = HousingType.OTHER,
-			imagesBitmap = observing[7] as MutableList<Bitmap?>,
-			images = observing[8] as List<String>,
+			totalNumBedrooms = observing[5] as Int,
+			numBathrooms = observing[6] as Int,
+			bathroomsEnsuite = observing[7] as EnsuiteBathroomOption,
+			totalNumBathrooms = observing[8] as Int,
+			gender = observing[9] as ListingForGenderOption,
+			housingType = observing[10] as HousingType,
+			startDate = observing[11] as String,
+			startDateDisplayText = observing[12] as String,
+			endDate = observing[13] as String,
+			endDateDisplayText = observing[14] as String,
+			imagesBitmap = observing[15] as MutableList<Bitmap?>,
+			images = observing[16] as List<String>,
 		)
 	}
 
@@ -170,15 +197,18 @@ class CreateListingPageViewModel @Inject constructor(
 							leaseStart = it.startDate,
 							leaseEnd = it.endDate,
 							description = it.description,
-							residenceType = ResidenceType.house,
+							residenceType = when (it.housingType) {
+								HousingType.HOUSE -> ResidenceType.house
+								HousingType.APARTMENT -> ResidenceType.apartment
+								else -> ResidenceType.other
+							},
 							imgIds = imgIds,
-							// TODO: Update UI to allow the inputs of these newly added values
-							bathroomsAvailable = 0,
-							bathroomsEnsuite = 0,
-							bathroomsTotal = 0,
-							roomsAvailable = 0,
-							roomsTotal = 0,
-							gender = "Female",
+							bathroomsAvailable = it.numBathrooms,
+							bathroomsEnsuite = if (it.bathroomsEnsuite == EnsuiteBathroomOption.YES) 1 else 0,
+							bathroomsTotal = it.totalNumBathrooms,
+							roomsAvailable = it.numBedrooms,
+							roomsTotal = it.totalNumBedrooms,
+							gender = it.gender.toString(),
 						)
 					)
 				}

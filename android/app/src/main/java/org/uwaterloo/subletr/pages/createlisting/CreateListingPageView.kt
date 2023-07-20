@@ -34,9 +34,11 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DatePickerDefaults
+import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExposedDropdownMenuBox
+import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -65,6 +67,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
+import io.reactivex.rxjava3.subjects.BehaviorSubject
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import org.uwaterloo.subletr.R
@@ -73,8 +76,11 @@ import org.uwaterloo.subletr.components.bottomsheet.ImagePickerBottomSheet
 import org.uwaterloo.subletr.components.button.DateInputButton
 import org.uwaterloo.subletr.components.button.PrimaryButton
 import org.uwaterloo.subletr.components.textfield.RoundedTextField
+import org.uwaterloo.subletr.enums.EnsuiteBathroomOption
+import org.uwaterloo.subletr.enums.ListingForGenderOption
 import org.uwaterloo.subletr.enums.HousingType
 import org.uwaterloo.subletr.theme.SubletrTheme
+import org.uwaterloo.subletr.theme.SubletrTypography
 import org.uwaterloo.subletr.theme.subletrPalette
 import org.uwaterloo.subletr.utils.ComposeFileProvider
 import java.text.SimpleDateFormat
@@ -96,17 +102,12 @@ fun CreateListingPageView(
 	val coroutineScope = rememberCoroutineScope()
 
 	val dateRangePickerState = rememberDateRangePickerState()
-	// TODO: change to streams and add to ViewModel and uiState
-	var startButtonText by remember { mutableStateOf("") }
-	var endButtonText by remember { mutableStateOf("") }
 
 	var autocompleteExpanded by remember { mutableStateOf(false) }
 	val focusManager = LocalFocusManager.current
 
 	var openDatePicker by rememberSaveable { mutableStateOf(false) }
 	val datePickerBottomSheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
-
-	val numberPattern = remember { Regex("^\\d+\$") }
 
 	Scaffold(
 		modifier = modifier,
@@ -162,7 +163,7 @@ fun CreateListingPageView(
 			) {
 
 				Spacer(
-					modifier = Modifier.weight(weight = 2.0f)
+					modifier = Modifier.height(dimensionResource(id = R.dimen.m)),
 				)
 
 				ExposedDropdownMenuBox(
@@ -198,13 +199,13 @@ fun CreateListingPageView(
 					)
 
 					ExposedDropdownMenu(
-						modifier = Modifier
-							.exposedDropdownSize(),
+						modifier = Modifier,
 						expanded = autocompleteExpanded,
 						onDismissRequest = { autocompleteExpanded = false },
 					) {
 						uiState.addressAutocompleteOptions.map { prediction ->
 							DropdownMenuItem(
+								modifier = Modifier,
 								text = { Text(text = prediction.getFullText(null).toString()) },
 								onClick = {
 									viewModel.fullAddressStream.onNext(prediction.getFullText(null).toString())
@@ -217,77 +218,17 @@ fun CreateListingPageView(
 				}
 
 				Spacer(
-					modifier = Modifier.weight(weight = 2.0f)
+					modifier = Modifier.height(dimensionResource(id = R.dimen.m)),
 				)
 
-				RoundedTextField(
-					modifier = Modifier
-						.fillMaxWidth()
-						.border(
-							width = dimensionResource(id = R.dimen.xxxs),
-							color = MaterialTheme.subletrPalette.textFieldBorderColor,
-							shape = RoundedCornerShape(dimensionResource(id = R.dimen.xxxxl))
-						),
-					placeholder = {
-						Text(
-							text = stringResource(id = R.string.price),
-							color = MaterialTheme.subletrPalette.secondaryTextColor,
-						)
-					},
-					label = {
-						Text(
-							text = stringResource(id = R.string.price),
-							color = MaterialTheme.subletrPalette.secondaryTextColor,
-						)
-					},
-					keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-					value = if (uiState.price == 0) "" else uiState.price.toString(),
-					onValueChange = {
-						if (it.isEmpty()) {
-							viewModel.priceStream.onNext(0)
-						} else if (it.matches(numberPattern)) {
-							viewModel.priceStream.onNext(it.toInt())
-						}
-					}
+				CreateListingNumericalInputs(
+					labelId = R.string.price,
+					viewModelStream = viewModel.priceStream,
+					uiStateValue = uiState.price,
 				)
 
 				Spacer(
-					modifier = Modifier.weight(weight = 2.0f)
-				)
-
-				RoundedTextField(
-					modifier = Modifier
-						.fillMaxWidth()
-						.border(
-							width = dimensionResource(id = R.dimen.xxxs),
-							color = MaterialTheme.subletrPalette.textFieldBorderColor,
-							shape = RoundedCornerShape(dimensionResource(id = R.dimen.xxxxl))
-						),
-					placeholder = {
-						Text(
-							text = stringResource(id = R.string.num_bedrooms),
-							color = MaterialTheme.subletrPalette.secondaryTextColor,
-						)
-					},
-					label = {
-						Text(
-							text = stringResource(id = R.string.num_bedrooms),
-							color = MaterialTheme.subletrPalette.secondaryTextColor,
-						)
-					},
-					keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-					value = if (uiState.numBedrooms == 0) "" else uiState.numBedrooms.toString(),
-					onValueChange = {
-						if (it.isEmpty()) {
-							viewModel.numBedroomsStream.onNext(0)
-						} else if (it.matches(numberPattern)) {
-							viewModel.numBedroomsStream.onNext(it.toInt())
-						}
-					}
-				)
-
-				Spacer(
-					modifier = Modifier.weight(weight = 2.0f)
+					modifier = Modifier.height(dimensionResource(id = R.dimen.m)),
 				)
 
 				Row(
@@ -305,7 +246,7 @@ fun CreateListingPageView(
 								shape = RoundedCornerShape(dimensionResource(id = R.dimen.xxxxl))
 							),
 						labelStringId = R.string.start_date,
-						value = startButtonText,
+						value = uiState.startDateDisplayText,
 						onClick = {
 							coroutineScope.launch {
 								openDatePicker = true
@@ -322,7 +263,7 @@ fun CreateListingPageView(
 								shape = RoundedCornerShape(dimensionResource(id = R.dimen.xxxxl))
 							),
 						labelStringId = R.string.end_date,
-						value = endButtonText,
+						value = uiState.endDateDisplayText,
 						onClick = {
 							coroutineScope.launch {
 								openDatePicker = true
@@ -331,7 +272,143 @@ fun CreateListingPageView(
 				}
 
 				Spacer(
-					modifier = Modifier.weight(weight = 2.0f)
+					modifier = Modifier.height(dimensionResource(id = R.dimen.m)),
+				)
+
+				Row(
+					modifier = Modifier.fillMaxWidth(),
+					verticalAlignment = Alignment.CenterVertically,
+					horizontalArrangement = Arrangement.SpaceBetween,
+				) {
+					Text(
+						text = stringResource(id = R.string.bedrooms),
+						color = MaterialTheme.subletrPalette.primaryTextColor,
+						style = SubletrTypography.displaySmall,
+					)
+				}
+
+				Spacer(
+					modifier = Modifier.height(dimensionResource(id = R.dimen.xs)),
+				)
+
+				Row(
+					modifier = Modifier.fillMaxWidth(),
+					horizontalArrangement =  Arrangement.spacedBy(dimensionResource(id = R.dimen.s)),
+					verticalAlignment = Alignment.CenterVertically,
+				) {
+					CreateListingNumericalInputs(
+						modifier = Modifier.weight(1f),
+						labelId = R.string.num_bedrooms,
+						viewModelStream = viewModel.numBedroomsStream,
+						uiStateValue = uiState.numBedrooms,
+					)
+					CreateListingNumericalInputs(
+						modifier = Modifier.weight(1f),
+						labelId = R.string.bedrooms_in_unit,
+						viewModelStream = viewModel.totalNumBedroomsStream,
+						uiStateValue = uiState.totalNumBedrooms,
+					)
+				}
+
+				Spacer(
+					modifier = Modifier.height(dimensionResource(id = R.dimen.m)),
+				)
+
+				Row(
+					modifier = Modifier.fillMaxWidth(),
+					verticalAlignment = Alignment.CenterVertically,
+					horizontalArrangement = Arrangement.SpaceBetween,
+				) {
+					Text(
+						text = stringResource(id = R.string.bathrooms),
+						color = MaterialTheme.subletrPalette.primaryTextColor,
+						style = SubletrTypography.displaySmall,
+					)
+				}
+
+				Spacer(
+					modifier = Modifier.height(dimensionResource(id = R.dimen.xs)),
+				)
+
+				Row(
+					modifier = Modifier.fillMaxWidth(),
+					horizontalArrangement =  Arrangement.spacedBy(dimensionResource(id = R.dimen.s)),
+					verticalAlignment = Alignment.CenterVertically,
+				) {
+					CreateListingNumericalInputs(
+						modifier = Modifier.weight(1f),
+						labelId = R.string.num_bathrooms,
+						viewModelStream = viewModel.numBathroomsStream,
+						uiStateValue = uiState.numBathrooms,
+					)
+					CreateListingNumericalInputs(
+						modifier = Modifier.weight(1f),
+						labelId = R.string.bathrooms_in_unit,
+						viewModelStream = viewModel.totalNumBathroomsStream,
+						uiStateValue = uiState.totalNumBathrooms,
+					)
+				}
+
+				Spacer(
+					modifier = Modifier.height(dimensionResource(id = R.dimen.s)),
+				)
+
+				CreateListingSelectionInput(
+					dropdownItems = EnsuiteBathroomOption.values(),
+					labelId = R.string.ensuite_bathroom,
+					selectedDropdownItem = uiState.bathroomsEnsuite,
+					dropdownItemToString = { stringResource(id = it.stringId) },
+					setSelectedDropdownItem = {
+						viewModel.bathroomsEnsuiteStream.onNext(it)
+					},
+				)
+
+				Spacer(
+					modifier = Modifier.height(dimensionResource(id = R.dimen.m)),
+				)
+
+				Row(
+					modifier = Modifier.fillMaxWidth(),
+					verticalAlignment = Alignment.CenterVertically,
+					horizontalArrangement = Arrangement.SpaceBetween,
+				) {
+					Text(
+						text = stringResource(id = R.string.additional_information),
+						color = MaterialTheme.subletrPalette.primaryTextColor,
+						style = SubletrTypography.displaySmall,
+					)
+				}
+
+				Spacer(
+					modifier = Modifier.height(dimensionResource(id = R.dimen.xs)),
+				)
+
+				CreateListingSelectionInput(
+					dropdownItems = ListingForGenderOption.values(),
+					labelId = R.string.gender,
+					selectedDropdownItem = uiState.gender,
+					dropdownItemToString = { stringResource(id = it.stringId) },
+					setSelectedDropdownItem = {
+						viewModel.genderStream.onNext(it)
+					},
+				)
+
+				Spacer(
+					modifier = Modifier.height(dimensionResource(id = R.dimen.s)),
+				)
+
+				CreateListingSelectionInput(
+					dropdownItems = HousingType.values(),
+					labelId = R.string.housing_type,
+					selectedDropdownItem = uiState.housingType,
+					dropdownItemToString = { stringResource(id = it.stringId) },
+					setSelectedDropdownItem = {
+						viewModel.housingTypeStream.onNext(it)
+					},
+				)
+
+				Spacer(
+					modifier = Modifier.height(dimensionResource(id = R.dimen.s)),
 				)
 
 				RoundedTextField(
@@ -364,7 +441,7 @@ fun CreateListingPageView(
 				)
 
 				Spacer(
-					modifier = Modifier.weight(weight = 2.0f)
+					modifier = Modifier.height(dimensionResource(id = R.dimen.m)),
 				)
 
 				Text(
@@ -374,17 +451,19 @@ fun CreateListingPageView(
 				)
 
 				Spacer(
-					modifier = Modifier.weight(weight = 1.0f)
+					modifier = Modifier.height(dimensionResource(id = R.dimen.m)),
 				)
 
 				UploadImages(viewModel, uiState, coroutineScope)
 
 				Spacer(
-					modifier = Modifier.weight(weight = 2.0f)
+					modifier = Modifier.height(dimensionResource(id = R.dimen.m)),
 				)
 
 				if (openDatePicker) {
-					DatePickerBottomSheet(datePickerBottomSheetState, dateRangePickerState,
+					DatePickerBottomSheet(
+						datePickerBottomSheetState,
+						dateRangePickerState,
 						onDismissRequest = { openDatePicker = false },
 						onClick = {
 							coroutineScope.launch { datePickerBottomSheetState.hide() }.invokeOnCompletion {
@@ -392,33 +471,38 @@ fun CreateListingPageView(
 									openDatePicker = false
 								}
 								if (dateRangePickerState.selectedStartDateMillis != null) {
-									startButtonText =
+									val startButtonText =
 										displayDateFormatter.formatDate(dateRangePickerState.selectedStartDateMillis, locale = Locale.getDefault())!!
+									viewModel.startDateDisplayTextStream.onNext(startButtonText)
 									val startDate = SimpleDateFormat("MM/dd/yyyy").parse(startButtonText)
 									viewModel.startDateStream.onNext(
 										if (startDate is Date)
 											startDate.toInstant().atOffset(ZoneOffset.UTC).format(
-												storeDateFormatISO)
-										else uiState.startDate)
+												storeDateFormatISO
+											)
+										else uiState.startDate
+									)
 								} else {
-									startButtonText = ""
+									viewModel.startDateDisplayTextStream.onNext("")
 									viewModel.startDateStream.onNext("")
 								}
 								if (dateRangePickerState.selectedEndDateMillis != null) {
-									endButtonText =
+									val endButtonText =
 										displayDateFormatter.formatDate(dateRangePickerState.selectedEndDateMillis, locale = Locale.getDefault())!!
+									viewModel.endDateDisplayTextStream.onNext(endButtonText)
 									val endDate = SimpleDateFormat("MM/dd/yyyy").parse(endButtonText)
 									viewModel.endDateStream.onNext(
-										if (endDate is Date)
 											endDate.toInstant().atOffset(ZoneOffset.UTC).format(
-												storeDateFormatISO)
-										else uiState.endDate)
+												storeDateFormatISO
+											)
+									)
 								} else {
-									endButtonText = ""
+									viewModel.endDateDisplayTextStream.onNext("")
 									viewModel.endDateStream.onNext("")
 								}
 							}
-						})
+						}
+					)
 				}
 
 				PrimaryButton(
@@ -446,6 +530,104 @@ private val storeDateFormatISO: DateTimeFormatter = DateTimeFormatter.ISO_LOCAL_
 // TODO: localize date format
 @OptIn(ExperimentalMaterial3Api::class)
 private val displayDateFormatter = DatePickerDefaults.dateFormatter(selectedDateSkeleton = "MM/dd/yyyy")
+
+@Composable
+fun CreateListingNumericalInputs(
+	modifier: Modifier = Modifier,
+	labelId: Int,
+	viewModelStream: BehaviorSubject<Int>,
+	uiStateValue: Int,
+) {
+	val numberPattern = remember { Regex("^\\d+\$") }
+
+	RoundedTextField(
+		modifier = modifier
+			.fillMaxWidth()
+			.border(
+				dimensionResource(id = R.dimen.xxxs),
+				MaterialTheme.subletrPalette.textFieldBorderColor,
+				RoundedCornerShape(dimensionResource(id = R.dimen.xxxxl))
+			),
+		placeholder = {
+			Text(
+				text = stringResource(id = labelId),
+				color = MaterialTheme.subletrPalette.secondaryTextColor,
+			)
+		},
+		label = {
+			Text(
+				text = stringResource(id = labelId),
+				color = MaterialTheme.subletrPalette.secondaryTextColor,
+			)
+		},
+		keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+		value = if (uiStateValue == 0) "" else uiStateValue.toString(),
+		onValueChange = {
+			if (it.isEmpty()) {
+				viewModelStream.onNext(0)
+			} else if (it.matches(numberPattern)) {
+				viewModelStream.onNext(it.toInt())
+			}
+		}
+	)
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun <T> CreateListingSelectionInput(
+	modifier: Modifier = Modifier,
+	dropdownItems: Array<T>,
+	labelId: Int,
+	selectedDropdownItem: T,
+	dropdownItemToString: @Composable (T) -> String,
+	setSelectedDropdownItem: (T) -> Unit,
+) {
+	var expanded by remember {
+		mutableStateOf(false)
+	}
+
+	ExposedDropdownMenuBox(
+		modifier = modifier,
+		expanded = expanded,
+		onExpandedChange = { expanded = !expanded },
+	) {
+		RoundedTextField(
+			modifier = modifier
+				.fillMaxWidth()
+				.menuAnchor()
+				.border(
+					dimensionResource(id = R.dimen.xxxs),
+					MaterialTheme.subletrPalette.textFieldBorderColor,
+					RoundedCornerShape(dimensionResource(id = R.dimen.xxxxl))
+				),
+			readOnly = true,
+			value = dropdownItemToString(selectedDropdownItem),
+			onValueChange = {},
+			label = { Text(text = stringResource(id = labelId)) },
+			trailingIcon = {
+				ExposedDropdownMenuDefaults.TrailingIcon(
+					expanded = expanded
+				)
+			},
+		)
+		DropdownMenu(
+			modifier = modifier.exposedDropdownSize(),
+			expanded = expanded,
+			onDismissRequest = { expanded = false },
+		) {
+			dropdownItems.forEach {
+				DropdownMenuItem(
+					modifier = modifier,
+					onClick = {
+						setSelectedDropdownItem(it)
+						expanded = false
+					},
+					text = { Text(text = dropdownItemToString(it)) },
+				)
+			}
+		}
+	}
+}
 
 @Composable
 fun ImageUploadMethodButton(
@@ -661,8 +843,15 @@ fun CreateListingPageLoadedPreview() {
 				description = "",
 				price = 0,
 				numBedrooms = 0,
+				totalNumBedrooms = 0,
+				numBathrooms = 0,
+				bathroomsEnsuite = EnsuiteBathroomOption.NO,
+				totalNumBathrooms = 0,
+				gender = ListingForGenderOption.FEMALE,
 				startDate = "",
+				startDateDisplayText = "",
 				endDate = "",
+				endDateDisplayText = "",
 				housingType = HousingType.OTHER,
 				imagesBitmap = ArrayList(),
 				images = ArrayList()
