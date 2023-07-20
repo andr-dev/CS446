@@ -15,7 +15,9 @@ import org.uwaterloo.subletr.api.infrastructure.ApiClient
 import org.uwaterloo.subletr.services.AuthenticationService
 import org.uwaterloo.subletr.services.IAuthenticationService
 import org.uwaterloo.subletr.services.IIoService
+import org.uwaterloo.subletr.services.ISettingsService
 import org.uwaterloo.subletr.services.IoService
+import org.uwaterloo.subletr.services.SettingsService
 import javax.inject.Singleton
 
 @Module
@@ -63,6 +65,12 @@ object SingletonModule {
 	@Provides
 	fun provideAuthenticationService(ioService: IIoService): IAuthenticationService {
 		return AuthenticationService(ioService = ioService)
+	}
+
+	@Singleton
+	@Provides
+	fun provideSettingsService(ioService: IIoService): ISettingsService {
+		return SettingsService(ioService = ioService)
 	}
 }
 

@@ -9,18 +9,25 @@ sealed interface AccountPageUiState {
 	object Loading : AccountPageUiState
 
 	data class Loaded(
-		val lastName: String,
-		val firstName: String,
-		val gender: String,
-		val settings: List<Setting>,
+		val personalInformation: PersonalInformation,
+		val settings: Settings,
 		val listingId: Int?,
 		val listingDetails: ListingDetails?,
 		val listingImage: Bitmap?,
+		val avatarBitmap: Bitmap?,
+		val newAvatarBitmap: Bitmap?,
+		val newAvatarString: String?,
 	) : AccountPageUiState
 
-	data class Setting(
-		@StringRes
-		val textStringId: Int,
-		val toggleState: Boolean,
+	data class Settings(
+		val useDeviceTheme: Boolean,
+		val useDarkMode: Boolean,
+		val allowChatNotifications: Boolean,
+	)
+
+	data class PersonalInformation(
+		val lastName: String,
+		val firstName: String,
+		val gender: String,
 	)
 }
