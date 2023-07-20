@@ -123,6 +123,8 @@ private val textFieldBorderColorDark = Color((0xFFE5E5E5))
 
 val Purple900 = Color(0xFF4A148C)
 val Purple500 = Color(0xFF9C27B0)
+val mapCircleFill = Color(0x8042A5F5)
+val mapCircleStroke = Color(0x991565C0)
 
 internal val SubletrDarkColorScheme = darkColorScheme(
 	primary = subletrPinkDark,

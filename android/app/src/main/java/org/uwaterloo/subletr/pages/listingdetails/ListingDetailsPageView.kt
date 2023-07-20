@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -57,9 +58,8 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
 import com.google.maps.android.compose.CameraPositionState
+import com.google.maps.android.compose.Circle
 import com.google.maps.android.compose.GoogleMap
-import com.google.maps.android.compose.Marker
-import com.google.maps.android.compose.MarkerState
 import com.google.maps.android.compose.rememberCameraPositionState
 import kotlinx.coroutines.launch
 import org.uwaterloo.subletr.R
@@ -72,6 +72,8 @@ import org.uwaterloo.subletr.pages.listingdetails.ListingDetailsPageUiState.Load
 import org.uwaterloo.subletr.pages.listingdetails.ListingDetailsPageUiState.Loading.toListOfInfo
 import org.uwaterloo.subletr.theme.SubletrTheme
 import org.uwaterloo.subletr.theme.SubletrTypography
+import org.uwaterloo.subletr.theme.mapCircleFill
+import org.uwaterloo.subletr.theme.mapCircleStroke
 import org.uwaterloo.subletr.theme.primaryTextColor
 import org.uwaterloo.subletr.theme.secondaryButtonBackgroundColor
 import org.uwaterloo.subletr.theme.secondaryTextColor
@@ -126,13 +128,17 @@ fun ListingDetailsPageView(
 				CircularProgressIndicator()
 			}
 		} else if (uiState is ListingDetailsPageUiState.Loaded) {
+			val listingLatLng = LatLng(
+				uiState.listingDetails.latitude.toDouble(),
+				uiState.listingDetails.longitude.toDouble()
+			)
 			val imageCount = uiState.images.size
 			val pagerState = rememberPagerState(
 				initialPage = 0,
 				initialPageOffsetFraction = 0f,
 			) { imageCount }
 			val cameraPositionState = rememberCameraPositionState {
-				position = CameraPosition.fromLatLngZoom(SINGAPORE, 10f)
+				position = CameraPosition.fromLatLngZoom(listingLatLng, 15f)
 			}
 			var columnScrollingEnabled by remember { mutableStateOf(true) }
 			LaunchedEffect(cameraPositionState.isMoving) {
@@ -352,7 +358,7 @@ fun ListingDetailsPageView(
 				GoogleMapComposable(
 					cameraPositionState = cameraPositionState,
 					disableColumnScrolling = { columnScrollingEnabled = false },
-					position = null,
+					position = listingLatLng,
 				)
 
 				Spacer(
@@ -418,11 +424,12 @@ fun GoogleMapComposable(
 	modifier: Modifier = Modifier,
 	cameraPositionState: CameraPositionState,
 	disableColumnScrolling: () -> Unit,
-	position: LatLng?,
+	position: LatLng,
 ) {
 	GoogleMap(
 		modifier = modifier
-			.size(dimensionResource(id = R.dimen.listing_details_image))
+			.fillMaxWidth(fraction = 1.0f)
+			.aspectRatio(ratio = 1.0f)
 			.pointerInteropFilter(
 				onTouchEvent = {
 					when (it.action) {
@@ -437,16 +444,18 @@ fun GoogleMapComposable(
 			),
 		cameraPositionState = cameraPositionState
 	) {
-		Marker(
-			state = MarkerState(position = position ?: SINGAPORE),
+		Circle(
+			center = position,
+			radius = MAP_CIRCLE_RADIUS,
+			fillColor = mapCircleFill,
+			strokeColor = mapCircleStroke,
+			strokeWidth = 5f,
 		)
 	}
 }
 
 private const val ELEMENT_WIDTH = 0.9f
-
-/* TODO figure out address to LatLng */
-private val SINGAPORE = LatLng(1.35, 103.87)
+private const val MAP_CIRCLE_RADIUS = 500.0
 
 @Preview(showBackground = true)
 @Composable
