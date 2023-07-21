@@ -21,3 +21,15 @@
 |2023-06-28| 1.5 hours (23:00 - 00:30) | Worked on Figma design of filters page |
 |2023-06-29| 2 hour (21:00 - 23:00) | Worked on uploading multiple images for a listing and deleting images after they are uploaded |
 |2023-06-30| 1 hour (18:00 - 19:00) | Worked taking a new photo and uploading it when creating a listing |
+|2023-07-10| 1 hour (14:00 - 15:00) | Worked on D4 architecture style examples |
+|2023-07-12| 2 hours (20 - 22:00) | Worked on figma for new account page and updated base UI for account page |
+|2023-07-15| 1 hour (18 - 19:00) | Worked on figma public profile page |
+|2023-07-16| 2 hours (20 - 22:00) | Updated account page viewmodel and made editable name and gender fields for user |
+|2023-07-17| 1 hour (14:00 - 15:00) | Worked on D5 design pattern examples |
+|2023-07-17| 1 hour (14:00 - 15:00) | Created animations for account page |
+|2023-07-19| 1 hour (13:00 - 14:00) | Updated authentication service |
+|2023-07-19| 2 hours (20:00 - 21:00) | Created settings service to store and update user settings |
+|2023-07-19| 1 hour (22:00 - 23:00) | Worked on logic and UI for showing user's listing on account page |
+|2023-07-20| 3 hours (17:00 - 20:00) | Worked on functionality for users to upload avatar and finalized UI for account page |
+|2023-07-20| 1.5 hours (21:30 - 23:00) | Created app logo and figma for dark mode |
+|2023-07-21| 5 hours (19:30 - 00:30) | Created user profile page |
