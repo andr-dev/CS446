@@ -51,6 +51,7 @@ import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.input.pointer.pointerInteropFilter
 import androidx.compose.ui.layout.ContentScale
@@ -167,9 +168,16 @@ fun ListingDetailsPageView(
 					modifier = Modifier
 				) {
 					if (uiState.isFetchingImages) {
-						ImageBoxPlaceholder {
+						Box(
+							modifier = modifier
+								.padding(dimensionResource(id = R.dimen.xs))
+								.size(dimensionResource(id = R.dimen.listing_details_image)),
+							contentAlignment = Alignment.Center
+						) {
 							CircularProgressIndicator()
 						}
+					} else if (uiState.images.size == 1) {
+						ListingDetailsImageDisplay(imageBitmap = uiState.images[0].asImageBitmap())
 					} else if (uiState.images.isNotEmpty()) {
 						Column(
 							modifier = Modifier,
@@ -180,14 +188,7 @@ fun ListingDetailsPageView(
 								state = pagerState,
 								contentPadding = PaddingValues(start = dimensionResource(id = R.dimen.xxl)),
 							) { page ->
-								Image(
-									bitmap = uiState.images[page].asImageBitmap(),
-									contentDescription = stringResource(id = R.string.listing_image),
-									contentScale = ContentScale.Fit,
-									modifier = Modifier
-										.size(dimensionResource(id = R.dimen.listing_details_image))
-										.clip(RoundedCornerShape(dimensionResource(id = R.dimen.xxs))),
-								)
+								ListingDetailsImageDisplay(imageBitmap = uiState.images[page].asImageBitmap())
 							}
 
 							Row(
@@ -245,25 +246,7 @@ fun ListingDetailsPageView(
 							)
 						}
 					} else {
-						Image(
-							modifier = Modifier
-								.size(dimensionResource(id = R.dimen.listing_details_image))
-								.clip(
-									shape = RoundedCornerShape(dimensionResource(id = R.dimen.xxs))
-								)
-								.border(
-									width = dimensionResource(id = R.dimen.xxxxs),
-									color = MaterialTheme.subletrPalette.textFieldBorderColor,
-									shape = RoundedCornerShape(
-										size = dimensionResource(id = R.dimen.xxs),
-									),
-								),
-							painter = painterResource(
-								id = R.drawable.default_listing_image,
-							),
-							contentDescription = stringResource(id = R.string.listing_image),
-							contentScale = ContentScale.Fit,
-						)
+						ListingDetailsImageDisplay()
 					}
 				}
 
@@ -460,18 +443,34 @@ fun DetailsInfoColumn(
 }
 
 @Composable
-fun ImageBoxPlaceholder(
-	modifier: Modifier = Modifier,
-	contentAlignment: Alignment = Alignment.Center,
-	content: @Composable () -> Unit,
+fun ListingDetailsImageDisplay(
+	imageBitmap: ImageBitmap? = null
 ) {
-	Box(
-		modifier = modifier
-			.padding(dimensionResource(id = R.dimen.xs))
-			.size(dimensionResource(id = R.dimen.listing_details_image)),
-		contentAlignment = contentAlignment
-	) {
-		content()
+	if (imageBitmap != null) {
+		Image(
+			bitmap = imageBitmap,
+			contentDescription = stringResource(id = R.string.listing_image),
+			contentScale = ContentScale.Fit,
+			modifier = Modifier
+				.size(dimensionResource(id = R.dimen.listing_details_image))
+				.clip(RoundedCornerShape(dimensionResource(id = R.dimen.xxs))),
+		)
+	} else {
+		Image(
+			painter = painterResource(id = R.drawable.room),
+			contentDescription = stringResource(id = R.string.listing_image),
+			contentScale = ContentScale.Fit,
+			modifier = Modifier
+				.size(dimensionResource(id = R.dimen.listing_details_image))
+				.clip(RoundedCornerShape(dimensionResource(id = R.dimen.xxs)))
+				.border(
+					width = dimensionResource(id = R.dimen.xxxxs),
+					color = MaterialTheme.subletrPalette.textFieldBorderColor,
+					shape = RoundedCornerShape(
+						size = dimensionResource(id = R.dimen.xxs),
+					),
+				),
+		)
 	}
 }
 
