@@ -17,7 +17,7 @@ val subletrPink
 	}
 
 private val subletrPinkLight = Color(0xFFF4717F)
-private val subletrPinkDark = Color(0xFFF4717F)
+private val subletrPinkDark = Color(0xFFEF838F)
 
 val textOnSubletrPink
 	@Composable
@@ -27,7 +27,7 @@ val textOnSubletrPink
 		textOnSubletrPinkLight
 	}
 private val textOnSubletrPinkLight = Color((0xFFFFFFFF))
-private val textOnSubletrPinkDark = Color((0xFFFFFFFF))
+private val textOnSubletrPinkDark = Color((0xFF181213))
 
 val unselectedGray
 	@Composable
@@ -47,7 +47,7 @@ val primaryTextColor
 		primaryTextColorLight
 	}
 private val primaryTextColorLight = Color((0xFF000000))
-private val primaryTextColorDark = Color((0xFFFFFFFF))
+private val primaryTextColorDark = Color((0xFFF6ECED))
 
 val secondaryTextColor
 	@Composable
@@ -57,7 +57,7 @@ val secondaryTextColor
 		secondaryTextColorLight
 	}
 private val secondaryTextColorLight = Color((0xFF808080))
-private val secondaryTextColorDark = Color((0xFF808080))
+private val secondaryTextColorDark = Color((0xFFCFC0C1))
 
 val darkerGrayButtonColor
 	@Composable
@@ -68,7 +68,7 @@ val darkerGrayButtonColor
 		darkerGrayButtonColorLight
 	}
 private val darkerGrayButtonColorLight = Color((0xFFE5E5E5))
-private val darkerGrayButtonColorDark = Color((0xFFE5E5E5))
+private val darkerGrayButtonColorDark = Color((0xFF403637))
 
 val primaryBackgroundColor
 	@Composable
@@ -77,8 +77,8 @@ val primaryBackgroundColor
 	} else {
 		primaryBackgroundColorLight
 	}
-private val primaryBackgroundColorLight = Color((0xFFFFFFFF))
-private val primaryBackgroundColorDark = Color((0xFF000000))
+private val primaryBackgroundColorLight = Color((0xFFFFFBFE))
+private val primaryBackgroundColorDark = Color((0xFF181213))
 
 val secondaryBackgroundColor
 	@Composable
@@ -88,7 +88,7 @@ val secondaryBackgroundColor
 		secondaryBackgroundColorLight
 	}
 private val secondaryBackgroundColorLight = Color((0xFFF0F0F0))
-private val secondaryBackgroundColorDark = Color((0xFFF0F0F0))
+private val secondaryBackgroundColorDark = Color((0xFF2B2930))
 
 val secondaryButtonBackgroundColor
 	@Composable
@@ -98,7 +98,7 @@ val secondaryButtonBackgroundColor
 		secondaryButtonBackgroundColorLight
 	}
 private val secondaryButtonBackgroundColorLight = Color((0xFFF0F0F0))
-private val secondaryButtonBackgroundColorDark = Color((0xFFF0F0F0))
+private val secondaryButtonBackgroundColorDark = Color((0xFF2B2930))
 
 val textFieldBackgroundColor
 	@Composable
@@ -108,7 +108,7 @@ val textFieldBackgroundColor
 		textFieldBackgroundColorLight
 	}
 private val textFieldBackgroundColorLight = Color((0xFFF0F0F0))
-private val textFieldBackgroundColorDark = Color((0xFFF0F0F0))
+private val textFieldBackgroundColorDark = Color((0xFF2B2930))
 
 val squaredTextFieldBackgroundColor
 	@Composable
@@ -117,8 +117,8 @@ val squaredTextFieldBackgroundColor
 	} else {
 		squaredTextFieldBackgroundColorLight
 	}
-private val squaredTextFieldBackgroundColorLight = Color((0xFFFFFFFF))
-private val squaredTextFieldBackgroundColorDark = Color((0xFFFFFFFF))
+private val squaredTextFieldBackgroundColorLight = Color(0xFFFFFFFF)
+private val squaredTextFieldBackgroundColorDark = Color(0xFF000000)
 
 val textFieldBorderColor
 	@Composable
@@ -129,19 +129,7 @@ val textFieldBorderColor
 		textFieldBorderColorLight
 	}
 private val textFieldBorderColorLight = Color((0xFFE5E5E5))
-private val textFieldBorderColorDark = Color((0xFFE5E5E5))
-
-val surfaceColor
-	@Composable
-	get() = if (isSystemInDarkTheme()) {
-		surfaceColorDark
-	}
-	else {
-		surfaceColorLight
-	}
-private val surfaceColorLight = Color((0xFF1C1B1F))
-private val surfaceColorDark = Color((0xFF1C1B1F))
-
+private val textFieldBorderColorDark = Color((0xFF928586))
 
 val Purple900 = Color(0xFF4A148C)
 val Purple500 = Color(0xFF9C27B0)
@@ -151,11 +139,11 @@ val mapCircleStroke = Color(0x991565C0)
 internal val SubletrDarkColorScheme = darkColorScheme(
 	primary = subletrPinkDark,
 	tertiary = Purple900,
-	background = Color(0xFFFFFBFE),
-	surface = Color(0xFFFFFBFE),
-	onPrimary = Color.White,
-	onSecondary = Color.White,
-	onTertiary = Color.White,
+	background = primaryBackgroundColorDark,
+	surface = primaryBackgroundColorDark,
+	onPrimary = Color.Black,
+	onSecondary = Color.Black,
+	onTertiary = Color.Black,
 	onBackground = Color(0xFF1C1B1F),
 	onSurface = Color(0xFF1C1B1F),
 )
@@ -163,8 +151,8 @@ internal val SubletrDarkColorScheme = darkColorScheme(
 internal val SubletrLightColorScheme = lightColorScheme(
 	primary = subletrPinkLight,
 	tertiary = Purple500,
-	background = Color(0xFFFFFBFE),
-	surface = Color(0xFFFFFBFE),
+	background = primaryBackgroundColorLight,
+	surface = primaryBackgroundColorLight,
 	onPrimary = Color.White,
 	onSecondary = Color.White,
 	onTertiary = Color.White,

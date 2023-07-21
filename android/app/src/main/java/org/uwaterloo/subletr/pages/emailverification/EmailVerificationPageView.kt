@@ -25,7 +25,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rxjava3.subscribeAsState
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusDirection
@@ -38,14 +37,17 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import okhttp3.internal.immutableListOf
 import org.uwaterloo.subletr.R
 import org.uwaterloo.subletr.theme.SubletrTheme
+import org.uwaterloo.subletr.theme.primaryBackgroundColor
+import org.uwaterloo.subletr.theme.primaryTextColor
 import org.uwaterloo.subletr.theme.secondaryButtonBackgroundColor
+import org.uwaterloo.subletr.theme.secondaryTextColor
 import org.uwaterloo.subletr.theme.subletrPink
-import org.uwaterloo.subletr.theme.textFieldBackgroundColor
+import org.uwaterloo.subletr.theme.textFieldBorderColor
+import org.uwaterloo.subletr.theme.textOnSubletrPink
 
 @Composable
 fun EmailVerificationPageView(
@@ -116,12 +118,12 @@ fun EmailVerificationPageView(
 				onClick = { viewModel.navHostController.navigate("home") },
 				colors = ButtonDefaults.buttonColors(
 					containerColor = subletrPink,
-					contentColor = Color.White,
+					contentColor = textOnSubletrPink,
 				)
 			) {
 				Text(
 					text = stringResource(id = R.string.verify),
-					color = Color.White,
+					color = textOnSubletrPink,
 					style = MaterialTheme.typography.labelMedium,
 					textAlign = TextAlign.Justify,
 				)
@@ -136,12 +138,12 @@ fun EmailVerificationPageView(
 				onClick = {},
 				colors = ButtonDefaults.buttonColors(
 					containerColor = secondaryButtonBackgroundColor,
-					contentColor = Color.White,
+					contentColor = primaryTextColor,
 				)
 			) {
 				Text(
 					text = stringResource(id = R.string.resend_code),
-					color = Color.Gray,
+					color = secondaryTextColor,
 					style = MaterialTheme.typography.labelMedium,
 
 					)
@@ -162,28 +164,27 @@ fun TextFieldBox(
 	verificationCodeValue: List<String>,
 	onTextViewValueChange: (Int, String) -> Unit,
 ) {
-	val textFieldColor = textFieldBackgroundColor
-	val sublrPink = subletrPink
-	var backgroundColor by remember { mutableStateOf(textFieldColor) }
-	var borderColor by remember { mutableStateOf(textFieldColor) }
+	val isFocused by remember{ mutableStateOf(false) }
 
 	TextField(
 		modifier = Modifier
-			.width(56.dp)
-			.height(56.dp)
+			.width(dimensionResource(id = R.dimen.xxl))
+			.height(dimensionResource(id = R.dimen.xxl))
 			.wrapContentSize(align = Alignment.Center)
-			.border(BorderStroke(dimensionResource(id = R.dimen.xxxs), borderColor),
-				shape = RoundedCornerShape(dimensionResource(id = R.dimen.xxs)))
+			.border(
+				BorderStroke(
+					width = dimensionResource(id = R.dimen.xxxs),
+					color = if (isFocused) subletrPink else textFieldBorderColor,
+				),
+				shape = RoundedCornerShape(dimensionResource(id = R.dimen.xxs))
+			)
 			.onFocusChanged {
-				if (it.isFocused) {
-					borderColor = sublrPink
-					backgroundColor = Color.White
-				}
+				it.isFocused
 			},
 		shape = RoundedCornerShape(size = dimensionResource(id = R.dimen.xs)),
 		colors = TextFieldDefaults.colors(
-			unfocusedContainerColor = backgroundColor,
-			focusedContainerColor = backgroundColor,
+			unfocusedContainerColor = primaryBackgroundColor,
+			focusedContainerColor = primaryBackgroundColor,
 			unfocusedIndicatorColor = Color.Transparent,
 			focusedIndicatorColor = Color.Transparent,
 		),

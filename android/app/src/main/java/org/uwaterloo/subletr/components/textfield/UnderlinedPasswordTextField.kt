@@ -28,6 +28,7 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import org.uwaterloo.subletr.R
+import org.uwaterloo.subletr.theme.primaryTextColor
 import org.uwaterloo.subletr.theme.subletrPink
 
 @Composable
@@ -56,6 +57,8 @@ fun UnderlinedPasswordTextField(
 	interactionSource: MutableInteractionSource = remember { MutableInteractionSource() },
 	shape: Shape = TextFieldDefaults.shape,
 	colors: TextFieldColors = TextFieldDefaults.colors(
+		focusedTextColor = primaryTextColor,
+		unfocusedTextColor = primaryTextColor,
 		unfocusedContainerColor = Color.Transparent,
 		focusedContainerColor = Color.Transparent,
 		unfocusedIndicatorColor = subletrPink,

@@ -39,7 +39,7 @@ fun PropertyTypeFilter(
 				horizontalArrangement = Arrangement.spacedBy(dimensionResource(id = R.dimen.xs)),
 				content = {
 					item {
-						defaultFilterButton(
+						DefaultFilterButton(
 							isSelected = (housingPref == HousingType.OTHER),
 							onClick = { housingPref = HousingType.OTHER },
 							text = stringResource(
@@ -50,7 +50,7 @@ fun PropertyTypeFilter(
 					HousingType.values().map {
 						if (it != HousingType.OTHER) {
 							item {
-								defaultFilterButton(
+								DefaultFilterButton(
 									isSelected = (housingPref == it),
 									onClick = { housingPref = it },
 									text = stringResource(

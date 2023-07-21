@@ -77,7 +77,7 @@ import org.uwaterloo.subletr.theme.mapCircleStroke
 import org.uwaterloo.subletr.theme.primaryTextColor
 import org.uwaterloo.subletr.theme.secondaryButtonBackgroundColor
 import org.uwaterloo.subletr.theme.secondaryTextColor
-import org.uwaterloo.subletr.theme.textFieldBackgroundColor
+import org.uwaterloo.subletr.theme.textFieldBorderColor
 import org.uwaterloo.subletr.theme.textOnSubletrPink
 import java.time.OffsetDateTime
 
@@ -265,6 +265,7 @@ fun ListingDetailsPageView(
 					Text(
 						text = uiState.listingDetails.address,
 						style = SubletrTypography.titleSmall,
+						color = primaryTextColor,
 					)
 				}
 
@@ -297,6 +298,7 @@ fun ListingDetailsPageView(
 								stringResource(id = R.string.unfavourite)
 							else
 								stringResource(id = R.string.favourite),
+							color = primaryTextColor,
 						)
 					}
 				}
@@ -334,7 +336,7 @@ fun ListingDetailsPageView(
 						.border(
 							BorderStroke(
 								dimensionResource(id = R.dimen.xxxs),
-								textFieldBackgroundColor
+								textFieldBorderColor,
 							),
 							shape = RoundedCornerShape(dimensionResource(id = R.dimen.xs))
 						)

@@ -17,7 +17,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -83,7 +82,7 @@ fun HomeMapListingItemView(
 		Spacer(modifier = Modifier.width(dimensionResource(id = R.dimen.s)))
 		Column(
 			modifier = Modifier
-				.fillMaxWidth(fraction = 1.0f)
+				.wrapContentHeight(),
 		) {
 			Row(
 				modifier = Modifier
@@ -156,6 +155,7 @@ fun HomeMapListingItemView(
 								listingSummary.distanceMeters.roundToInt(),
 							),
 							style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Bold),
+							color = primaryTextColor,
 						)
 					}
 					Text(
@@ -169,22 +169,26 @@ fun HomeMapListingItemView(
 							),
 						),
 						style = MaterialTheme.typography.bodyLarge,
+						color = primaryTextColor,
 					)
 				}
 			}
 			Row(
 				modifier = Modifier
-					.wrapContentHeight()
-					.fillMaxWidth(fraction = 1.0f),
+					.height(height = dimensionResource(id = R.dimen.xl))
+					.fillMaxWidth(fraction = 1.0f)
+					.padding(
+						bottom = dimensionResource(id = R.dimen.xs),
+					),
 				horizontalArrangement = Arrangement.SpaceEvenly,
 			) {
 				SecondaryButton(
 					modifier = Modifier
-						.fillMaxWidth(0.5f)
-						.fillMaxHeight(1.0f),
+						.fillMaxWidth(fraction = 0.5f)
+						.fillMaxHeight(fraction = 1.0f),
 					colors = ButtonDefaults.buttonColors(
 						containerColor = if (selected) primaryBackgroundColor else darkerGrayButtonColor,
-						contentColor = Color.Black,
+						contentColor = primaryTextColor,
 					),
 					border = BorderStroke(
 						width = dimensionResource(id = R.dimen.xxxs),
@@ -199,22 +203,26 @@ fun HomeMapListingItemView(
 					Text(
 						stringResource(id = R.string.view_details),
 						style = MaterialTheme.typography.bodyLarge,
+						color = primaryTextColor,
 					)
 				}
+				Spacer(modifier = Modifier.width(dimensionResource(id = R.dimen.xs)))
 				Box(
 					modifier = Modifier
-						.clip(CircleShape)
+						.clip(RoundedCornerShape(dimensionResource(id = R.dimen.xl)))
 						.border(
 							width = dimensionResource(id = R.dimen.xxxs),
-							shape = CircleShape,
+							shape = RoundedCornerShape(dimensionResource(id = R.dimen.xl)),
 							color = if (selected) primaryTextColor else Color.Transparent,
-						),
+						)
+						.weight(weight = 0.5f),
 				) {
 					IconButton(
 						modifier = Modifier
 							.background(
 								color = if (selected) primaryBackgroundColor else darkerGrayButtonColor,
-							),
+							)
+							.fillMaxWidth(fraction = 1.0f),
 						onClick = { /*TODO*/ },
 					) {
 						Icon(
@@ -223,12 +231,14 @@ fun HomeMapListingItemView(
 						)
 					}
 				}
+				Spacer(modifier = Modifier.width(dimensionResource(id = R.dimen.xs)))
 				Box(
 					modifier = Modifier
-						.clip(CircleShape)
+						.weight(weight = 0.5f)
+						.clip(RoundedCornerShape(dimensionResource(id = R.dimen.xl)))
 						.border(
 							width = dimensionResource(id = R.dimen.xxxs),
-							shape = CircleShape,
+							shape = RoundedCornerShape(dimensionResource(id = R.dimen.xl)),
 							color = if (selected) primaryTextColor else Color.Transparent,
 						),
 				) {
@@ -236,7 +246,8 @@ fun HomeMapListingItemView(
 						modifier = Modifier
 							.background(
 								color = if (selected) primaryBackgroundColor else darkerGrayButtonColor,
-							),
+							)
+							.fillMaxWidth(fraction = 1.0f),
 						onClick = {
 							  /*TODO*/
 						},
@@ -247,9 +258,8 @@ fun HomeMapListingItemView(
 						)
 					}
 				}
-				Spacer(modifier = Modifier.width(dimensionResource(id = R.dimen.s)))
+				Spacer(modifier = Modifier.width(dimensionResource(id = R.dimen.xs)))
 			}
-			Spacer(modifier = Modifier.width(dimensionResource(id = R.dimen.xs)))
 		}
 	}
 }

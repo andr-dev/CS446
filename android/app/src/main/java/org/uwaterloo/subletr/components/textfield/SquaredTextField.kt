@@ -18,6 +18,7 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import org.uwaterloo.subletr.R
+import org.uwaterloo.subletr.theme.primaryTextColor
 import org.uwaterloo.subletr.theme.squaredTextFieldBackgroundColor
 
 @Composable
@@ -46,6 +47,8 @@ fun SquaredTextField(
 	interactionSource: MutableInteractionSource = remember { MutableInteractionSource() },
 	shape: Shape = RoundedCornerShape(dimensionResource(id = R.dimen.xs)),
 	colors: TextFieldColors = TextFieldDefaults.colors(
+		focusedTextColor = primaryTextColor,
+		unfocusedTextColor = primaryTextColor,
 		unfocusedContainerColor = squaredTextFieldBackgroundColor,
 		focusedContainerColor = squaredTextFieldBackgroundColor,
 		unfocusedIndicatorColor = Color.Transparent,

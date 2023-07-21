@@ -41,21 +41,21 @@ fun RoommateFilter(
 				horizontalArrangement = Arrangement.spacedBy(dimensionResource(id = R.dimen.s)),
 			) {
 
-				defaultFilterButton(
+				DefaultFilterButton(
 					isSelected = (genderPref == Gender.OTHER),
 					onClick = { genderPref = Gender.OTHER },
 					text = stringResource(
 						id = R.string.any,
 					),
 				)
-				defaultFilterButton(
+				DefaultFilterButton(
 					isSelected = (genderPref == Gender.FEMALE),
 					onClick = { genderPref = Gender.FEMALE },
 					text = stringResource(
 						id = R.string.female,
 					),
 				)
-				defaultFilterButton(
+				DefaultFilterButton(
 					isSelected = (genderPref == Gender.MALE),
 					onClick = { genderPref = Gender.MALE },
 					text = stringResource(

@@ -23,7 +23,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.dimensionResource
@@ -32,21 +31,20 @@ import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.unit.dp
 import org.uwaterloo.subletr.R
 import org.uwaterloo.subletr.api.models.ListingSummary
 import org.uwaterloo.subletr.api.models.ResidenceType
 import org.uwaterloo.subletr.components.button.SecondaryButton
-import org.uwaterloo.subletr.pages.home.list.ButtonWithIcon
 import org.uwaterloo.subletr.pages.home.list.dateTimeFormatter
 import org.uwaterloo.subletr.theme.darkerGrayButtonColor
 import org.uwaterloo.subletr.theme.listingDescriptionFont
 import org.uwaterloo.subletr.theme.listingTitleFont
+import org.uwaterloo.subletr.theme.primaryTextColor
 import org.uwaterloo.subletr.theme.secondaryButtonBackgroundColor
 import org.uwaterloo.subletr.theme.secondaryTextColor
 
 @Composable
-fun ListingPost(
+fun HomeListListingItemView(
 	modifier: Modifier = Modifier,
 	listingSummary: ListingSummary,
 	listingImage: Bitmap?,
@@ -58,14 +56,16 @@ fun ListingPost(
 			.fillMaxWidth(1.0f)
 			.clip(
 				RoundedCornerShape(
-					dimensionResource(id = R.dimen.xxs)
+					size = dimensionResource(id = R.dimen.xxs),
 				),
 			)
-			.background(secondaryButtonBackgroundColor)
+			.background(
+				color = secondaryButtonBackgroundColor,
+			)
 	) {
 		Column(
 			modifier = Modifier
-				.fillMaxWidth(1.0f)
+				.fillMaxWidth(fraction = 1.0f)
 				.padding(
 					start = dimensionResource(id = R.dimen.s),
 					top = dimensionResource(id = R.dimen.s),
@@ -78,7 +78,6 @@ fun ListingPost(
 			Row(
 				modifier = Modifier
 					.fillMaxWidth(1.0f),
-
 			) {
 				if (listingImage != null) {
 					Image(
@@ -104,13 +103,13 @@ fun ListingPost(
 				Spacer(modifier = Modifier.width(dimensionResource(id = R.dimen.s)),)
 				Column(
 					modifier = Modifier
-						.fillMaxWidth(1.0f),
+						.fillMaxWidth(fraction = 1.0f),
 					horizontalAlignment = Alignment.Start,
 					verticalArrangement = Arrangement.spacedBy(dimensionResource(id = R.dimen.xxxs)),
 
 				) {
 					Text(
-						listingSummary.address,
+						text = listingSummary.address,
 						style = listingTitleFont,
 						overflow = TextOverflow.Clip,
 						textAlign = TextAlign.Start,
@@ -130,6 +129,7 @@ fun ListingPost(
 							dateTimeFormatter(offsetDateTime = listingSummary.leaseEnd),
 						),
 						style = MaterialTheme.typography.bodyLarge,
+						color = primaryTextColor,
 					)
 				}
 			}
@@ -163,7 +163,6 @@ fun ListingPost(
 							ResidenceType.other -> R.drawable.other_houses_solid_gray_16
 							else -> R.drawable.home_outline_gray_16
 						},
-
 					),
 					contentDescription = stringResource(R.string.home_icon),
 					tint = secondaryTextColor,
@@ -175,8 +174,7 @@ fun ListingPost(
 			}
 			Row(
 				modifier = Modifier
-					.height(40.dp),
-				horizontalArrangement = Arrangement.SpaceBetween,
+					.height(height = dimensionResource(id = R.dimen.listing_item_button_bar_height)),
 			) {
 				SecondaryButton(
 					modifier = Modifier
@@ -184,36 +182,37 @@ fun ListingPost(
 						.fillMaxHeight(1.0f),
 					colors = ButtonDefaults.buttonColors(
 						containerColor = darkerGrayButtonColor,
-						contentColor = Color.Black,
+						contentColor = primaryTextColor,
 					),
 					onClick = detailsNavigation,
 				) {
-
 					Text(
 						stringResource(id = R.string.view_details),
 						style = MaterialTheme.typography.bodyLarge,
+						color = primaryTextColor,
 					)
-
 				}
+				Spacer(modifier = Modifier.width(dimensionResource(id = R.dimen.xs)))
 				ButtonWithIcon(
 					modifier = Modifier
 						.fillMaxHeight(1.0f)
-						.width(dimensionResource(id = R.dimen.xxxl)),
+						.weight(weight = 0.5f),
 					colors = ButtonDefaults.buttonColors(
 						containerColor = darkerGrayButtonColor,
-						contentColor = Color.Black,
+						contentColor = primaryTextColor,
 					),
 					iconId = R.drawable.chat_bubble_outline_gray_24,
 					onClick = { /*TODO*/ },
 					contentDescription = stringResource(id = R.string.chat_icon),
 				)
+				Spacer(modifier = Modifier.width(dimensionResource(id = R.dimen.xs)))
 				ButtonWithIcon(
 					modifier = Modifier
 						.fillMaxHeight(1.0f)
-						.width(dimensionResource(id = R.dimen.xxxl)),
+						.weight(weight = 0.5f),
 					colors = ButtonDefaults.buttonColors(
 						containerColor = darkerGrayButtonColor,
-						contentColor = Color.Black,
+						contentColor = primaryTextColor,
 					),
 					iconId = R.drawable.star_outline_black_26,
 					onClick = { /*TODO*/ },

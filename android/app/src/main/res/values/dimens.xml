@@ -16,4 +16,5 @@
     <dimen name="xxxxxxl">128dp</dimen>
     <dimen name="xxxxxxxl">144dp</dimen>
     <dimen name="listing_details_image">256dp</dimen>
+    <dimen name="listing_item_button_bar_height">40dp</dimen>
 </resources>
