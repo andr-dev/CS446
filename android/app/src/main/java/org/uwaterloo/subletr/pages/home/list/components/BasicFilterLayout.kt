@@ -38,8 +38,9 @@ import androidx.compose.ui.unit.sp
 import org.uwaterloo.subletr.R
 import org.uwaterloo.subletr.components.button.PrimaryButton
 import org.uwaterloo.subletr.components.button.SecondaryButton
-import org.uwaterloo.subletr.theme.SubletrLightColorScheme
 import org.uwaterloo.subletr.theme.filterBoldFont
+import org.uwaterloo.subletr.theme.primaryBackgroundColor
+import org.uwaterloo.subletr.theme.primaryTextColor
 import org.uwaterloo.subletr.theme.secondaryButtonBackgroundColor
 import org.uwaterloo.subletr.theme.secondaryTextColor
 import org.uwaterloo.subletr.theme.subletrPink
@@ -59,7 +60,7 @@ fun BasicFilterLayout(
 	Scaffold(
 		modifier = modifier
 			.fillMaxWidth(1.0f),
-		containerColor = SubletrLightColorScheme.onPrimary,
+		containerColor = primaryBackgroundColor,
 		topBar = {
 			Row(
 				modifier = Modifier
@@ -84,7 +85,8 @@ fun BasicFilterLayout(
 				)
 				Text(
 					stringResource(id = titleId),
-					style = MaterialTheme.typography.displayMedium
+					style = MaterialTheme.typography.displayMedium,
+					color = primaryTextColor,
 				)
 				Spacer(modifier = Modifier.width(dimensionResource(id = R.dimen.m)))
 
@@ -123,7 +125,7 @@ fun BasicFilterLayout(
 							stringResource(
 								id = R.string.show_sublets,
 							),
-							color = SubletrLightColorScheme.onPrimary,
+							color = primaryBackgroundColor,
 							style = filterBoldFont,
 
 							)
@@ -142,9 +144,7 @@ fun BasicFilterLayout(
 				.padding(dimensionResource(id = R.dimen.m), dimensionResource(id = R.dimen.zero))
 				.fillMaxWidth(1.0f),
 		) {
-			if (content != null) {
-				content()
-			}
+			content()
 		}
 	}
 }
@@ -195,7 +195,7 @@ fun TextFieldWithErrorIndication(
 }
 
 @Composable
-fun defaultFilterButton(
+fun DefaultFilterButton(
 	modifier: Modifier = Modifier,
 	isSelected: Boolean,
 	onClick: () -> Unit,

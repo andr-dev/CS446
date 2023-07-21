@@ -15,11 +15,11 @@ import androidx.compose.material3.SheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import org.uwaterloo.subletr.R
 import org.uwaterloo.subletr.pages.createlisting.ImageUploadMethodButton
+import org.uwaterloo.subletr.theme.primaryBackgroundColor
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -33,7 +33,7 @@ fun ImagePickerBottomSheet(
 		modifier = Modifier,
 		onDismissRequest = onDismissRequest,
 		sheetState = bottomSheetState,
-		containerColor = Color.White,
+		containerColor = primaryBackgroundColor,
 		dragHandle = { BottomSheetDefaults.DragHandle(
 			width = dimensionResource(id = R.dimen.xl)
 		)},
@@ -42,7 +42,7 @@ fun ImagePickerBottomSheet(
 				modifier = Modifier
 					.fillMaxWidth()
 					.height(dimensionResource(id = R.dimen.xxxxxxxl))
-					.background(Color.White)
+					.background(primaryBackgroundColor)
 			) {
 				Row(
 					modifier = Modifier

@@ -29,10 +29,10 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import org.uwaterloo.subletr.R
 import org.uwaterloo.subletr.pages.home.HomePageUiState
-import org.uwaterloo.subletr.theme.SubletrLightColorScheme
 import org.uwaterloo.subletr.theme.darkerGrayButtonColor
 import org.uwaterloo.subletr.theme.filterBoldFont
 import org.uwaterloo.subletr.theme.filterRegularFont
+import org.uwaterloo.subletr.theme.primaryBackgroundColor
 import org.uwaterloo.subletr.theme.secondaryTextColor
 import org.uwaterloo.subletr.theme.subletrPink
 
@@ -86,7 +86,7 @@ fun LocationFilter(
 					},
 					valueRange = 0f..MAX_LOCATION_RANGE.toFloat(),
 					colors = SliderDefaults.colors(
-						thumbColor = SubletrLightColorScheme.onPrimary,
+						thumbColor = primaryBackgroundColor,
 						activeTrackColor = subletrPink,
 						inactiveTrackColor = darkerGrayButtonColor,
 					),
@@ -97,7 +97,7 @@ fun LocationFilter(
 								.size(dimensionResource(id = R.dimen.m)),
 							interactionSource = remember { MutableInteractionSource() },
 							colors = SliderDefaults.colors(
-								thumbColor = SubletrLightColorScheme.onPrimary,
+								thumbColor = primaryBackgroundColor,
 							),
 							enabled = true
 						)
@@ -109,7 +109,7 @@ fun LocationFilter(
 								.size(dimensionResource(id = R.dimen.m)),
 							interactionSource = remember { MutableInteractionSource() },
 							colors = SliderDefaults.colors(
-								thumbColor = SubletrLightColorScheme.onPrimary,
+								thumbColor = primaryBackgroundColor,
 							),
 							enabled = true
 						)
@@ -127,7 +127,6 @@ fun LocationFilter(
 					verticalAlignment = Alignment.CenterVertically,
 					horizontalArrangement = Arrangement.SpaceBetween,
 				) {
-
 					TextFieldWithErrorIndication(
 						value = lowerBoundText,
 						onValueChange = {

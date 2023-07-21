@@ -30,6 +30,7 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import org.uwaterloo.subletr.R
+import org.uwaterloo.subletr.theme.primaryTextColor
 import org.uwaterloo.subletr.theme.textFieldBackgroundColor
 
 @Composable
@@ -58,6 +59,8 @@ fun RoundedPasswordTextField(
 	interactionSource: MutableInteractionSource = remember { MutableInteractionSource() },
 	shape: Shape = RoundedCornerShape(dimensionResource(id = R.dimen.xxxxl)),
 	colors: TextFieldColors = TextFieldDefaults.colors(
+		focusedTextColor = primaryTextColor,
+		unfocusedTextColor = primaryTextColor,
 		unfocusedContainerColor = textFieldBackgroundColor,
 		focusedContainerColor = textFieldBackgroundColor,
 		unfocusedIndicatorColor = Color.Transparent,

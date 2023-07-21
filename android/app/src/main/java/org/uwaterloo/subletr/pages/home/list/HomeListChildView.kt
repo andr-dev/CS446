@@ -1,10 +1,9 @@
 package org.uwaterloo.subletr.pages.home.list
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -12,21 +11,15 @@ import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentSize
-import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonColors
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FabPosition
 import androidx.compose.material3.FloatingActionButton
-import androidx.compose.material3.Icon
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -41,26 +34,25 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.dimensionResource
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.sp
 import kotlinx.coroutines.launch
 import org.uwaterloo.subletr.R
-import org.uwaterloo.subletr.components.button.SecondaryButton
 import org.uwaterloo.subletr.enums.FilterType
 import org.uwaterloo.subletr.enums.Gender
 import org.uwaterloo.subletr.enums.HousingType
 import org.uwaterloo.subletr.navigation.NavigationDestination
 import org.uwaterloo.subletr.pages.home.HomePageUiState
 import org.uwaterloo.subletr.pages.home.HomePageViewModel
+import org.uwaterloo.subletr.pages.home.list.components.ButtonWithIcon
 import org.uwaterloo.subletr.pages.home.list.components.DateFilter
 import org.uwaterloo.subletr.pages.home.list.components.FavouriteFilter
-import org.uwaterloo.subletr.pages.home.list.components.ListingPost
+import org.uwaterloo.subletr.pages.home.list.components.FilterButton
+import org.uwaterloo.subletr.pages.home.list.components.HomeListListingItemView
 import org.uwaterloo.subletr.pages.home.list.components.LocationFilter
 import org.uwaterloo.subletr.pages.home.list.components.PriceFilter
 import org.uwaterloo.subletr.pages.home.list.components.PropertyTypeFilter
@@ -68,10 +60,10 @@ import org.uwaterloo.subletr.pages.home.list.components.RoomFilter
 import org.uwaterloo.subletr.pages.home.list.components.RoommateFilter
 import org.uwaterloo.subletr.services.NavigationService
 import org.uwaterloo.subletr.theme.SubletrTheme
-import org.uwaterloo.subletr.theme.filterTextFont
-import org.uwaterloo.subletr.theme.secondaryButtonBackgroundColor
-import org.uwaterloo.subletr.theme.secondaryTextColor
+import org.uwaterloo.subletr.theme.primaryBackgroundColor
 import org.uwaterloo.subletr.theme.subletrPink
+import org.uwaterloo.subletr.theme.textFieldBorderColor
+import org.uwaterloo.subletr.theme.textOnSubletrPink
 import java.time.OffsetDateTime
 import java.time.format.DateTimeFormatter
 
@@ -218,13 +210,14 @@ fun HomeListChildView(
 					},
 					shape = CircleShape,
 					containerColor = subletrPink,
-					contentColor = Color.White,
+					contentColor = textOnSubletrPink,
 				) {
 					Text(
 						stringResource(id = R.string.plus_sign),
 						style = TextStyle(
 							fontSize = 24.sp
 						),
+						color = textOnSubletrPink,
 					)
 				}
 			},
@@ -250,7 +243,7 @@ fun HomeListChildView(
 			) {
 
 				item {
-					Column() {
+					Column {
 						LazyRow(
 							modifier = Modifier
 								.fillMaxWidth(1.0f),
@@ -262,7 +255,6 @@ fun HomeListChildView(
 									modifier = Modifier
 										.width(dimensionResource(id = R.dimen.xl))
 										.height(dimensionResource(id = R.dimen.l)),
-//								TODO: make this dark mode conscious
 									iconId = R.drawable.tune_round_black_24,
 									onClick = {
 										filterType.value = FilterType.ALL
@@ -271,6 +263,10 @@ fun HomeListChildView(
 
 										}
 									},
+									border = BorderStroke(
+										width = dimensionResource(id = R.dimen.xxxxs),
+										color = textFieldBorderColor,
+									),
 									contentDescription = stringResource(id = R.string.filter_menu),
 								)
 							}
@@ -303,7 +299,7 @@ fun HomeListChildView(
 								modifier = Modifier.wrapContentSize(),
 								onDismissRequest = { isBottomSheetOpen = false },
 								sheetState = modelSheetState,
-								containerColor = Color.White,
+								containerColor = primaryBackgroundColor,
 								content = {
 									when (filterType.value) {
 										FilterType.LOCATION -> {
@@ -357,15 +353,13 @@ fun HomeListChildView(
 								},
 							)
 						}
-
-
 					}
 				}
 
 				items(uiState.listingItems.listings.size) {
 					val listingSummary = uiState.listingItems.listings[it]
 					val listingImage = uiState.listingItems.listingsImages.getOrNull(it)
-					ListingPost(
+					HomeListListingItemView(
 						listingSummary = listingSummary,
 						listingImage = listingImage,
 						detailsNavigation = {
@@ -378,85 +372,6 @@ fun HomeListChildView(
 			}
 		}
 
-	}
-}
-
-
-@Composable
-fun ButtonWithIcon(
-	modifier: Modifier = Modifier,
-	iconId: Int,
-	onClick: () -> Unit,
-	contentDescription: String,
-	colors: ButtonColors = ButtonDefaults.buttonColors(
-		containerColor = secondaryButtonBackgroundColor,
-		contentColor = Color.Black
-	),
-) {
-	SecondaryButton(onClick = onClick,
-		modifier = modifier
-			.wrapContentSize(align = Alignment.Center),
-		contentPadding = PaddingValues(all = dimensionResource(id = R.dimen.zero)),
-		colors = colors,
-		content = {
-			Icon(
-				painter = painterResource(
-					id = iconId
-				),
-				contentDescription = contentDescription,
-			)
-		})
-}
-
-@Composable
-fun FilterButton(
-	modifier: Modifier = Modifier,
-	filterName: String,
-	onClick: () -> Unit,
-) {
-	Box(
-		modifier = modifier
-			.wrapContentSize()
-			.height(dimensionResource(id = R.dimen.l))
-	) {
-		Button(
-			modifier = Modifier
-				.wrapContentSize(),
-			contentPadding = PaddingValues(
-				horizontal = dimensionResource(id = R.dimen.s),
-				vertical = dimensionResource(id = R.dimen.zero),
-			),
-			colors = ButtonDefaults.buttonColors(
-				containerColor = secondaryButtonBackgroundColor,
-				contentColor = secondaryTextColor,
-			),
-			shape = RoundedCornerShape(
-				size = dimensionResource(id = R.dimen.s),
-			),
-			onClick = {
-				onClick()
-			},
-		) {
-			Row(
-				modifier = Modifier.wrapContentWidth(),
-				verticalAlignment = Alignment.CenterVertically,
-				horizontalArrangement = Arrangement.SpaceBetween,
-			) {
-				Text(
-					text = filterName,
-					style = filterTextFont,
-				)
-
-				Icon(
-					painter = painterResource(
-						id = R.drawable.arrow_drop_down_solid_gray_24
-					),
-					contentDescription = stringResource(
-						id = R.string.drop_down_arrow
-					)
-				)
-			}
-		}
 	}
 }
 

@@ -33,6 +33,7 @@ import org.uwaterloo.subletr.pages.home.list.HomeListUiState
 import org.uwaterloo.subletr.pages.home.map.HomeMapChildView
 import org.uwaterloo.subletr.pages.home.map.HomeMapUiState
 import org.uwaterloo.subletr.theme.SubletrTheme
+import org.uwaterloo.subletr.theme.primaryTextColor
 import org.uwaterloo.subletr.theme.subletrPink
 import org.uwaterloo.subletr.theme.unselectedGray
 
@@ -63,6 +64,7 @@ fun HomePageView(
 				Text(
 					text = stringResource(id = R.string.view_sublets),
 					style = MaterialTheme.typography.titleMedium,
+					color = primaryTextColor,
 				)
 				ViewSwitch(
 					isListView = isListView,

@@ -280,7 +280,7 @@ fun HomeMapChildView(
 							thumbColor = subletrPink,
 							activeTrackColor = subletrPink,
 						),
-						valueRange = 0.0f..MAX_DISTANCE_IN_MINUTES
+						valueRange = 0.0f..MAX_DISTANCE_IN_MINUTES,
 					)
 				}
 				item {

@@ -78,7 +78,7 @@ fun RoomFilter(
 					horizontalArrangement = Arrangement.SpaceBetween,
 				) {
 
-					defaultFilterButton(
+					DefaultFilterButton(
 						isSelected = (bedroomForSublet == null),
 						onClick = { bedroomForSublet = null },
 						text = stringResource(
@@ -86,13 +86,13 @@ fun RoomFilter(
 						),
 					)
 					for (i in 1..4) {
-						defaultFilterButton(
+						DefaultFilterButton(
 							isSelected = (bedroomForSublet == i),
 							onClick = { bedroomForSublet = i },
 							text = i.toString(),
 						)
 					}
-					defaultFilterButton(
+					DefaultFilterButton(
 						isSelected = (bedroomForSublet == 5),
 						onClick = { bedroomForSublet = 5 },
 						text = stringResource(
@@ -113,7 +113,7 @@ fun RoomFilter(
 					horizontalArrangement = Arrangement.SpaceBetween,
 				) {
 
-					defaultFilterButton(
+					DefaultFilterButton(
 						isSelected = (bedroomInProperty == null),
 						onClick = { bedroomInProperty = null },
 						text = stringResource(
@@ -121,13 +121,13 @@ fun RoomFilter(
 						),
 					)
 					for (i in 1..4) {
-						defaultFilterButton(
+						DefaultFilterButton(
 							isSelected = (bedroomInProperty == i),
 							onClick = { bedroomInProperty = i },
 							text = i.toString(),
 						)
 					}
-					defaultFilterButton(
+					DefaultFilterButton(
 						isSelected = (bedroomInProperty == 5),
 						onClick = { bedroomInProperty = 5 },
 						text = stringResource(
@@ -148,7 +148,7 @@ fun RoomFilter(
 					horizontalArrangement = Arrangement.SpaceBetween,
 				) {
 
-					defaultFilterButton(
+					DefaultFilterButton(
 						isSelected = (bathroom == null),
 						onClick = { bathroom = null },
 						text = stringResource(
@@ -156,13 +156,13 @@ fun RoomFilter(
 						),
 					)
 					for (i in 1..4) {
-						defaultFilterButton(
+						DefaultFilterButton(
 							isSelected = (bathroom == i),
 							onClick = { bathroom = i },
 							text = i.toString(),
 						)
 					}
-					defaultFilterButton(
+					DefaultFilterButton(
 						isSelected = (bathroom == 5),
 						onClick = { bathroom = 5 },
 						text = stringResource(

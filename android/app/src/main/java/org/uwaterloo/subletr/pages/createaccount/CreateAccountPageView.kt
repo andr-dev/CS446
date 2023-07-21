@@ -38,6 +38,7 @@ import org.uwaterloo.subletr.enums.Gender
 import org.uwaterloo.subletr.navigation.NavigationDestination
 import org.uwaterloo.subletr.theme.SubletrTheme
 import org.uwaterloo.subletr.theme.SubletrTypography
+import org.uwaterloo.subletr.theme.primaryTextColor
 import org.uwaterloo.subletr.theme.secondaryTextColor
 import org.uwaterloo.subletr.theme.subletrPink
 import org.uwaterloo.subletr.theme.textOnSubletrPink
@@ -84,11 +85,13 @@ fun CreateAccountPageView(
 					Text(
 						text = stringResource(id = R.string.welcome_to),
 						style = SubletrTypography.bodyMedium,
+						color = primaryTextColor,
 					)
 					Row {
 						Text(
 							text = stringResource(id = R.string.app_name_black_part),
 							style = MaterialTheme.typography.titleLarge,
+							color = primaryTextColor,
 						)
 						Text(
 							text = stringResource(id = R.string.app_name_pink_part),

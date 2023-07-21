@@ -26,7 +26,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.LiveRegionMode
@@ -34,6 +33,7 @@ import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.unit.dp
 import org.uwaterloo.subletr.R
+import org.uwaterloo.subletr.theme.primaryBackgroundColor
 import org.uwaterloo.subletr.theme.secondaryTextColor
 import org.uwaterloo.subletr.theme.subletrPink
 import org.uwaterloo.subletr.theme.textFieldBackgroundColor
@@ -56,7 +56,7 @@ fun DatePickerBottomSheet(
 				modifier = Modifier
 					.fillMaxWidth()
 					.height(550.dp) // TODO: change this to not use explicit value
-					.background(Color.White)
+					.background(primaryBackgroundColor)
 			) {
 				LeaseDatePicker(state, onClick)
 				Button(
@@ -143,7 +143,7 @@ fun LeaseDatePicker(state: DateRangePickerState, onClick: () -> Unit) {
 				}
 			},
 			colors = DatePickerDefaults.colors(
-				containerColor = Color.White,
+				containerColor = primaryBackgroundColor,
 				dayInSelectionRangeContainerColor = textFieldBackgroundColor,
 				selectedDayContainerColor = subletrPink,
 			)
