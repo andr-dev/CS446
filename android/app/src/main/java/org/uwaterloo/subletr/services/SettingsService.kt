@@ -4,9 +4,22 @@ package org.uwaterloo.subletr.services
 class SettingsService(
 	private val ioService: IIoService,
 ): ISettingsService {
-	private var useDeviceTheme: Boolean = true
-	private var useDarkTheme: Boolean = false
-	private var allowChatNotifications: Boolean = true
+	private var useDeviceTheme: Boolean =
+		if (settingExists(DEFAULT_DISPLAY_SETTINGS_PATH))
+			ioService.readStringFromInternalFile(DEFAULT_DISPLAY_SETTINGS_PATH).toBoolean()
+		else true
+	private var useDarkTheme: Boolean =
+		if (settingExists(DISPLAY_THEME_SETTINGS_PATH))
+			ioService.readStringFromInternalFile(DISPLAY_THEME_SETTINGS_PATH).toBoolean()
+		else false
+	private var allowChatNotifications: Boolean =
+		if (settingExists(CHAT_NOTIFICATIONS_SETTINGS_PATH))
+			ioService.readStringFromInternalFile(CHAT_NOTIFICATIONS_SETTINGS_PATH).toBoolean()
+		else true
+
+	private fun settingExists(filePath: String): Boolean {
+		return ioService.internalFileExists(filePath)
+	}
 
 	override fun setDefaultDisplayTheme(useOSSetting: Boolean) {
 		ioService.writeStringToInternalFile(
