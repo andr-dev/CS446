@@ -111,7 +111,7 @@ fun AccountPageView(
 ) {
 	var nameExpanded by remember { mutableStateOf(false) }
 	var genderExpanded by remember { mutableStateOf(false) }
-	val initialPersonalInformation = remember {
+	var initialPersonalInformation by remember {
 		mutableStateOf(
 			AccountPageUiState.PersonalInformation(
 				lastName = "",
@@ -246,10 +246,10 @@ fun AccountPageView(
 					onClick = {
 						if (nameExpanded) {
 							viewModel.personalInformationStream.onNext(
-								initialPersonalInformation.value
+								initialPersonalInformation
 							)
 						} else {
-							initialPersonalInformation.value = uiState.personalInformation
+							initialPersonalInformation = uiState.personalInformation
 						}
 						nameExpanded = !nameExpanded
 					},
@@ -386,7 +386,7 @@ fun AccountPageView(
 							},
 							onCancelClick = {
 								viewModel.personalInformationStream.onNext(
-									initialPersonalInformation.value
+									initialPersonalInformation
 								)
 								nameExpanded = !nameExpanded
 							},
@@ -409,9 +409,9 @@ fun AccountPageView(
 						.fillMaxWidth(),
 					onClick = {
 						if (genderExpanded) {
-							viewModel.personalInformationStream.onNext(initialPersonalInformation.value)
+							viewModel.personalInformationStream.onNext(initialPersonalInformation)
 						} else {
-							initialPersonalInformation.value = uiState.personalInformation
+							initialPersonalInformation = uiState.personalInformation
 						}
 						genderExpanded = !genderExpanded
 					},
@@ -509,7 +509,7 @@ fun AccountPageView(
 							},
 							onCancelClick = {
 								viewModel.personalInformationStream.onNext(
-									initialPersonalInformation.value
+									initialPersonalInformation
 								)
 								genderExpanded = !genderExpanded
 							},
