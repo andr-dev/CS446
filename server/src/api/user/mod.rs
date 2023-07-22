@@ -35,8 +35,8 @@ use super::{
 use crate::{
     api::token::AuthenticatedUser,
     db::{
-        model::users::{NewUser, User},
-        schema::{listings, users},
+        model::users::{NewUser, User, UserVerified},
+        schema::{listings, user_verified, users},
         schema_view::user_rating,
     },
     error::{ServiceError, ServiceResult},
@@ -162,6 +162,18 @@ fn user_change_password(
     Ok(Json(ChangePasswordUserResponse {}))
 }
 
+#[openapi(tag = "User")]
+#[get("/verified?<user_id>")]
+fn user_is_verified(state: &State<AppState>, user: AuthenticatedUser, user_id: Option<i32>) -> ServiceResult<bool> {
+    let mut dbcon = state.pool.get()?;
+
+    let user: Vec<UserVerified> = user_verified::dsl::user_verified
+        .find(user_id.unwrap_or(user.user_id))
+        .load(&mut dbcon)?;
+
+    Ok(Json(user.first().map(|user| user.verified).unwrap_or(false)))
+}
+
 pub fn routes() -> (Vec<Route>, OpenApi) {
     openapi_get_routes_spec![
         user_avatar_get,
@@ -170,7 +182,8 @@ pub fn routes() -> (Vec<Route>, OpenApi) {
         user_create,
         user_get,
         user_get_rating,
+        user_is_verified,
         user_rate,
-        user_update
+        user_update,
     ]
 }

@@ -57,6 +57,13 @@ diesel::table! {
 }
 
 diesel::table! {
+    user_verified (user_id) {
+        user_id -> Integer,
+        verified -> Bool,
+    }
+}
+
+diesel::table! {
     users (user_id) {
         user_id -> Integer,
         first_name -> Text,
@@ -73,6 +80,7 @@ diesel::joinable!(listings_favourites -> users (user_id));
 diesel::joinable!(listings_images -> listings (listing_id));
 diesel::joinable!(listings_images -> users (user_id));
 diesel::joinable!(user_avatars -> users (user_id));
+diesel::joinable!(user_verified -> users (user_id));
 
 diesel::allow_tables_to_appear_in_same_query!(
     listings,
@@ -80,5 +88,6 @@ diesel::allow_tables_to_appear_in_same_query!(
     listings_images,
     user_avatars,
     user_ratings,
+    user_verified,
     users,
 );

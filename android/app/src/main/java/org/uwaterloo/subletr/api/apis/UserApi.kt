@@ -486,6 +486,82 @@ class UserApi(basePath: kotlin.String = defaultBasePath, client: OkHttpClient = 
     /**
      * 
      * 
+     * @param userId  (optional)
+     * @return kotlin.Boolean
+     * @throws IllegalStateException If the request is not correctly configured
+     * @throws IOException Rethrows the OkHttp execute method exception
+     * @throws UnsupportedOperationException If the API returns an informational or redirection response
+     * @throws ClientException If the API returns a client error response
+     * @throws ServerException If the API returns a server error response
+     */
+    @Suppress("UNCHECKED_CAST")
+    @Throws(IllegalStateException::class, IOException::class, UnsupportedOperationException::class, ClientException::class, ServerException::class)
+    suspend fun userIsVerified(userId: kotlin.Int? = null) : kotlin.Boolean = withContext(Dispatchers.IO) {
+        val localVarResponse = userIsVerifiedWithHttpInfo(userId = userId)
+
+        return@withContext when (localVarResponse.responseType) {
+            ResponseType.Success -> (localVarResponse as Success<*>).data as kotlin.Boolean
+            ResponseType.Informational -> throw UnsupportedOperationException("Client does not support Informational responses.")
+            ResponseType.Redirection -> throw UnsupportedOperationException("Client does not support Redirection responses.")
+            ResponseType.ClientError -> {
+                val localVarError = localVarResponse as ClientError<*>
+                throw ClientException("Client error : ${localVarError.statusCode} ${localVarError.message.orEmpty()}", localVarError.statusCode, localVarResponse)
+            }
+            ResponseType.ServerError -> {
+                val localVarError = localVarResponse as ServerError<*>
+                throw ServerException("Server error : ${localVarError.statusCode} ${localVarError.message.orEmpty()}", localVarError.statusCode, localVarResponse)
+            }
+        }
+    }
+
+    /**
+     * 
+     * 
+     * @param userId  (optional)
+     * @return ApiResponse<kotlin.Boolean?>
+     * @throws IllegalStateException If the request is not correctly configured
+     * @throws IOException Rethrows the OkHttp execute method exception
+     */
+    @Suppress("UNCHECKED_CAST")
+    @Throws(IllegalStateException::class, IOException::class)
+    suspend fun userIsVerifiedWithHttpInfo(userId: kotlin.Int?) : ApiResponse<kotlin.Boolean?> = withContext(Dispatchers.IO) {
+        val localVariableConfig = userIsVerifiedRequestConfig(userId = userId)
+
+        return@withContext request<Unit, kotlin.Boolean>(
+            localVariableConfig
+        )
+    }
+
+    /**
+     * To obtain the request config of the operation userIsVerified
+     *
+     * @param userId  (optional)
+     * @return RequestConfig
+     */
+    fun userIsVerifiedRequestConfig(userId: kotlin.Int?) : RequestConfig<Unit> {
+        val localVariableBody = null
+        val localVariableQuery: MultiValueMap = mutableMapOf<kotlin.String, kotlin.collections.List<kotlin.String>>()
+            .apply {
+                if (userId != null) {
+                    put("user_id", listOf(userId.toString()))
+                }
+            }
+        val localVariableHeaders: MutableMap<String, String> = mutableMapOf()
+        localVariableHeaders["Accept"] = "application/json"
+
+        return RequestConfig(
+            method = RequestMethod.GET,
+            path = "/user/verified",
+            query = localVariableQuery,
+            headers = localVariableHeaders,
+            requiresAuthentication = true,
+            body = localVariableBody
+        )
+    }
+
+    /**
+     * 
+     * 
      * @param rateUserRequest 
      * @return kotlin.String
      * @throws IllegalStateException If the request is not correctly configured
