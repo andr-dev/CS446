@@ -172,6 +172,7 @@
     <string name="gender_select_label">Select your gender</string>
     <string name="sublet_your_place">Sublet your place</string>
     <string name="sublet_your_place_label">Start subletting your apartment to the Waterloo community</string>
+    <string name="current_location">Current Location</string>
     <string name="no_ratings">No ratings</string>
     <string name="verified_student">"Verified University of Waterloo student"</string>
     <string name="no_active_listing">"does not have an active listing"</string>

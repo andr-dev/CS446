@@ -1,3 +1,5 @@
+@file:Suppress("CyclomaticComplexMethod", "ForbiddenComment")
+
 package org.uwaterloo.subletr.pages.home.map
 
 import android.util.Log
@@ -53,6 +55,7 @@ import org.uwaterloo.subletr.R
 import org.uwaterloo.subletr.components.textfield.RoundedTextField
 import org.uwaterloo.subletr.pages.home.HomePageUiState
 import org.uwaterloo.subletr.pages.home.HomePageViewModel
+import org.uwaterloo.subletr.pages.home.map.HomeMapChildViewModel.Companion.CURRENT_LOCATION_STRING_VAL
 import org.uwaterloo.subletr.pages.home.map.components.HomeMapFiltersRowView
 import org.uwaterloo.subletr.pages.home.map.components.HomeMapListingItemView
 import org.uwaterloo.subletr.services.LocationService
@@ -90,18 +93,20 @@ fun HomeMapChildView(
 	val launcher = rememberLauncherForActivityResult(
 		contract = ActivityResultContracts.RequestMultiplePermissions(),
 	) { permissions ->
-		when {
-			permissions.getOrDefault(android.Manifest.permission.ACCESS_FINE_LOCATION, false) -> {
-				coroutineScope.launch {
-					viewModel.getLocation()
+		if (uiState is HomeMapUiState.Loaded) {
+			when {
+				permissions.getOrDefault(android.Manifest.permission.ACCESS_FINE_LOCATION, false) -> {
+					coroutineScope.launch {
+						viewModel.setLocationToCurrentLocation(uiState = uiState)
+					}
 				}
-			}
-			permissions.getOrDefault(android.Manifest.permission.ACCESS_COARSE_LOCATION, false) -> {
-				coroutineScope.launch {
-					viewModel.getLocation()
+				permissions.getOrDefault(android.Manifest.permission.ACCESS_COARSE_LOCATION, false) -> {
+					coroutineScope.launch {
+						viewModel.setLocationToCurrentLocation(uiState = uiState)
+					}
+				} else -> {
+					Log.d("LocationLogs", "No Location Permissions")
 				}
-			} else -> {
-				Log.d("LocationLogs", "No Location Permissions")
 			}
 		}
 	}
@@ -114,9 +119,10 @@ fun HomeMapChildView(
 	) { paddingValues ->
 		if (uiState is HomeMapUiState.Loading) {
 			Column(
-				modifier = Modifier.padding(
-					paddingValues = paddingValues,
-				)
+				modifier = Modifier
+					.padding(
+						paddingValues = paddingValues,
+					)
 					.fillMaxSize(fraction = 1.0f),
 				horizontalAlignment = Alignment.CenterHorizontally,
 				verticalArrangement = Arrangement.Center,
@@ -165,7 +171,11 @@ fun HomeMapChildView(
 						modifier = Modifier
 							.fillMaxWidth(fraction = 1.0f)
 							.padding(horizontal = dimensionResource(id = R.dimen.xs)),
-						value = uiState.addressSearch,
+						value = if (uiState.addressSearch != CURRENT_LOCATION_STRING_VAL) {
+							uiState.addressSearch
+						} else {
+							stringResource(id = R.string.current_location)
+					    },
 						onValueChange = {
 							viewModel.uiStateStream.onNext(
 								uiState.copy(
