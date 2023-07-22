@@ -160,7 +160,7 @@ val accountHeadingSmallFont
 val userRatingLabel
 	@Composable
 	get() = TextStyle(
-		color = secondaryTextColor,
+		color =  MaterialTheme.subletrPalette.secondaryTextColor,
 		fontFamily = FontFamily.Default,
 		fontWeight = FontWeight.Medium,
 		fontSize = 18.sp,

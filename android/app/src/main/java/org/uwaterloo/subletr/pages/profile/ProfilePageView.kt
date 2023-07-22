@@ -49,16 +49,8 @@ import org.uwaterloo.subletr.navigation.NavigationDestination
 import org.uwaterloo.subletr.pages.home.list.dateTimeFormatter
 import org.uwaterloo.subletr.theme.SubletrTheme
 import org.uwaterloo.subletr.theme.SubletrTypography
-import org.uwaterloo.subletr.theme.darkerGrayButtonColor
 import org.uwaterloo.subletr.theme.listingTitleFont
-import org.uwaterloo.subletr.theme.primaryTextColor
-import org.uwaterloo.subletr.theme.secondaryBackgroundColor
-import org.uwaterloo.subletr.theme.secondaryButtonBackgroundColor
-import org.uwaterloo.subletr.theme.secondaryTextColor
-import org.uwaterloo.subletr.theme.squaredTextFieldBackgroundColor
-import org.uwaterloo.subletr.theme.subletrPink
-import org.uwaterloo.subletr.theme.textFieldBorderColor
-import org.uwaterloo.subletr.theme.textOnSubletrPink
+import org.uwaterloo.subletr.theme.subletrPalette
 import org.uwaterloo.subletr.theme.userRatingLabel
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -171,7 +163,7 @@ fun ProfilePageView(
 								id = R.drawable.verify_outline_black_24,
 							),
 							contentDescription = stringResource(id = R.string.verified_student),
-							tint = secondaryTextColor,
+							tint =  MaterialTheme.subletrPalette.secondaryTextColor,
 						)
 						Text(
 							text = stringResource(id = R.string.verified_student),
@@ -184,14 +176,14 @@ fun ProfilePageView(
 				Divider(
 					modifier = Modifier.fillMaxWidth(),
 					thickness = dimensionResource(id = R.dimen.xxxxs),
-					color = secondaryButtonBackgroundColor,
+					color =  MaterialTheme.subletrPalette.secondaryButtonBackgroundColor,
 				)
 
 				Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.s)))
 
 				Text(
 					text = stringResource(id = R.string.listing),
-					color = primaryTextColor,
+					color =  MaterialTheme.subletrPalette.primaryTextColor,
 					style = SubletrTypography.displayLarge,
 				)
 
@@ -200,7 +192,7 @@ fun ProfilePageView(
 				if (uiState.listingDetails == null) {
 					Text(
 						text = "${uiState.name} " + stringResource(id = R.string.no_active_listing),
-						color = secondaryTextColor,
+						color =  MaterialTheme.subletrPalette.secondaryTextColor,
 					)
 				} else {
 					Card(
@@ -210,10 +202,10 @@ fun ProfilePageView(
 							defaultElevation = dimensionResource(id = R.dimen.xxs),
 						),
 						colors = CardDefaults.cardColors(
-							containerColor = squaredTextFieldBackgroundColor,
-							disabledContainerColor = secondaryBackgroundColor,
-							contentColor = primaryTextColor,
-							disabledContentColor = darkerGrayButtonColor,
+							containerColor =  MaterialTheme.subletrPalette.squaredTextFieldBackgroundColor,
+							disabledContainerColor =  MaterialTheme.subletrPalette.secondaryBackgroundColor,
+							contentColor =  MaterialTheme.subletrPalette.primaryTextColor,
+							disabledContentColor =  MaterialTheme.subletrPalette.darkerGrayButtonColor,
 						),
 						onClick = {
 							viewModel.navHostController.navigate(
@@ -273,7 +265,7 @@ fun ProfilePageView(
 										overflow = TextOverflow.Clip,
 										textAlign = TextAlign.Start,
 										maxLines = 1,
-										color = primaryTextColor,
+										color =  MaterialTheme.subletrPalette.primaryTextColor,
 									)
 									Text(
 										stringResource(
@@ -281,7 +273,7 @@ fun ProfilePageView(
 											uiState.listingDetails.price,
 										),
 										style = listingTitleFont,
-										color = primaryTextColor,
+										color =  MaterialTheme.subletrPalette.primaryTextColor,
 									)
 									Text(
 										text = stringResource(
@@ -290,7 +282,7 @@ fun ProfilePageView(
 											dateTimeFormatter(offsetDateTime = uiState.listingDetails.leaseEnd),
 										),
 										style = MaterialTheme.typography.bodyLarge,
-										color = primaryTextColor,
+										color =  MaterialTheme.subletrPalette.primaryTextColor,
 									)
 								}
 							}
@@ -303,7 +295,7 @@ fun ProfilePageView(
 				if (viewModel.allowUserToReview()) {
 					Text(
 						text = stringResource(id = R.string.leave_a_review),
-						color = primaryTextColor,
+						color =  MaterialTheme.subletrPalette.primaryTextColor,
 						style = SubletrTypography.displayLarge,
 					)
 
@@ -324,7 +316,7 @@ fun ProfilePageView(
 					) {
 						Text(
 							text = stringResource(id = R.string.submit_rating),
-							color = textOnSubletrPink,
+							color =  MaterialTheme.subletrPalette.textOnSubletrPink,
 						)
 					}
 
@@ -358,7 +350,8 @@ fun DynamicRatingBar(
 						id = if (rating >= it) R.drawable.star_solid_pink_26
 						else R.drawable.star_outline_black_26
 					),
-					tint = if (rating >= it) subletrPink else textFieldBorderColor,
+					tint = if (rating >= it)  MaterialTheme.subletrPalette.subletrPink
+					else  MaterialTheme.subletrPalette.textFieldBorderColor,
 					contentDescription = stringResource(id = R.string.leave_a_review),
 				)
 			}
