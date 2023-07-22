@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.DatePickerDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.rememberDateRangePickerState
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
@@ -28,7 +29,7 @@ import org.uwaterloo.subletr.R
 import org.uwaterloo.subletr.components.bottomsheet.DatePickerBottomSheet
 import org.uwaterloo.subletr.components.button.DateInputButton
 import org.uwaterloo.subletr.pages.home.HomePageUiState
-import org.uwaterloo.subletr.theme.textFieldBorderColor
+import org.uwaterloo.subletr.theme.subletrPalette
 import org.uwaterloo.subletr.utils.parseUTCDateTimeToLocal
 import java.text.SimpleDateFormat
 import java.time.ZoneOffset
@@ -81,9 +82,9 @@ fun DateFilter(
 							.fillMaxWidth()
 							.weight(1f)
 							.border(
-								dimensionResource(id = R.dimen.xxxs),
-								textFieldBorderColor,
-								RoundedCornerShape(dimensionResource(id = R.dimen.xxxxl))
+								width = dimensionResource(id = R.dimen.xxxs),
+								color = MaterialTheme.subletrPalette.textFieldBorderColor,
+								shape = RoundedCornerShape(dimensionResource(id = R.dimen.xxxxl)),
 							),
 						labelStringId = R.string.start_date,
 						value = startButtonText,
@@ -98,9 +99,9 @@ fun DateFilter(
 							.fillMaxWidth()
 							.weight(1f)
 							.border(
-								dimensionResource(id = R.dimen.xxxs),
-								textFieldBorderColor,
-								RoundedCornerShape(dimensionResource(id = R.dimen.xxxxl)),
+								width = dimensionResource(id = R.dimen.xxxs),
+								color = MaterialTheme.subletrPalette.textFieldBorderColor,
+								shape = RoundedCornerShape(dimensionResource(id = R.dimen.xxxxl)),
 							),
 						labelStringId = R.string.end_date,
 						value = endButtonText,

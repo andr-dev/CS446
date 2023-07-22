@@ -75,13 +75,7 @@ import org.uwaterloo.subletr.components.button.PrimaryButton
 import org.uwaterloo.subletr.components.textfield.RoundedTextField
 import org.uwaterloo.subletr.enums.HousingType
 import org.uwaterloo.subletr.theme.SubletrTheme
-import org.uwaterloo.subletr.theme.primaryBackgroundColor
-import org.uwaterloo.subletr.theme.primaryTextColor
-import org.uwaterloo.subletr.theme.secondaryTextColor
-import org.uwaterloo.subletr.theme.textFieldBackgroundColor
-import org.uwaterloo.subletr.theme.textFieldBorderColor
-import org.uwaterloo.subletr.theme.textOnSubletrPink
-import org.uwaterloo.subletr.theme.unselectedGray
+import org.uwaterloo.subletr.theme.subletrPalette
 import org.uwaterloo.subletr.utils.ComposeFileProvider
 import java.text.SimpleDateFormat
 import java.time.ZoneOffset
@@ -141,7 +135,7 @@ fun CreateListingPageView(
 				Text(
 					text = stringResource(id = R.string.create_new_listing),
 					style = MaterialTheme.typography.titleMedium,
-					color = primaryTextColor,
+					color = MaterialTheme.subletrPalette.primaryTextColor,
 				)
 			}
 		},
@@ -181,20 +175,20 @@ fun CreateListingPageView(
 							.fillMaxWidth()
 							.menuAnchor()
 							.border(
-								dimensionResource(id = R.dimen.xxxs),
-								textFieldBorderColor,
-								RoundedCornerShape(dimensionResource(id = R.dimen.xxxxl))
+								width = dimensionResource(id = R.dimen.xxxs),
+								color = MaterialTheme.subletrPalette.textFieldBorderColor,
+								shape = RoundedCornerShape(dimensionResource(id = R.dimen.xxxxl))
 							),
 						placeholder = {
 							Text(
 								text = stringResource(id = R.string.address_format_label),
-								color = secondaryTextColor,
+								color = MaterialTheme.subletrPalette.secondaryTextColor,
 							)
 						},
 						label = {
 							Text(
 								text = stringResource(id = R.string.address),
-								color = secondaryTextColor,
+								color = MaterialTheme.subletrPalette.secondaryTextColor,
 							)
 						},
 						value = uiState.address.fullAddress,
@@ -230,20 +224,20 @@ fun CreateListingPageView(
 					modifier = Modifier
 						.fillMaxWidth()
 						.border(
-							dimensionResource(id = R.dimen.xxxs),
-							textFieldBorderColor,
-							RoundedCornerShape(dimensionResource(id = R.dimen.xxxxl))
+							width = dimensionResource(id = R.dimen.xxxs),
+							color = MaterialTheme.subletrPalette.textFieldBorderColor,
+							shape = RoundedCornerShape(dimensionResource(id = R.dimen.xxxxl))
 						),
 					placeholder = {
 						Text(
 							text = stringResource(id = R.string.price),
-							color = secondaryTextColor,
+							color = MaterialTheme.subletrPalette.secondaryTextColor,
 						)
 					},
 					label = {
 						Text(
 							text = stringResource(id = R.string.price),
-							color = secondaryTextColor,
+							color = MaterialTheme.subletrPalette.secondaryTextColor,
 						)
 					},
 					keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
@@ -265,20 +259,20 @@ fun CreateListingPageView(
 					modifier = Modifier
 						.fillMaxWidth()
 						.border(
-							dimensionResource(id = R.dimen.xxxs),
-							textFieldBorderColor,
-							RoundedCornerShape(dimensionResource(id = R.dimen.xxxxl))
+							width = dimensionResource(id = R.dimen.xxxs),
+							color = MaterialTheme.subletrPalette.textFieldBorderColor,
+							shape = RoundedCornerShape(dimensionResource(id = R.dimen.xxxxl))
 						),
 					placeholder = {
 						Text(
 							text = stringResource(id = R.string.num_bedrooms),
-							color = secondaryTextColor,
+							color = MaterialTheme.subletrPalette.secondaryTextColor,
 						)
 					},
 					label = {
 						Text(
 							text = stringResource(id = R.string.num_bedrooms),
-							color = secondaryTextColor,
+							color = MaterialTheme.subletrPalette.secondaryTextColor,
 						)
 					},
 					keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
@@ -306,9 +300,9 @@ fun CreateListingPageView(
 							.fillMaxWidth()
 							.weight(1f)
 							.border(
-								dimensionResource(id = R.dimen.xxxs),
-								textFieldBorderColor,
-								RoundedCornerShape(dimensionResource(id = R.dimen.xxxxl))
+								width = dimensionResource(id = R.dimen.xxxs),
+								color = MaterialTheme.subletrPalette.textFieldBorderColor,
+								shape = RoundedCornerShape(dimensionResource(id = R.dimen.xxxxl))
 							),
 						labelStringId = R.string.start_date,
 						value = startButtonText,
@@ -323,9 +317,9 @@ fun CreateListingPageView(
 							.fillMaxWidth()
 							.weight(1f)
 							.border(
-								dimensionResource(id = R.dimen.xxxs),
-								textFieldBorderColor,
-								RoundedCornerShape(dimensionResource(id = R.dimen.xxxxl))
+								width = dimensionResource(id = R.dimen.xxxs),
+								color = MaterialTheme.subletrPalette.textFieldBorderColor,
+								shape = RoundedCornerShape(dimensionResource(id = R.dimen.xxxxl))
 							),
 						labelStringId = R.string.end_date,
 						value = endButtonText,
@@ -345,20 +339,20 @@ fun CreateListingPageView(
 						.fillMaxWidth()
 						.height(dimensionResource(id = R.dimen.xxxxxxl))
 						.border(
-							dimensionResource(id = R.dimen.xxxs),
-							textFieldBorderColor,
-							RoundedCornerShape(dimensionResource(id = R.dimen.s))
+							width = dimensionResource(id = R.dimen.xxxs),
+							color = MaterialTheme.subletrPalette.textFieldBorderColor,
+							shape = RoundedCornerShape(dimensionResource(id = R.dimen.s))
 						),
 					placeholder = {
 						Text(
 							text = stringResource(id = R.string.description),
-							color = secondaryTextColor,
+							color = MaterialTheme.subletrPalette.secondaryTextColor,
 						)
 					},
 					label = {
 						Text(
 							text = stringResource(id = R.string.description),
-							color = secondaryTextColor,
+							color = MaterialTheme.subletrPalette.secondaryTextColor,
 						)
 					},
 					shape = RoundedCornerShape(dimensionResource(id = R.dimen.s)),
@@ -376,7 +370,7 @@ fun CreateListingPageView(
 				Text(
 					text = stringResource(id = R.string.upload_images),
 					style = MaterialTheme.typography.titleSmall,
-					color = primaryTextColor,
+					color = MaterialTheme.subletrPalette.primaryTextColor,
 				)
 
 				Spacer(
@@ -438,7 +432,7 @@ fun CreateListingPageView(
 				) {
 					Text(
 						text = stringResource(id = R.string.create_post),
-						color = textOnSubletrPink,
+						color = MaterialTheme.subletrPalette.textOnSubletrPink,
 					)
 				}
 			}
@@ -463,7 +457,7 @@ fun ImageUploadMethodButton(
 		modifier = Modifier,
 		onClick = onClick,
 		colors = ButtonDefaults.buttonColors(
-			containerColor = primaryBackgroundColor,
+			containerColor = MaterialTheme.subletrPalette.primaryBackgroundColor,
 		),
 	) {
 		Column(
@@ -477,7 +471,7 @@ fun ImageUploadMethodButton(
 					id = iconId,
 				),
 				contentDescription = buttonText,
-				tint = secondaryTextColor,
+				tint = MaterialTheme.subletrPalette.secondaryTextColor,
 			)
 			Text(
 				text = buttonText,
@@ -524,9 +518,9 @@ fun UploadImages(
 				modifier = Modifier
 					.size(dimensionResource(id = R.dimen.xxxxxxl))
 					.border(
-						dimensionResource(id = R.dimen.xxxs),
-						textFieldBorderColor,
-						RoundedCornerShape(dimensionResource(id = R.dimen.s))
+						width = dimensionResource(id = R.dimen.xxxs),
+						color = MaterialTheme.subletrPalette.textFieldBorderColor,
+						shape = RoundedCornerShape(dimensionResource(id = R.dimen.s))
 					),
 				shape = RoundedCornerShape(dimensionResource(id = R.dimen.s)),
 				onClick = {
@@ -535,8 +529,8 @@ fun UploadImages(
 					}
 				},
 				colors = ButtonDefaults.buttonColors(
-					containerColor = textFieldBackgroundColor,
-					contentColor = unselectedGray,
+					containerColor = MaterialTheme.subletrPalette.textFieldBackgroundColor,
+					contentColor = MaterialTheme.subletrPalette.unselectedGray,
 				),
 			) {
 				Column(
@@ -552,7 +546,7 @@ fun UploadImages(
 					)
 					Text(
 						text = stringResource(id = R.string.add_photo),
-						color = secondaryTextColor
+						color = MaterialTheme.subletrPalette.secondaryTextColor
 					)
 				}
 			}
@@ -626,8 +620,8 @@ fun UploadImages(
 						viewModel.imagesBitmapStream.onNext(uiState.imagesBitmap)
 					},
 					colors = ButtonDefaults.buttonColors(
-						containerColor = textFieldBackgroundColor,
-						contentColor = primaryTextColor,
+						containerColor = MaterialTheme.subletrPalette.textFieldBackgroundColor,
+						contentColor = MaterialTheme.subletrPalette.primaryTextColor,
 					),
 				) {
 					Icon(

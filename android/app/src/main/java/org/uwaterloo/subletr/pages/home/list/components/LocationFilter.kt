@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.RangeSlider
 import androidx.compose.material3.SliderDefaults
 import androidx.compose.material3.Text
@@ -29,12 +30,9 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import org.uwaterloo.subletr.R
 import org.uwaterloo.subletr.pages.home.HomePageUiState
-import org.uwaterloo.subletr.theme.darkerGrayButtonColor
 import org.uwaterloo.subletr.theme.filterBoldFont
 import org.uwaterloo.subletr.theme.filterRegularFont
-import org.uwaterloo.subletr.theme.primaryBackgroundColor
-import org.uwaterloo.subletr.theme.secondaryTextColor
-import org.uwaterloo.subletr.theme.subletrPink
+import org.uwaterloo.subletr.theme.subletrPalette
 
 const val MAX_LOCATION_RANGE = 50
 
@@ -86,9 +84,9 @@ fun LocationFilter(
 					},
 					valueRange = 0f..MAX_LOCATION_RANGE.toFloat(),
 					colors = SliderDefaults.colors(
-						thumbColor = primaryBackgroundColor,
-						activeTrackColor = subletrPink,
-						inactiveTrackColor = darkerGrayButtonColor,
+						thumbColor = MaterialTheme.subletrPalette.primaryBackgroundColor,
+						activeTrackColor = MaterialTheme.subletrPalette.subletrPink,
+						inactiveTrackColor = MaterialTheme.subletrPalette.darkerGrayButtonColor,
 					),
 					startThumb = {
 						SliderDefaults.Thumb(
@@ -97,7 +95,7 @@ fun LocationFilter(
 								.size(dimensionResource(id = R.dimen.m)),
 							interactionSource = remember { MutableInteractionSource() },
 							colors = SliderDefaults.colors(
-								thumbColor = primaryBackgroundColor,
+								thumbColor = MaterialTheme.subletrPalette.primaryBackgroundColor,
 							),
 							enabled = true
 						)
@@ -109,7 +107,7 @@ fun LocationFilter(
 								.size(dimensionResource(id = R.dimen.m)),
 							interactionSource = remember { MutableInteractionSource() },
 							colors = SliderDefaults.colors(
-								thumbColor = primaryBackgroundColor,
+								thumbColor = MaterialTheme.subletrPalette.primaryBackgroundColor,
 							),
 							enabled = true
 						)
@@ -119,7 +117,7 @@ fun LocationFilter(
 				Text(
 					text = stringResource(id = R.string.Distance_instruction),
 					style = filterRegularFont,
-					color = secondaryTextColor,
+					color = MaterialTheme.subletrPalette.secondaryTextColor,
 				)
 				Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.s)))
 				Row(
@@ -156,7 +154,7 @@ fun LocationFilter(
 						)
 					Divider(
 						modifier = Modifier.width(width = dimensionResource(id = R.dimen.m)),
-						color = secondaryTextColor,
+						color = MaterialTheme.subletrPalette.secondaryTextColor,
 						thickness = dimensionResource(id = R.dimen.xxxxs),
 					)
 					TextFieldWithErrorIndication(

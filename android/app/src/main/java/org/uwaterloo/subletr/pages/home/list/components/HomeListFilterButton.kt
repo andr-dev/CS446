@@ -11,6 +11,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -20,9 +21,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import org.uwaterloo.subletr.R
 import org.uwaterloo.subletr.theme.filterTextFont
-import org.uwaterloo.subletr.theme.secondaryButtonBackgroundColor
-import org.uwaterloo.subletr.theme.secondaryTextColor
-import org.uwaterloo.subletr.theme.textFieldBorderColor
+import org.uwaterloo.subletr.theme.subletrPalette
 
 @Composable
 fun FilterButton(
@@ -35,7 +34,7 @@ fun FilterButton(
 			.wrapContentSize()
 			.border(
 				width = dimensionResource(id = R.dimen.xxxxs),
-				color = textFieldBorderColor,
+				color = MaterialTheme.subletrPalette.textFieldBorderColor,
 				shape = RoundedCornerShape(
 					size = dimensionResource(id = R.dimen.m),
 				),
@@ -46,8 +45,8 @@ fun FilterButton(
 			vertical = dimensionResource(id = R.dimen.zero),
 		),
 		colors = ButtonDefaults.buttonColors(
-			containerColor = secondaryButtonBackgroundColor,
-			contentColor = secondaryTextColor,
+			containerColor = MaterialTheme.subletrPalette.secondaryButtonBackgroundColor,
+			contentColor = MaterialTheme.subletrPalette.secondaryTextColor,
 		),
 		shape = RoundedCornerShape(
 			size = dimensionResource(id = R.dimen.s),

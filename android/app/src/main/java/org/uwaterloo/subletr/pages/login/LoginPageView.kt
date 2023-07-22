@@ -34,9 +34,7 @@ import org.uwaterloo.subletr.components.textfield.RoundedTextField
 import org.uwaterloo.subletr.models.ConcavePentagon
 import org.uwaterloo.subletr.navigation.NavigationDestination
 import org.uwaterloo.subletr.theme.SubletrTheme
-import org.uwaterloo.subletr.theme.secondaryTextColor
-import org.uwaterloo.subletr.theme.subletrPink
-import org.uwaterloo.subletr.theme.textOnSubletrPink
+import org.uwaterloo.subletr.theme.subletrPalette
 
 @Composable
 fun LoginPageView(
@@ -86,7 +84,7 @@ fun LoginPageView(
 				Text(
 					text = stringResource(id = R.string.app_name_pink_part),
 					style = MaterialTheme.typography.titleLarge,
-					color = subletrPink,
+					color = MaterialTheme.subletrPalette.subletrPink,
 				)
 			}
 
@@ -100,7 +98,7 @@ fun LoginPageView(
 				placeholder = {
 					Text(
 						text = stringResource(id = R.string.email),
-						color = secondaryTextColor,
+						color = MaterialTheme.subletrPalette.secondaryTextColor,
 					)
 				},
 				value = uiState.email,
@@ -119,7 +117,7 @@ fun LoginPageView(
 				placeholder = {
 					Text(
 						text = stringResource(id = R.string.password),
-						color = secondaryTextColor,
+						color = MaterialTheme.subletrPalette.secondaryTextColor,
 					)
 				},
 				value = uiState.password,
@@ -142,7 +140,7 @@ fun LoginPageView(
 			) {
 				Text(
 					text = stringResource(id = R.string.log_in),
-					color = textOnSubletrPink,
+					color = MaterialTheme.subletrPalette.textOnSubletrPink,
 				)
 			}
 
@@ -159,7 +157,7 @@ fun LoginPageView(
 			Row(verticalAlignment = Alignment.CenterVertically) {
 				Text(
 					text = stringResource(id = R.string.dont_have_an_account),
-					color = secondaryTextColor,
+					color = MaterialTheme.subletrPalette.secondaryTextColor,
 				)
 				Button(
 					contentPadding = PaddingValues(dimensionResource(id = R.dimen.xxxxs)),
@@ -175,7 +173,7 @@ fun LoginPageView(
 				) {
 					Text(
 						text = stringResource(id = R.string.sign_up),
-						color = subletrPink,
+						color = MaterialTheme.subletrPalette.subletrPink,
 					)
 				}
 			}

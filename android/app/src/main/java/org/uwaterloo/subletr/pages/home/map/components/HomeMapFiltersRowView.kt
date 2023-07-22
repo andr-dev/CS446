@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -22,9 +23,7 @@ import org.uwaterloo.subletr.components.button.SegmentedIconButton
 import org.uwaterloo.subletr.components.button.SegmentedIconButtonPosition
 import org.uwaterloo.subletr.pages.home.HomePageUiState
 import org.uwaterloo.subletr.pages.home.map.HomeMapUiState
-import org.uwaterloo.subletr.theme.secondaryButtonBackgroundColor
-import org.uwaterloo.subletr.theme.subletrPink
-import org.uwaterloo.subletr.theme.unselectedGray
+import org.uwaterloo.subletr.theme.subletrPalette
 
 @Composable
 fun HomeMapFiltersRowView(
@@ -43,7 +42,7 @@ fun HomeMapFiltersRowView(
 				.clip(CircleShape),
 		) {
 			IconButton(
-				modifier = Modifier.background(color = secondaryButtonBackgroundColor),
+				modifier = Modifier.background(color = MaterialTheme.subletrPalette.secondaryButtonBackgroundColor),
 				onClick = { /*TODO*/ },
 			) {
 				Icon(
@@ -65,8 +64,8 @@ fun HomeMapFiltersRowView(
 				},
 				iconPainter = painterResource(id = R.drawable.directions_walk_solid_gray_24),
 				iconContentDescription = stringResource(id = R.string.walk),
-				selectedTint = subletrPink,
-				unselectedTint = unselectedGray,
+				selectedTint = MaterialTheme.subletrPalette.subletrPink,
+				unselectedTint = MaterialTheme.subletrPalette.unselectedGray,
 				selected = uiState.transportationMethod == HomePageUiState.TransportationMethod.WALK,
 				position = SegmentedIconButtonPosition.START,
 			)
@@ -76,8 +75,8 @@ fun HomeMapFiltersRowView(
 				},
 				iconPainter = painterResource(id = R.drawable.directions_bike_solid_gray_24),
 				iconContentDescription = stringResource(id = R.string.bike),
-				selectedTint = subletrPink,
-				unselectedTint = unselectedGray,
+				selectedTint = MaterialTheme.subletrPalette.subletrPink,
+				unselectedTint = MaterialTheme.subletrPalette.unselectedGray,
 				selected = uiState.transportationMethod == HomePageUiState.TransportationMethod.BIKE,
 				position = SegmentedIconButtonPosition.MIDDLE,
 			)
@@ -87,8 +86,8 @@ fun HomeMapFiltersRowView(
 				},
 				iconPainter = painterResource(id = R.drawable.directions_bus_solid_gray_24),
 				iconContentDescription = stringResource(id = R.string.bus),
-				selectedTint = subletrPink,
-				unselectedTint = unselectedGray,
+				selectedTint = MaterialTheme.subletrPalette.subletrPink,
+				unselectedTint = MaterialTheme.subletrPalette.unselectedGray,
 				selected = uiState.transportationMethod == HomePageUiState.TransportationMethod.BUS,
 				position = SegmentedIconButtonPosition.MIDDLE,
 			)
@@ -98,8 +97,8 @@ fun HomeMapFiltersRowView(
 				},
 				iconPainter = painterResource(id = R.drawable.directions_car_solid_gray_24),
 				iconContentDescription = stringResource(id = R.string.car),
-				selectedTint = subletrPink,
-				unselectedTint = unselectedGray,
+				selectedTint = MaterialTheme.subletrPalette.subletrPink,
+				unselectedTint = MaterialTheme.subletrPalette.unselectedGray,
 				selected = uiState.transportationMethod == HomePageUiState.TransportationMethod.CAR,
 				position = SegmentedIconButtonPosition.END,
 			)

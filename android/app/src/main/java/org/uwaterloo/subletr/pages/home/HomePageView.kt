@@ -33,9 +33,7 @@ import org.uwaterloo.subletr.pages.home.list.HomeListUiState
 import org.uwaterloo.subletr.pages.home.map.HomeMapChildView
 import org.uwaterloo.subletr.pages.home.map.HomeMapUiState
 import org.uwaterloo.subletr.theme.SubletrTheme
-import org.uwaterloo.subletr.theme.primaryTextColor
-import org.uwaterloo.subletr.theme.subletrPink
-import org.uwaterloo.subletr.theme.unselectedGray
+import org.uwaterloo.subletr.theme.subletrPalette
 
 @Composable
 fun HomePageView(
@@ -64,7 +62,7 @@ fun HomePageView(
 				Text(
 					text = stringResource(id = R.string.view_sublets),
 					style = MaterialTheme.typography.titleMedium,
-					color = primaryTextColor,
+					color = MaterialTheme.subletrPalette.primaryTextColor,
 				)
 				ViewSwitch(
 					isListView = isListView,
@@ -128,8 +126,8 @@ fun ViewSwitch(
 				id = R.drawable.view_list_outline_pink_24,
 			),
 			iconContentDescription = stringResource(id = R.string.list_icon),
-			selectedTint = subletrPink,
-			unselectedTint = unselectedGray,
+			selectedTint = MaterialTheme.subletrPalette.subletrPink,
+			unselectedTint = MaterialTheme.subletrPalette.unselectedGray,
 			selected = isListView,
 			position = SegmentedIconButtonPosition.START,
 		)
@@ -140,8 +138,8 @@ fun ViewSwitch(
 				id = R.drawable.map_solid_pink_24,
 			),
 			iconContentDescription = stringResource(id = R.string.map_icon),
-			selectedTint = subletrPink,
-			unselectedTint = unselectedGray,
+			selectedTint = MaterialTheme.subletrPalette.subletrPink,
+			unselectedTint = MaterialTheme.subletrPalette.unselectedGray,
 			selected = !isListView,
 			position = SegmentedIconButtonPosition.END,
 		)

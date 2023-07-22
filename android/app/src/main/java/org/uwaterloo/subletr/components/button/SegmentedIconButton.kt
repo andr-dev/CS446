@@ -9,6 +9,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonColors
 import androidx.compose.material3.IconButtonDefaults
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
@@ -19,9 +20,7 @@ import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import org.uwaterloo.subletr.R
-import org.uwaterloo.subletr.theme.secondaryButtonBackgroundColor
-import org.uwaterloo.subletr.theme.subletrPink
-import org.uwaterloo.subletr.theme.unselectedGray
+import org.uwaterloo.subletr.theme.subletrPalette
 
 @Suppress("LongParameterList")
 @Composable
@@ -69,7 +68,7 @@ fun SegmentedIconButton(
 			.clip(
 				shape = buttonShape,
 			)
-			.background(color = secondaryButtonBackgroundColor)
+			.background(color = MaterialTheme.subletrPalette.secondaryButtonBackgroundColor)
 			.border(
 				width = dimensionResource(id = R.dimen.xxxxs),
 				color = if (selected) selectedTint else unselectedTint,
@@ -105,8 +104,8 @@ private fun SegmentedStartIconButtonUnselectedPreview() {
 	SegmentedIconButton(
 		iconPainter = painterResource(id = R.drawable.person_solid_pink_24),
 		iconContentDescription = null,
-		selectedTint = subletrPink,
-		unselectedTint = unselectedGray,
+		selectedTint = MaterialTheme.subletrPalette.subletrPink,
+		unselectedTint = MaterialTheme.subletrPalette.unselectedGray,
 		selected = false,
 		onClick = {},
 		position = SegmentedIconButtonPosition.START,
@@ -120,8 +119,8 @@ private fun SegmentedEndIconButtonSelectedPreview() {
 	SegmentedIconButton(
 		iconPainter = painterResource(id = R.drawable.person_solid_pink_24),
 		iconContentDescription = null,
-		selectedTint = subletrPink,
-		unselectedTint = unselectedGray,
+		selectedTint = MaterialTheme.subletrPalette.subletrPink,
+		unselectedTint = MaterialTheme.subletrPalette.unselectedGray,
 		selected = true,
 		onClick = {},
 		position = SegmentedIconButtonPosition.END,

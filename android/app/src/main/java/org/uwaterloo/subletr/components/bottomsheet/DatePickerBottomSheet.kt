@@ -33,11 +33,7 @@ import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.unit.dp
 import org.uwaterloo.subletr.R
-import org.uwaterloo.subletr.theme.primaryBackgroundColor
-import org.uwaterloo.subletr.theme.secondaryTextColor
-import org.uwaterloo.subletr.theme.subletrPink
-import org.uwaterloo.subletr.theme.textFieldBackgroundColor
-import org.uwaterloo.subletr.theme.textOnSubletrPink
+import org.uwaterloo.subletr.theme.subletrPalette
 import java.util.Locale
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -56,13 +52,13 @@ fun DatePickerBottomSheet(
 				modifier = Modifier
 					.fillMaxWidth()
 					.height(550.dp) // TODO: change this to not use explicit value
-					.background(primaryBackgroundColor)
+					.background(MaterialTheme.subletrPalette.primaryBackgroundColor)
 			) {
 				LeaseDatePicker(state, onClick)
 				Button(
 					onClick = onClick,
 					colors = ButtonDefaults.buttonColors(
-						containerColor = subletrPink,
+						containerColor = MaterialTheme.subletrPalette.subletrPink,
 					),
 					modifier = Modifier
 						.align(Alignment.BottomCenter)
@@ -74,7 +70,7 @@ fun DatePickerBottomSheet(
 						.fillMaxWidth()
 						.height(dimensionResource(id = R.dimen.xl))
 				) {
-					Text(stringResource(id = R.string.done), color = textOnSubletrPink)
+					Text(stringResource(id = R.string.done), color = MaterialTheme.subletrPalette.textOnSubletrPink)
 				}
 			}
 		},
@@ -108,7 +104,7 @@ fun LeaseDatePicker(state: DateRangePickerState, onClick: () -> Unit) {
 					text = stringResource(id = R.string.lease_start_end_dates),
 					modifier = Modifier
 						.padding(start = dimensionResource(id = R.dimen.l), end = dimensionResource(id = R.dimen.xs)),
-					color = secondaryTextColor,
+					color = MaterialTheme.subletrPalette.secondaryTextColor,
 				)
 			},
 			headline = {
@@ -143,9 +139,9 @@ fun LeaseDatePicker(state: DateRangePickerState, onClick: () -> Unit) {
 				}
 			},
 			colors = DatePickerDefaults.colors(
-				containerColor = primaryBackgroundColor,
-				dayInSelectionRangeContainerColor = textFieldBackgroundColor,
-				selectedDayContainerColor = subletrPink,
+				containerColor = MaterialTheme.subletrPalette.primaryBackgroundColor,
+				dayInSelectionRangeContainerColor = MaterialTheme.subletrPalette.textFieldBackgroundColor,
+				selectedDayContainerColor = MaterialTheme.subletrPalette.subletrPink,
 			)
 		)
 	}

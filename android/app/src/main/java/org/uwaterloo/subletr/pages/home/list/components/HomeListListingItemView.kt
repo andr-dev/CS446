@@ -36,12 +36,9 @@ import org.uwaterloo.subletr.api.models.ListingSummary
 import org.uwaterloo.subletr.api.models.ResidenceType
 import org.uwaterloo.subletr.components.button.SecondaryButton
 import org.uwaterloo.subletr.pages.home.list.dateTimeFormatter
-import org.uwaterloo.subletr.theme.darkerGrayButtonColor
 import org.uwaterloo.subletr.theme.listingDescriptionFont
 import org.uwaterloo.subletr.theme.listingTitleFont
-import org.uwaterloo.subletr.theme.primaryTextColor
-import org.uwaterloo.subletr.theme.secondaryButtonBackgroundColor
-import org.uwaterloo.subletr.theme.secondaryTextColor
+import org.uwaterloo.subletr.theme.subletrPalette
 
 @Composable
 fun HomeListListingItemView(
@@ -60,7 +57,7 @@ fun HomeListListingItemView(
 				),
 			)
 			.background(
-				color = secondaryButtonBackgroundColor,
+				color = MaterialTheme.subletrPalette.secondaryButtonBackgroundColor,
 			)
 	) {
 		Column(
@@ -129,7 +126,7 @@ fun HomeListListingItemView(
 							dateTimeFormatter(offsetDateTime = listingSummary.leaseEnd),
 						),
 						style = MaterialTheme.typography.bodyLarge,
-						color = primaryTextColor,
+						color = MaterialTheme.subletrPalette.primaryTextColor,
 					)
 				}
 			}
@@ -144,7 +141,7 @@ fun HomeListListingItemView(
 						id = R.drawable.bed_solid_gray_16,
 					),
 					contentDescription = stringResource(id = R.string.bed_icon),
-					tint = secondaryTextColor,
+					tint = MaterialTheme.subletrPalette.secondaryTextColor,
 				)
 				Text(
 					pluralStringResource(
@@ -165,7 +162,7 @@ fun HomeListListingItemView(
 						},
 					),
 					contentDescription = stringResource(R.string.home_icon),
-					tint = secondaryTextColor,
+					tint = MaterialTheme.subletrPalette.secondaryTextColor,
 				)
 				Text(
 					text = listingSummary.residenceType.value,
@@ -181,15 +178,15 @@ fun HomeListListingItemView(
 						.fillMaxWidth(0.5f)
 						.fillMaxHeight(1.0f),
 					colors = ButtonDefaults.buttonColors(
-						containerColor = darkerGrayButtonColor,
-						contentColor = primaryTextColor,
+						containerColor = MaterialTheme.subletrPalette.darkerGrayButtonColor,
+						contentColor = MaterialTheme.subletrPalette.primaryTextColor,
 					),
 					onClick = detailsNavigation,
 				) {
 					Text(
 						stringResource(id = R.string.view_details),
 						style = MaterialTheme.typography.bodyLarge,
-						color = primaryTextColor,
+						color = MaterialTheme.subletrPalette.primaryTextColor,
 					)
 				}
 				Spacer(modifier = Modifier.width(dimensionResource(id = R.dimen.xs)))
@@ -198,8 +195,8 @@ fun HomeListListingItemView(
 						.fillMaxHeight(1.0f)
 						.weight(weight = 0.5f),
 					colors = ButtonDefaults.buttonColors(
-						containerColor = darkerGrayButtonColor,
-						contentColor = primaryTextColor,
+						containerColor = MaterialTheme.subletrPalette.darkerGrayButtonColor,
+						contentColor = MaterialTheme.subletrPalette.primaryTextColor,
 					),
 					iconId = R.drawable.chat_bubble_outline_gray_24,
 					onClick = { /*TODO*/ },
@@ -211,8 +208,8 @@ fun HomeListListingItemView(
 						.fillMaxHeight(1.0f)
 						.weight(weight = 0.5f),
 					colors = ButtonDefaults.buttonColors(
-						containerColor = darkerGrayButtonColor,
-						contentColor = primaryTextColor,
+						containerColor = MaterialTheme.subletrPalette.darkerGrayButtonColor,
+						contentColor = MaterialTheme.subletrPalette.primaryTextColor,
 					),
 					iconId = R.drawable.star_outline_black_26,
 					onClick = { /*TODO*/ },

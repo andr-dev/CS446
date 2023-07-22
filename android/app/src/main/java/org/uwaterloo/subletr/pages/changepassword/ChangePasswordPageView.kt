@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -27,7 +28,7 @@ import org.uwaterloo.subletr.R
 import org.uwaterloo.subletr.components.button.SecondaryButton
 import org.uwaterloo.subletr.components.textfield.UnderlinedPasswordTextField
 import org.uwaterloo.subletr.theme.changePasswordTopBarTitle
-import org.uwaterloo.subletr.theme.secondaryTextColor
+import org.uwaterloo.subletr.theme.subletrPalette
 
 @Composable
 fun ChangePasswordPageView(
@@ -101,7 +102,7 @@ fun ChangePasswordPageView(
 						Text(
 							modifier = Modifier,
 							text = stringResource(id = R.string.old_password),
-							color = secondaryTextColor,
+							color = MaterialTheme.subletrPalette.secondaryTextColor,
 						)
 					},
 				)
@@ -120,7 +121,7 @@ fun ChangePasswordPageView(
 					label = {
 						Text(
 							text = stringResource(id = R.string.new_password),
-							color = secondaryTextColor,
+							color = MaterialTheme.subletrPalette.secondaryTextColor,
 						)
 					},
 				)
@@ -139,7 +140,7 @@ fun ChangePasswordPageView(
 					label = {
 						Text(
 							text = stringResource(id = R.string.confirm_new_password),
-							color = secondaryTextColor,
+							color = MaterialTheme.subletrPalette.secondaryTextColor,
 						)
 					},
 				)

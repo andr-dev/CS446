@@ -7,6 +7,7 @@ import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ButtonElevation
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -14,8 +15,7 @@ import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import org.uwaterloo.subletr.R
 import org.uwaterloo.subletr.components.button.SecondaryButton
-import org.uwaterloo.subletr.theme.primaryTextColor
-import org.uwaterloo.subletr.theme.secondaryButtonBackgroundColor
+import org.uwaterloo.subletr.theme.subletrPalette
 
 @Composable
 fun ButtonWithIcon(
@@ -24,8 +24,8 @@ fun ButtonWithIcon(
 	onClick: () -> Unit,
 	contentDescription: String,
 	colors: ButtonColors = ButtonDefaults.buttonColors(
-		containerColor = secondaryButtonBackgroundColor,
-		contentColor = primaryTextColor,
+		containerColor = MaterialTheme.subletrPalette.secondaryButtonBackgroundColor,
+		contentColor = MaterialTheme.subletrPalette.primaryTextColor,
 	),
 	elevation: ButtonElevation? = ButtonDefaults.buttonElevation(),
 	border: BorderStroke? = null,
@@ -44,7 +44,7 @@ fun ButtonWithIcon(
 					id = iconId
 				),
 				contentDescription = contentDescription,
-				tint = primaryTextColor,
+				tint = MaterialTheme.subletrPalette.primaryTextColor,
 			)
 		},
 	)

@@ -76,8 +76,8 @@ object SingletonModule {
 
 	@Singleton
 	@Provides
-	fun provideSettingsService(ioService: IIoService): ISettingsService {
-		return SettingsService(ioService = ioService)
+	fun provideSettingsService(@ApplicationContext context: Context, ioService: IIoService): ISettingsService {
+		return SettingsService(ioService = ioService, context = context)
 	}
 }
 

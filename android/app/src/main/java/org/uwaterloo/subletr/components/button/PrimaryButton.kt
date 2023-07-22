@@ -8,15 +8,14 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ButtonElevation
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.tooling.preview.Preview
-import org.uwaterloo.subletr.theme.subletrPink
-import org.uwaterloo.subletr.theme.textOnSubletrPink
+import org.uwaterloo.subletr.theme.subletrPalette
 
 @Composable
 @Suppress("LongParameterList")
@@ -26,8 +25,8 @@ fun PrimaryButton(
 	enabled: Boolean = true,
 	shape: Shape = ButtonDefaults.shape,
 	colors: ButtonColors = ButtonDefaults.buttonColors(
-		containerColor = subletrPink,
-		contentColor = textOnSubletrPink,
+		containerColor = MaterialTheme.subletrPalette.subletrPink,
+		contentColor = MaterialTheme.subletrPalette.textOnSubletrPink,
 	),
 	elevation: ButtonElevation? = ButtonDefaults.buttonElevation(),
 	border: BorderStroke? = null,
@@ -56,7 +55,7 @@ private fun PrimaryButtonPreview() {
 	PrimaryButton(onClick = {}) {
 		Text(
 			text = "Test Button",
-			color = textOnSubletrPink,
+			color = MaterialTheme.subletrPalette.textOnSubletrPink,
 		)
 	}
 }

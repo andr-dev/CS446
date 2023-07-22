@@ -87,17 +87,9 @@ import org.uwaterloo.subletr.pages.home.list.dateTimeFormatter
 import org.uwaterloo.subletr.theme.SubletrTheme
 import org.uwaterloo.subletr.theme.SubletrTypography
 import org.uwaterloo.subletr.theme.accountHeadingSmallFont
-import org.uwaterloo.subletr.theme.darkerGrayButtonColor
 import org.uwaterloo.subletr.theme.filterBoldFont
 import org.uwaterloo.subletr.theme.listingTitleFont
-import org.uwaterloo.subletr.theme.primaryTextColor
-import org.uwaterloo.subletr.theme.secondaryBackgroundColor
-import org.uwaterloo.subletr.theme.secondaryButtonBackgroundColor
-import org.uwaterloo.subletr.theme.secondaryTextColor
-import org.uwaterloo.subletr.theme.squaredTextFieldBackgroundColor
-import org.uwaterloo.subletr.theme.subletrPink
-import org.uwaterloo.subletr.theme.textFieldBorderColor
-import org.uwaterloo.subletr.theme.textOnSubletrPink
+import org.uwaterloo.subletr.theme.subletrPalette
 import org.uwaterloo.subletr.utils.ComposeFileProvider
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -178,10 +170,10 @@ fun AccountPageView(
 						// TODO navigate to profile page
 					},
 					colors = CardDefaults.cardColors(
-						containerColor = squaredTextFieldBackgroundColor,
-						disabledContainerColor = secondaryBackgroundColor,
-						contentColor = primaryTextColor,
-						disabledContentColor = darkerGrayButtonColor,
+						containerColor = MaterialTheme.subletrPalette.squaredTextFieldBackgroundColor,
+						disabledContainerColor = MaterialTheme.subletrPalette.secondaryBackgroundColor,
+						contentColor = MaterialTheme.subletrPalette.primaryTextColor,
+						disabledContentColor = MaterialTheme.subletrPalette.darkerGrayButtonColor,
 					),
 					enabled = !nameExpanded && !genderExpanded,
 				) {
@@ -195,8 +187,8 @@ fun AccountPageView(
 						Text(
 							modifier = Modifier.fillMaxWidth(0.9f),
 							text = stringResource(id = R.string.view_public_profile),
-							color = if (!nameExpanded && !genderExpanded) primaryTextColor
-							else darkerGrayButtonColor
+							color = if (!nameExpanded && !genderExpanded) MaterialTheme.subletrPalette.primaryTextColor
+							else MaterialTheme.subletrPalette.darkerGrayButtonColor
 						)
 						Icon(
 							painter = painterResource(
@@ -229,8 +221,8 @@ fun AccountPageView(
 					Text(
 						text = stringResource(id = R.string.personal_info),
 						style = SubletrTypography.displaySmall,
-						color = if (!nameExpanded && !genderExpanded) secondaryTextColor
-						else darkerGrayButtonColor,
+						color = if (!nameExpanded && !genderExpanded) MaterialTheme.subletrPalette.secondaryTextColor
+						else MaterialTheme.subletrPalette.darkerGrayButtonColor,
 					)
 				}
 			}
@@ -256,8 +248,8 @@ fun AccountPageView(
 					colors = CardDefaults.cardColors(
 						containerColor = Color.Transparent,
 						disabledContainerColor = Color.Transparent,
-						contentColor = primaryTextColor,
-						disabledContentColor = darkerGrayButtonColor,
+						contentColor = MaterialTheme.subletrPalette.primaryTextColor,
+						disabledContentColor = MaterialTheme.subletrPalette.darkerGrayButtonColor,
 					),
 					enabled = !genderExpanded,
 				) {
@@ -272,8 +264,8 @@ fun AccountPageView(
 								modifier = Modifier.fillMaxWidth(0.9f),
 								text = stringResource(id = R.string.full_name),
 								style = accountHeadingSmallFont,
-								color = if (!genderExpanded) secondaryTextColor
-								else darkerGrayButtonColor,
+								color = if (!genderExpanded) MaterialTheme.subletrPalette.secondaryTextColor
+								else MaterialTheme.subletrPalette.darkerGrayButtonColor,
 							)
 							AnimatedContent(
 								targetState = nameExpanded,
@@ -305,7 +297,9 @@ fun AccountPageView(
 							text = if (!nameExpanded)
 								"${uiState.personalInformation.firstName} ${uiState.personalInformation.lastName}"
 							else stringResource(id = R.string.name_information_label),
-							color = if (!genderExpanded) primaryTextColor else darkerGrayButtonColor,
+							color =
+							if (!genderExpanded) MaterialTheme.subletrPalette.primaryTextColor
+							else MaterialTheme.subletrPalette.darkerGrayButtonColor,
 						)
 					}
 				}
@@ -329,14 +323,14 @@ fun AccountPageView(
 							modifier = Modifier
 								.fillMaxWidth()
 								.border(
-									dimensionResource(id = R.dimen.xxxxs),
-									textFieldBorderColor,
-									RoundedCornerShape(dimensionResource(id = R.dimen.xs))
+									width = dimensionResource(id = R.dimen.xxxxs),
+									color = MaterialTheme.subletrPalette.textFieldBorderColor,
+									shape = RoundedCornerShape(dimensionResource(id = R.dimen.xs)),
 								),
 							label = {
 								Text(
 									text = stringResource(id = R.string.first_name),
-									color = secondaryTextColor,
+									color = MaterialTheme.subletrPalette.secondaryTextColor,
 								)
 							},
 							value = uiState.personalInformation.firstName,
@@ -356,14 +350,14 @@ fun AccountPageView(
 							modifier = Modifier
 								.fillMaxWidth()
 								.border(
-									dimensionResource(id = R.dimen.xxxxs),
-									textFieldBorderColor,
-									RoundedCornerShape(dimensionResource(id = R.dimen.xs))
+									width = dimensionResource(id = R.dimen.xxxxs),
+									color = MaterialTheme.subletrPalette.textFieldBorderColor,
+									shape = RoundedCornerShape(dimensionResource(id = R.dimen.xs))
 								),
 							label = {
 								Text(
 									text = stringResource(id = R.string.last_name),
-									color = secondaryTextColor,
+									color = MaterialTheme.subletrPalette.secondaryTextColor,
 								)
 							},
 							value = uiState.personalInformation.lastName,
@@ -418,8 +412,8 @@ fun AccountPageView(
 					colors = CardDefaults.cardColors(
 						containerColor = Color.Transparent,
 						disabledContainerColor = Color.Transparent,
-						contentColor = primaryTextColor,
-						disabledContentColor = darkerGrayButtonColor,
+						contentColor = MaterialTheme.subletrPalette.primaryTextColor,
+						disabledContentColor = MaterialTheme.subletrPalette.darkerGrayButtonColor,
 					),
 					enabled = !nameExpanded,
 				) {
@@ -434,8 +428,8 @@ fun AccountPageView(
 								modifier = Modifier.fillMaxWidth(0.9f),
 								text = stringResource(id = R.string.gender),
 								style = accountHeadingSmallFont,
-								color = if (!nameExpanded) secondaryTextColor
-								else darkerGrayButtonColor,
+								color = if (!nameExpanded) MaterialTheme.subletrPalette.secondaryTextColor
+								else MaterialTheme.subletrPalette.darkerGrayButtonColor,
 							)
 							AnimatedContent(
 								targetState = genderExpanded,
@@ -466,7 +460,9 @@ fun AccountPageView(
 						Text(
 							text = if (!genderExpanded) uiState.personalInformation.gender
 							else stringResource(id = R.string.gender_select_label),
-							color = if (!nameExpanded) primaryTextColor else darkerGrayButtonColor,
+							color =
+							if (!nameExpanded) MaterialTheme.subletrPalette.primaryTextColor
+							else MaterialTheme.subletrPalette.darkerGrayButtonColor,
 						)
 					}
 
@@ -538,8 +534,8 @@ fun AccountPageView(
 					colors = CardDefaults.cardColors(
 						containerColor = Color.Transparent,
 						disabledContainerColor = Color.Transparent,
-						contentColor = primaryTextColor,
-						disabledContentColor = darkerGrayButtonColor,
+						contentColor = MaterialTheme.subletrPalette.primaryTextColor,
+						disabledContentColor = MaterialTheme.subletrPalette.darkerGrayButtonColor,
 					),
 					enabled = !nameExpanded && !genderExpanded,
 				) {
@@ -554,13 +550,13 @@ fun AccountPageView(
 							Text(
 								text = stringResource(id = R.string.password),
 								style = accountHeadingSmallFont,
-								color = if (!nameExpanded && !genderExpanded) secondaryTextColor
-								else darkerGrayButtonColor,
+								color = if (!nameExpanded && !genderExpanded) MaterialTheme.subletrPalette.secondaryTextColor
+								else MaterialTheme.subletrPalette.darkerGrayButtonColor,
 							)
 							Text(
 								text = stringResource(id = R.string.change_password),
-								color = if (!nameExpanded && !genderExpanded) primaryTextColor
-								else darkerGrayButtonColor,
+								color = if (!nameExpanded && !genderExpanded) MaterialTheme.subletrPalette.primaryTextColor
+								else MaterialTheme.subletrPalette.darkerGrayButtonColor,
 							)
 						}
 						Icon(
@@ -593,8 +589,8 @@ fun AccountPageView(
 					Text(
 						text = stringResource(id = R.string.my_sublet),
 						style = SubletrTypography.displaySmall,
-						color = if (!nameExpanded && !genderExpanded) secondaryTextColor
-						else darkerGrayButtonColor,
+						color = if (!nameExpanded && !genderExpanded) MaterialTheme.subletrPalette.secondaryTextColor
+						else MaterialTheme.subletrPalette.darkerGrayButtonColor,
 					)
 				}
 			}
@@ -611,10 +607,10 @@ fun AccountPageView(
 						defaultElevation = dimensionResource(id = R.dimen.xxs),
 					),
 					colors = CardDefaults.cardColors(
-						containerColor = squaredTextFieldBackgroundColor,
-						disabledContainerColor = secondaryBackgroundColor,
-						contentColor = primaryTextColor,
-						disabledContentColor = darkerGrayButtonColor,
+						containerColor = MaterialTheme.subletrPalette.squaredTextFieldBackgroundColor,
+						disabledContainerColor = MaterialTheme.subletrPalette.secondaryBackgroundColor,
+						contentColor = MaterialTheme.subletrPalette.primaryTextColor,
+						disabledContentColor = MaterialTheme.subletrPalette.darkerGrayButtonColor,
 					),
 				) {
 					if (uiState.listingId == null) {
@@ -632,13 +628,13 @@ fun AccountPageView(
 								Text(
 									text = stringResource(id = R.string.sublet_your_place),
 									style = SubletrTypography.displayLarge,
-									color = if (!nameExpanded && !genderExpanded) primaryTextColor
-									else darkerGrayButtonColor,
+									color = if (!nameExpanded && !genderExpanded) MaterialTheme.subletrPalette.primaryTextColor
+									else MaterialTheme.subletrPalette.darkerGrayButtonColor,
 								)
 								Text(
 									text = stringResource(id = R.string.sublet_your_place_label),
-									color = if (!nameExpanded && !genderExpanded) primaryTextColor
-									else darkerGrayButtonColor,
+									color = if (!nameExpanded && !genderExpanded) MaterialTheme.subletrPalette.primaryTextColor
+									else MaterialTheme.subletrPalette.darkerGrayButtonColor,
 								)
 								Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.xs)))
 								PrimaryButton(
@@ -655,7 +651,7 @@ fun AccountPageView(
 								) {
 									Text(
 										stringResource(id = R.string.create_listing),
-										color = textOnSubletrPink,
+										color = MaterialTheme.subletrPalette.textOnSubletrPink,
 									)
 								}
 							}
@@ -715,8 +711,8 @@ fun AccountPageView(
 										overflow = TextOverflow.Clip,
 										textAlign = TextAlign.Start,
 										maxLines = 1,
-										color = if (!nameExpanded && !genderExpanded) primaryTextColor
-										else darkerGrayButtonColor,
+										color = if (!nameExpanded && !genderExpanded) MaterialTheme.subletrPalette.primaryTextColor
+										else MaterialTheme.subletrPalette.darkerGrayButtonColor,
 									)
 									Text(
 										stringResource(
@@ -724,8 +720,8 @@ fun AccountPageView(
 											uiState.listingDetails.price,
 										),
 										style = listingTitleFont,
-										color = if (!nameExpanded && !genderExpanded) primaryTextColor
-										else darkerGrayButtonColor,
+										color = if (!nameExpanded && !genderExpanded) MaterialTheme.subletrPalette.primaryTextColor
+										else MaterialTheme.subletrPalette.darkerGrayButtonColor,
 									)
 									Text(
 										text = stringResource(
@@ -734,8 +730,8 @@ fun AccountPageView(
 											dateTimeFormatter(offsetDateTime = uiState.listingDetails.leaseEnd),
 										),
 										style = MaterialTheme.typography.bodyLarge,
-										color = if (!nameExpanded && !genderExpanded) primaryTextColor
-										else darkerGrayButtonColor,
+										color = if (!nameExpanded && !genderExpanded) MaterialTheme.subletrPalette.primaryTextColor
+										else MaterialTheme.subletrPalette.darkerGrayButtonColor,
 									)
 								}
 							}
@@ -761,7 +757,7 @@ fun AccountPageView(
 					) {
 						Text(
 							stringResource(id = R.string.manage_my_sublet),
-							color = textOnSubletrPink,
+							color = MaterialTheme.subletrPalette.textOnSubletrPink,
 						)
 					}
 				}
@@ -787,8 +783,8 @@ fun AccountPageView(
 					Text(
 						text = stringResource(id = R.string.display),
 						style = SubletrTypography.displaySmall,
-						color = if (!nameExpanded && !genderExpanded) secondaryTextColor
-						else darkerGrayButtonColor,
+						color = if (!nameExpanded && !genderExpanded) MaterialTheme.subletrPalette.secondaryTextColor
+						else MaterialTheme.subletrPalette.darkerGrayButtonColor,
 					)
 				}
 			}
@@ -802,8 +798,8 @@ fun AccountPageView(
 				) {
 					Text(
 						text = stringResource(id = R.string.use_device_settings),
-						color = if (!nameExpanded && !genderExpanded) primaryTextColor
-						else darkerGrayButtonColor,
+						color = if (!nameExpanded && !genderExpanded) MaterialTheme.subletrPalette.primaryTextColor
+						else MaterialTheme.subletrPalette.darkerGrayButtonColor,
 					)
 					PrimarySwitch(
 						checked = uiState.settings.useDeviceTheme,
@@ -832,8 +828,8 @@ fun AccountPageView(
 					Text(
 						text = stringResource(id = R.string.dark_mode),
 						color = if (!nameExpanded && !genderExpanded && !uiState.settings.useDeviceTheme)
-							primaryTextColor
-						else darkerGrayButtonColor,
+							MaterialTheme.subletrPalette.primaryTextColor
+						else MaterialTheme.subletrPalette.darkerGrayButtonColor,
 					)
 					PrimarySwitch(
 						checked = uiState.settings.useDarkMode,
@@ -872,8 +868,8 @@ fun AccountPageView(
 					Text(
 						text = stringResource(id = R.string.notifications),
 						style = SubletrTypography.displaySmall,
-						color = if (!nameExpanded && !genderExpanded) secondaryTextColor
-						else darkerGrayButtonColor,
+						color = if (!nameExpanded && !genderExpanded) MaterialTheme.subletrPalette.secondaryTextColor
+						else MaterialTheme.subletrPalette.darkerGrayButtonColor,
 					)
 				}
 			}
@@ -887,8 +883,8 @@ fun AccountPageView(
 				) {
 					Text(
 						text = stringResource(id = R.string.allow_chat_notifications),
-						color = if (!nameExpanded && !genderExpanded) primaryTextColor
-						else darkerGrayButtonColor,
+						color = if (!nameExpanded && !genderExpanded) MaterialTheme.subletrPalette.primaryTextColor
+						else MaterialTheme.subletrPalette.darkerGrayButtonColor,
 					)
 					PrimarySwitch(
 						checked = uiState.settings.allowChatNotifications,
@@ -923,7 +919,7 @@ fun AccountPageView(
 				) {
 					Text(
 						text = stringResource(id = R.string.log_out),
-						color = textOnSubletrPink,
+						color = MaterialTheme.subletrPalette.textOnSubletrPink,
 					)
 				}
 			}
@@ -940,7 +936,7 @@ fun PageDivider() {
 	Divider(
 		modifier = Modifier.fillMaxWidth(),
 		thickness = dimensionResource(id = R.dimen.xxxxs),
-		color = secondaryButtonBackgroundColor,
+		color = MaterialTheme.subletrPalette.secondaryButtonBackgroundColor,
 	)
 }
 
@@ -978,7 +974,7 @@ fun SaveCancelButtonsRow(onSaveClick: () -> Unit, onCancelClick: () -> Unit) {
 				stringResource(
 					id = R.string.save,
 				),
-				color = textOnSubletrPink,
+				color = MaterialTheme.subletrPalette.textOnSubletrPink,
 				style = filterBoldFont,
 			)
 		}
@@ -1028,7 +1024,7 @@ fun GenderRadioButtons(selectedValue: String, onChangeState: (String) -> Unit) {
 					selected = isSelectedItem(option),
 					onClick = null,
 					colors = RadioButtonDefaults.colors(
-						selectedColor = subletrPink,
+						selectedColor = MaterialTheme.subletrPalette.subletrPink,
 					)
 				)
 			}
@@ -1047,13 +1043,13 @@ fun GenderRadioButtons(selectedValue: String, onChangeState: (String) -> Unit) {
 					.fillMaxWidth()
 					.border(
 						dimensionResource(id = R.dimen.xxxxs),
-						textFieldBorderColor,
+						MaterialTheme.subletrPalette.textFieldBorderColor,
 						RoundedCornerShape(dimensionResource(id = R.dimen.xs))
 					),
 				label = {
 					Text(
 						text = stringResource(id = R.string.other_gender),
-						color = secondaryTextColor,
+						color = MaterialTheme.subletrPalette.secondaryTextColor,
 					)
 				},
 				value = if (options.contains(selectedValue)) "" else selectedValue,
@@ -1105,9 +1101,9 @@ fun UploadAvatar(
 			}
 		},
 		colors = ButtonDefaults.buttonColors(
-			containerColor = subletrPink,
-			contentColor = textOnSubletrPink,
-			disabledContainerColor = darkerGrayButtonColor,
+			containerColor = MaterialTheme.subletrPalette.subletrPink,
+			contentColor = MaterialTheme.subletrPalette.textOnSubletrPink,
+			disabledContainerColor = MaterialTheme.subletrPalette.darkerGrayButtonColor,
 		),
 		enabled = isEnabled,
 	) {
@@ -1117,7 +1113,7 @@ fun UploadAvatar(
 				id = R.drawable.edit_round_black_24
 			),
 			contentDescription = stringResource(id = R.string.upload_images),
-			tint = textOnSubletrPink
+			tint = MaterialTheme.subletrPalette.textOnSubletrPink
 		)
 	}
 

@@ -30,6 +30,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
@@ -74,11 +75,7 @@ import org.uwaterloo.subletr.theme.SubletrTheme
 import org.uwaterloo.subletr.theme.SubletrTypography
 import org.uwaterloo.subletr.theme.mapCircleFill
 import org.uwaterloo.subletr.theme.mapCircleStroke
-import org.uwaterloo.subletr.theme.primaryTextColor
-import org.uwaterloo.subletr.theme.secondaryButtonBackgroundColor
-import org.uwaterloo.subletr.theme.secondaryTextColor
-import org.uwaterloo.subletr.theme.textFieldBorderColor
-import org.uwaterloo.subletr.theme.textOnSubletrPink
+import org.uwaterloo.subletr.theme.subletrPalette
 import java.time.OffsetDateTime
 
 @OptIn(ExperimentalFoundationApi::class)
@@ -193,7 +190,9 @@ fun ListingDetailsPageView(
 							) {
 								repeat(imageCount) { iteration ->
 									val dotColor =
-										if (pagerState.currentPage == iteration) primaryTextColor else secondaryTextColor
+										if (pagerState.currentPage == iteration)
+											MaterialTheme.subletrPalette.primaryTextColor
+										else MaterialTheme.subletrPalette.secondaryTextColor
 									Box(
 										modifier = Modifier
 											.padding(dimensionResource(id = R.dimen.xxs))
@@ -265,7 +264,7 @@ fun ListingDetailsPageView(
 					Text(
 						text = uiState.listingDetails.address,
 						style = SubletrTypography.titleSmall,
-						color = primaryTextColor,
+						color = MaterialTheme.subletrPalette.primaryTextColor,
 					)
 				}
 
@@ -281,7 +280,7 @@ fun ListingDetailsPageView(
 					) {
 						Text(
 							text = stringResource(id = R.string.message_sublet_owner),
-							color = textOnSubletrPink
+							color = MaterialTheme.subletrPalette.textOnSubletrPink
 						)
 					}
 
@@ -298,7 +297,7 @@ fun ListingDetailsPageView(
 								stringResource(id = R.string.unfavourite)
 							else
 								stringResource(id = R.string.favourite),
-							color = primaryTextColor,
+							color = MaterialTheme.subletrPalette.primaryTextColor,
 						)
 					}
 				}
@@ -321,7 +320,7 @@ fun ListingDetailsPageView(
 				) {
 					Text(
 						text = stringResource(id = R.string.description),
-						color = primaryTextColor,
+						color = MaterialTheme.subletrPalette.primaryTextColor,
 						style = SubletrTypography.displaySmall,
 					)
 				}
@@ -335,17 +334,17 @@ fun ListingDetailsPageView(
 						.wrapContentSize(align = Alignment.Center)
 						.border(
 							BorderStroke(
-								dimensionResource(id = R.dimen.xxxs),
-								textFieldBorderColor,
+								width = dimensionResource(id = R.dimen.xxxs),
+								color = MaterialTheme.subletrPalette.textFieldBorderColor,
 							),
-							shape = RoundedCornerShape(dimensionResource(id = R.dimen.xs))
+							shape = RoundedCornerShape(dimensionResource(id = R.dimen.xs)),
 						)
 						.fillMaxWidth(ELEMENT_WIDTH),
 					readOnly = true,
 					shape = RoundedCornerShape(size = dimensionResource(id = R.dimen.xs)),
 					colors = TextFieldDefaults.colors(
-						unfocusedContainerColor = secondaryButtonBackgroundColor,
-						focusedContainerColor = secondaryButtonBackgroundColor,
+						unfocusedContainerColor = MaterialTheme.subletrPalette.secondaryButtonBackgroundColor,
+						focusedContainerColor = MaterialTheme.subletrPalette.secondaryButtonBackgroundColor,
 						unfocusedIndicatorColor = Color.Transparent,
 						focusedIndicatorColor = Color.Transparent,
 					),
@@ -396,7 +395,7 @@ fun DetailsInfoColumn(
 						R.string.ensuite_bathroom -> stringResource(id = it.second as Int)
 						else -> it.second.toString()
 					},
-					color = primaryTextColor,
+					color = MaterialTheme.subletrPalette.primaryTextColor,
 					style = SubletrTypography.displaySmall,
 				)
 			}

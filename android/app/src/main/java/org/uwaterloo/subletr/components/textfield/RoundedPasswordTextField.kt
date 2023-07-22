@@ -10,6 +10,7 @@ import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.LocalTextStyle
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldColors
 import androidx.compose.material3.TextFieldDefaults
@@ -30,8 +31,7 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import org.uwaterloo.subletr.R
-import org.uwaterloo.subletr.theme.primaryTextColor
-import org.uwaterloo.subletr.theme.textFieldBackgroundColor
+import org.uwaterloo.subletr.theme.subletrPalette
 
 @Composable
 @Suppress("LongParameterList")
@@ -59,10 +59,10 @@ fun RoundedPasswordTextField(
 	interactionSource: MutableInteractionSource = remember { MutableInteractionSource() },
 	shape: Shape = RoundedCornerShape(dimensionResource(id = R.dimen.xxxxl)),
 	colors: TextFieldColors = TextFieldDefaults.colors(
-		focusedTextColor = primaryTextColor,
-		unfocusedTextColor = primaryTextColor,
-		unfocusedContainerColor = textFieldBackgroundColor,
-		focusedContainerColor = textFieldBackgroundColor,
+		focusedTextColor = MaterialTheme.subletrPalette.primaryTextColor,
+		unfocusedTextColor = MaterialTheme.subletrPalette.primaryTextColor,
+		unfocusedContainerColor = MaterialTheme.subletrPalette.textFieldBackgroundColor,
+		focusedContainerColor = MaterialTheme.subletrPalette.textFieldBackgroundColor,
 		unfocusedIndicatorColor = Color.Transparent,
 		focusedIndicatorColor = Color.Transparent,
 	),

@@ -8,14 +8,14 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ButtonElevation
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.tooling.preview.Preview
-import org.uwaterloo.subletr.theme.primaryTextColor
-import org.uwaterloo.subletr.theme.secondaryButtonBackgroundColor
+import org.uwaterloo.subletr.theme.subletrPalette
 
 @Composable
 @Suppress("LongParameterList")
@@ -25,8 +25,8 @@ fun SecondaryButton(
 	enabled: Boolean = true,
 	shape: Shape = ButtonDefaults.shape,
 	colors: ButtonColors = ButtonDefaults.buttonColors(
-		containerColor = secondaryButtonBackgroundColor,
-		contentColor = primaryTextColor,
+		containerColor = MaterialTheme.subletrPalette.secondaryButtonBackgroundColor,
+		contentColor = MaterialTheme.subletrPalette.primaryTextColor,
 	),
 	elevation: ButtonElevation? = ButtonDefaults.buttonElevation(),
 	border: BorderStroke? = null,

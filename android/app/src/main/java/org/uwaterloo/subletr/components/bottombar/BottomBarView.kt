@@ -1,6 +1,7 @@
 package org.uwaterloo.subletr.components.bottombar
 
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.NavigationBarItemDefaults
@@ -15,8 +16,7 @@ import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.navOptions
 import org.uwaterloo.subletr.navigation.NavigationDestination
 import org.uwaterloo.subletr.theme.bottomBarItemText
-import org.uwaterloo.subletr.theme.subletrPink
-import org.uwaterloo.subletr.theme.unselectedGray
+import org.uwaterloo.subletr.theme.subletrPalette
 
 @Composable
 fun BottomBarView(
@@ -68,8 +68,8 @@ fun BottomBarView(
 						)
 					},
 					colors = NavigationBarItemDefaults.colors(
-						selectedIconColor = subletrPink,
-						unselectedIconColor = unselectedGray,
+						selectedIconColor = MaterialTheme.subletrPalette.subletrPink,
+						unselectedIconColor = MaterialTheme.subletrPalette.unselectedGray,
 					),
 				)
 			}

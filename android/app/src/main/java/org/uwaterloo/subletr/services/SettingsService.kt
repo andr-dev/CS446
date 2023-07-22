@@ -1,60 +1,67 @@
 package org.uwaterloo.subletr.services
 
+import android.content.Context
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.snapshotFlow
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
+
 
 class SettingsService(
 	private val ioService: IIoService,
+	val context: Context,
 ): ISettingsService {
-	private var useDeviceTheme: Boolean =
+	override val useDeviceTheme: MutableState<Boolean> =
 		if (settingExists(DEFAULT_DISPLAY_SETTINGS_PATH))
-			ioService.readStringFromInternalFile(DEFAULT_DISPLAY_SETTINGS_PATH).toBoolean()
-		else true
-	private var useDarkTheme: Boolean =
+			mutableStateOf(
+				value = ioService.readStringFromInternalFile(DEFAULT_DISPLAY_SETTINGS_PATH).toBoolean(),
+			)
+		else mutableStateOf(value = true)
+	override val useDarkTheme: MutableState<Boolean> =
 		if (settingExists(DISPLAY_THEME_SETTINGS_PATH))
-			ioService.readStringFromInternalFile(DISPLAY_THEME_SETTINGS_PATH).toBoolean()
-		else false
-	private var allowChatNotifications: Boolean =
+			mutableStateOf(
+				value = ioService.readStringFromInternalFile(DISPLAY_THEME_SETTINGS_PATH).toBoolean(),
+			)
+		else mutableStateOf(value = false)
+	override val allowChatNotifications: MutableState<Boolean> =
 		if (settingExists(CHAT_NOTIFICATIONS_SETTINGS_PATH))
-			ioService.readStringFromInternalFile(CHAT_NOTIFICATIONS_SETTINGS_PATH).toBoolean()
-		else true
+			mutableStateOf(
+				value = ioService.readStringFromInternalFile(CHAT_NOTIFICATIONS_SETTINGS_PATH).toBoolean()
+			)
+		else mutableStateOf(value = true)
+	override fun subscribe(coroutineScope: CoroutineScope) {
+		snapshotFlow { useDeviceTheme.value }
+			.onEach {
+				ioService.writeStringToInternalFile(
+					fileName = DEFAULT_DISPLAY_SETTINGS_PATH,
+					input = it.toString(),
+				)
+			}
+			.launchIn(coroutineScope)
+
+		snapshotFlow { useDarkTheme.value }
+			.onEach {
+				ioService.writeStringToInternalFile(
+					fileName = DISPLAY_THEME_SETTINGS_PATH,
+					input = it.toString(),
+				)
+			}
+			.launchIn(coroutineScope)
+
+		snapshotFlow { useDarkTheme.value }
+			.onEach {
+				ioService.writeStringToInternalFile(
+					fileName = CHAT_NOTIFICATIONS_SETTINGS_PATH,
+					input = it.toString(),
+				)
+			}
+			.launchIn(coroutineScope)
+	}
 
 	private fun settingExists(filePath: String): Boolean {
 		return ioService.internalFileExists(filePath)
-	}
-
-	override fun setDefaultDisplayTheme(useOSSetting: Boolean) {
-		ioService.writeStringToInternalFile(
-			fileName = DEFAULT_DISPLAY_SETTINGS_PATH,
-			input = useOSSetting.toString(),
-		)
-		useDeviceTheme = useOSSetting
-	}
-
-	override fun setDisplayTheme(useDarkMode: Boolean) {
-		ioService.writeStringToInternalFile(
-			fileName = DISPLAY_THEME_SETTINGS_PATH,
-			input = useDarkMode.toString(),
-		)
-		useDarkTheme = useDarkMode
-	}
-
-	override fun setChatNotifications(allowNotifications: Boolean) {
-		ioService.writeStringToInternalFile(
-			fileName = CHAT_NOTIFICATIONS_SETTINGS_PATH,
-			input = allowNotifications.toString(),
-		)
-		allowChatNotifications = allowNotifications
-	}
-
-	override fun getDefaultDisplayTheme(): Boolean {
-		return useDeviceTheme
-	}
-
-	override fun getDisplayTheme(): Boolean {
-		return useDarkTheme
-	}
-
-	override fun getChatNotifications(): Boolean {
-		return allowChatNotifications
 	}
 
 	companion object {
