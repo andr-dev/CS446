@@ -19,7 +19,9 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -43,7 +45,9 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.sp
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
 import com.google.maps.android.compose.GoogleMap
@@ -53,6 +57,7 @@ import com.google.maps.android.compose.rememberCameraPositionState
 import kotlinx.coroutines.launch
 import org.uwaterloo.subletr.R
 import org.uwaterloo.subletr.components.textfield.RoundedTextField
+import org.uwaterloo.subletr.navigation.NavigationDestination
 import org.uwaterloo.subletr.pages.home.HomePageUiState
 import org.uwaterloo.subletr.pages.home.HomePageViewModel
 import org.uwaterloo.subletr.pages.home.map.HomeMapChildViewModel.Companion.CURRENT_LOCATION_STRING_VAL
@@ -115,7 +120,28 @@ fun HomeMapChildView(
 		modifier = modifier
 			.fillMaxSize(fraction = 1.0f),
 		topBar = {Box{}},
-		bottomBar = {Box{}}
+		bottomBar = {Box{}},
+		floatingActionButton = {
+			FloatingActionButton(
+				modifier = Modifier.padding(
+					all = dimensionResource(id = R.dimen.zero),
+				),
+				onClick = {
+					viewModel.navHostController.navigate(NavigationDestination.CREATE_LISTING.fullNavPath)
+				},
+				shape = CircleShape,
+				containerColor = MaterialTheme.subletrPalette.subletrPink,
+				contentColor = MaterialTheme.subletrPalette.textOnSubletrPink,
+			) {
+				Text(
+					stringResource(id = R.string.plus_sign),
+					style = TextStyle(
+						fontSize = 24.sp
+					),
+					color = MaterialTheme.subletrPalette.textOnSubletrPink,
+				)
+			}
+		},
 	) { paddingValues ->
 		if (uiState is HomeMapUiState.Loading) {
 			Column(
