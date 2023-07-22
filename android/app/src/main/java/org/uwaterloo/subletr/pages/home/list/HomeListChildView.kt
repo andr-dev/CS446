@@ -1,5 +1,6 @@
 package org.uwaterloo.subletr.pages.home.list
 
+import android.graphics.Bitmap
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -43,6 +44,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.sp
 import kotlinx.coroutines.launch
 import org.uwaterloo.subletr.R
+import org.uwaterloo.subletr.api.models.ListingSummary
 import org.uwaterloo.subletr.enums.FilterType
 import org.uwaterloo.subletr.enums.Gender
 import org.uwaterloo.subletr.enums.HousingType
@@ -74,171 +76,169 @@ fun HomeListChildView(
 	viewModel: HomeListChildViewModel,
 	uiState: HomeListUiState,
 ) {
-	if (uiState is HomeListUiState.Loading) {
-		Column(
-			modifier = modifier
-				.fillMaxSize(1.0f)
-				.imePadding(),
-			horizontalAlignment = Alignment.CenterHorizontally,
-			verticalArrangement = Arrangement.Center,
-		) {
-			CircularProgressIndicator()
-		}
-	} else if (uiState is HomeListUiState.Loaded) {
-		val filterType = remember { mutableStateOf(FilterType.LOCATION) }
-		val coroutineScope = rememberCoroutineScope()
-		val modelSheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
-		var isBottomSheetOpen by remember {
-			mutableStateOf(false)
-		}
-		val listState: LazyListState = rememberLazyListState()
-		val lastItemIsShowing by remember {
-			derivedStateOf {
-				if (listState.layoutInfo.totalItemsCount == 0) {
-					false
-				} else {
-					listState.layoutInfo.visibleItemsInfo.lastOrNull()?.index == listState.layoutInfo.totalItemsCount - 1
+	Scaffold(
+		modifier = modifier.fillMaxSize(1.0f),
+		floatingActionButtonPosition = FabPosition.End,
+		floatingActionButton = {
+			FloatingActionButton(
+				modifier = Modifier.padding(
+					all = dimensionResource(id = R.dimen.zero),
+				),
+				onClick = {
+					viewModel.navHostController.navigate(NavigationDestination.CREATE_LISTING.fullNavPath)
+				},
+				shape = CircleShape,
+				containerColor = MaterialTheme.subletrPalette.subletrPink,
+				contentColor = MaterialTheme.subletrPalette.textOnSubletrPink,
+			) {
+				Text(
+					stringResource(id = R.string.plus_sign),
+					style = TextStyle(
+						fontSize = 24.sp
+					),
+					color = MaterialTheme.subletrPalette.textOnSubletrPink,
+				)
+			}
+		},
+		topBar = {
+			Box(modifier = Modifier)
+		},
+		bottomBar = {
+			Box(modifier = Modifier)
+		},
+	) { scaffoldPadding ->
+		if (uiState is HomeListUiState.Loading) {
+			Column(
+				modifier = Modifier
+					.fillMaxSize(1.0f)
+					.padding(paddingValues = scaffoldPadding)
+					.imePadding(),
+				horizontalAlignment = Alignment.CenterHorizontally,
+				verticalArrangement = Arrangement.Center,
+			) {
+				CircularProgressIndicator()
+			}
+		} else if (uiState is HomeListUiState.Loaded) {
+			val filterType = remember { mutableStateOf(FilterType.LOCATION) }
+			val coroutineScope = rememberCoroutineScope()
+			val modelSheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
+			var isBottomSheetOpen by remember {
+				mutableStateOf(false)
+			}
+			val listState: LazyListState = rememberLazyListState()
+			val lastItemIsShowing by remember {
+				derivedStateOf {
+					if (listState.layoutInfo.totalItemsCount == 0) {
+						false
+					} else {
+						listState.layoutInfo.visibleItemsInfo.lastOrNull()?.index == listState.layoutInfo.totalItemsCount - 1
+					}
 				}
 			}
-		}
 
-		LaunchedEffect(key1 = lastItemIsShowing) {
-			if (lastItemIsShowing) {
+			LaunchedEffect(key1 = lastItemIsShowing) {
+				if (lastItemIsShowing) {
+					viewModel.getListingParamsStream.onNext(
+						HomePageViewModel.GetListingParams(
+							filters = uiState.filters,
+							transportationMethod = HomePageUiState.TransportationMethod.WALK,
+							listingPagingParams = HomePageViewModel.ListingPagingParams(
+								previousListingItemsModel = uiState.listingItems,
+								pageNumber = listState.layoutInfo.totalItemsCount.floorDiv(
+									HomePageViewModel.LISTING_PAGE_SIZE
+								)
+							),
+							homePageView = HomePageUiState.HomePageViewType.LIST,
+						)
+					)
+				}
+			}
+
+			fun updateLocationFilter(newVal: HomePageUiState.LocationRange) {
 				viewModel.getListingParamsStream.onNext(
 					HomePageViewModel.GetListingParams(
-						filters = uiState.filters,
+						filters = uiState.filters.copy(locationRange = newVal),
 						transportationMethod = HomePageUiState.TransportationMethod.WALK,
-						listingPagingParams = HomePageViewModel.ListingPagingParams(
-							previousListingItemsModel = uiState.listingItems,
-							pageNumber = listState.layoutInfo.totalItemsCount
-								.floorDiv(HomePageViewModel.LISTING_PAGE_SIZE)
-						),
 						homePageView = HomePageUiState.HomePageViewType.LIST,
 					)
 				)
 			}
-		}
 
-		fun updateLocationFilter(newVal: HomePageUiState.LocationRange) {
-			viewModel.getListingParamsStream.onNext(
-				HomePageViewModel.GetListingParams(
-					filters = uiState.filters.copy(locationRange = newVal),
-					transportationMethod = HomePageUiState.TransportationMethod.WALK,
-					homePageView = HomePageUiState.HomePageViewType.LIST,
-				)
-			)
-		}
-
-		fun updatePriceFilter(newVal: HomePageUiState.PriceRange) {
-			viewModel.getListingParamsStream.onNext(
-				HomePageViewModel.GetListingParams(
-					filters = uiState.filters.copy(priceRange = newVal),
-					transportationMethod = HomePageUiState.TransportationMethod.WALK,
-					homePageView = HomePageUiState.HomePageViewType.LIST,
-				)
-			)
-		}
-
-		fun updateRoomFilter(newVal: HomePageUiState.RoomRange) {
-			viewModel.getListingParamsStream.onNext(
-				HomePageViewModel.GetListingParams(
-					filters = uiState.filters.copy(roomRange = newVal),
-					transportationMethod = HomePageUiState.TransportationMethod.WALK,
-					homePageView = HomePageUiState.HomePageViewType.LIST,
-				)
-			)
-		}
-
-		fun updateGenderFilter(newVal: Gender) {
-			viewModel.getListingParamsStream.onNext(
-				HomePageViewModel.GetListingParams(
-					filters = uiState.filters.copy(gender = newVal),
-					transportationMethod = HomePageUiState.TransportationMethod.WALK,
-					homePageView = HomePageUiState.HomePageViewType.LIST,
-				)
-			)
-		}
-
-		fun updateHousingFilter(newVal: HousingType) {
-			viewModel.getListingParamsStream.onNext(
-				HomePageViewModel.GetListingParams(
-					filters = uiState.filters.copy(housingType = newVal),
-					transportationMethod = HomePageUiState.TransportationMethod.WALK,
-					homePageView = HomePageUiState.HomePageViewType.LIST,
-				)
-			)
-		}
-
-		fun updateDateFilter(newVal: HomePageUiState.DateRange) {
-			viewModel.getListingParamsStream.onNext(
-				HomePageViewModel.GetListingParams(
-					filters = uiState.filters.copy(dateRange = newVal),
-					transportationMethod = HomePageUiState.TransportationMethod.WALK,
-					homePageView = HomePageUiState.HomePageViewType.LIST,
-				)
-			)
-		}
-
-		fun updateFavouriteFilter(newVal: Boolean) {
-			viewModel.getListingParamsStream.onNext(
-				HomePageViewModel.GetListingParams(
-					filters = uiState.filters.copy(favourite = newVal),
-					transportationMethod = HomePageUiState.TransportationMethod.WALK,
-					homePageView = HomePageUiState.HomePageViewType.LIST,
-				)
-			)
-		}
-
-		fun updateAllFilters(newVal: HomePageUiState.FiltersModel) {
-			viewModel.getListingParamsStream.onNext(
-				HomePageViewModel.GetListingParams(
-					filters = newVal,
-					transportationMethod = HomePageUiState.TransportationMethod.WALK,
-					homePageView = HomePageUiState.HomePageViewType.LIST,
-				)
-
-
-			)
-		}
-
-		fun closeBottomSheet() {
-			coroutineScope.launch {
-				isBottomSheetOpen = false
-			}
-		}
-
-		Scaffold(
-			modifier = modifier
-				.fillMaxSize(1.0f),
-			floatingActionButtonPosition = FabPosition.End,
-			floatingActionButton = {
-				FloatingActionButton(
-					modifier = Modifier.padding(
-						all = dimensionResource(id = R.dimen.zero),
-					),
-					onClick = {
-						viewModel.navHostController.navigate(NavigationDestination.CREATE_LISTING.fullNavPath)
-					},
-					shape = CircleShape,
-					containerColor = MaterialTheme.subletrPalette.subletrPink,
-					contentColor = MaterialTheme.subletrPalette.textOnSubletrPink,
-				) {
-					Text(
-						stringResource(id = R.string.plus_sign),
-						style = TextStyle(
-							fontSize = 24.sp
-						),
-						color = MaterialTheme.subletrPalette.textOnSubletrPink,
+			fun updatePriceFilter(newVal: HomePageUiState.PriceRange) {
+				viewModel.getListingParamsStream.onNext(
+					HomePageViewModel.GetListingParams(
+						filters = uiState.filters.copy(priceRange = newVal),
+						transportationMethod = HomePageUiState.TransportationMethod.WALK,
+						homePageView = HomePageUiState.HomePageViewType.LIST,
 					)
+				)
+			}
+
+			fun updateRoomFilter(newVal: HomePageUiState.RoomRange) {
+				viewModel.getListingParamsStream.onNext(
+					HomePageViewModel.GetListingParams(
+						filters = uiState.filters.copy(roomRange = newVal),
+						transportationMethod = HomePageUiState.TransportationMethod.WALK,
+						homePageView = HomePageUiState.HomePageViewType.LIST,
+					)
+				)
+			}
+
+			fun updateGenderFilter(newVal: Gender) {
+				viewModel.getListingParamsStream.onNext(
+					HomePageViewModel.GetListingParams(
+						filters = uiState.filters.copy(gender = newVal),
+						transportationMethod = HomePageUiState.TransportationMethod.WALK,
+						homePageView = HomePageUiState.HomePageViewType.LIST,
+					)
+				)
+			}
+
+			fun updateHousingFilter(newVal: HousingType) {
+				viewModel.getListingParamsStream.onNext(
+					HomePageViewModel.GetListingParams(
+						filters = uiState.filters.copy(housingType = newVal),
+						transportationMethod = HomePageUiState.TransportationMethod.WALK,
+						homePageView = HomePageUiState.HomePageViewType.LIST,
+					)
+				)
+			}
+
+			fun updateDateFilter(newVal: HomePageUiState.DateRange) {
+				viewModel.getListingParamsStream.onNext(
+					HomePageViewModel.GetListingParams(
+						filters = uiState.filters.copy(dateRange = newVal),
+						transportationMethod = HomePageUiState.TransportationMethod.WALK,
+						homePageView = HomePageUiState.HomePageViewType.LIST,
+					)
+				)
+			}
+
+			fun updateFavouriteFilter(newVal: Boolean) {
+				viewModel.getListingParamsStream.onNext(
+					HomePageViewModel.GetListingParams(
+						filters = uiState.filters.copy(favourite = newVal),
+						transportationMethod = HomePageUiState.TransportationMethod.WALK,
+						homePageView = HomePageUiState.HomePageViewType.LIST,
+					)
+				)
+			}
+
+			fun updateAllFilters(newVal: HomePageUiState.FiltersModel) {
+				viewModel.getListingParamsStream.onNext(
+					HomePageViewModel.GetListingParams(
+						filters = newVal,
+						transportationMethod = HomePageUiState.TransportationMethod.WALK,
+						homePageView = HomePageUiState.HomePageViewType.LIST,
+					)
+				)
+			}
+
+			fun closeBottomSheet() {
+				coroutineScope.launch {
+					isBottomSheetOpen = false
 				}
-			},
-			topBar = {
-				Box(modifier = Modifier)
-			},
-			bottomBar = {
-				Box(modifier = Modifier)
-			},
-		) { scaffoldPadding ->
+			}
 			LazyColumn(
 				modifier = Modifier
 					.fillMaxSize(1.0f)
@@ -252,7 +252,6 @@ fun HomeListChildView(
 				horizontalAlignment = Alignment.CenterHorizontally,
 				userScrollEnabled = true,
 			) {
-
 				item {
 					Column {
 						LazyRow(
@@ -297,7 +296,6 @@ fun HomeListChildView(
 											filterType.value = it
 											coroutineScope.launch {
 												isBottomSheetOpen = true
-
 											}
 										},
 									)
@@ -364,7 +362,6 @@ fun HomeListChildView(
 											coroutineScope = coroutineScope,
 											closeAction = ::closeBottomSheet,
 										)
-
 									}
 								},
 							)
@@ -373,8 +370,9 @@ fun HomeListChildView(
 				}
 
 				items(uiState.listingItems.listings.size) {
-					val listingSummary = uiState.listingItems.listings[it]
-					val listingImage = uiState.listingItems.listingsImages.getOrNull(it)
+					val listingSummary: ListingSummary = uiState.listingItems.listings[it]
+					val listingImage: Bitmap? =
+						uiState.listingItems.listingsImages.getOrNull(it)
 					HomeListListingItemView(
 						listingSummary = listingSummary,
 						listingImage = listingImage,
@@ -387,7 +385,6 @@ fun HomeListChildView(
 				}
 			}
 		}
-
 	}
 }
 
