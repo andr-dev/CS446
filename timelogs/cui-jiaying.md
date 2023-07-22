@@ -20,3 +20,4 @@
 | July 15th | 2.5 hours | add date and favourite filter |
 | July 16th | 7 hours | sync with backend to update api calls and look into location service|
 | July 17th | 1 hours | update review and update api calls|
+| July 22th | 4 hours | create all filter|
