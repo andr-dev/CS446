@@ -32,11 +32,13 @@ fun StaticRatingsBar(
 		modifier = modifier,
 		horizontalArrangement = Arrangement.spacedBy(dimensionResource(id = R.dimen.xxxs))
 	) {
-		(1..5).toList().forEach {
-			RatingStar(rating =
-			if (it - rating <= 0.0f) 1.0f
-			else if (it - rating >= 1.0f) 0.0f
-			else 1 - (it - rating))
+		for (i in 1..5) {
+			RatingStar(
+				rating =
+				if (i - rating <= 0.0f) 1.0f
+				else if (i - rating >= 1.0f) 0.0f
+				else 1 - (i - rating),
+			)
 		}
 	}
 }

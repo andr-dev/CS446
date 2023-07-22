@@ -128,16 +128,17 @@ class AccountPageViewModel @Inject constructor(
 		.onErrorResumeWith(Observable.never())
 		.subscribeOn(Schedulers.io())
 
-	private val listingImageBitmapStream: Observable<Optional<Bitmap>> = listingImageStream.map {
-		val nullableVersion = it.getOrNull()
-		if (nullableVersion != null) {
-			Optional.of(nullableVersion.base64ToBitmap())
-		}
-		else {
-			Optional.empty<Bitmap>()
-		}
-	}
+	private val listingImageBitmapStream: Observable<Optional<Bitmap>> = listingImageStream
 		.observeOn(Schedulers.computation())
+		.map {
+			val nullableVersion = it.getOrNull()
+			if (nullableVersion != null) {
+				Optional.of(nullableVersion.base64ToBitmap())
+			}
+			else {
+				Optional.empty<Bitmap>()
+			}
+		}
 
 	private val avatarStream: Observable<Optional<String>> = avatarStringStream.map{
 			val user = authenticationService.isAuthenticatedUser()
@@ -160,16 +161,18 @@ class AccountPageViewModel @Inject constructor(
 			.onErrorResumeWith(Observable.never())
 			.subscribeOn(Schedulers.io())
 
-	private val avatarBitmapStream: Observable<Optional<Bitmap>> = avatarStream.map {
-		val nullableVersion = it.getOrNull()
-		if (nullableVersion != null) {
-			Optional.of(nullableVersion.base64ToBitmap())
-		}
-		else {
-			Optional.empty<Bitmap>()
-		}
-	}
+	private val avatarBitmapStream: Observable<Optional<Bitmap>> = avatarStream
 		.observeOn(Schedulers.computation())
+		.map {
+			val nullableVersion = it.getOrNull()
+			if (nullableVersion != null) {
+				Optional.of(nullableVersion.base64ToBitmap())
+			}
+			else {
+				Optional.empty<Bitmap>()
+			}
+		}
+		.observeOn(Schedulers.io())
 
 	override val uiStateStream: Observable<AccountPageUiState> = Observable.combineLatest(
 		personalInformationStream,
