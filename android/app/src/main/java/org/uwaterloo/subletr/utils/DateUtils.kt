@@ -1,6 +1,8 @@
 package org.uwaterloo.subletr.utils
 
 import android.text.format.DateFormat
+import androidx.compose.material3.DatePickerDefaults
+import androidx.compose.material3.ExperimentalMaterial3Api
 import java.time.LocalDateTime
 import java.time.OffsetDateTime
 import java.time.ZoneId
@@ -29,3 +31,7 @@ fun parseUTCDateTimeToLocal(dateTimeString: String): String {
 fun OffsetDateTime.localize(): String {
 	return this.atZoneSameInstant(ZoneId.systemDefault()).format(useLocalization())
 }
+@OptIn(ExperimentalMaterial3Api::class)
+val displayDateFormatter =
+	DatePickerDefaults.dateFormatter(selectedDateSkeleton = "MM/dd/yyyy")
+val storeDateFormatISO: DateTimeFormatter = DateTimeFormatter.ISO_LOCAL_DATE_TIME

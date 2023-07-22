@@ -1,6 +1,7 @@
 package org.uwaterloo.subletr.pages.home.list.components
 
 import androidx.annotation.StringRes
+import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -45,12 +46,13 @@ import org.uwaterloo.subletr.theme.subletrPalette
 @Composable
 fun BasicFilterLayout(
 	modifier: Modifier = Modifier,
+	contentModifier: Modifier = Modifier,
 	@StringRes titleId: Int,
 	closeAction: () -> Unit,
 	content: @Composable (() -> Unit),
 	updateFilterAndClose: () -> Unit,
 	clearAction: () -> Unit,
-	revertInput: () -> Unit,
+	revertInput: () -> Unit = {},
 ) {
 	Scaffold(
 		modifier = modifier
@@ -71,7 +73,6 @@ fun BasicFilterLayout(
 				Icon(
 					modifier = Modifier.clickable {
 						closeAction()
-						revertInput()
 					},
 					painter = painterResource(
 						id = R.drawable.close_filled_black_24
@@ -89,14 +90,9 @@ fun BasicFilterLayout(
 		},
 		bottomBar = {
 			Column(
-				modifier = Modifier.height(dimensionResource(id = R.dimen.xxl)),
+				modifier = Modifier.height(dimensionResource(id = R.dimen.xxl)).background(Color.White),
 			) {
-				Divider(
-					color = MaterialTheme.subletrPalette.textFieldBackgroundColor,
-					modifier = Modifier
-						.height(dimensionResource(id = R.dimen.xxxxs))
-						.fillMaxWidth(),
-				)
+				FilterDefaultDivider()
 				Row(
 					modifier = Modifier
 						.fillMaxWidth(1.0f)
@@ -131,7 +127,7 @@ fun BasicFilterLayout(
 		}
 	) { paddingValues ->
 		Box(
-			modifier = Modifier
+			modifier = contentModifier
 				.padding(
 					top = paddingValues.calculateTopPadding(),
 					bottom = dimensionResource(R.dimen.zero),
@@ -212,6 +208,15 @@ fun DefaultFilterButton(
 		),
 	)
 
+}
+@Composable
+fun FilterDefaultDivider(modifier: Modifier = Modifier){
+	Divider(
+		color = MaterialTheme.subletrPalette.textFieldBackgroundColor,
+		modifier = modifier
+			.height(dimensionResource(id = R.dimen.xxxxs))
+			.fillMaxWidth(),
+	)
 }
 
 fun verifyNewBoundVal(
