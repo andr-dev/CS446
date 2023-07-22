@@ -76,7 +76,7 @@ fun AllFilter(
 			currentFilterVals.housingType
 		)
 	}
-	var startButtonText by remember {
+	var startDateButtonText by remember {
 		mutableStateOf(
 			currentFilterVals.dateRange.startingDate?.let {
 				parseUTCDateTimeToLocal(it)
@@ -84,7 +84,7 @@ fun AllFilter(
 		)
 
 	}
-	var endButtonText by remember {
+	var endDateButtonText by remember {
 		mutableStateOf(
 			currentFilterVals.dateRange.endingDate?.let {
 				parseUTCDateTimeToLocal(it)
@@ -173,7 +173,7 @@ fun AllFilter(
 				state = listState,
 				verticalArrangement = Arrangement.spacedBy(dimensionResource(id = R.dimen.s))
 			) {
-				item { FilterDefaultDivider(modifier = Modifier.shadow(2.dp)) }
+				item { FilterDefaultDivider(modifier = Modifier.shadow(dimensionResource(id = R.dimen.xxxs))) }
 				item {
 					Text(
 						text = stringResource(id = R.string.dates),
@@ -197,7 +197,7 @@ fun AllFilter(
 									shape = RoundedCornerShape(dimensionResource(id = R.dimen.xxxxl)),
 								),
 							labelStringId = R.string.start_date,
-							value = startButtonText,
+							value = startDateButtonText,
 							onClick = {
 								coroutineScope.launch {
 									openDatePicker = true
@@ -215,12 +215,12 @@ fun AllFilter(
 									shape = RoundedCornerShape(dimensionResource(id = R.dimen.xxxxl)),
 								),
 							labelStringId = R.string.end_date,
-							value = endButtonText,
+							value = endDateButtonText,
 							onClick = {
 								coroutineScope.launch {
 									openDatePicker = true
 								}
-							})
+							},)
 					}
 
 					if (openDatePicker) {
@@ -233,13 +233,13 @@ fun AllFilter(
 										if (!datePickerBottomSheetState.isVisible) {
 											openDatePicker = false
 										}
-										startButtonText =
+										startDateButtonText =
 											displayDateFormatter.formatDate(
 												dateRangePickerState.selectedStartDateMillis,
 												locale = Locale.getDefault()
 											) ?: ""
 
-										endButtonText =
+										endDateButtonText =
 											displayDateFormatter.formatDate(
 												dateRangePickerState.selectedEndDateMillis,
 												locale = Locale.getDefault()
@@ -338,7 +338,7 @@ fun AllFilter(
 									colors = SliderDefaults.colors(
 										thumbColor = MaterialTheme.subletrPalette.primaryBackgroundColor,
 									),
-									enabled = true
+									enabled = true,
 								)
 							},
 							endThumb = {
@@ -350,7 +350,7 @@ fun AllFilter(
 									colors = SliderDefaults.colors(
 										thumbColor = MaterialTheme.subletrPalette.primaryBackgroundColor,
 									),
-									enabled = true
+									enabled = true,
 								)
 							},
 						)
@@ -373,7 +373,7 @@ fun AllFilter(
 									lowerLocTextFieldError =
 										!verifyNewBoundVal(
 											newVal = lowerLocBoundText,
-											upperBound = upperLocBoundText
+											upperBound = upperLocBoundText,
 										)
 									val newNum = it.trim().toIntOrNull()
 									if (newNum == null || lowerLocTextFieldError || newNum > MAX_LOCATION_RANGE) {
@@ -697,8 +697,8 @@ fun AllFilter(
 		closeAction = closeAction,
 		clearAction = {
 			housingPref = HousingType.OTHER
-			startButtonText = ""
-			endButtonText = ""
+			startDateButtonText = ""
+			endDateButtonText = ""
 			lowerPriceBoundText = ""
 			upperPriceBoundText = ""
 			lowerLocBound = 0
@@ -721,8 +721,8 @@ fun AllFilter(
 		},
 		updateFilterAndClose = {
 			if (!lowerLocTextFieldError && !upperLocTextFieldError && !lowerPriceTextFieldError && !upperPriceTextFieldError) {
-				val newStartingDate = if (startButtonText != "")  SimpleDateFormat("MM/dd/yyyy").parse(startButtonText) else ""
-				val newEndingDate = if (endButtonText != "") SimpleDateFormat("MM/dd/yyyy").parse(endButtonText) else ""
+				val newStartingDate = if (startDateButtonText != "")  SimpleDateFormat("MM/dd/yyyy").parse(startDateButtonText) else ""
+				val newEndingDate = if (endDateButtonText != "") SimpleDateFormat("MM/dd/yyyy").parse(endDateButtonText) else ""
 				updateFilterVals(
 					currentFilterVals.copy(
 						priceRange = HomePageUiState.PriceRange(
@@ -750,7 +750,7 @@ fun AllFilter(
 						favourite = isFavourite,
 						locationRange = HomePageUiState.LocationRange(
 							lowerLocBoundText.toIntOrNull(),
-							upperLocBoundText.toIntOrNull()
+							upperLocBoundText.toIntOrNull(),
 						),
 					)
 				)
