@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.size
@@ -162,9 +163,9 @@ fun AllFilter(
 	}
 	val datePickerBottomSheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
 	BasicFilterLayout(
-		modifier = Modifier.height(800.dp),
+		modifier = Modifier.fillMaxHeight(1.0f),
 		titleId = R.string.all_filters,
-		contentModifier = Modifier.height(700.dp),
+		contentModifier = Modifier.fillMaxHeight(1.0f),
 		content = {
 			LazyColumn(
 				modifier = Modifier
@@ -689,7 +690,7 @@ fun AllFilter(
 						)
 					}
 				}
-				item { Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.l))) }
+				item { Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.xxl))) }
 			}
 
 
@@ -721,8 +722,8 @@ fun AllFilter(
 		},
 		updateFilterAndClose = {
 			if (!lowerLocTextFieldError && !upperLocTextFieldError && !lowerPriceTextFieldError && !upperPriceTextFieldError) {
-				val newStartingDate = if (startDateButtonText != "")  SimpleDateFormat("MM/dd/yyyy").parse(startDateButtonText) else ""
-				val newEndingDate = if (endDateButtonText != "") SimpleDateFormat("MM/dd/yyyy").parse(endDateButtonText) else ""
+				val newStartingDate = if (startDateButtonText.isNotEmpty())  SimpleDateFormat("MM/dd/yyyy").parse(startDateButtonText) else ""
+				val newEndingDate = if (endDateButtonText.isNotEmpty()) SimpleDateFormat("MM/dd/yyyy").parse(endDateButtonText) else ""
 				updateFilterVals(
 					currentFilterVals.copy(
 						priceRange = HomePageUiState.PriceRange(
