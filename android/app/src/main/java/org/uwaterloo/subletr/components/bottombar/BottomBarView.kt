@@ -1,5 +1,7 @@
 package org.uwaterloo.subletr.components.bottombar
 
+import androidx.compose.foundation.border
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
@@ -8,12 +10,16 @@ import androidx.compose.material3.NavigationBarItemDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.navOptions
+import org.uwaterloo.subletr.R
 import org.uwaterloo.subletr.navigation.NavigationDestination
 import org.uwaterloo.subletr.theme.bottomBarItemText
 import org.uwaterloo.subletr.theme.subletrPalette
@@ -24,8 +30,28 @@ fun BottomBarView(
 	currentDestination: NavigationDestination,
 	viewModel: BottomBarViewModel = hiltViewModel(),
 ) {
+	val navigationBarShape = RoundedCornerShape(
+		topStart = dimensionResource(id = R.dimen.s),
+		topEnd = dimensionResource(id = R.dimen.s),
+		bottomEnd = dimensionResource(id = R.dimen.zero),
+		bottomStart = dimensionResource(id = R.dimen.zero),
+	)
+
 	NavigationBar(
-		modifier = modifier,
+		modifier = modifier
+			.clip(
+				shape = navigationBarShape,
+			)
+			.border(
+				width = dimensionResource(id = R.dimen.xxxxs),
+				color = MaterialTheme.subletrPalette.textFieldBorderColor,
+				shape = navigationBarShape,
+			)
+			.shadow(
+				elevation = dimensionResource(id = R.dimen.xxs),
+				shape = navigationBarShape,
+				ambientColor = MaterialTheme.subletrPalette.textFieldBorderColor,
+			),
 	) {
 		NavigationDestination.values().forEach {
 			if (it.bottomBarNavigationItems != null) {
