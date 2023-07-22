@@ -344,6 +344,7 @@ class UserApi(basePath: kotlin.String = defaultBasePath, client: OkHttpClient = 
     /**
      * 
      * 
+     * @param userId  (optional)
      * @return GetUserResponse
      * @throws IllegalStateException If the request is not correctly configured
      * @throws IOException Rethrows the OkHttp execute method exception
@@ -353,8 +354,8 @@ class UserApi(basePath: kotlin.String = defaultBasePath, client: OkHttpClient = 
      */
     @Suppress("UNCHECKED_CAST")
     @Throws(IllegalStateException::class, IOException::class, UnsupportedOperationException::class, ClientException::class, ServerException::class)
-    suspend fun userGet() : GetUserResponse = withContext(Dispatchers.IO) {
-        val localVarResponse = userGetWithHttpInfo()
+    suspend fun userGet(userId: kotlin.Int? = null) : GetUserResponse = withContext(Dispatchers.IO) {
+        val localVarResponse = userGetWithHttpInfo(userId = userId)
 
         return@withContext when (localVarResponse.responseType) {
             ResponseType.Success -> (localVarResponse as Success<*>).data as GetUserResponse
@@ -374,14 +375,15 @@ class UserApi(basePath: kotlin.String = defaultBasePath, client: OkHttpClient = 
     /**
      * 
      * 
+     * @param userId  (optional)
      * @return ApiResponse<GetUserResponse?>
      * @throws IllegalStateException If the request is not correctly configured
      * @throws IOException Rethrows the OkHttp execute method exception
      */
     @Suppress("UNCHECKED_CAST")
     @Throws(IllegalStateException::class, IOException::class)
-    suspend fun userGetWithHttpInfo() : ApiResponse<GetUserResponse?> = withContext(Dispatchers.IO) {
-        val localVariableConfig = userGetRequestConfig()
+    suspend fun userGetWithHttpInfo(userId: kotlin.Int?) : ApiResponse<GetUserResponse?> = withContext(Dispatchers.IO) {
+        val localVariableConfig = userGetRequestConfig(userId = userId)
 
         return@withContext request<Unit, GetUserResponse>(
             localVariableConfig
@@ -391,11 +393,17 @@ class UserApi(basePath: kotlin.String = defaultBasePath, client: OkHttpClient = 
     /**
      * To obtain the request config of the operation userGet
      *
+     * @param userId  (optional)
      * @return RequestConfig
      */
-    fun userGetRequestConfig() : RequestConfig<Unit> {
+    fun userGetRequestConfig(userId: kotlin.Int?) : RequestConfig<Unit> {
         val localVariableBody = null
-        val localVariableQuery: MultiValueMap = mutableMapOf()
+        val localVariableQuery: MultiValueMap = mutableMapOf<kotlin.String, kotlin.collections.List<kotlin.String>>()
+            .apply {
+                if (userId != null) {
+                    put("user_id", listOf(userId.toString()))
+                }
+            }
         val localVariableHeaders: MutableMap<String, String> = mutableMapOf()
         localVariableHeaders["Accept"] = "application/json"
 

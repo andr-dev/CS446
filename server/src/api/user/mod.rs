@@ -75,11 +75,14 @@ fn user_create(
 }
 
 #[openapi(tag = "User")]
-#[get("/get")]
-fn user_get(state: &State<AppState>, user: AuthenticatedUser) -> ServiceResult<GetUserResponse> {
+#[get("/get?<user_id>")]
+fn user_get(state: &State<AppState>, user: AuthenticatedUser, user_id: Option<i32>) -> ServiceResult<GetUserResponse> {
     let mut dbcon = state.pool.get()?;
 
-    let user: User = users::dsl::users.find(user.user_id).first(&mut dbcon).unwrap();
+    let user: User = users::dsl::users
+        .find(user_id.unwrap_or(user.user_id))
+        .first(&mut dbcon)
+        .unwrap();
 
     let rating: (i32, f32) = user_rating::dsl::user_rating
         .filter(user_rating::user_id.eq(user.user_id))
