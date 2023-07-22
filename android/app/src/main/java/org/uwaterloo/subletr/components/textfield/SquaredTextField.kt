@@ -5,6 +5,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.LocalTextStyle
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldColors
 import androidx.compose.material3.TextFieldDefaults
@@ -18,8 +19,7 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import org.uwaterloo.subletr.R
-import org.uwaterloo.subletr.theme.primaryTextColor
-import org.uwaterloo.subletr.theme.squaredTextFieldBackgroundColor
+import org.uwaterloo.subletr.theme.subletrPalette
 
 @Composable
 @Suppress("LongParameterList")
@@ -47,10 +47,10 @@ fun SquaredTextField(
 	interactionSource: MutableInteractionSource = remember { MutableInteractionSource() },
 	shape: Shape = RoundedCornerShape(dimensionResource(id = R.dimen.xs)),
 	colors: TextFieldColors = TextFieldDefaults.colors(
-		focusedTextColor = primaryTextColor,
-		unfocusedTextColor = primaryTextColor,
-		unfocusedContainerColor = squaredTextFieldBackgroundColor,
-		focusedContainerColor = squaredTextFieldBackgroundColor,
+		focusedTextColor = MaterialTheme.subletrPalette.primaryTextColor,
+		unfocusedTextColor = MaterialTheme.subletrPalette.primaryTextColor,
+		unfocusedContainerColor = MaterialTheme.subletrPalette.squaredTextFieldBackgroundColor,
+		focusedContainerColor = MaterialTheme.subletrPalette.squaredTextFieldBackgroundColor,
 		unfocusedIndicatorColor = Color.Transparent,
 		focusedIndicatorColor = Color.Transparent,
 	),

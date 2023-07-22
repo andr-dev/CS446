@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Divider
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -19,7 +20,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import org.uwaterloo.subletr.R
 import org.uwaterloo.subletr.pages.home.HomePageUiState
-import org.uwaterloo.subletr.theme.secondaryTextColor
+import org.uwaterloo.subletr.theme.subletrPalette
 
 @Composable
 fun PriceFilter(
@@ -69,7 +70,7 @@ fun PriceFilter(
 					)
 					Divider(
 						modifier = Modifier.width(width = dimensionResource(id = R.dimen.m)),
-						color = secondaryTextColor,
+						color = MaterialTheme.subletrPalette.secondaryTextColor,
 						thickness = dimensionResource(id = R.dimen.xxxxs),
 					)
 					TextFieldWithErrorIndication(

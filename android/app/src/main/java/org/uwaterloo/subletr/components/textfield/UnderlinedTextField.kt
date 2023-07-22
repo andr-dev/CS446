@@ -4,6 +4,7 @@ import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.LocalTextStyle
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldColors
 import androidx.compose.material3.TextFieldDefaults
@@ -15,8 +16,7 @@ import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
-import org.uwaterloo.subletr.theme.primaryTextColor
-import org.uwaterloo.subletr.theme.subletrPink
+import org.uwaterloo.subletr.theme.subletrPalette
 
 @Composable
 @Suppress("LongParameterList")
@@ -44,12 +44,12 @@ fun UnderlinedTextField(
 	interactionSource: MutableInteractionSource = remember { MutableInteractionSource() },
 	shape: Shape = TextFieldDefaults.shape,
 	colors: TextFieldColors = TextFieldDefaults.colors(
-		focusedTextColor = primaryTextColor,
-		unfocusedTextColor = primaryTextColor,
+		focusedTextColor = MaterialTheme.subletrPalette.primaryTextColor,
+		unfocusedTextColor = MaterialTheme.subletrPalette.primaryTextColor,
 		unfocusedContainerColor = Color.Transparent,
 		focusedContainerColor = Color.Transparent,
-		unfocusedIndicatorColor = subletrPink,
-		focusedIndicatorColor = subletrPink,
+		unfocusedIndicatorColor = MaterialTheme.subletrPalette.subletrPink,
+		focusedIndicatorColor = MaterialTheme.subletrPalette.subletrPink,
 	),
 ) {
 	TextField(

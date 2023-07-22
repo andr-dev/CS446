@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -23,10 +24,7 @@ import org.uwaterloo.subletr.R
 import org.uwaterloo.subletr.components.switch.PrimarySwitch
 import org.uwaterloo.subletr.pages.home.HomePageUiState
 import org.uwaterloo.subletr.theme.filterRegularFont
-import org.uwaterloo.subletr.theme.secondaryButtonBackgroundColor
-import org.uwaterloo.subletr.theme.secondaryTextColor
-import org.uwaterloo.subletr.theme.subletrPink
-import org.uwaterloo.subletr.theme.textOnSubletrPink
+import org.uwaterloo.subletr.theme.subletrPalette
 
 @Composable
 fun RoomFilter(
@@ -68,7 +66,7 @@ fun RoomFilter(
 				Text(
 					text = stringResource(id = R.string.bedrooms_for_sublet),
 					style = filterRegularFont,
-					color = secondaryTextColor,
+					color = MaterialTheme.subletrPalette.secondaryTextColor,
 				)
 				Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.xs)))
 
@@ -104,7 +102,7 @@ fun RoomFilter(
 				Text(
 					text = stringResource(id = R.string.bedrooms_in_property),
 					style = filterRegularFont,
-					color = secondaryTextColor,
+					color = MaterialTheme.subletrPalette.secondaryTextColor,
 				)
 				Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.xs)))
 				Row(
@@ -139,7 +137,7 @@ fun RoomFilter(
 				Text(
 					text = stringResource(id = R.string.bathrooms),
 					style = filterRegularFont,
-					color = secondaryTextColor,
+					color = MaterialTheme.subletrPalette.secondaryTextColor,
 				)
 				Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.xs)))
 				Row(
@@ -179,19 +177,19 @@ fun RoomFilter(
 					Text(
 						text = stringResource(id = R.string.ensuite_bathroom),
 						style = filterRegularFont,
-						color = secondaryTextColor,
+						color = MaterialTheme.subletrPalette.secondaryTextColor,
 					)
 					PrimarySwitch(
 						modifier = Modifier.height(dimensionResource(id = R.dimen.m)),
 						checked = ensuitebathroom,
 						onCheckedChange = { ensuitebathroom = it },
 						colors = SwitchDefaults.colors(
-							checkedTrackColor = subletrPink,
-							checkedBorderColor = subletrPink,
-							uncheckedTrackColor = secondaryButtonBackgroundColor,
-							uncheckedBorderColor = secondaryButtonBackgroundColor,
-							checkedThumbColor = textOnSubletrPink,
-							uncheckedThumbColor = textOnSubletrPink,
+							checkedTrackColor = MaterialTheme.subletrPalette.subletrPink,
+							checkedBorderColor = MaterialTheme.subletrPalette.subletrPink,
+							uncheckedTrackColor = MaterialTheme.subletrPalette.secondaryButtonBackgroundColor,
+							uncheckedBorderColor = MaterialTheme.subletrPalette.secondaryButtonBackgroundColor,
+							checkedThumbColor = MaterialTheme.subletrPalette.textOnSubletrPink,
+							uncheckedThumbColor = MaterialTheme.subletrPalette.textOnSubletrPink,
 						)
 					)
 				}

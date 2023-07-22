@@ -38,10 +38,7 @@ import org.uwaterloo.subletr.enums.Gender
 import org.uwaterloo.subletr.navigation.NavigationDestination
 import org.uwaterloo.subletr.theme.SubletrTheme
 import org.uwaterloo.subletr.theme.SubletrTypography
-import org.uwaterloo.subletr.theme.primaryTextColor
-import org.uwaterloo.subletr.theme.secondaryTextColor
-import org.uwaterloo.subletr.theme.subletrPink
-import org.uwaterloo.subletr.theme.textOnSubletrPink
+import org.uwaterloo.subletr.theme.subletrPalette
 
 
 @Composable
@@ -85,18 +82,18 @@ fun CreateAccountPageView(
 					Text(
 						text = stringResource(id = R.string.welcome_to),
 						style = SubletrTypography.bodyMedium,
-						color = primaryTextColor,
+						color = MaterialTheme.subletrPalette.primaryTextColor,
 					)
 					Row {
 						Text(
 							text = stringResource(id = R.string.app_name_black_part),
 							style = MaterialTheme.typography.titleLarge,
-							color = primaryTextColor,
+							color = MaterialTheme.subletrPalette.primaryTextColor,
 						)
 						Text(
 							text = stringResource(id = R.string.app_name_pink_part),
 							style = MaterialTheme.typography.titleLarge,
-							color = subletrPink,
+							color = MaterialTheme.subletrPalette.subletrPink,
 						)
 					}
 				}
@@ -116,7 +113,7 @@ fun CreateAccountPageView(
 				placeholder = {
 					Text(
 						text = stringResource(id = R.string.first_name),
-						color = secondaryTextColor,
+						color = MaterialTheme.subletrPalette.secondaryTextColor,
 					)
 				},
 				value = uiState.firstName,
@@ -142,7 +139,7 @@ fun CreateAccountPageView(
 				placeholder = {
 					Text(
 						text = stringResource(id = R.string.last_name),
-						color = secondaryTextColor,
+						color = MaterialTheme.subletrPalette.secondaryTextColor,
 					)
 				},
 				value = uiState.lastName,
@@ -172,7 +169,7 @@ fun CreateAccountPageView(
 				placeholder = {
 					Text(
 						text = stringResource(id = R.string.email),
-						color = secondaryTextColor,
+						color = MaterialTheme.subletrPalette.secondaryTextColor,
 					)
 				},
 				value = uiState.email,
@@ -198,7 +195,7 @@ fun CreateAccountPageView(
 				placeholder = {
 					Text(
 						text = stringResource(id = R.string.password),
-						color = secondaryTextColor,
+						color = MaterialTheme.subletrPalette.secondaryTextColor,
 					)
 				},
 				value = uiState.password,
@@ -224,7 +221,7 @@ fun CreateAccountPageView(
 				placeholder = {
 					Text(
 						text = stringResource(id = R.string.confirm_password),
-						color = secondaryTextColor,
+						color = MaterialTheme.subletrPalette.secondaryTextColor,
 					)
 				},
 				value = uiState.confirmPassword,
@@ -269,7 +266,7 @@ fun CreateAccountPageView(
 			) {
 				Text(
 					text = stringResource(id = R.string.create_account),
-					color = textOnSubletrPink,
+					color = MaterialTheme.subletrPalette.textOnSubletrPink,
 				)
 			}
 
@@ -282,7 +279,7 @@ fun CreateAccountPageView(
 			) {
 				Text(
 					text = stringResource(id = R.string.already_have_an_account),
-					color = secondaryTextColor,
+					color = MaterialTheme.subletrPalette.secondaryTextColor,
 				)
 				Button(
 					contentPadding = PaddingValues(dimensionResource(id = R.dimen.xxxxs)),
@@ -301,7 +298,7 @@ fun CreateAccountPageView(
 				) {
 					Text(
 						text = stringResource(id = R.string.log_in),
-						color = subletrPink,
+						color = MaterialTheme.subletrPalette.subletrPink,
 					)
 				}
 			}

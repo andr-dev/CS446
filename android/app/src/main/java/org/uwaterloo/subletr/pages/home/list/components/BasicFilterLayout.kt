@@ -39,12 +39,7 @@ import org.uwaterloo.subletr.R
 import org.uwaterloo.subletr.components.button.PrimaryButton
 import org.uwaterloo.subletr.components.button.SecondaryButton
 import org.uwaterloo.subletr.theme.filterBoldFont
-import org.uwaterloo.subletr.theme.primaryBackgroundColor
-import org.uwaterloo.subletr.theme.primaryTextColor
-import org.uwaterloo.subletr.theme.secondaryButtonBackgroundColor
-import org.uwaterloo.subletr.theme.secondaryTextColor
-import org.uwaterloo.subletr.theme.subletrPink
-import org.uwaterloo.subletr.theme.textFieldBackgroundColor
+import org.uwaterloo.subletr.theme.subletrPalette
 
 
 @Composable
@@ -60,7 +55,7 @@ fun BasicFilterLayout(
 	Scaffold(
 		modifier = modifier
 			.fillMaxWidth(1.0f),
-		containerColor = primaryBackgroundColor,
+		containerColor = MaterialTheme.subletrPalette.primaryBackgroundColor,
 		topBar = {
 			Row(
 				modifier = Modifier
@@ -86,7 +81,7 @@ fun BasicFilterLayout(
 				Text(
 					stringResource(id = titleId),
 					style = MaterialTheme.typography.displayMedium,
-					color = primaryTextColor,
+					color = MaterialTheme.subletrPalette.primaryTextColor,
 				)
 				Spacer(modifier = Modifier.width(dimensionResource(id = R.dimen.m)))
 
@@ -97,7 +92,7 @@ fun BasicFilterLayout(
 				modifier = Modifier.height(dimensionResource(id = R.dimen.xxl)),
 			) {
 				Divider(
-					color = textFieldBackgroundColor,
+					color = MaterialTheme.subletrPalette.textFieldBackgroundColor,
 					modifier = Modifier
 						.height(dimensionResource(id = R.dimen.xxxxs))
 						.fillMaxWidth(),
@@ -125,7 +120,7 @@ fun BasicFilterLayout(
 							stringResource(
 								id = R.string.show_sublets,
 							),
-							color = primaryBackgroundColor,
+							color = MaterialTheme.subletrPalette.primaryBackgroundColor,
 							style = filterBoldFont,
 
 							)
@@ -169,12 +164,12 @@ fun TextFieldWithErrorIndication(
 			),
 		value = value,
 		colors = TextFieldDefaults.colors(
-			unfocusedContainerColor = textFieldBackgroundColor,
-			focusedContainerColor = textFieldBackgroundColor,
+			unfocusedContainerColor = MaterialTheme.subletrPalette.textFieldBackgroundColor,
+			focusedContainerColor = MaterialTheme.subletrPalette.textFieldBackgroundColor,
 			unfocusedIndicatorColor = Color.Transparent,
 			focusedIndicatorColor = Color.Transparent,
 			errorIndicatorColor = Color.Transparent,
-			errorContainerColor = textFieldBackgroundColor,
+			errorContainerColor = MaterialTheme.subletrPalette.textFieldBackgroundColor,
 		),
 		textStyle = LocalTextStyle.current.copy(fontSize = 14.sp),
 		onValueChange = onValueChange,
@@ -185,7 +180,7 @@ fun TextFieldWithErrorIndication(
 		placeholder = {
 			Text(
 				text = placeholderString,
-				color = secondaryTextColor,
+				color = MaterialTheme.subletrPalette.secondaryTextColor,
 				style = TextStyle(fontSize = 14.sp),
 			)
 		},
@@ -211,7 +206,9 @@ fun DefaultFilterButton(
 		),
 		content = { Text(text = text, color = if (isSelected) Color.White else Color.Black) },
 		colors = ButtonDefaults.buttonColors(
-			containerColor = if (isSelected) subletrPink else secondaryButtonBackgroundColor,
+			containerColor =
+			if (isSelected) MaterialTheme.subletrPalette.subletrPink
+			else MaterialTheme.subletrPalette.secondaryButtonBackgroundColor,
 		),
 	)
 

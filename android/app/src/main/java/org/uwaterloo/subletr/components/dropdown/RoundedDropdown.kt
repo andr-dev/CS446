@@ -12,6 +12,7 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -26,8 +27,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import org.uwaterloo.subletr.R
-import org.uwaterloo.subletr.theme.secondaryTextColor
-import org.uwaterloo.subletr.theme.textFieldBackgroundColor
+import org.uwaterloo.subletr.theme.subletrPalette
 
 @Composable
 fun <T> RoundedDropdown(
@@ -51,8 +51,8 @@ fun <T> RoundedDropdown(
 				.fillMaxWidth(1.0f)
 				.height(dimensionResource(id = R.dimen.xl)),
 			colors = ButtonDefaults.buttonColors(
-				containerColor = textFieldBackgroundColor,
-				contentColor = secondaryTextColor,
+				containerColor = MaterialTheme.subletrPalette.textFieldBackgroundColor,
+				contentColor = MaterialTheme.subletrPalette.secondaryTextColor,
 			),
 			onClick = {
 				expanded = !expanded
@@ -65,7 +65,7 @@ fun <T> RoundedDropdown(
 			) {
 				Text(
 					text = dropdownItemToString(selectedDropdownItem),
-					color = secondaryTextColor,
+					color = MaterialTheme.subletrPalette.secondaryTextColor,
 				)
 
 				Icon(

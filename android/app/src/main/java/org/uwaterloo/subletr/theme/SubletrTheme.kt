@@ -7,6 +7,8 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.dynamicDarkColorScheme
 import androidx.compose.material3.dynamicLightColorScheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.ReadOnlyComposable
 import androidx.compose.runtime.SideEffect
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
@@ -38,9 +40,22 @@ fun SubletrTheme(
 		}
 	}
 
-	MaterialTheme(
-		colorScheme = colorScheme,
-		typography = SubletrTypography,
-		content = content
-	)
+	val customColorPalette =
+		if (darkTheme) OnDarkSubletrCustomColorPalette
+		else OnLightSubletrCustomColorPalette
+
+	CompositionLocalProvider(
+		LocalSubletrCustomColorPalette provides customColorPalette
+	) {
+		MaterialTheme(
+			colorScheme = colorScheme,
+			typography = SubletrTypography,
+			content = content
+		)
+	}
 }
+
+val MaterialTheme.subletrPalette: SubletrCustomColorPalette
+	@Composable
+	@ReadOnlyComposable
+	get() = LocalSubletrCustomColorPalette.current

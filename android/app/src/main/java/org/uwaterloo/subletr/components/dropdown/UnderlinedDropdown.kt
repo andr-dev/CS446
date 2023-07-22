@@ -12,6 +12,7 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -29,8 +30,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import org.uwaterloo.subletr.R
-import org.uwaterloo.subletr.theme.secondaryTextColor
-import org.uwaterloo.subletr.theme.subletrPink
+import org.uwaterloo.subletr.theme.subletrPalette
 
 @Composable
 fun <T> UnderlinedDropdown(
@@ -49,7 +49,7 @@ fun <T> UnderlinedDropdown(
 			.wrapContentSize(Alignment.TopEnd)
 			.fillMaxWidth(1.0f)
 	) {
-		val subletrPink = subletrPink
+		val subletrPink = MaterialTheme.subletrPalette.subletrPink
 		val strokeWidthDp = dimensionResource(id = R.dimen.xxxxs)
 		Button(
 			modifier = Modifier
@@ -71,8 +71,8 @@ fun <T> UnderlinedDropdown(
 			colors = ButtonDefaults.buttonColors(
 				containerColor = Color.Transparent,
 				disabledContainerColor = Color.Transparent,
-				contentColor = secondaryTextColor,
-				disabledContentColor = secondaryTextColor,
+				contentColor = MaterialTheme.subletrPalette.secondaryTextColor,
+				disabledContentColor = MaterialTheme.subletrPalette.secondaryTextColor,
 			),
 		) {
 			Row(
@@ -82,7 +82,7 @@ fun <T> UnderlinedDropdown(
 			) {
 				Text(
 					text = dropdownItemToString(selectedDropdownItem),
-					color = secondaryTextColor,
+					color = MaterialTheme.subletrPalette.secondaryTextColor,
 				)
 				Icon(
 					painter = painterResource(

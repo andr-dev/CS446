@@ -20,6 +20,7 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FabPosition
 import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -60,10 +61,7 @@ import org.uwaterloo.subletr.pages.home.list.components.RoomFilter
 import org.uwaterloo.subletr.pages.home.list.components.RoommateFilter
 import org.uwaterloo.subletr.services.NavigationService
 import org.uwaterloo.subletr.theme.SubletrTheme
-import org.uwaterloo.subletr.theme.primaryBackgroundColor
-import org.uwaterloo.subletr.theme.subletrPink
-import org.uwaterloo.subletr.theme.textFieldBorderColor
-import org.uwaterloo.subletr.theme.textOnSubletrPink
+import org.uwaterloo.subletr.theme.subletrPalette
 import java.time.OffsetDateTime
 import java.time.format.DateTimeFormatter
 
@@ -209,15 +207,15 @@ fun HomeListChildView(
 						viewModel.navHostController.navigate(NavigationDestination.CREATE_LISTING.fullNavPath)
 					},
 					shape = CircleShape,
-					containerColor = subletrPink,
-					contentColor = textOnSubletrPink,
+					containerColor = MaterialTheme.subletrPalette.subletrPink,
+					contentColor = MaterialTheme.subletrPalette.textOnSubletrPink,
 				) {
 					Text(
 						stringResource(id = R.string.plus_sign),
 						style = TextStyle(
 							fontSize = 24.sp
 						),
-						color = textOnSubletrPink,
+						color = MaterialTheme.subletrPalette.textOnSubletrPink,
 					)
 				}
 			},
@@ -265,7 +263,7 @@ fun HomeListChildView(
 									},
 									border = BorderStroke(
 										width = dimensionResource(id = R.dimen.xxxxs),
-										color = textFieldBorderColor,
+										color = MaterialTheme.subletrPalette.textFieldBorderColor,
 									),
 									contentDescription = stringResource(id = R.string.filter_menu),
 								)
@@ -299,7 +297,7 @@ fun HomeListChildView(
 								modifier = Modifier.wrapContentSize(),
 								onDismissRequest = { isBottomSheetOpen = false },
 								sheetState = modelSheetState,
-								containerColor = primaryBackgroundColor,
+								containerColor = MaterialTheme.subletrPalette.primaryBackgroundColor,
 								content = {
 									when (filterType.value) {
 										FilterType.LOCATION -> {

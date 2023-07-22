@@ -15,6 +15,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -32,8 +33,7 @@ import org.uwaterloo.subletr.pages.individualchat.IndividualChatPageUiState
 import org.uwaterloo.subletr.theme.avatarTextFont
 import org.uwaterloo.subletr.theme.headerPrimaryTitle
 import org.uwaterloo.subletr.theme.headerSecondaryTitle
-import org.uwaterloo.subletr.theme.primaryBackgroundColor
-import org.uwaterloo.subletr.theme.secondaryBackgroundColor
+import org.uwaterloo.subletr.theme.subletrPalette
 
 @Composable
 fun IndividualChatHeader(
@@ -56,7 +56,7 @@ fun IndividualChatHeader(
 		Row(
 			modifier = Modifier
 				.background(
-					color = secondaryBackgroundColor
+					color = MaterialTheme.subletrPalette.secondaryBackgroundColor
 				)
 				.fillMaxWidth(fraction = 1.0f),
 			verticalAlignment = Alignment.CenterVertically,
@@ -88,7 +88,7 @@ fun IndividualChatHeader(
 					modifier = Modifier
 						.width(dimensionResource(id = R.dimen.xl))
 						.height(dimensionResource(id = R.dimen.xl))
-						.background(color = primaryBackgroundColor),
+						.background(color = MaterialTheme.subletrPalette.primaryBackgroundColor),
 					contentAlignment = Alignment.Center,
 				) {
 					Text(

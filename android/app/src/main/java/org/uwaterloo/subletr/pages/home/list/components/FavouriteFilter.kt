@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -20,10 +21,7 @@ import androidx.compose.ui.unit.dp
 import org.uwaterloo.subletr.R
 import org.uwaterloo.subletr.components.switch.PrimarySwitch
 import org.uwaterloo.subletr.theme.filterRegularFont
-import org.uwaterloo.subletr.theme.secondaryButtonBackgroundColor
-import org.uwaterloo.subletr.theme.secondaryTextColor
-import org.uwaterloo.subletr.theme.subletrPink
-import org.uwaterloo.subletr.theme.textOnSubletrPink
+import org.uwaterloo.subletr.theme.subletrPalette
 
 @Composable
 fun FavouriteFilter(
@@ -50,19 +48,19 @@ fun FavouriteFilter(
 				Text(
 					text = stringResource(id = R.string.only_show_favourites),
 					style = filterRegularFont,
-					color = secondaryTextColor,
+					color = MaterialTheme.subletrPalette.secondaryTextColor,
 				)
 				PrimarySwitch(
 					modifier = Modifier.height(dimensionResource(id = R.dimen.m)),
 					checked = isFavourite,
 					onCheckedChange = { isFavourite = it },
 					colors = SwitchDefaults.colors(
-						checkedTrackColor = subletrPink,
-						checkedBorderColor = subletrPink,
-						uncheckedTrackColor = secondaryButtonBackgroundColor,
-						uncheckedBorderColor = secondaryButtonBackgroundColor,
-						checkedThumbColor = textOnSubletrPink,
-						uncheckedThumbColor = textOnSubletrPink,
+						checkedTrackColor = MaterialTheme.subletrPalette.subletrPink,
+						checkedBorderColor = MaterialTheme.subletrPalette.subletrPink,
+						uncheckedTrackColor = MaterialTheme.subletrPalette.secondaryButtonBackgroundColor,
+						uncheckedBorderColor = MaterialTheme.subletrPalette.secondaryButtonBackgroundColor,
+						checkedThumbColor = MaterialTheme.subletrPalette.textOnSubletrPink,
+						uncheckedThumbColor = MaterialTheme.subletrPalette.textOnSubletrPink,
 					)
 				)
 			}

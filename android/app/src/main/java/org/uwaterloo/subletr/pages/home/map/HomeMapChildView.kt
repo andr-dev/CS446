@@ -20,6 +20,7 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Slider
 import androidx.compose.material3.SliderDefaults
@@ -58,10 +59,8 @@ import org.uwaterloo.subletr.services.LocationService
 import org.uwaterloo.subletr.services.LocationService.Companion.locationPermissions
 import org.uwaterloo.subletr.services.NavigationService
 import org.uwaterloo.subletr.theme.SubletrTheme
-import org.uwaterloo.subletr.theme.secondaryTextColor
-import org.uwaterloo.subletr.theme.subletrPink
+import org.uwaterloo.subletr.theme.subletrPalette
 import org.uwaterloo.subletr.theme.timeToDestinationFont
-import org.uwaterloo.subletr.theme.unselectedGray
 import org.uwaterloo.subletr.utils.UWATERLOO_LATITUDE
 import org.uwaterloo.subletr.utils.UWATERLOO_LONGITUDE
 import kotlin.math.roundToInt
@@ -177,14 +176,14 @@ fun HomeMapChildView(
 						placeholder = {
 							Text(
 								text = stringResource(id = R.string.address_city_postal_code),
-								color = secondaryTextColor,
+								color = MaterialTheme.subletrPalette.secondaryTextColor,
 							)
 						},
 						leadingIcon = {
 							Icon(
 								painter = painterResource(id = R.drawable.search_solid_gray_24),
 								contentDescription = stringResource(id = R.string.search),
-								tint = unselectedGray,
+								tint = MaterialTheme.subletrPalette.unselectedGray,
 							)
 						},
 						trailingIcon = {
@@ -192,7 +191,7 @@ fun HomeMapChildView(
 								Icon(
 									painter = painterResource(id = R.drawable.my_location_solid_pink_24),
 									contentDescription = stringResource(id = R.string.my_location),
-									tint = subletrPink,
+									tint = MaterialTheme.subletrPalette.subletrPink,
 								)
 							}
 						},
@@ -277,8 +276,8 @@ fun HomeMapChildView(
 							)
 						},
 						colors = SliderDefaults.colors(
-							thumbColor = subletrPink,
-							activeTrackColor = subletrPink,
+							thumbColor = MaterialTheme.subletrPalette.subletrPink,
+							activeTrackColor = MaterialTheme.subletrPalette.subletrPink,
 						),
 						valueRange = 0.0f..MAX_DISTANCE_IN_MINUTES,
 					)

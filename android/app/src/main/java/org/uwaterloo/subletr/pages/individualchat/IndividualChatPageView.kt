@@ -17,6 +17,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
@@ -39,9 +40,7 @@ import org.uwaterloo.subletr.pages.individualchat.components.MyChatBubble
 import org.uwaterloo.subletr.pages.individualchat.components.OtherChatBubble
 import org.uwaterloo.subletr.services.NavigationService
 import org.uwaterloo.subletr.theme.SubletrTheme
-import org.uwaterloo.subletr.theme.primaryBackgroundColor
-import org.uwaterloo.subletr.theme.secondaryBackgroundColor
-import org.uwaterloo.subletr.theme.subletrPink
+import org.uwaterloo.subletr.theme.subletrPalette
 
 @Composable
 fun IndividualChatPageView(
@@ -96,7 +95,7 @@ fun IndividualChatPageView(
 			) {
 				Row(
 					modifier = Modifier
-						.background(secondaryBackgroundColor)
+						.background(color = MaterialTheme.subletrPalette.secondaryBackgroundColor)
 						.fillMaxWidth(fraction = 1.0f),
 					verticalAlignment = Alignment.CenterVertically,
 					horizontalArrangement = Arrangement.Center,
@@ -115,8 +114,8 @@ fun IndividualChatPageView(
 							Text(text = stringResource(id = R.string.message_ellipses))
 						},
 						colors = TextFieldDefaults.colors(
-							unfocusedContainerColor = primaryBackgroundColor,
-							focusedContainerColor = primaryBackgroundColor,
+							unfocusedContainerColor = MaterialTheme.subletrPalette.primaryBackgroundColor,
+							focusedContainerColor = MaterialTheme.subletrPalette.primaryBackgroundColor,
 							unfocusedIndicatorColor = Color.Transparent,
 							focusedIndicatorColor = Color.Transparent,
 						),
@@ -143,7 +142,7 @@ fun IndividualChatPageView(
 					) {
 						IconButton(
 							modifier = Modifier
-								.background(color = primaryBackgroundColor)
+								.background(color = MaterialTheme.subletrPalette.primaryBackgroundColor)
 								.height(dimensionResource(id = R.dimen.xxl))
 								.aspectRatio(ratio = 1.0f),
 							onClick = {},
@@ -153,7 +152,7 @@ fun IndividualChatPageView(
 									id = R.drawable.send_solid_black_24,
 								),
 								contentDescription = stringResource(id = R.string.back_arrow),
-								tint = subletrPink,
+								tint = MaterialTheme.subletrPalette.subletrPink,
 							)
 						}
 					}

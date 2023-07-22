@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -21,7 +22,7 @@ import org.uwaterloo.subletr.R
 import org.uwaterloo.subletr.models.ChatItemModel
 import org.uwaterloo.subletr.theme.SubletrTheme
 import org.uwaterloo.subletr.theme.otherChatBubbleFont
-import org.uwaterloo.subletr.theme.secondaryBackgroundColor
+import org.uwaterloo.subletr.theme.subletrPalette
 
 @Composable
 fun OtherChatBubble(modifier: Modifier = Modifier, otherChatItem: ChatItemModel.OtherChatItem) {
@@ -50,7 +51,7 @@ fun OtherChatBubble(modifier: Modifier = Modifier, otherChatItem: ChatItemModel.
 		) {
 			Box(
 				modifier = Modifier
-					.background(color = secondaryBackgroundColor),
+					.background(color = MaterialTheme.subletrPalette.secondaryBackgroundColor),
 			) {
 				Text(
 					modifier = Modifier.padding(dimensionResource(id = R.dimen.s)),

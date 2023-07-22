@@ -43,7 +43,7 @@ class AccountPageViewModel @Inject constructor(
 	private val authenticationService: IAuthenticationService,
 	val navigationService: INavigationService,
 	private val settingsService: ISettingsService,
-	): SubletrViewModel<AccountPageUiState>() {
+): SubletrViewModel<AccountPageUiState>() {
 	val navHostController: NavHostController get() = navigationService.navHostController
 
 	val personalInformationStream: BehaviorSubject<AccountPageUiState.PersonalInformation> =
@@ -56,9 +56,9 @@ class AccountPageViewModel @Inject constructor(
 	val settingsStream: BehaviorSubject<AccountPageUiState.Settings> =
 		BehaviorSubject.createDefault(
 			AccountPageUiState.Settings(
-				useDeviceTheme = settingsService.getDefaultDisplayTheme(),
-				useDarkMode = settingsService.getDisplayTheme(),
-				allowChatNotifications = settingsService.getChatNotifications(),
+				useDeviceTheme = settingsService.useDeviceTheme.value,
+				useDarkMode = settingsService.useDarkTheme.value,
+				allowChatNotifications = settingsService.allowChatNotifications.value,
 			)
 		)
 
@@ -252,17 +252,16 @@ class AccountPageViewModel @Inject constructor(
 		}
 	}
 
-	// TODO: actually change theme when settings changed
 	fun setDefaultDisplayTheme(useDeviceTheme: Boolean) {
-		settingsService.setDefaultDisplayTheme(useDeviceTheme)
+		settingsService.useDeviceTheme.value = useDeviceTheme
 	}
 
 	fun setDisplayMode(useDarkMode: Boolean) {
-		settingsService.setDisplayTheme(useDarkMode)
+		settingsService.useDarkTheme.value = useDarkMode
 	}
 
 	fun setChatNotifications(allowChatNotifications: Boolean) {
-		settingsService.setChatNotifications(allowChatNotifications)
+		settingsService.allowChatNotifications.value = allowChatNotifications
 	}
 
 	fun logout() {

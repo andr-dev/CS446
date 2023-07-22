@@ -41,13 +41,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import okhttp3.internal.immutableListOf
 import org.uwaterloo.subletr.R
 import org.uwaterloo.subletr.theme.SubletrTheme
-import org.uwaterloo.subletr.theme.primaryBackgroundColor
-import org.uwaterloo.subletr.theme.primaryTextColor
-import org.uwaterloo.subletr.theme.secondaryButtonBackgroundColor
-import org.uwaterloo.subletr.theme.secondaryTextColor
-import org.uwaterloo.subletr.theme.subletrPink
-import org.uwaterloo.subletr.theme.textFieldBorderColor
-import org.uwaterloo.subletr.theme.textOnSubletrPink
+import org.uwaterloo.subletr.theme.subletrPalette
 
 @Composable
 fun EmailVerificationPageView(
@@ -117,13 +111,13 @@ fun EmailVerificationPageView(
 					.height(dimensionResource(id = R.dimen.xl)),
 				onClick = { viewModel.navHostController.navigate("home") },
 				colors = ButtonDefaults.buttonColors(
-					containerColor = subletrPink,
-					contentColor = textOnSubletrPink,
+					containerColor = MaterialTheme.subletrPalette.subletrPink,
+					contentColor = MaterialTheme.subletrPalette.textOnSubletrPink,
 				)
 			) {
 				Text(
 					text = stringResource(id = R.string.verify),
-					color = textOnSubletrPink,
+					color = MaterialTheme.subletrPalette.textOnSubletrPink,
 					style = MaterialTheme.typography.labelMedium,
 					textAlign = TextAlign.Justify,
 				)
@@ -137,13 +131,13 @@ fun EmailVerificationPageView(
 					.height(dimensionResource(id = R.dimen.xl)),
 				onClick = {},
 				colors = ButtonDefaults.buttonColors(
-					containerColor = secondaryButtonBackgroundColor,
-					contentColor = primaryTextColor,
+					containerColor = MaterialTheme.subletrPalette.secondaryButtonBackgroundColor,
+					contentColor = MaterialTheme.subletrPalette.primaryTextColor,
 				)
 			) {
 				Text(
 					text = stringResource(id = R.string.resend_code),
-					color = secondaryTextColor,
+					color = MaterialTheme.subletrPalette.secondaryTextColor,
 					style = MaterialTheme.typography.labelMedium,
 
 					)
@@ -174,7 +168,9 @@ fun TextFieldBox(
 			.border(
 				BorderStroke(
 					width = dimensionResource(id = R.dimen.xxxs),
-					color = if (isFocused) subletrPink else textFieldBorderColor,
+					color =
+					if (isFocused) MaterialTheme.subletrPalette.subletrPink
+					else MaterialTheme.subletrPalette.textFieldBorderColor,
 				),
 				shape = RoundedCornerShape(dimensionResource(id = R.dimen.xxs))
 			)
@@ -183,8 +179,8 @@ fun TextFieldBox(
 			},
 		shape = RoundedCornerShape(size = dimensionResource(id = R.dimen.xs)),
 		colors = TextFieldDefaults.colors(
-			unfocusedContainerColor = primaryBackgroundColor,
-			focusedContainerColor = primaryBackgroundColor,
+			unfocusedContainerColor = MaterialTheme.subletrPalette.primaryBackgroundColor,
+			focusedContainerColor = MaterialTheme.subletrPalette.primaryBackgroundColor,
 			unfocusedIndicatorColor = Color.Transparent,
 			focusedIndicatorColor = Color.Transparent,
 		),
