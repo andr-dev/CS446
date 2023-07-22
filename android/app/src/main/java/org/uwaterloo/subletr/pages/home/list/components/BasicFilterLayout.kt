@@ -90,7 +90,7 @@ fun BasicFilterLayout(
 		},
 		bottomBar = {
 			Column(
-				modifier = Modifier.height(dimensionResource(id = R.dimen.xxl)).background(Color.White),
+				modifier = Modifier.height(dimensionResource(id = R.dimen.xxl)).background(MaterialTheme.subletrPalette.primaryBackgroundColor),
 			) {
 				FilterDefaultDivider()
 				Row(
@@ -200,7 +200,7 @@ fun DefaultFilterButton(
 			horizontal = dimensionResource(id = R.dimen.s),
 			vertical = dimensionResource(id = R.dimen.xs),
 		),
-		content = { Text(text = text, color = if (isSelected) Color.White else Color.Black) },
+		content = { Text(text = text, color = if (isSelected) Color.White else MaterialTheme.subletrPalette.primaryTextColor) },
 		colors = ButtonDefaults.buttonColors(
 			containerColor =
 			if (isSelected) MaterialTheme.subletrPalette.subletrPink

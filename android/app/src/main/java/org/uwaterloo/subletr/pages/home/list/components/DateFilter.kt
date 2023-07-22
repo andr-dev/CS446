@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.DatePickerDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.rememberDateRangePickerState
@@ -35,7 +34,6 @@ import org.uwaterloo.subletr.utils.parseUTCDateTimeToLocal
 import org.uwaterloo.subletr.utils.storeDateFormatISO
 import java.text.SimpleDateFormat
 import java.time.ZoneOffset
-import java.time.format.DateTimeFormatter
 import java.util.Date
 import java.util.Locale
 
@@ -147,8 +145,8 @@ fun DateFilter(
 			endButtonText = ""
 		},
 		updateFilterAndClose = {
-			val newStartingDate = if (startButtonText != "") SimpleDateFormat("MM/dd/yyyy").parse(startButtonText) else ""
-			val newEndingDate =if (endButtonText != "")  SimpleDateFormat("MM/dd/yyyy").parse(endButtonText) else ""
+			val newStartingDate = if (startButtonText.isNotEmpty()) SimpleDateFormat("MM/dd/yyyy").parse(startButtonText) else ""
+			val newEndingDate =if (endButtonText.isNotEmpty())  SimpleDateFormat("MM/dd/yyyy").parse(endButtonText) else ""
 			updateDateFilter(
 				HomePageUiState.DateRange(
 					startingDate = if (newStartingDate is Date)
