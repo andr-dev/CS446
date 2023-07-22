@@ -18,6 +18,7 @@ import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -790,6 +791,7 @@ fun AccountPageView(
 			}
 
 			item {
+				val systemDefaultDarkTheme = isSystemInDarkTheme()
 				Row(
 					modifier = Modifier
 						.fillMaxWidth(),
@@ -807,7 +809,9 @@ fun AccountPageView(
 							viewModel.settingsStream.onNext(
 								AccountPageUiState.Settings(
 									useDeviceTheme = it,
-									useDarkMode = uiState.settings.useDarkMode,
+									useDarkMode =
+									if (it) systemDefaultDarkTheme
+									else uiState.settings.useDarkMode,
 									allowChatNotifications = uiState.settings.allowChatNotifications,
 								)
 							)

@@ -1,6 +1,7 @@
 package org.uwaterloo.subletr.services
 
 import android.content.Context
+import android.content.res.Configuration
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.snapshotFlow
@@ -34,6 +35,12 @@ class SettingsService(
 	override fun subscribe(coroutineScope: CoroutineScope) {
 		snapshotFlow { useDeviceTheme.value }
 			.onEach {
+				if (it) {
+					useDarkTheme.value = (
+						context.getResources().getConfiguration().uiMode and Configuration.UI_MODE_NIGHT_MASK
+						) == Configuration.UI_MODE_NIGHT_YES
+				}
+
 				ioService.writeStringToInternalFile(
 					fileName = DEFAULT_DISPLAY_SETTINGS_PATH,
 					input = it.toString(),
