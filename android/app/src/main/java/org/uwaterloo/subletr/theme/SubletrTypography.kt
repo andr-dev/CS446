@@ -154,6 +154,17 @@ val accountHeadingSmallFont
 		fontWeight = FontWeight.Normal,
 		fontSize = 16.sp,
 		lineHeight = 24.sp,
+		letterSpacing = 0.0.sp,
+	)
+
+val userRatingLabel
+	@Composable
+	get() = TextStyle(
+		color = secondaryTextColor,
+		fontFamily = FontFamily.Default,
+		fontWeight = FontWeight.Medium,
+		fontSize = 18.sp,
+		lineHeight = 20.sp,
 		letterSpacing = 0.5.sp,
 	)
 

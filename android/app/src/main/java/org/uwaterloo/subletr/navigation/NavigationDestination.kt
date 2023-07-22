@@ -63,4 +63,8 @@ enum class NavigationDestination(
 		rootNavPath = "chat/individual",
 		fullNavPath = "chat/individual/{userId}",
 	),
+	PROFILE(
+		rootNavPath = "chat/profile",
+		fullNavPath = "chat/profile/{userId}",
+	),
 }

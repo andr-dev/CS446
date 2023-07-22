@@ -19,6 +19,7 @@ import org.uwaterloo.subletr.pages.home.HomePageView
 import org.uwaterloo.subletr.pages.individualchat.IndividualChatPageView
 import org.uwaterloo.subletr.pages.listingdetails.ListingDetailsPageView
 import org.uwaterloo.subletr.pages.login.LoginPageView
+import org.uwaterloo.subletr.pages.profile.ProfilePageView
 
 @Composable
 fun MainNavigation(
@@ -91,6 +92,15 @@ fun MainNavigation(
 			),
 		) {
 			IndividualChatPageView(
+				modifier = modifier,
+			)
+		}
+		composable(
+			route = NavigationDestination.PROFILE.fullNavPath,
+			arguments = listOf(navArgument("userId") { type = NavType.IntType }
+			),
+		) {
+			ProfilePageView(
 				modifier = modifier,
 			)
 		}

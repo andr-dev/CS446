@@ -264,6 +264,15 @@ class AccountPageViewModel @Inject constructor(
 		settingsService.allowChatNotifications.value = allowChatNotifications
 	}
 
+	fun goToProfile() {
+		val user = authenticationService.isAuthenticatedUser()
+		if (user != null) {
+			navHostController.navigate(
+				route = "${NavigationDestination.PROFILE.rootNavPath}/${user.userId}"
+			)
+		}
+	}
+
 	fun logout() {
 		authenticationService.deleteAccessToken()
 		navigationService

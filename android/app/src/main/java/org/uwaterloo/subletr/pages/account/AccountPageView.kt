@@ -167,7 +167,7 @@ fun AccountPageView(
 						defaultElevation = dimensionResource(id = R.dimen.xxs),
 					),
 					onClick = {
-						// TODO navigate to profile page
+						viewModel.goToProfile()
 					},
 					colors = CardDefaults.cardColors(
 						containerColor = MaterialTheme.subletrPalette.squaredTextFieldBackgroundColor,
