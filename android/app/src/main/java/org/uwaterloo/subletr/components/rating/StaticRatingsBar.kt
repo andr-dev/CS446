@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.GenericShape
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -18,8 +19,7 @@ import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.res.dimensionResource
 import org.uwaterloo.subletr.R
-import org.uwaterloo.subletr.theme.subletrPink
-import org.uwaterloo.subletr.theme.textFieldBorderColor
+import org.uwaterloo.subletr.theme.subletrPalette
 import kotlin.math.cos
 import kotlin.math.sin
 
@@ -75,8 +75,8 @@ private val starPath = { size: Float ->
 @Composable
 private fun RatingStar(
 	rating: Float,
-	ratingColor: Color = subletrPink,
-	backgroundColor: Color = textFieldBorderColor,
+	ratingColor: Color =  MaterialTheme.subletrPalette.subletrPink,
+	backgroundColor: Color =  MaterialTheme.subletrPalette.textFieldBorderColor,
 ) {
 	BoxWithConstraints(
 		modifier = Modifier
