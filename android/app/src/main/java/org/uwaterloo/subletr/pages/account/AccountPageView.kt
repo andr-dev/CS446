@@ -677,7 +677,12 @@ fun AccountPageView(
 									Image(
 										modifier = Modifier
 											.height(dimensionResource(id = R.dimen.xxxl))
-											.width(dimensionResource(id = R.dimen.xxxl)),
+											.width(dimensionResource(id = R.dimen.xxxl))
+											.clip(
+												RoundedCornerShape(
+													size = dimensionResource(id = R.dimen.xxs),
+												),
+											),
 										bitmap = uiState.listingImage.asImageBitmap(),
 										contentDescription = stringResource(id = R.string.listing_image),
 										contentScale = ContentScale.Crop,
@@ -687,7 +692,19 @@ fun AccountPageView(
 									Image(
 										modifier = Modifier
 											.height(dimensionResource(id = R.dimen.xxxl))
-											.width(dimensionResource(id = R.dimen.xxxl)),
+											.width(dimensionResource(id = R.dimen.xxxl))
+											.clip(
+												RoundedCornerShape(
+													size = dimensionResource(id = R.dimen.xxs),
+												),
+											)
+											.border(
+												width = dimensionResource(id = R.dimen.xxxxs),
+												color = MaterialTheme.subletrPalette.textFieldBorderColor,
+												shape = RoundedCornerShape(
+													size = dimensionResource(id = R.dimen.xxs),
+												),
+											),
 										painter = painterResource(
 											id = R.drawable.default_listing_image,
 										),

@@ -241,6 +241,13 @@ fun ListingDetailsPageView(
 								.size(dimensionResource(id = R.dimen.listing_details_image))
 								.clip(
 									shape = RoundedCornerShape(dimensionResource(id = R.dimen.xxs))
+								)
+								.border(
+									width = dimensionResource(id = R.dimen.xxxxs),
+									color = MaterialTheme.subletrPalette.textFieldBorderColor,
+									shape = RoundedCornerShape(
+										size = dimensionResource(id = R.dimen.xxs),
+									),
 								),
 							painter = painterResource(
 								id = R.drawable.default_listing_image,

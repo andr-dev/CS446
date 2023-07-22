@@ -3,6 +3,7 @@ package org.uwaterloo.subletr.pages.home.list.components
 import android.graphics.Bitmap
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -58,7 +59,7 @@ fun HomeListListingItemView(
 			)
 			.background(
 				color = MaterialTheme.subletrPalette.secondaryButtonBackgroundColor,
-			)
+			),
 	) {
 		Column(
 			modifier = Modifier
@@ -80,7 +81,12 @@ fun HomeListListingItemView(
 					Image(
 						modifier = Modifier
 							.height(dimensionResource(id = R.dimen.xxxl))
-							.width(dimensionResource(id = R.dimen.xxxl)),
+							.width(dimensionResource(id = R.dimen.xxxl))
+							.clip(
+								RoundedCornerShape(
+									size = dimensionResource(id = R.dimen.xxs),
+								),
+							),
 						bitmap = listingImage.asImageBitmap(),
 						contentDescription = stringResource(id = R.string.listing_image),
 						contentScale = ContentScale.Crop,
@@ -89,7 +95,19 @@ fun HomeListListingItemView(
 					Image(
 						modifier = Modifier
 							.height(dimensionResource(id = R.dimen.xxxl))
-							.width(dimensionResource(id = R.dimen.xxxl)),
+							.width(dimensionResource(id = R.dimen.xxxl))
+							.clip(
+								RoundedCornerShape(
+									size = dimensionResource(id = R.dimen.xxs),
+								),
+							)
+							.border(
+								width = dimensionResource(id = R.dimen.xxxxs),
+								color = MaterialTheme.subletrPalette.textFieldBorderColor,
+								shape = RoundedCornerShape(
+									size = dimensionResource(id = R.dimen.xxs),
+								),
+							),
 						painter = painterResource(
 							id = R.drawable.default_listing_image,
 						),

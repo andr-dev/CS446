@@ -107,6 +107,13 @@ fun HomeMapListingItemView(
 							.width(dimensionResource(id = R.dimen.xxxl))
 							.clip(
 								shape = RoundedCornerShape(size = dimensionResource(id = R.dimen.xxs)),
+							)
+							.border(
+								width = dimensionResource(id = R.dimen.xxxxs),
+								color = MaterialTheme.subletrPalette.textFieldBorderColor,
+								shape = RoundedCornerShape(
+									size = dimensionResource(id = R.dimen.xxs),
+								),
 							),
 						painter = painterResource(
 							id = R.drawable.default_listing_image,
