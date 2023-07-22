@@ -30,7 +30,9 @@ import org.uwaterloo.subletr.components.bottomsheet.DatePickerBottomSheet
 import org.uwaterloo.subletr.components.button.DateInputButton
 import org.uwaterloo.subletr.pages.home.HomePageUiState
 import org.uwaterloo.subletr.theme.subletrPalette
+import org.uwaterloo.subletr.utils.displayDateFormatter
 import org.uwaterloo.subletr.utils.parseUTCDateTimeToLocal
+import org.uwaterloo.subletr.utils.storeDateFormatISO
 import java.text.SimpleDateFormat
 import java.time.ZoneOffset
 import java.time.format.DateTimeFormatter
@@ -145,8 +147,8 @@ fun DateFilter(
 			endButtonText = ""
 		},
 		updateFilterAndClose = {
-			val newStartingDate = SimpleDateFormat("MM/dd/yyyy").parse(startButtonText)
-			val newEndingDate = SimpleDateFormat("MM/dd/yyyy").parse(endButtonText)
+			val newStartingDate = if (startButtonText != "") SimpleDateFormat("MM/dd/yyyy").parse(startButtonText) else ""
+			val newEndingDate =if (endButtonText != "")  SimpleDateFormat("MM/dd/yyyy").parse(endButtonText) else ""
 			updateDateFilter(
 				HomePageUiState.DateRange(
 					startingDate = if (newStartingDate is Date)
@@ -175,7 +177,4 @@ fun DateFilter(
 	)
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
-private val displayDateFormatter =
-	DatePickerDefaults.dateFormatter(selectedDateSkeleton = "MM/dd/yyyy")
-private val storeDateFormatISO: DateTimeFormatter = DateTimeFormatter.ISO_LOCAL_DATE_TIME
+

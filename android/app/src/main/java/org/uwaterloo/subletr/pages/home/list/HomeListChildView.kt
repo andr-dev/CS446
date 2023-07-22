@@ -49,6 +49,7 @@ import org.uwaterloo.subletr.enums.HousingType
 import org.uwaterloo.subletr.navigation.NavigationDestination
 import org.uwaterloo.subletr.pages.home.HomePageUiState
 import org.uwaterloo.subletr.pages.home.HomePageViewModel
+import org.uwaterloo.subletr.pages.home.list.components.AllFilter
 import org.uwaterloo.subletr.pages.home.list.components.ButtonWithIcon
 import org.uwaterloo.subletr.pages.home.list.components.DateFilter
 import org.uwaterloo.subletr.pages.home.list.components.FavouriteFilter
@@ -108,9 +109,9 @@ fun HomeListChildView(
 						filters = uiState.filters,
 						transportationMethod = HomePageUiState.TransportationMethod.WALK,
 						listingPagingParams = HomePageViewModel.ListingPagingParams(
-								previousListingItemsModel = uiState.listingItems,
-								pageNumber = listState.layoutInfo.totalItemsCount
-									.floorDiv(HomePageViewModel.LISTING_PAGE_SIZE)
+							previousListingItemsModel = uiState.listingItems,
+							pageNumber = listState.layoutInfo.totalItemsCount
+								.floorDiv(HomePageViewModel.LISTING_PAGE_SIZE)
 						),
 						homePageView = HomePageUiState.HomePageViewType.LIST,
 					)
@@ -185,6 +186,18 @@ fun HomeListChildView(
 					transportationMethod = HomePageUiState.TransportationMethod.WALK,
 					homePageView = HomePageUiState.HomePageViewType.LIST,
 				)
+			)
+		}
+
+		fun updateAllFilters(newVal: HomePageUiState.FiltersModel) {
+			viewModel.getListingParamsStream.onNext(
+				HomePageViewModel.GetListingParams(
+					filters = newVal,
+					transportationMethod = HomePageUiState.TransportationMethod.WALK,
+					homePageView = HomePageUiState.HomePageViewType.LIST,
+				)
+
+
 			)
 		}
 
@@ -304,7 +317,7 @@ fun HomeListChildView(
 											LocationFilter(
 												currentLocationRange = uiState.filters.locationRange,
 												updateLocationFilter = ::updateLocationFilter,
-												closeAction = ::closeBottomSheet
+												closeAction = ::closeBottomSheet,
 											)
 										}
 
@@ -312,40 +325,45 @@ fun HomeListChildView(
 											currentDateRange = uiState.filters.dateRange,
 											updateDateFilter = ::updateDateFilter,
 											coroutineScope = coroutineScope,
-											closeAction = ::closeBottomSheet
+											closeAction = ::closeBottomSheet,
 										)
 
 										FilterType.PRICE -> PriceFilter(
 											currentPriceRange = uiState.filters.priceRange,
 											updatePriceFilter = ::updatePriceFilter,
-											closeAction = ::closeBottomSheet
+											closeAction = ::closeBottomSheet,
 										)
 
 										FilterType.ROOMS -> RoomFilter(
 											currentRoomRange = uiState.filters.roomRange,
 											updateRoomFilter = ::updateRoomFilter,
-											closeAction = ::closeBottomSheet
+											closeAction = ::closeBottomSheet,
 										)
 
 										FilterType.PROPERTY_TYPE -> PropertyTypeFilter(
 											currentHousingPref = uiState.filters.housingType,
 											updateHousingFilter = ::updateHousingFilter,
-											closeAction = ::closeBottomSheet
+											closeAction = ::closeBottomSheet,
 										)
 
 										FilterType.ROOMMATE -> RoommateFilter(
 											currentGenderPref = uiState.filters.gender,
 											updateGenderFilter = ::updateGenderFilter,
-											closeAction = ::closeBottomSheet
+											closeAction = ::closeBottomSheet,
 										)
 
 										FilterType.FAVOURITE -> FavouriteFilter(
 											currentFavourite = uiState.filters.favourite,
 											updateFavouriteFilter = ::updateFavouriteFilter,
-											closeAction = ::closeBottomSheet
+											closeAction = ::closeBottomSheet,
 										)
 
-										FilterType.ALL -> TODO()
+										FilterType.ALL -> AllFilter(
+											currentFilterVals = uiState.filters,
+											updateFilterVals = ::updateAllFilters,
+											coroutineScope = coroutineScope,
+											closeAction = ::closeBottomSheet,
+										)
 
 									}
 								},

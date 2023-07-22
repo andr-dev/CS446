@@ -16,6 +16,7 @@ import org.uwaterloo.subletr.api.models.GetListingsResponse
 import org.uwaterloo.subletr.api.models.ListingSummary
 import org.uwaterloo.subletr.enums.Gender
 import org.uwaterloo.subletr.enums.HousingType
+import org.uwaterloo.subletr.enums.getGenderFilterString
 import org.uwaterloo.subletr.infrastructure.SubletrViewModel
 import org.uwaterloo.subletr.pages.home.list.HomeListChildViewModel
 import org.uwaterloo.subletr.pages.home.list.HomeListUiState
@@ -157,9 +158,9 @@ class HomePageViewModel @Inject constructor(
 							bathroomsTotalMax = setMaxRoom(getListingParams.filters.roomRange.bathroom),
 							bathroomsEnsuiteMin = if (getListingParams.filters.roomRange.ensuiteBathroom) 1 else null,
 							bathroomsEnsuiteMax = null,
-							gender = null,
-							leaseStart = null,
-							leaseEnd = null,
+							gender = getGenderFilterString(getListingParams.filters.gender),
+							leaseStart = getListingParams.filters.dateRange.startingDate,
+							leaseEnd =getListingParams.filters.dateRange.endingDate,
 						)
 					}
 				}.onSuccess {
