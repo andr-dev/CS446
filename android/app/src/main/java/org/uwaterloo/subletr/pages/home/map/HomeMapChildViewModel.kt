@@ -1,6 +1,7 @@
 package org.uwaterloo.subletr.pages.home.map
 
 import android.location.Location
+import com.google.android.gms.maps.model.LatLng
 import io.reactivex.rxjava3.schedulers.Schedulers
 import io.reactivex.rxjava3.subjects.PublishSubject
 import kotlinx.coroutines.coroutineScope
@@ -18,9 +19,25 @@ class HomeMapChildViewModel @Inject constructor(
 ): SubletrChildViewModel<HomeMapUiState>() {
 	val navHostController get() = navigationService.navHostController
 
-	suspend fun getLocation(): Location? {
-		return coroutineScope {
-			return@coroutineScope locationService.getLocation()
+	suspend fun setLocationToCurrentLocation(uiState: HomeMapUiState.Loaded) {
+		coroutineScope {
+			val currentLocation: Location? = locationService.getLocation()
+			if (currentLocation != null) {
+				getListingParamsStream.onNext(
+					HomePageViewModel.GetListingParams(
+						filters = uiState.filters.copy(
+							timeToDestination = uiState.timeToDestination,
+							addressSearch = CURRENT_LOCATION_STRING_VAL,
+						),
+						transportationMethod = uiState.transportationMethod,
+						homePageView = HomePageUiState.HomePageViewType.MAP,
+						computedLatLng = LatLng(
+							currentLocation.latitude,
+							currentLocation.longitude,
+						),
+					)
+				)
+			}
 		}
 	}
 
@@ -56,5 +73,9 @@ class HomeMapChildViewModel @Inject constructor(
 			}
 			.subscribeOn(Schedulers.computation())
 			.safeSubscribe()
+	}
+
+	companion object {
+		const val CURRENT_LOCATION_STRING_VAL = "CURRENT_LOCATION_STRING_CONSTANT"
 	}
 }

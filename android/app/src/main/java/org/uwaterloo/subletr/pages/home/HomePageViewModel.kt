@@ -20,6 +20,7 @@ import org.uwaterloo.subletr.infrastructure.SubletrViewModel
 import org.uwaterloo.subletr.pages.home.list.HomeListChildViewModel
 import org.uwaterloo.subletr.pages.home.list.HomeListUiState
 import org.uwaterloo.subletr.pages.home.map.HomeMapChildViewModel
+import org.uwaterloo.subletr.pages.home.map.HomeMapChildViewModel.Companion.CURRENT_LOCATION_STRING_VAL
 import org.uwaterloo.subletr.pages.home.map.HomeMapUiState
 import org.uwaterloo.subletr.pages.home.map.MAX_DISTANCE_IN_MINUTES
 import org.uwaterloo.subletr.services.INavigationService
@@ -98,7 +99,10 @@ class HomePageViewModel @Inject constructor(
 		 * Retrieve LatLng from geocodeApi if addressSearch is defined
 		 */
 		.map { getListingParams ->
-			if (getListingParams.filters.addressSearch != null) {
+			if (
+				!getListingParams.filters.addressSearch.isNullOrEmpty()
+				&& getListingParams.filters.addressSearch != CURRENT_LOCATION_STRING_VAL
+			) {
 				val splitAddress = getListingParams.filters.addressSearch.split(",").toTypedArray()
 				runCatching {
 					runBlocking {
