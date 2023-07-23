@@ -300,3 +300,21 @@ pub struct ListingsImagesCreateResponse {
 pub struct FavouriteListingRequest {
     pub listing_id: i32,
 }
+
+#[derive(JsonSchema, Deserialize, Clone, PartialEq)]
+pub struct UpdateListingRequest {
+    pub price: Option<i32>,
+    pub rooms_available: Option<i32>,
+    pub rooms_total: Option<i32>,
+    pub bathrooms_available: Option<i32>,
+    pub bathrooms_ensuite: Option<i32>,
+    pub bathrooms_total: Option<i32>,
+    pub lease_start: Option<NaiveDateTime>,
+    pub lease_end: Option<NaiveDateTime>,
+    pub description: Option<String>,
+    pub residence_type: Option<ResidenceType>,
+    pub gender: Option<String>,
+}
+
+#[derive(JsonSchema, Serialize, Clone, PartialEq)]
+pub struct UpdateListingResponse {}
