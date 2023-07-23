@@ -15,8 +15,7 @@
     <dimen name="xxxxxl">112dp</dimen>
     <dimen name="xxxxxxl">128dp</dimen>
     <dimen name="xxxxxxxl">144dp</dimen>
-    <dimen name="xxxxxxxxl">160dp</dimen>
-    <dimen name="xxxxxxxxxl">176dp</dimen>
+    <dimen name="watcard_image_height">176dp</dimen>
     <dimen name="listing_details_image">256dp</dimen>
     <dimen name="listing_item_button_bar_height">40dp</dimen>
 </resources>

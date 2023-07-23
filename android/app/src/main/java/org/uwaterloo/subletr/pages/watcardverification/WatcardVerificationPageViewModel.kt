@@ -17,7 +17,8 @@ class WatcardVerificationPageViewModel @Inject constructor (
 	override val uiStateStream: BehaviorSubject<WatcardVerificationUiState> = BehaviorSubject.createDefault(
 		WatcardVerificationUiState.Loaded(
 			watcard = null,
-			verified = false
+			submitted = false,
+			verified = false,
 		)
 	)
 

@@ -35,6 +35,7 @@
     <string name="back_arrow">Back Arrow</string>
     <string name="next_arrow">Next Arrow</string>
     <string name="prev_arrow">Prev Arrow</string>
+    <string name="add_sign">Add Sign</string>
     <string name="change_your_password">Change Your Password</string>
     <string name="verify">Verify</string>
     <string name="resend_code">Resend code</string>
@@ -145,8 +146,9 @@
     <string name="submit">Submit</string>
     <string name="add_watcard">Add Watcard</string>
     <string name="cancel">Cancel</string>
-    <string name="plus">+</string>
-    <string name="pending_verification">Pending Verification ...</string>
+    <string name="image_uploaded">✔ Image Uploaded</string>
+    <string name="image_verified">✔ Image Verified</string>
+    <string name="pending_verification">Pending Verification...</string>
     <string name="address_city_postal_code">Address, City, Postal Code</string>
     <string name="search">Search</string>
     <string name="my_location">My Location</string>

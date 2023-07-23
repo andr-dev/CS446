@@ -9,6 +9,7 @@ sealed interface WatcardVerificationUiState {
 
 	data class Loaded(
 		val watcard : String?, // TODO: change this type
+		var submitted : Boolean,
 		var verified : Boolean,
 	) : WatcardVerificationUiState
 }
