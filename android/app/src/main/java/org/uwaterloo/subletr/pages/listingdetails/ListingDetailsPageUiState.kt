@@ -14,6 +14,7 @@ sealed interface ListingDetailsPageUiState {
 		val favourited: Boolean,
 		val images: List<Bitmap>,
 		val isFetchingImages: Boolean,
+		val ownerDetails: OwnerDetails,
 	) : ListingDetailsPageUiState
 
 	data class ListOfInfo(
@@ -27,6 +28,13 @@ sealed interface ListingDetailsPageUiState {
 		val leaseEnd: java.time.OffsetDateTime,
 		val residenceType: ResidenceType,
 		val gender: String,
+	)
+
+	data class OwnerDetails(
+		val name: String,
+		val rating: Float,
+		val verified: Boolean,
+		val avatar: Bitmap?,
 	)
 
 	fun ListingDetails.toListOfInfo() = ListOfInfo(

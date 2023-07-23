@@ -14,7 +14,9 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.runBlocking
 import org.uwaterloo.subletr.api.apis.ListingsApi
+import org.uwaterloo.subletr.api.apis.UserApi
 import org.uwaterloo.subletr.api.models.FavouriteListingRequest
+import org.uwaterloo.subletr.api.models.GetUserResponse
 import org.uwaterloo.subletr.api.models.ListingDetails
 import org.uwaterloo.subletr.infrastructure.SubletrViewModel
 import org.uwaterloo.subletr.navigation.NavigationDestination
@@ -22,11 +24,14 @@ import org.uwaterloo.subletr.services.INavigationService
 import org.uwaterloo.subletr.utils.UWATERLOO_LATITUDE
 import org.uwaterloo.subletr.utils.UWATERLOO_LONGITUDE
 import org.uwaterloo.subletr.utils.base64ToBitmap
+import java.util.Optional
 import javax.inject.Inject
+import kotlin.jvm.optionals.getOrNull
 
 @HiltViewModel
 class ListingDetailsPageViewModel @Inject constructor(
 	private val listingsApi: ListingsApi,
+	private val userApi: UserApi,
 	savedStateHandle: SavedStateHandle,
 	private val navigationService: INavigationService,
 ) : SubletrViewModel<ListingDetailsPageUiState>() {
@@ -42,6 +47,10 @@ class ListingDetailsPageViewModel @Inject constructor(
 		toggleFavouriteStream.onNext(isFavourite)
 	}
 
+	private val ownerIdStream: BehaviorSubject<Int> = BehaviorSubject.createDefault(0)
+	private val ownerNameStream: BehaviorSubject<String> = BehaviorSubject.createDefault("")
+	private val ownerRatingStream: BehaviorSubject<Float> = BehaviorSubject.createDefault(0.0f)
+
 	private val isFetchingImagesStream: BehaviorSubject<Boolean> =
 		BehaviorSubject.createDefault(false)
 	private val listingDetailsStream: Observable<Result<ListingDetails>> = listingIdStream.map {
@@ -55,6 +64,7 @@ class ListingDetailsPageViewModel @Inject constructor(
 					)
 				favouritedStream.onNext(listing.favourited)
 				imageIdsStream.onNext(listing.details.imgIds)
+				ownerIdStream.onNext(listing.details.ownerUserId)
 				listing.details
 			}
 		}.onFailure {
@@ -93,18 +103,86 @@ class ListingDetailsPageViewModel @Inject constructor(
 		.observeOn(Schedulers.io())
 		.onErrorResumeWith(Observable.never())
 
+	private val ownerDetailsStream: Observable<Result<GetUserResponse>> = ownerIdStream.map {
+		runCatching {
+			runBlocking {
+				userApi.userGet(it)
+			}
+		}
+			.onSuccess { userResponse ->
+				ownerNameStream.onNext("${userResponse.firstName} ${userResponse.lastName}")
+				ownerRatingStream.onNext(userResponse.rating)
+			}
+			.onFailure {
+				Log.d("API ERROR", "Failed to get user details")
+			}
+	}
+		.onErrorResumeWith(Observable.never())
+		.subscribeOn(Schedulers.io())
+
+	private val ownerAvatarStream: Observable<Optional<String>> = ownerIdStream.map {
+		var avatar = Optional.empty<String>()
+		runCatching {
+			runBlocking {
+				userApi.userAvatarGet(it)
+			}
+		}
+			.onSuccess { img ->
+				avatar = Optional.of(img)
+			}
+			.onFailure {
+				avatar = Optional.empty<String>()
+			}
+		avatar
+	}
+		.onErrorResumeWith(Observable.never())
+		.subscribeOn(Schedulers.io())
+
+	private val ownerAvatarBitmapStream: Observable<Optional<Bitmap>> = ownerAvatarStream
+		.observeOn(Schedulers.computation())
+		.map {
+			val nullableVersion = it.getOrNull()
+			if (nullableVersion != null) {
+				Optional.of(nullableVersion.base64ToBitmap())
+			}
+			else {
+				Optional.empty<Bitmap>()
+			}
+		}
+		.observeOn(Schedulers.io())
+
+	private val ownerVerificationStream: Observable<Result<Boolean>> = ownerIdStream.map {
+		runCatching {
+			runBlocking {
+				userApi.userIsVerified(it)
+			}
+		}
+	}
+		.onErrorResumeWith(Observable.never())
+		.subscribeOn(Schedulers.io())
+
 	override val uiStateStream: Observable<ListingDetailsPageUiState> = Observable.combineLatest(
 		listingDetailsStream,
 		favouritedStream,
 		imagesStream,
 		isFetchingImagesStream,
-	) { listingDetails, favourited, images, isFetchingImages ->
+		ownerNameStream,
+		ownerRatingStream,
+		ownerAvatarBitmapStream,
+		ownerVerificationStream,
+	) { listingDetails, favourited, images, isFetchingImages, ownerName, ownerRating, ownerAvatar, ownerVerification  ->
 		listingDetails.getOrNull()?.let {
 			return@combineLatest ListingDetailsPageUiState.Loaded(
 				it,
 				favourited,
 				images,
 				isFetchingImages,
+				ownerDetails = ListingDetailsPageUiState.OwnerDetails(
+					name = ownerName,
+					rating = ownerRating,
+					verified = ownerVerification.getOrDefault(false),
+					avatar = ownerAvatar.getOrNull(),
+				),
 			)
 		}
 		return@combineLatest ListingDetailsPageUiState.Loading
@@ -131,5 +209,15 @@ class ListingDetailsPageViewModel @Inject constructor(
 			.subscribeOn(Schedulers.io())
 			.onErrorResumeWith(Observable.never())
 			.safeSubscribe()
+
+		ownerDetailsStream.safeSubscribe()
+	}
+
+	fun goToProfile() {
+		if (ownerIdStream.value != null) {
+			navHostController.navigate(
+				route = "${NavigationDestination.PROFILE.rootNavPath}/${ownerIdStream.value}"
+			)
+		}
 	}
 }
