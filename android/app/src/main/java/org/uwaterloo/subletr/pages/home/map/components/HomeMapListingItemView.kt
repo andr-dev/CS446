@@ -53,6 +53,7 @@ fun HomeMapListingItemView(
 	listingSummary: ListingSummary,
 	listingImage: Bitmap?,
 	selected: Boolean,
+	timeToDestination: Float?,
 	viewModel: HomeMapChildViewModel,
 	setSelected: (Boolean) -> Unit,
 ) {
@@ -154,11 +155,16 @@ fun HomeMapListingItemView(
 						)
 						Spacer(modifier = Modifier.width(dimensionResource(id = R.dimen.xxs)))
 						Text(
-							text = stringResource(
-								id = R.string.n_minutes,
-								// TODO: Fix variable when listingSummary is fixed
-								listingSummary.distanceMeters.roundToInt(),
-							),
+							text = if (timeToDestination != null) {
+								stringResource(
+									id = R.string.n_minutes,
+									timeToDestination.roundToInt(),
+								)
+							} else {
+								stringResource(
+									id = R.string.time_not_available,
+								)
+						    },
 							style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Bold),
 							color = MaterialTheme.subletrPalette.primaryTextColor,
 						)

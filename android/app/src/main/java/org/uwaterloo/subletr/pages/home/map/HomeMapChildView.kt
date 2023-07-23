@@ -310,11 +310,13 @@ fun HomeMapChildView(
 					val listingSummary = uiState.listingItems.listings[it]
 					val listingImage = uiState.listingItems.listingsImages.getOrNull(it)
 					val selected = uiState.listingItems.selectedListings.getOrElse(it) { false }
+					val timeToDestination = uiState.listingItems.timeToDestination.getOrNull(it)
 					HomeMapListingItemView(
 						listingSummary = listingSummary,
 						listingImage = listingImage,
 						selected = selected,
 						viewModel = viewModel,
+						timeToDestination = timeToDestination,
 						setSelected = { newSelected ->
 							viewModel.uiStateStream.onNext(
 								uiState.copy(
@@ -331,7 +333,7 @@ fun HomeMapChildView(
 										),
 								)
 							)
-						}
+						},
 					)
 				}
 			}

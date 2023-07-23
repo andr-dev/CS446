@@ -65,6 +65,12 @@ class HomeMapChildViewModel @Inject constructor(
 							filters = it.filters.copy(
 								timeToDestination = it.timeToDestination,
 								addressSearch = it.addressSearch.ifEmpty { null },
+								locationRange = if (it.timeToDestination < 180) {
+									HomePageUiState.LocationRange(
+										lowerBound = null,
+										upperBound = null,
+									)
+								} else it.filters.locationRange,
 							),
 							transportationMethod = it.transportationMethod,
 							homePageView = HomePageUiState.HomePageViewType.MAP,
