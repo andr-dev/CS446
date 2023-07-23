@@ -68,7 +68,7 @@ fun MainNavigation(
 				modifier = modifier,
 			)
 		}
-		composable(NavigationDestination.CHAT.fullNavPath) {
+		composable(NavigationDestination.CHAT_LISTING.fullNavPath) {
 			ChatListingPageView(
 				modifier = modifier,
 			)
