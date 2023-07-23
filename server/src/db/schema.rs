@@ -60,6 +60,8 @@ diesel::table! {
     user_verified (user_id) {
         user_id -> Integer,
         verified -> Bool,
+        image_id -> Text,
+        extension -> Text,
     }
 }
 
