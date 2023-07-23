@@ -1,15 +1,18 @@
 package org.uwaterloo.subletr.pages.watcardverification
 
-import android.media.Image
-import android.widget.ImageView
+import android.content.Context
+import android.graphics.Bitmap
+import android.net.Uri
+
 
 sealed interface WatcardVerificationUiState {
 
 	object Loading : WatcardVerificationUiState
 
 	data class Loaded(
-		val watcard : String?, // TODO: change this type
-		var submitted : Boolean,
-		var verified : Boolean,
+		val watcard: Bitmap?,
+		val verified: Boolean,
+		val submitted: Boolean,
 	) : WatcardVerificationUiState
+
 }
