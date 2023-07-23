@@ -27,3 +27,10 @@
 | 2023-07-05 | 1.0 hour(s) | Add an example to deliverable 4 (arch style examples) |
 | 2023-07-10 | 3.0 hour(s) | Fix examples for deliverable 4 (arch style examples) and review PRs |
 | 2023-07-12 | 1.0 hour(s) | Add an example to deliverable 5 (design pattern examples) |
+| 2023-07-16 | 5.0 hour(s) | Create Individual Chat Page View and fix bug with Bottom Bar |
+| 2023-07-17 | 8.0 hour(s) | Create Home Map Page View and some of unifying Home List and Map ViewModels and add example to deliverable 5 |
+| 2023-07-18 | 4.0 hour(s) | Finish Unifying Home List and Map ViewModels and fix Textfield in Indiviudal Chat Page |
+| 2023-07-19 | 3.0 hour(s) | Add location functionality to Map View of Home Page |
+| 2023-07-20 | 1.5 hour(s) | Update Change Password Page |
+| 2023-07-21 | 5.5 hour(s) | Add dark mode support and dark mode toggle |
+| 2023-07-22 | 4.0 hour(s) | Fix Bottom Bar View, fix Listing Item Image Corners, add Current Location functionality, update component diagram |
