@@ -4,7 +4,7 @@ use chrono::{NaiveDate, NaiveTime};
 use diesel::{ExpressionMethods, QueryDsl, RunQueryDsl};
 use okapi::openapi3::OpenApi;
 use rand::Rng;
-use rocket::{get, post, serde::json::Json, Route, State};
+use rocket::{delete, get, post, serde::json::Json, Route, State};
 use rocket_okapi::{openapi, openapi_get_routes_spec};
 
 mod images;
@@ -218,6 +218,18 @@ fn listings_update(
 }
 
 #[openapi(tag = "Listings")]
+#[delete("/delete")]
+fn listings_delete(state: &State<AppState>, user: AuthenticatedUser) -> ServiceResult<String> {
+    let mut dbcon = state.pool.get()?;
+
+    diesel::delete(listings::table)
+        .filter(listings::dsl::owner_user_id.eq(user.user_id))
+        .execute(&mut dbcon)?;
+
+    Ok(Json("OK".to_owned()))
+}
+
+#[openapi(tag = "Listings")]
 #[post("/favourite", format = "json", data = "<listing_request>")]
 fn listings_favourite(
     state: &State<AppState>,
@@ -403,6 +415,7 @@ fn listings_list(
 pub fn routes() -> (Vec<Route>, OpenApi) {
     openapi_get_routes_spec![
         listings_create,
+        listings_delete,
         listings_details,
         listings_favourite,
         listings_images_create,
