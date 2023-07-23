@@ -45,4 +45,6 @@ pub struct UserAvatar {
 pub struct UserVerified {
     pub user_id: i32,
     pub verified: bool,
+    pub image_id: String,
+    pub extension: String,
 }

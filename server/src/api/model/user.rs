@@ -66,3 +66,11 @@ pub struct UserAvatarUpdateRequest {
 pub struct UserAvatarUpdateResponse {
     pub avatar_id: String,
 }
+
+#[derive(JsonSchema, Deserialize, Clone, PartialEq)]
+pub struct UserVerifyUploadRequest {
+    pub image: String,
+}
+
+#[derive(JsonSchema, Serialize, Clone, PartialEq)]
+pub struct UserVerifyUploadResponse {}
