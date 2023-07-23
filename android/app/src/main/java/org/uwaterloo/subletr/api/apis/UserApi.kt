@@ -27,6 +27,7 @@ import org.uwaterloo.subletr.api.models.RateUserRequest
 import org.uwaterloo.subletr.api.models.UpdateUserRequest
 import org.uwaterloo.subletr.api.models.UserAvatarUpdateRequest
 import org.uwaterloo.subletr.api.models.UserAvatarUpdateResponse
+import org.uwaterloo.subletr.api.models.UserVerifyUploadRequest
 
 import com.squareup.moshi.Json
 
@@ -704,6 +705,152 @@ class UserApi(basePath: kotlin.String = defaultBasePath, client: OkHttpClient = 
         return RequestConfig(
             method = RequestMethod.POST,
             path = "/user/update",
+            query = localVariableQuery,
+            headers = localVariableHeaders,
+            requiresAuthentication = true,
+            body = localVariableBody
+        )
+    }
+
+    /**
+     * 
+     * 
+     * @param userId 
+     * @return kotlin.String
+     * @throws IllegalStateException If the request is not correctly configured
+     * @throws IOException Rethrows the OkHttp execute method exception
+     * @throws UnsupportedOperationException If the API returns an informational or redirection response
+     * @throws ClientException If the API returns a client error response
+     * @throws ServerException If the API returns a server error response
+     */
+    @Suppress("UNCHECKED_CAST")
+    @Throws(IllegalStateException::class, IOException::class, UnsupportedOperationException::class, ClientException::class, ServerException::class)
+    suspend fun userVerifyApprove(userId: kotlin.Int) : kotlin.String = withContext(Dispatchers.IO) {
+        val localVarResponse = userVerifyApproveWithHttpInfo(userId = userId)
+
+        return@withContext when (localVarResponse.responseType) {
+            ResponseType.Success -> (localVarResponse as Success<*>).data as kotlin.String
+            ResponseType.Informational -> throw UnsupportedOperationException("Client does not support Informational responses.")
+            ResponseType.Redirection -> throw UnsupportedOperationException("Client does not support Redirection responses.")
+            ResponseType.ClientError -> {
+                val localVarError = localVarResponse as ClientError<*>
+                throw ClientException("Client error : ${localVarError.statusCode} ${localVarError.message.orEmpty()}", localVarError.statusCode, localVarResponse)
+            }
+            ResponseType.ServerError -> {
+                val localVarError = localVarResponse as ServerError<*>
+                throw ServerException("Server error : ${localVarError.statusCode} ${localVarError.message.orEmpty()}", localVarError.statusCode, localVarResponse)
+            }
+        }
+    }
+
+    /**
+     * 
+     * 
+     * @param userId 
+     * @return ApiResponse<kotlin.String?>
+     * @throws IllegalStateException If the request is not correctly configured
+     * @throws IOException Rethrows the OkHttp execute method exception
+     */
+    @Suppress("UNCHECKED_CAST")
+    @Throws(IllegalStateException::class, IOException::class)
+    suspend fun userVerifyApproveWithHttpInfo(userId: kotlin.Int) : ApiResponse<kotlin.String?> = withContext(Dispatchers.IO) {
+        val localVariableConfig = userVerifyApproveRequestConfig(userId = userId)
+
+        return@withContext request<Unit, kotlin.String>(
+            localVariableConfig
+        )
+    }
+
+    /**
+     * To obtain the request config of the operation userVerifyApprove
+     *
+     * @param userId 
+     * @return RequestConfig
+     */
+    fun userVerifyApproveRequestConfig(userId: kotlin.Int) : RequestConfig<Unit> {
+        val localVariableBody = null
+        val localVariableQuery: MultiValueMap = mutableMapOf<kotlin.String, kotlin.collections.List<kotlin.String>>()
+            .apply {
+                put("user_id", listOf(userId.toString()))
+            }
+        val localVariableHeaders: MutableMap<String, String> = mutableMapOf()
+        localVariableHeaders["Accept"] = "application/json"
+
+        return RequestConfig(
+            method = RequestMethod.POST,
+            path = "/user/verify/approve",
+            query = localVariableQuery,
+            headers = localVariableHeaders,
+            requiresAuthentication = true,
+            body = localVariableBody
+        )
+    }
+
+    /**
+     * 
+     * 
+     * @param userVerifyUploadRequest 
+     * @return kotlin.Any
+     * @throws IllegalStateException If the request is not correctly configured
+     * @throws IOException Rethrows the OkHttp execute method exception
+     * @throws UnsupportedOperationException If the API returns an informational or redirection response
+     * @throws ClientException If the API returns a client error response
+     * @throws ServerException If the API returns a server error response
+     */
+    @Suppress("UNCHECKED_CAST")
+    @Throws(IllegalStateException::class, IOException::class, UnsupportedOperationException::class, ClientException::class, ServerException::class)
+    suspend fun userVerifyUpload(userVerifyUploadRequest: UserVerifyUploadRequest) : kotlin.Any = withContext(Dispatchers.IO) {
+        val localVarResponse = userVerifyUploadWithHttpInfo(userVerifyUploadRequest = userVerifyUploadRequest)
+
+        return@withContext when (localVarResponse.responseType) {
+            ResponseType.Success -> (localVarResponse as Success<*>).data as kotlin.Any
+            ResponseType.Informational -> throw UnsupportedOperationException("Client does not support Informational responses.")
+            ResponseType.Redirection -> throw UnsupportedOperationException("Client does not support Redirection responses.")
+            ResponseType.ClientError -> {
+                val localVarError = localVarResponse as ClientError<*>
+                throw ClientException("Client error : ${localVarError.statusCode} ${localVarError.message.orEmpty()}", localVarError.statusCode, localVarResponse)
+            }
+            ResponseType.ServerError -> {
+                val localVarError = localVarResponse as ServerError<*>
+                throw ServerException("Server error : ${localVarError.statusCode} ${localVarError.message.orEmpty()}", localVarError.statusCode, localVarResponse)
+            }
+        }
+    }
+
+    /**
+     * 
+     * 
+     * @param userVerifyUploadRequest 
+     * @return ApiResponse<kotlin.Any?>
+     * @throws IllegalStateException If the request is not correctly configured
+     * @throws IOException Rethrows the OkHttp execute method exception
+     */
+    @Suppress("UNCHECKED_CAST")
+    @Throws(IllegalStateException::class, IOException::class)
+    suspend fun userVerifyUploadWithHttpInfo(userVerifyUploadRequest: UserVerifyUploadRequest) : ApiResponse<kotlin.Any?> = withContext(Dispatchers.IO) {
+        val localVariableConfig = userVerifyUploadRequestConfig(userVerifyUploadRequest = userVerifyUploadRequest)
+
+        return@withContext request<UserVerifyUploadRequest, kotlin.Any>(
+            localVariableConfig
+        )
+    }
+
+    /**
+     * To obtain the request config of the operation userVerifyUpload
+     *
+     * @param userVerifyUploadRequest 
+     * @return RequestConfig
+     */
+    fun userVerifyUploadRequestConfig(userVerifyUploadRequest: UserVerifyUploadRequest) : RequestConfig<UserVerifyUploadRequest> {
+        val localVariableBody = userVerifyUploadRequest
+        val localVariableQuery: MultiValueMap = mutableMapOf()
+        val localVariableHeaders: MutableMap<String, String> = mutableMapOf()
+        localVariableHeaders["Content-Type"] = "application/json"
+        localVariableHeaders["Accept"] = "application/json"
+
+        return RequestConfig(
+            method = RequestMethod.POST,
+            path = "/user/verify/upload",
             query = localVariableQuery,
             headers = localVariableHeaders,
             requiresAuthentication = true,
