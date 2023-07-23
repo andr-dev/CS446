@@ -27,7 +27,10 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -51,11 +54,16 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.input.pointer.pointerInteropFilter
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
+import coil.compose.AsyncImage
+import coil.request.ImageRequest
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
 import com.google.maps.android.compose.CameraPositionState
@@ -68,6 +76,7 @@ import org.uwaterloo.subletr.api.models.ListingDetails
 import org.uwaterloo.subletr.api.models.ResidenceType
 import org.uwaterloo.subletr.components.button.PrimaryButton
 import org.uwaterloo.subletr.components.button.SecondaryButton
+import org.uwaterloo.subletr.components.rating.StaticRatingsBar
 import org.uwaterloo.subletr.enums.Gender
 import org.uwaterloo.subletr.pages.listingdetails.ListingDetailsPageUiState.Loading.getInfoDisplay
 import org.uwaterloo.subletr.pages.listingdetails.ListingDetailsPageUiState.Loading.toListOfInfo
@@ -328,7 +337,7 @@ fun ListingDetailsPageView(
 					Text(
 						text = stringResource(id = R.string.description),
 						color = MaterialTheme.subletrPalette.primaryTextColor,
-						style = SubletrTypography.displaySmall,
+						style = SubletrTypography.displayMedium,
 					)
 				}
 
@@ -360,6 +369,23 @@ fun ListingDetailsPageView(
 				)
 
 				Spacer(
+					modifier = Modifier.height(dimensionResource(id = R.dimen.m)),
+				)
+
+				Row(
+					modifier = Modifier
+						.fillMaxWidth(ELEMENT_WIDTH),
+					verticalAlignment = Alignment.CenterVertically,
+					horizontalArrangement = Arrangement.SpaceBetween,
+				) {
+					Text(
+						text = stringResource(id = R.string.map),
+						color = MaterialTheme.subletrPalette.primaryTextColor,
+						style = SubletrTypography.displayMedium,
+					)
+				}
+
+				Spacer(
 					modifier = Modifier.height(dimensionResource(id = R.dimen.xs)),
 				)
 
@@ -370,7 +396,30 @@ fun ListingDetailsPageView(
 				)
 
 				Spacer(
+					modifier = Modifier.height(dimensionResource(id = R.dimen.m)),
+				)
+
+				Row(
+					modifier = Modifier
+						.fillMaxWidth(ELEMENT_WIDTH),
+					verticalAlignment = Alignment.CenterVertically,
+					horizontalArrangement = Arrangement.SpaceBetween,
+				) {
+					Text(
+						text = stringResource(id = R.string.about_sublessor),
+						color = MaterialTheme.subletrPalette.primaryTextColor,
+						style = SubletrTypography.displayMedium,
+					)
+				}
+
+				Spacer(
 					modifier = Modifier.height(dimensionResource(id = R.dimen.xs)),
+				)
+
+				OwnerCard(ownerDetails = uiState.ownerDetails, onClick = { viewModel.goToProfile() })
+
+				Spacer(
+					modifier = Modifier.height(dimensionResource(id = R.dimen.m)),
 				)
 			}
 		}
@@ -462,6 +511,96 @@ fun GoogleMapComposable(
 	}
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun OwnerCard(ownerDetails: ListingDetailsPageUiState.OwnerDetails, onClick: () -> Unit) {
+	Card(
+		modifier = Modifier.fillMaxWidth(ELEMENT_WIDTH),
+		shape = RoundedCornerShape(dimensionResource(id = R.dimen.xs)),
+		elevation = CardDefaults.elevatedCardElevation(
+			defaultElevation = dimensionResource(id = R.dimen.xxs),
+		),
+		onClick = onClick,
+		colors = CardDefaults.cardColors(
+			containerColor = MaterialTheme.subletrPalette.squaredTextFieldBackgroundColor,
+			disabledContainerColor = MaterialTheme.subletrPalette.secondaryBackgroundColor,
+			contentColor = MaterialTheme.subletrPalette.primaryTextColor,
+			disabledContentColor = MaterialTheme.subletrPalette.darkerGrayButtonColor,
+		),
+	) {
+		Row(
+			modifier = Modifier
+				.fillMaxWidth(ELEMENT_WIDTH)
+				.padding(dimensionResource(id = R.dimen.s)),
+		) {
+			AsyncImage(
+				modifier = Modifier
+					.size(dimensionResource(id = R.dimen.xxl))
+					.clip(RoundedCornerShape(dimensionResource(id = R.dimen.xxl))),
+				model = ImageRequest.Builder(LocalContext.current)
+					.data(ownerDetails.avatar)
+					.crossfade(false)
+					.build(),
+				fallback = painterResource(R.drawable.default_avatar),
+				contentDescription = stringResource(R.string.avatar),
+				contentScale = ContentScale.Crop,
+			)
+			Spacer(modifier = Modifier.width(dimensionResource(id = R.dimen.s)))
+			Column(
+				modifier = Modifier.fillMaxWidth(),
+				horizontalAlignment = Alignment.Start,
+			) {
+				Text(
+					ownerDetails.name,
+					style = SubletrTypography.titleSmall,
+					overflow = TextOverflow.Clip,
+					textAlign = TextAlign.Start,
+					maxLines = 1,
+					color = MaterialTheme.subletrPalette.primaryTextColor,
+				)
+				Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.xxs)))
+				Row(
+					modifier = Modifier
+						.fillMaxWidth()
+						.height(dimensionResource(id = R.dimen.m)),
+					horizontalArrangement = Arrangement.spacedBy(dimensionResource(id = R.dimen.xs)),
+					verticalAlignment = Alignment.CenterVertically,
+				) {
+					StaticRatingsBar(
+						modifier = Modifier.padding(horizontal = dimensionResource(id = R.dimen.xxxs)),
+						ownerDetails.rating,
+					)
+					Text(
+						text = if (ownerDetails.rating == 0.0f) stringResource(id = R.string.no_ratings)
+						else ownerDetails.rating.toString(),
+						style = SubletrTypography.displaySmall,
+					)
+				}
+				if (ownerDetails.verified) {
+					Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.xs)))
+					Row(
+						modifier = Modifier.fillMaxWidth(),
+						horizontalArrangement = Arrangement.spacedBy(dimensionResource(id = R.dimen.xxs)),
+						verticalAlignment = Alignment.CenterVertically,
+					) {
+						Icon(
+							painter = painterResource(
+								id = R.drawable.verify_outline_black_24,
+							),
+							contentDescription = stringResource(id = R.string.verified_student_short),
+							tint = MaterialTheme.subletrPalette.secondaryTextColor,
+						)
+						Text(
+							text = stringResource(id = R.string.verified_student_short),
+							style = SubletrTypography.displaySmall,
+						)
+					}
+				}
+			}
+		}
+	}
+}
+
 private const val ELEMENT_WIDTH = 0.9f
 private const val MAP_CIRCLE_RADIUS = 500.0
 
@@ -493,6 +632,12 @@ fun ListingDetailsPagePreview() {
 				favourited = true,
 				images = listOf(),
 				isFetchingImages = false,
+				ownerDetails = ListingDetailsPageUiState.OwnerDetails(
+					name = "",
+					rating = 0.0f,
+					verified = false,
+					avatar = null,
+				),
 			),
 		)
 	}
