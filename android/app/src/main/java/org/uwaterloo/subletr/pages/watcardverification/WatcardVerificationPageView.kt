@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
@@ -26,8 +27,10 @@ import androidx.compose.runtime.rxjava3.subscribeAsState
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
+import androidx.compose.ui.modifier.modifierLocalConsumer
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -37,14 +40,7 @@ import org.uwaterloo.subletr.R
 import org.uwaterloo.subletr.components.button.PrimaryButton
 import org.uwaterloo.subletr.components.button.SecondaryButton
 import org.uwaterloo.subletr.theme.SubletrTheme
-import org.uwaterloo.subletr.theme.darkerGrayButtonColor
-import org.uwaterloo.subletr.theme.lightGrayButtonColor
-import org.uwaterloo.subletr.theme.primaryTextColor
-import org.uwaterloo.subletr.theme.secondaryTextColor
-import org.uwaterloo.subletr.theme.subletrBlack
-import org.uwaterloo.subletr.theme.subletrPink
-import org.uwaterloo.subletr.theme.textOnGray
-import org.uwaterloo.subletr.theme.textOnSubletrPink
+import org.uwaterloo.subletr.theme.subletrPalette
 
 private const val ELEMENT_WIDTH = 0.75f
 @Composable
@@ -68,40 +64,36 @@ fun WatcardVerificationPageView(
 		}
 	} else if (uiState is WatcardVerificationUiState.Loaded) {
 		Column(
-			modifier = modifier.fillMaxSize(1.0f),
+			modifier = modifier.fillMaxSize(),
 			horizontalAlignment = Alignment.CenterHorizontally,
 			verticalArrangement = Arrangement.Center,
 		) {
-			Spacer(modifier = modifier.weight(6.0f))
+			Spacer(modifier = Modifier.weight(4.0f))
 			
 			Text(
 				text = stringResource(id = R.string.watcard_verification),
 				style = MaterialTheme.typography.titleMedium,
-				color = primaryTextColor
+				color = MaterialTheme.subletrPalette.primaryTextColor
 			)
 
-			Column(modifier = modifier
+			Column(modifier = Modifier
 				.fillMaxWidth(1.0f)
 				.padding(horizontal = dimensionResource(id = R.dimen.l))
 			) {
 				Text(
-					text = stringResource(id = R.string.watcard_verification_txt1),
-					color = secondaryTextColor,
-				)
-				Text(
-					text = stringResource(id = R.string.watcard_verification_txt2),
-					color = secondaryTextColor,
+					text = stringResource(id = R.string.watcard_verification_txt),
+					color = MaterialTheme.subletrPalette.secondaryTextColor,
 				)
 			}
 
-			Spacer(modifier = modifier.weight(2.0f))
+			Spacer(modifier = Modifier.weight(4.0f))
 
 			SetContent(
 				viewModel = viewModel,
 				watcard = uiState.watcard
 			)
 
-			Spacer(modifier = modifier.weight(8.0f))
+			Spacer(modifier = Modifier.weight(8.0f))
 
 			SetSubmitButton(
 				viewModel,
@@ -110,7 +102,7 @@ fun WatcardVerificationPageView(
 				uiState.verified,
 			)
 
-			Spacer(modifier = modifier.weight(3.0f))
+			Spacer(modifier = Modifier.weight(3.0f))
 
 			SetCancelButton(
 				uiState.watcard,
@@ -118,7 +110,7 @@ fun WatcardVerificationPageView(
 				uiState.verified,
 			)
 
-			Spacer(modifier = modifier.weight(8.0f))
+			Spacer(modifier = Modifier.weight(8.0f))
 		}
 	}
 }
@@ -127,15 +119,11 @@ fun WatcardVerificationPageView(
 fun SetContent(viewModel: WatcardVerificationPageViewModel, watcard : String?) {
 	Box(
 		modifier = Modifier
-			.padding(dimensionResource(id = R.dimen.l))
+			.padding(dimensionResource(id = R.dimen.s))
 			.fillMaxWidth()
 			.height(dimensionResource(id = R.dimen.watcard_image_height))
-			.border(
-				width = dimensionResource(id = R.dimen.xxxs),
-				color = subletrBlack,
-				shape = RectangleShape,
-			)
-			.background(Color.Transparent)
+			.clip(RoundedCornerShape(dimensionResource(id = R.dimen.s)))
+			.background(MaterialTheme.subletrPalette.darkerGrayButtonColor)
 			.clickable {
 				viewModel.updateUiState(
 					WatcardVerificationUiState.Loaded(
@@ -161,7 +149,8 @@ fun SetContent(viewModel: WatcardVerificationPageViewModel, watcard : String?) {
 				)
 				Text(
 					stringResource(id = R.string.add_watcard),
-					style = MaterialTheme.typography.bodyMedium,
+					style = MaterialTheme.typography.titleSmall,
+					color = MaterialTheme.subletrPalette.subletrBlack
 				)
 			}
 		} else {
@@ -198,25 +187,40 @@ fun SetSubmitButton(
 			}
 		},
 		colors = ButtonDefaults.buttonColors(
-			containerColor = subletrPink,
-			contentColor = textOnSubletrPink,
-			disabledContainerColor = lightGrayButtonColor,
+			containerColor = MaterialTheme.subletrPalette.subletrPink,
+			contentColor = MaterialTheme.subletrPalette.textOnSubletrPink,
+			disabledContainerColor = MaterialTheme.subletrPalette.lightGrayButtonColor,
 		)
 	) {
 		if (!submitted) {
 			active = true
 			Text(
-				stringResource(id = R.string.submit)
+				stringResource(id = R.string.submit),
+				color = MaterialTheme.subletrPalette.textOnSubletrPink
 			)
 		} else if (submitted && !verified){
 			active = false
+			Icon(
+				painter = painterResource(
+					id = R.drawable.baseline_check_24
+				),
+				contentDescription = stringResource(id = R.string.checkmark_sign),
+			)
 			Text(
-				stringResource(id = R.string.image_uploaded)
+				modifier = Modifier.padding(horizontal = dimensionResource(id = R.dimen.xs)),
+				text = stringResource(id = R.string.image_uploaded)
 			)
 		} else {
 			active = false
+			Icon(
+				painter = painterResource(
+					id = R.drawable.baseline_check_24
+				),
+				contentDescription = stringResource(id = R.string.checkmark_sign),
+			)
 			Text(
-				stringResource(id = R.string.image_verified)
+				modifier = Modifier.padding(horizontal = dimensionResource(id = R.dimen.xs)),
+				text = stringResource(id = R.string.image_verified)
 			)
 		}
 	}
@@ -232,8 +236,7 @@ fun SetCancelButton(
 	var active by remember { mutableStateOf<Boolean>(true) }
 
 	var color by remember { mutableStateOf<Color>(Color.Gray) }
-	color = darkerGrayButtonColor
-
+	color = MaterialTheme.subletrPalette.darkerGrayButtonColor
 
 	val buttonAction = remember { mutableStateOf<()->Unit>(
 		fun(){
@@ -248,27 +251,30 @@ fun SetCancelButton(
 		onClick = { buttonAction },
 		colors = ButtonDefaults.buttonColors(
 			containerColor = color,
-			contentColor = textOnGray,
-			disabledContainerColor = lightGrayButtonColor
+			contentColor = MaterialTheme.subletrPalette.textOnGray,
+			disabledContainerColor = MaterialTheme.subletrPalette.lightGrayButtonColor
 		),
 		enabled = active,
 	) {
 		if (watcard == null || !submitted) {
 			active = true
-			color = darkerGrayButtonColor
+			color = MaterialTheme.subletrPalette.darkerGrayButtonColor
 			Text(
-				stringResource(id = R.string.cancel)
+				stringResource(id = R.string.cancel),
+				color = MaterialTheme.subletrPalette.textOnGray
 			)
 		} else if (watcard != null && !verified && submitted) {
 			active = false
 			Text(
-				stringResource(id = R.string.pending_verification)
+				stringResource(id = R.string.pending_verification),
+				color = MaterialTheme.subletrPalette.textOnGray
 			)
 		} else if (watcard != null && verified){
 			active = true
-			color = subletrPink
+			color = MaterialTheme.subletrPalette.subletrPink
 			Text(
-				stringResource(id = R.string.done)
+				stringResource(id = R.string.done),
+				color = MaterialTheme.subletrPalette.textOnSubletrPink
 			)
 		}
 	}

@@ -121,6 +121,37 @@ private fun getSquaredTextFieldBackgroundColor(darkTheme: Boolean): Color {
 private val squaredTextFieldBackgroundColorLight = Color(0xFFFFFFFF)
 private val squaredTextFieldBackgroundColorDark = Color(0xFF000000)
 
+private fun getSubletrBlack(darkTheme: Boolean): Color {
+	return if (darkTheme) {
+		blackOnDark
+	} else {
+		blackOnLight
+	}
+}
+private val blackOnDark = Color.Black
+private val blackOnLight = Color.Black
+
+private fun getTextOnGray(darkTheme: Boolean): Color {
+	return if (darkTheme) {
+		textOnGrayDark
+	} else {
+		textOnGrayLight
+	}
+}
+private val textOnGrayDark = Color.Black
+private val textOnGrayLight = Color.Black
+
+private fun getLightGrayButtonColor(darkTheme: Boolean): Color {
+	return if (darkTheme) {
+		lightGrayButtonColorDark
+	} else {
+		lightGrayButtonColorLight
+	}
+}
+
+private val lightGrayButtonColorLight = Color((0xFFEEEEEE))
+private val lightGrayButtonColorDark = Color((0xFFEEEEEE))
+
 private fun getTextFieldBorderColor(darkTheme: Boolean): Color {
 	return if (darkTheme) {
 		textFieldBorderColorDark
@@ -162,6 +193,9 @@ data class SubletrCustomColorPalette(
 	val textFieldBackgroundColor: Color = Color.Unspecified,
 	val squaredTextFieldBackgroundColor: Color = Color.Unspecified,
 	val textFieldBorderColor: Color = Color.Unspecified,
+	val lightGrayButtonColor: Color = Color.Unspecified,
+	val subletrBlack: Color = Color.Unspecified,
+	val textOnGray: Color = Color.Unspecified,
 	val bottomSheetColor: Color = Color.Unspecified,
 )
 
@@ -183,7 +217,10 @@ val OnLightSubletrCustomColorPalette = SubletrCustomColorPalette(
 	textFieldBackgroundColor = getTextFieldBackgroundColor(darkTheme = false),
 	squaredTextFieldBackgroundColor = getSquaredTextFieldBackgroundColor(darkTheme = false),
 	textFieldBorderColor = getTextFieldBorderColor(darkTheme = false),
-	bottomSheetColor = getBottomSheetColor(darkTheme = false)
+	bottomSheetColor = getBottomSheetColor(darkTheme = false),
+	lightGrayButtonColor = getLightGrayButtonColor(darkTheme = false),
+	subletrBlack = getSubletrBlack(darkTheme = false),
+	textOnGray = getTextOnGray(darkTheme = false),
 )
 
 val OnDarkSubletrCustomColorPalette = SubletrCustomColorPalette(
@@ -199,7 +236,10 @@ val OnDarkSubletrCustomColorPalette = SubletrCustomColorPalette(
 	textFieldBackgroundColor = getTextFieldBackgroundColor(darkTheme = true),
 	squaredTextFieldBackgroundColor = getSquaredTextFieldBackgroundColor(darkTheme = true),
 	textFieldBorderColor = getTextFieldBorderColor(darkTheme = true),
-	bottomSheetColor = getBottomSheetColor(darkTheme = true)
+	bottomSheetColor = getBottomSheetColor(darkTheme = true),
+	lightGrayButtonColor = getLightGrayButtonColor(darkTheme = true),
+	subletrBlack = getSubletrBlack(darkTheme = true),
+	textOnGray = getTextOnGray(darkTheme = false),
 )
 
 internal val SubletrDarkColorScheme = darkColorScheme(

@@ -36,6 +36,7 @@
     <string name="next_arrow">Next Arrow</string>
     <string name="prev_arrow">Prev Arrow</string>
     <string name="add_sign">Add Sign</string>
+    <string name="checkmark_sign">Checkmark Sign</string>
     <string name="change_your_password">Change Your Password</string>
     <string name="verify">Verify</string>
     <string name="resend_code">Resend code</string>
@@ -142,12 +143,12 @@
     <string name="all_filters">All Filters</string>
     <string name="watcard_verification">Watcard Verification</string>
     <string name="watcard_verification_txt2">verify you are a student</string>
-    <string name="watcard_verification_txt1">Please upload your watcard to</string>
+    <string name="watcard_verification_txt">Please upload your watcard to verify you are a student</string>
     <string name="submit">Submit</string>
     <string name="add_watcard">Add Watcard</string>
     <string name="cancel">Cancel</string>
-    <string name="image_uploaded">✔ Image Uploaded</string>
-    <string name="image_verified">✔ Image Verified</string>
+    <string name="image_uploaded">Image Uploaded</string>
+    <string name="image_verified">Image Verified</string>
     <string name="pending_verification">Pending Verification...</string>
     <string name="address_city_postal_code">Address, City, Postal Code</string>
     <string name="search">Search</string>
