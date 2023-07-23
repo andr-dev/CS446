@@ -1,10 +1,5 @@
 package org.uwaterloo.subletr.pages.watcardverification
 
-import android.app.Activity
-import android.content.Intent
-import android.net.Uri
-import android.provider.MediaStore
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -17,32 +12,39 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Button
+import androidx.compose.foundation.layout.size
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rxjava3.subscribeAsState
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.res.dimensionResource
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.core.app.ActivityCompat.startActivityForResult
-import androidx.core.content.ContextCompat.startActivity
 import androidx.hilt.navigation.compose.hiltViewModel
 import org.uwaterloo.subletr.R
+import org.uwaterloo.subletr.components.button.PrimaryButton
+import org.uwaterloo.subletr.components.button.SecondaryButton
 import org.uwaterloo.subletr.theme.SubletrTheme
 import org.uwaterloo.subletr.theme.darkerGrayButtonColor
 import org.uwaterloo.subletr.theme.lightGrayButtonColor
+import org.uwaterloo.subletr.theme.primaryTextColor
 import org.uwaterloo.subletr.theme.secondaryTextColor
+import org.uwaterloo.subletr.theme.subletrBlack
 import org.uwaterloo.subletr.theme.subletrPink
+import org.uwaterloo.subletr.theme.textOnGray
+import org.uwaterloo.subletr.theme.textOnSubletrPink
 
 private const val ELEMENT_WIDTH = 0.75f
 @Composable
@@ -70,11 +72,12 @@ fun WatcardVerificationPageView(
 			horizontalAlignment = Alignment.CenterHorizontally,
 			verticalArrangement = Arrangement.Center,
 		) {
-			Spacer(modifier = modifier.weight(8.0f))
+			Spacer(modifier = modifier.weight(6.0f))
 			
 			Text(
 				text = stringResource(id = R.string.watcard_verification),
 				style = MaterialTheme.typography.titleMedium,
+				color = primaryTextColor
 			)
 
 			Column(modifier = modifier
@@ -91,20 +94,27 @@ fun WatcardVerificationPageView(
 				)
 			}
 
-			setContent(
+			Spacer(modifier = modifier.weight(2.0f))
+
+			SetContent(
 				viewModel = viewModel,
 				watcard = uiState.watcard
 			)
 
-			SetUploadButton(
+			Spacer(modifier = modifier.weight(8.0f))
+
+			SetSubmitButton(
 				viewModel,
-				uiState.watcard
+				uiState.watcard,
+				uiState.submitted,
+				uiState.verified,
 			)
 
-			Spacer(modifier = modifier.weight(0.5f))
+			Spacer(modifier = modifier.weight(3.0f))
 
-			setCancelButton(
+			SetCancelButton(
 				uiState.watcard,
+				uiState.submitted,
 				uiState.verified,
 			)
 
@@ -114,25 +124,27 @@ fun WatcardVerificationPageView(
 }
 
 @Composable
-fun setContent(viewModel: WatcardVerificationPageViewModel, watcard : String?) {
+fun SetContent(viewModel: WatcardVerificationPageViewModel, watcard : String?) {
 	Box(
 		modifier = Modifier
 			.padding(dimensionResource(id = R.dimen.l))
 			.fillMaxWidth()
-			.height(dimensionResource(id = R.dimen.xxxxxxxxxl))
+			.height(dimensionResource(id = R.dimen.watcard_image_height))
 			.border(
 				width = dimensionResource(id = R.dimen.xxxs),
-				color = Color.Gray,
-				shape = RoundedCornerShape(dimensionResource(id = R.dimen.zero)),
+				color = subletrBlack,
+				shape = RectangleShape,
 			)
 			.background(Color.Transparent)
 			.clickable {
 				viewModel.updateUiState(
 					WatcardVerificationUiState.Loaded(
 						watcard = "uploaded",
-						verified = false
+						submitted = false,
+						verified = false,
 					)
-				)},
+				)
+			},
 		contentAlignment = Alignment.Center,
 	) {
 		if (watcard == null) {
@@ -140,9 +152,12 @@ fun setContent(viewModel: WatcardVerificationPageViewModel, watcard : String?) {
 				horizontalAlignment = Alignment.CenterHorizontally,
 				verticalArrangement = Arrangement.Center,
 			) {
-				Text(
-					stringResource(id = R.string.plus),
-					style = MaterialTheme.typography.titleSmall,
+				Icon(
+					modifier = Modifier.size(dimensionResource(id = R.dimen.xl)),
+					painter = painterResource(
+						id = R.drawable.add_filled_black_32
+					),
+					contentDescription = stringResource(id = R.string.add_sign),
 				)
 				Text(
 					stringResource(id = R.string.add_watcard),
@@ -156,43 +171,69 @@ fun setContent(viewModel: WatcardVerificationPageViewModel, watcard : String?) {
 }
 
 @Composable
-fun SetUploadButton(
+fun SetSubmitButton(
 	viewModel: WatcardVerificationPageViewModel,
 	watcard: String?,
+	submitted: Boolean,
+	verified : Boolean
 ) {
-	Button(
+	var active by remember { mutableStateOf<Boolean>(true) }
+
+	PrimaryButton(
 		modifier = Modifier
 			.fillMaxWidth(ELEMENT_WIDTH)
 			.height(dimensionResource(id = R.dimen.xl)),
+		enabled = active,
+
 		onClick = { // TODO: verify
-			viewModel.updateUiState(
-				WatcardVerificationUiState.Loaded(
-					watcard = watcard,
-					verified = true
+			if (watcard != null) {
+				viewModel.updateUiState(
+					WatcardVerificationUiState.Loaded(
+						watcard = watcard,
+						submitted = true,
+						verified = false,
+					)
 				)
-			)
+
+			}
 		},
 		colors = ButtonDefaults.buttonColors(
 			containerColor = subletrPink,
-			contentColor = Color.White,
+			contentColor = textOnSubletrPink,
+			disabledContainerColor = lightGrayButtonColor,
 		)
 	) {
-		Text(
-			stringResource(id = R.string.submit)
-		)
+		if (!submitted) {
+			active = true
+			Text(
+				stringResource(id = R.string.submit)
+			)
+		} else if (submitted && !verified){
+			active = false
+			Text(
+				stringResource(id = R.string.image_uploaded)
+			)
+		} else {
+			active = false
+			Text(
+				stringResource(id = R.string.image_verified)
+			)
+		}
 	}
 }
 
 
 @Composable
-fun setCancelButton(
+fun SetCancelButton(
 	watcard: String?,
+	submitted : Boolean,
 	verified : Boolean,
 ) {
-	val active = remember { mutableStateOf<Boolean>(true) }
+	var active by remember { mutableStateOf<Boolean>(true) }
 
-	val color = remember { mutableStateOf<Color>(Color.Gray) }
-	color.value = darkerGrayButtonColor
+	var color by remember { mutableStateOf<Color>(Color.Gray) }
+	color = darkerGrayButtonColor
+
 
 	val buttonAction = remember { mutableStateOf<()->Unit>(
 		fun(){
@@ -200,32 +241,32 @@ fun setCancelButton(
 		}
 	) }
 
-	Button(
+	SecondaryButton(
 		modifier = Modifier
 			.fillMaxWidth(ELEMENT_WIDTH)
 			.height(dimensionResource(id = R.dimen.xl)),
 		onClick = { buttonAction },
 		colors = ButtonDefaults.buttonColors(
-			containerColor = color.value,
-			contentColor = Color.White,
+			containerColor = color,
+			contentColor = textOnGray,
 			disabledContainerColor = lightGrayButtonColor
 		),
-		enabled = active.value,
+		enabled = active,
 	) {
-		if (watcard == null) {
-			active.value = true
-			color.value = darkerGrayButtonColor
+		if (watcard == null || !submitted) {
+			active = true
+			color = darkerGrayButtonColor
 			Text(
 				stringResource(id = R.string.cancel)
 			)
-		} else if (watcard != null && !verified) {
-			active.value = false
+		} else if (watcard != null && !verified && submitted) {
+			active = false
 			Text(
 				stringResource(id = R.string.pending_verification)
 			)
-		} else {
-			active.value = true
-			color.value = subletrPink
+		} else if (watcard != null && verified){
+			active = true
+			color = subletrPink
 			Text(
 				stringResource(id = R.string.done)
 			)
@@ -242,10 +283,11 @@ fun WatcardVerificationPageViewLoadingPreview() {
 @Preview(showBackground = true)
 @Composable
 fun WatcardVerificationPageViewLoadedPreview() {
-	SubletrTheme {
+	SubletrTheme() {
 		WatcardVerificationPageView(
 			uiState = WatcardVerificationUiState.Loaded(
 				watcard = null,
+				submitted = false,
 				verified = false
 			),
 		)
