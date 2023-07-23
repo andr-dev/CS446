@@ -6,7 +6,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -21,7 +20,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
-import org.uwaterloo.subletr.theme.textOnSubletrPink
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rxjava3.subscribeAsState
@@ -34,20 +32,13 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
 import org.uwaterloo.subletr.R
-import org.uwaterloo.subletr.pages.account.AccountPageUiState
-import org.uwaterloo.subletr.pages.home.ViewSwitch
-import org.uwaterloo.subletr.pages.home.list.HomeListUiState
-import org.uwaterloo.subletr.services.NavigationService
 import org.uwaterloo.subletr.theme.SubletrTheme
-import org.uwaterloo.subletr.theme.notificationGreen
-import org.uwaterloo.subletr.theme.primaryTextColor
-import org.uwaterloo.subletr.theme.secondaryButtonBackgroundColor
-import org.uwaterloo.subletr.theme.subletrPink
+import org.uwaterloo.subletr.theme.subletrPalette
 
 @Composable
 fun ChatListingPageView(
 	modifier: Modifier = Modifier,
-	viewModel : ChatListingPageViewModel = hiltViewModel(),
+	viewModel: ChatListingPageViewModel = hiltViewModel(),
 	uiState: ChatListingPageUiState = viewModel.uiStateStream.subscribeAsState(
 		ChatListingPageUiState.Loading
 	).value
@@ -92,7 +83,7 @@ fun ChatListingPageView(
 					) {
 						Text(
 							stringResource(id = R.string.empty_chat),
-							color = primaryTextColor,
+							color = MaterialTheme.subletrPalette.primaryTextColor,
 						)
 					}
 				} else {
@@ -108,7 +99,7 @@ fun ChatListingPageView(
 }
 
 @Composable
-fun ListItem(contact : Contact) {
+fun ListItem(contact: Contact) {
 	val name = contact.name
 	val lastMsg = contact.msg.last()
 	Box(
@@ -124,7 +115,7 @@ fun ListItem(contact : Contact) {
 					dimensionResource(id = R.dimen.s)
 				)
 			)
-			.background(secondaryButtonBackgroundColor),
+			.background(MaterialTheme.subletrPalette.secondaryButtonBackgroundColor),
 	) {
 		Row(verticalAlignment = Alignment.CenterVertically) {
 			Icon(name = name)
@@ -148,7 +139,7 @@ fun ListItem(contact : Contact) {
 }
 
 @Composable
-fun Icon(name : String) {
+fun Icon(name: String) {
 	Box(
 		modifier = Modifier
 			.padding(dimensionResource(id = R.dimen.s))
@@ -158,20 +149,20 @@ fun Icon(name : String) {
 			modifier = Modifier
 				.width(dimensionResource(id = R.dimen.xxl))
 				.height(dimensionResource(id = R.dimen.xxl))
-				.background(subletrPink),
+				.background(MaterialTheme.subletrPalette.subletrPink),
 			contentAlignment = Alignment.Center,
 		) {
 			Text(
 				text = name.first().toString(),
 				style = MaterialTheme.typography.titleSmall,
-				color = textOnSubletrPink,
+				color = MaterialTheme.subletrPalette.textOnSubletrPink,
 			)
 		}
 	}
 }
 
 @Composable
-fun Notification(n : Int = 1) {
+fun Notification(n: Int = 1) {
 	Box(
 		modifier = Modifier
 			.padding(dimensionResource(id = R.dimen.s))
@@ -181,12 +172,12 @@ fun Notification(n : Int = 1) {
 			modifier = Modifier
 				.width(dimensionResource(id = R.dimen.l))
 				.height(dimensionResource(id = R.dimen.l))
-				.background(notificationGreen),
+				.background(MaterialTheme.subletrPalette.subletrPink),
 			contentAlignment = Alignment.Center,
 		) {
 			Text(
 				text = n.toString(),
-				color = textOnSubletrPink,
+				color = MaterialTheme.subletrPalette.textOnSubletrPink,
 				style = MaterialTheme.typography.labelLarge,
 			)
 		}
