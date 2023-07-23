@@ -198,6 +198,6 @@
     <string name="verified_student_short">"Verified student"</string>
     <string name="map">"Map"</string>
     <string name="rating">"Rating"</string>
-
-
+    <string name="image_not_supported">Image Not Supported</string>
+    <string name="skip">Skip</string>
 </resources>
