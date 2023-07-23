@@ -150,6 +150,7 @@
     <string name="google_maps_view">Google Maps View</string>
     <string name="time_to_destination_integer_minutes">Time to destination: &lt; %d minutes</string>
     <string name="n_minutes">%d minutes</string>
+    <string name="time_not_available">N/A</string>
     <string name="time">Time</string>
     <string name="message_ellipses">Message…</string>
     <string name="dates">Dates</string>

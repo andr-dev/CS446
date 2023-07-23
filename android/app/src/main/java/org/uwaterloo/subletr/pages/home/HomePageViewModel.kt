@@ -86,6 +86,7 @@ class HomePageViewModel @Inject constructor(
 							listings = emptyList(),
 							likedListings = emptySet(),
 							listingsImages = emptyList(),
+							timeToDestination = emptyList(),
 							selectedListings = emptyList(),
 						)
 					)
@@ -237,12 +238,17 @@ class HomePageViewModel @Inject constructor(
 									.listingParams.listingPagingParams.previousListingItemsModel.listingsImages +
 										images,
 								selectedListings = emptyList(),
+								timeToDestination = emptyList(),
 							),
 						)
 					)
 				}
 				HomePageUiState.HomePageViewType.MAP -> {
-					val newListings = listingParamsAndResponse.listingParams.listingPagingParams.previousListingItemsModel.listings +
+					val newListings = listingParamsAndResponse
+						.listingParams
+						.listingPagingParams
+						.previousListingItemsModel
+						.listings +
 						listingParamsAndResponse.listingsResponse.listings
 					val newLikedListings = listingParamsAndResponse
 						.listingParams
@@ -272,15 +278,83 @@ class HomePageViewModel @Inject constructor(
 										.size,
 								0)
 						) { false }
+					val newTimeToDestination = newListings.map {
+						when (listingParamsAndResponse.listingParams.transportationMethod) {
+							HomePageUiState.TransportationMethod.WALK -> {
+								it.distanceMeters / WALKING_METRES_PER_MINUTE
+							}
+							HomePageUiState.TransportationMethod.BIKE -> {
+								it.distanceMeters / CYCLING_METRES_PER_MINUTE
+							}
+							HomePageUiState.TransportationMethod.BUS -> {
+								it.distanceMeters / BUS_METRES_PER_MINUTE
+							}
+							HomePageUiState.TransportationMethod.CAR -> {
+								it.distanceMeters / DRIVING_METRES_PER_MINUTE
+							}
+						}
+					}
+
+					val filteredListings = if (
+						(listingParamsAndResponse
+							.listingParams
+							.filters
+							.timeToDestination ?: 200.0f) < 180
+					) {
+						newListings.filterIndexed { index, item ->
+							newTimeToDestination.getOrElse(index) { 200.0f } <
+								(listingParamsAndResponse
+									.listingParams
+									.filters
+									.timeToDestination ?: 210.0f)
+						}
+					} else {
+						newListings
+					}
+
+					val filteredListingImages = if (
+						(listingParamsAndResponse
+							.listingParams
+							.filters
+							.timeToDestination ?: 200.0f) < 180
+					) {
+						newListingImages.filterIndexed { index, item ->
+							newTimeToDestination.getOrElse(index) { 200.0f } <
+								(listingParamsAndResponse
+									.listingParams
+									.filters
+									.timeToDestination ?: 210.0f)
+						}
+					} else {
+						newListingImages
+					}
+
+					val filteredTimeToDestination = if (
+					(listingParamsAndResponse
+						.listingParams
+						.filters
+						.timeToDestination ?: 200.0f) < 180
+					) {
+						newTimeToDestination.filter { item: Float ->
+							item <
+								(listingParamsAndResponse
+									.listingParams
+									.filters
+									.timeToDestination ?: 210.0f)
+						}
+					} else {
+						newTimeToDestination
+					}
 
 					uiStateStream.onNext(
 						HomeMapUiState.Loaded(
 							filters = listingParamsAndResponse.listingParams.filters,
 							listingItems = HomePageUiState.ListingItemsModel(
-								listings = newListings,
+								listings = filteredListings,
 								likedListings = newLikedListings,
-								listingsImages = newListingImages,
+								listingsImages = filteredListingImages,
 								selectedListings = newSelectedListings,
+								timeToDestination = filteredTimeToDestination,
 							),
 							transportationMethod = listingParamsAndResponse.listingParams.transportationMethod,
 							addressSearch = listingParamsAndResponse.listingParams.filters.addressSearch ?: "",
@@ -291,7 +365,7 @@ class HomePageViewModel @Inject constructor(
 				}
 			}
 		}
-			.subscribeOn(Schedulers.io())
+			.subscribeOn(Schedulers.computation())
 
 	override val uiStateStream: BehaviorSubject<HomePageUiState> =
 		BehaviorSubject.createDefault(HomeListUiState.Loading)
@@ -344,6 +418,7 @@ class HomePageViewModel @Inject constructor(
 				likedListings = setOf(),
 				listingsImages = listOf(),
 				selectedListings = emptyList(),
+				timeToDestination = emptyList(),
 			),
 			pageNumber = 0,
 		),
@@ -367,6 +442,10 @@ class HomePageViewModel @Inject constructor(
 
 	companion object {
 		const val LISTING_PAGE_SIZE = 5
+		const val WALKING_METRES_PER_MINUTE = 75
+		const val CYCLING_METRES_PER_MINUTE = 250
+		const val BUS_METRES_PER_MINUTE = 350
+		const val DRIVING_METRES_PER_MINUTE = 600
 		const val CURRENT_LOCATION_STRING_VAL = "CURRENT_LOCATION_STRING_CONSTANT"
 	}
 
