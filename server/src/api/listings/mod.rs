@@ -27,6 +27,8 @@ use super::{
         GetListingsResponse,
         ListingDetails,
         ListingSummary,
+        UpdateListingRequest,
+        UpdateListingResponse,
     },
     token::AuthenticatedUser,
     utils::{distance_meters, format_address},
@@ -134,6 +136,85 @@ fn listings_details(
     } else {
         Err(ServiceError::NotFound)
     }
+}
+
+#[openapi(tag = "Listings")]
+#[post("/update", format = "json", data = "<listing_request>")]
+fn listings_update(
+    state: &State<AppState>,
+    user: AuthenticatedUser,
+    listing_request: Json<UpdateListingRequest>,
+) -> ServiceResult<UpdateListingResponse> {
+    let mut dbcon = state.pool.get()?;
+
+    if let Some(price) = listing_request.price {
+        diesel::update(listings::dsl::listings)
+            .filter(listings::dsl::owner_user_id.eq(user.user_id))
+            .set(listings::dsl::price.eq(price))
+            .execute(&mut dbcon)?;
+    }
+    if let Some(rooms_available) = listing_request.rooms_available {
+        diesel::update(listings::dsl::listings)
+            .filter(listings::dsl::owner_user_id.eq(user.user_id))
+            .set(listings::dsl::rooms_available.eq(rooms_available))
+            .execute(&mut dbcon)?;
+    }
+    if let Some(rooms_total) = listing_request.rooms_total {
+        diesel::update(listings::dsl::listings)
+            .filter(listings::dsl::owner_user_id.eq(user.user_id))
+            .set(listings::dsl::rooms_total.eq(rooms_total))
+            .execute(&mut dbcon)?;
+    }
+    if let Some(bathrooms_available) = listing_request.bathrooms_available {
+        diesel::update(listings::dsl::listings)
+            .filter(listings::dsl::owner_user_id.eq(user.user_id))
+            .set(listings::dsl::bathrooms_available.eq(bathrooms_available))
+            .execute(&mut dbcon)?;
+    }
+    if let Some(bathrooms_ensuite) = listing_request.bathrooms_ensuite {
+        diesel::update(listings::dsl::listings)
+            .filter(listings::dsl::owner_user_id.eq(user.user_id))
+            .set(listings::dsl::bathrooms_ensuite.eq(bathrooms_ensuite))
+            .execute(&mut dbcon)?;
+    }
+    if let Some(bathrooms_total) = listing_request.bathrooms_total {
+        diesel::update(listings::dsl::listings)
+            .filter(listings::dsl::owner_user_id.eq(user.user_id))
+            .set(listings::dsl::bathrooms_total.eq(bathrooms_total))
+            .execute(&mut dbcon)?;
+    }
+    if let Some(lease_start) = listing_request.lease_start {
+        diesel::update(listings::dsl::listings)
+            .filter(listings::dsl::owner_user_id.eq(user.user_id))
+            .set(listings::dsl::lease_start.eq(lease_start))
+            .execute(&mut dbcon)?;
+    }
+    if let Some(lease_end) = listing_request.lease_end {
+        diesel::update(listings::dsl::listings)
+            .filter(listings::dsl::owner_user_id.eq(user.user_id))
+            .set(listings::dsl::lease_end.eq(lease_end))
+            .execute(&mut dbcon)?;
+    }
+    if let Some(description) = &listing_request.description {
+        diesel::update(listings::dsl::listings)
+            .filter(listings::dsl::owner_user_id.eq(user.user_id))
+            .set(listings::dsl::listing_description.eq(description))
+            .execute(&mut dbcon)?;
+    }
+    if let Some(residence_type) = &listing_request.residence_type {
+        diesel::update(listings::dsl::listings)
+            .filter(listings::dsl::owner_user_id.eq(user.user_id))
+            .set(listings::dsl::residence_type.eq(residence_type.name()))
+            .execute(&mut dbcon)?;
+    }
+    if let Some(gender) = &listing_request.gender {
+        diesel::update(listings::dsl::listings)
+            .filter(listings::dsl::owner_user_id.eq(user.user_id))
+            .set(listings::dsl::gender.eq(gender))
+            .execute(&mut dbcon)?;
+    }
+
+    Ok(Json(UpdateListingResponse {}))
 }
 
 #[openapi(tag = "Listings")]
@@ -328,5 +409,6 @@ pub fn routes() -> (Vec<Route>, OpenApi) {
         listings_images_get,
         listings_list,
         listings_unfavourite,
+        listings_update,
     ]
 }
