@@ -19,3 +19,4 @@
 |    07-22-2023  |   1h   |    reviewed delievery 5 documents |
 |    07-23-2023  |   7h   |    addressed comments for chat page PR and watcard verification PR, changed verifiy watcard ui |
 |    07-23-2023  |   2.5h   |    rebased, resolved conflicts, and updated code to adapt to new implementations |
+|    07-23-2023  |   4h   |    made changes and refactored WatcardVerificationPageView and Model to allow watcard verification page to work synchronizely with backend server |
