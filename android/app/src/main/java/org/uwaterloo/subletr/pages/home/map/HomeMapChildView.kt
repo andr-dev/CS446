@@ -16,17 +16,21 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Slider
 import androidx.compose.material3.SliderDefaults
 import androidx.compose.material3.Text
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
@@ -53,10 +57,12 @@ import com.google.maps.android.compose.MarkerState
 import com.google.maps.android.compose.rememberCameraPositionState
 import kotlinx.coroutines.launch
 import org.uwaterloo.subletr.R
+import org.uwaterloo.subletr.enums.FilterType
 import org.uwaterloo.subletr.navigation.NavigationDestination
 import org.uwaterloo.subletr.pages.home.HomePageUiState
 import org.uwaterloo.subletr.pages.home.HomePageViewModel
 import org.uwaterloo.subletr.pages.home.components.LocationSearchTextField
+import org.uwaterloo.subletr.pages.home.components.filters.AllFilter
 import org.uwaterloo.subletr.pages.home.map.components.HomeMapFiltersRowView
 import org.uwaterloo.subletr.pages.home.map.components.HomeMapListingItemView
 import org.uwaterloo.subletr.services.LocationService
@@ -68,7 +74,7 @@ import org.uwaterloo.subletr.utils.UWATERLOO_LATITUDE
 import org.uwaterloo.subletr.utils.UWATERLOO_LONGITUDE
 import kotlin.math.roundToInt
 
-@OptIn(ExperimentalComposeUiApi::class)
+@OptIn(ExperimentalComposeUiApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun HomeMapChildView(
 	modifier: Modifier = Modifier,
@@ -89,6 +95,11 @@ fun HomeMapChildView(
 			scrollEnabled = true
 		}
 	}
+	val modalSheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
+	var isBottomSheetOpen by remember {
+		mutableStateOf(false)
+	}
+	var filterType by remember { mutableStateOf(FilterType.LOCATION) }
 
 	val launcher = rememberLauncherForActivityResult(
 		contract = ActivityResultContracts.RequestMultiplePermissions(),
@@ -180,6 +191,37 @@ fun HomeMapChildView(
 				}
 			}
 
+			fun closeBottomSheet() {
+				coroutineScope.launch {
+					isBottomSheetOpen = false
+				}
+			}
+			if (isBottomSheetOpen) {
+				ModalBottomSheet(
+					modifier = Modifier.wrapContentSize(),
+					onDismissRequest = { isBottomSheetOpen = false },
+					sheetState = modalSheetState,
+					containerColor = MaterialTheme.subletrPalette.bottomSheetColor,
+					content = {
+						when (filterType) {
+							FilterType.ALL -> AllFilter(
+								currentFilterVals = uiState.filters,
+								updateFilterVals = {
+									viewModel.updateAllFilters(
+										uiState = uiState,
+										newFilters = it,
+									)
+							    },
+								coroutineScope = coroutineScope,
+								closeAction = ::closeBottomSheet,
+							)
+
+							else -> {}
+						}
+					},
+				)
+			}
+
 			LazyColumn(
 				modifier = Modifier.padding(
 					paddingValues = paddingValues,
@@ -217,6 +259,10 @@ fun HomeMapChildView(
 									homePageView = HomePageUiState.HomePageViewType.MAP,
 								)
 							)
+						},
+						showAllFilters = {
+							filterType = FilterType.ALL
+							isBottomSheetOpen = true
 						},
 					)
 				}

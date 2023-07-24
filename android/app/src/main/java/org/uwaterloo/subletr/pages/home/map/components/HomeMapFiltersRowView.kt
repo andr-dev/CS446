@@ -30,6 +30,7 @@ fun HomeMapFiltersRowView(
 	modifier: Modifier,
 	uiState: HomeMapUiState.Loaded,
 	updateTransportationMethod: (HomePageUiState.TransportationMethod) -> Unit,
+	showAllFilters: () -> Unit,
 ) {
 	Row(
 		modifier = modifier
@@ -43,7 +44,7 @@ fun HomeMapFiltersRowView(
 		) {
 			IconButton(
 				modifier = Modifier.background(color = MaterialTheme.subletrPalette.secondaryButtonBackgroundColor),
-				onClick = { /*TODO*/ },
+				onClick = showAllFilters,
 			) {
 				Icon(
 					painter = painterResource(id = R.drawable.tune_round_black_24),

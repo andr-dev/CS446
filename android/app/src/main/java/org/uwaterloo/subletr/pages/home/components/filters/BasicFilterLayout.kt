@@ -1,4 +1,4 @@
-package org.uwaterloo.subletr.pages.home.list.components
+package org.uwaterloo.subletr.pages.home.components.filters
 
 import androidx.annotation.StringRes
 import androidx.compose.foundation.background
