@@ -1,6 +1,10 @@
 package org.uwaterloo.subletr.pages.home.list
 
+import android.Manifest
 import android.graphics.Bitmap
+import android.util.Log
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -51,6 +55,7 @@ import org.uwaterloo.subletr.enums.HousingType
 import org.uwaterloo.subletr.navigation.NavigationDestination
 import org.uwaterloo.subletr.pages.home.HomePageUiState
 import org.uwaterloo.subletr.pages.home.HomePageViewModel
+import org.uwaterloo.subletr.pages.home.components.LocationSearchTextField
 import org.uwaterloo.subletr.pages.home.list.components.AllFilter
 import org.uwaterloo.subletr.pages.home.list.components.ButtonWithIcon
 import org.uwaterloo.subletr.pages.home.list.components.DateFilter
@@ -62,6 +67,7 @@ import org.uwaterloo.subletr.pages.home.list.components.PriceFilter
 import org.uwaterloo.subletr.pages.home.list.components.PropertyTypeFilter
 import org.uwaterloo.subletr.pages.home.list.components.RoomFilter
 import org.uwaterloo.subletr.pages.home.list.components.RoommateFilter
+import org.uwaterloo.subletr.services.LocationService
 import org.uwaterloo.subletr.services.NavigationService
 import org.uwaterloo.subletr.theme.SubletrTheme
 import org.uwaterloo.subletr.theme.subletrPalette
@@ -76,6 +82,29 @@ fun HomeListChildView(
 	viewModel: HomeListChildViewModel,
 	uiState: HomeListUiState,
 ) {
+	val coroutineScope = rememberCoroutineScope()
+
+	val launcher = rememberLauncherForActivityResult(
+		contract = ActivityResultContracts.RequestMultiplePermissions(),
+	) { permissions ->
+		if (uiState is HomeListUiState.Loaded) {
+			when {
+				permissions.getOrDefault(Manifest.permission.ACCESS_FINE_LOCATION, false) -> {
+					coroutineScope.launch {
+						viewModel.setLocationToCurrentLocation(uiState = uiState)
+					}
+				}
+				permissions.getOrDefault(Manifest.permission.ACCESS_COARSE_LOCATION, false) -> {
+					coroutineScope.launch {
+						viewModel.setLocationToCurrentLocation(uiState = uiState)
+					}
+				} else -> {
+				Log.d("LocationLogs", "No Location Permissions")
+			}
+			}
+		}
+	}
+
 	Scaffold(
 		modifier = modifier.fillMaxSize(1.0f),
 		floatingActionButtonPosition = FabPosition.End,
@@ -120,7 +149,6 @@ fun HomeListChildView(
 			}
 		} else if (uiState is HomeListUiState.Loaded) {
 			val filterType = remember { mutableStateOf(FilterType.LOCATION) }
-			val coroutineScope = rememberCoroutineScope()
 			val modelSheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
 			var isBottomSheetOpen by remember {
 				mutableStateOf(false)
@@ -252,6 +280,22 @@ fun HomeListChildView(
 				horizontalAlignment = Alignment.CenterHorizontally,
 				userScrollEnabled = true,
 			) {
+				item {
+					LocationSearchTextField(
+						addressSearch = uiState.addressSearch,
+						onValueChange = {
+							viewModel.uiStateStream.onNext(
+								uiState.copy(
+									addressSearch = it,
+								),
+							)
+						},
+						onLocationIconClick = {
+							launcher.launch(LocationService.locationPermissions)
+						}
+					)
+				}
+
 				item {
 					Column {
 						LazyRow(
@@ -402,9 +446,11 @@ private fun HomeListViewPreview() {
 		HomeListChildView(
 			modifier = Modifier,
 			viewModel = HomeListChildViewModel(
-				NavigationService(context = LocalContext.current),
+				locationService = LocationService(context = LocalContext.current),
+				navigationService = NavigationService(context = LocalContext.current),
 			),
 			uiState = HomeListUiState.Loaded(
+				addressSearch = "",
 				listingItems = HomePageUiState.ListingItemsModel(
 					listings = emptyList(),
 					likedListings = emptySet(),
