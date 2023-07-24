@@ -25,3 +25,5 @@
 | July 17th | 6 hours | Added display for new fields in listing details, added listing favourite/unfavourite from listing details, worked on map latitude, longitude and location approximation and attempted to fix location services |
 | July 18th | 2 hours | Addressing comments on favourite/unfavourite api PR, reviewed some PRs and attempted backend changes |
 | July 19th | 3 hours | Clean up PR for Google Places Autocomplete for addresses when creating sublet listing |
+| July 20th | 6 hours | Listing details image position fix and adding more fields to the create listing page |
+| July 23rd | 3 hours | Refactored the create listing page to match updated UI |
