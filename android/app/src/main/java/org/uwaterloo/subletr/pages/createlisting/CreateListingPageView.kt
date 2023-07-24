@@ -109,6 +109,8 @@ fun CreateListingPageView(
 	var openDatePicker by rememberSaveable { mutableStateOf(false) }
 	val datePickerBottomSheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
 
+
+	var attemptCreate by remember { mutableStateOf(false) }
 	Scaffold(
 		modifier = modifier,
 		topBar = {
@@ -163,7 +165,17 @@ fun CreateListingPageView(
 			) {
 
 				Spacer(
-					modifier = Modifier.height(dimensionResource(id = R.dimen.m)),
+					modifier = Modifier.weight(weight = 1.0f)
+				)
+				if (attemptCreate && !canCreate(uiState = uiState)) {
+					Text(
+						text = stringResource(id = R.string.update_fields),
+						color = MaterialTheme.subletrPalette.warningColor
+					)
+				}
+
+				Spacer(
+					modifier = Modifier.weight(weight = 1.0f)
 				)
 
 				ExposedDropdownMenuBox(
@@ -177,7 +189,11 @@ fun CreateListingPageView(
 							.menuAnchor()
 							.border(
 								width = dimensionResource(id = R.dimen.xxxs),
-								color = MaterialTheme.subletrPalette.textFieldBorderColor,
+								color =
+								if (!attemptCreate || !adressIsEmpty(uiState.address))
+									MaterialTheme.subletrPalette.textFieldBorderColor
+								else
+									MaterialTheme.subletrPalette.warningColor,
 								shape = RoundedCornerShape(dimensionResource(id = R.dimen.xxxxl))
 							),
 						placeholder = {
@@ -189,7 +205,11 @@ fun CreateListingPageView(
 						label = {
 							Text(
 								text = stringResource(id = R.string.address),
-								color = MaterialTheme.subletrPalette.secondaryTextColor,
+								color =
+								if (!attemptCreate || !adressIsEmpty(uiState.address))
+									MaterialTheme.subletrPalette.secondaryTextColor
+								else
+									MaterialTheme.subletrPalette.warningColor,
 							)
 						},
 						value = uiState.address.fullAddress,
@@ -218,6 +238,53 @@ fun CreateListingPageView(
 				}
 
 				Spacer(
+					modifier = Modifier.weight(weight = 2.0f)
+				)
+
+				RoundedTextField(
+					modifier = Modifier
+						.fillMaxWidth()
+						.border(
+							width = dimensionResource(id = R.dimen.xxxs),
+							color =
+							if (!attemptCreate || uiState.price > 0)
+								MaterialTheme.subletrPalette.textFieldBorderColor
+							else
+								MaterialTheme.subletrPalette.warningColor,
+							shape = RoundedCornerShape(dimensionResource(id = R.dimen.xxxxl))
+						),
+					placeholder = {
+						Text(
+							text = stringResource(id = R.string.price),
+							color =
+							if (!attemptCreate || canCreate(uiState))
+								MaterialTheme.subletrPalette.secondaryTextColor
+							else
+								MaterialTheme.subletrPalette.warningColor,
+						)
+					},
+					label = {
+						Text(
+							text = stringResource(id = R.string.price),
+							color =
+							if (!attemptCreate || uiState.price > 0)
+								MaterialTheme.subletrPalette.secondaryTextColor
+							else
+								MaterialTheme.subletrPalette.warningColor,
+						)
+					},
+					keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+					value = if (uiState.price == 0) "" else uiState.price.toString(),
+					onValueChange = {
+						if (it.isEmpty()) {
+							viewModel.priceStream.onNext(0)
+						} else if (it.matches(numberPattern)) {
+							viewModel.priceStream.onNext(it.toInt())
+						}
+					}
+				)
+
+				Spacer(
 					modifier = Modifier.height(dimensionResource(id = R.dimen.m)),
 				)
 
@@ -242,7 +309,11 @@ fun CreateListingPageView(
 							.weight(1f)
 							.border(
 								width = dimensionResource(id = R.dimen.xxxs),
-								color = MaterialTheme.subletrPalette.textFieldBorderColor,
+								color =
+								if (!attemptCreate || canCreate(uiState))
+									MaterialTheme.subletrPalette.textFieldBorderColor
+								else
+									MaterialTheme.subletrPalette.warningColor,
 								shape = RoundedCornerShape(dimensionResource(id = R.dimen.xxxxl))
 							),
 						labelStringId = R.string.start_date,
@@ -259,7 +330,11 @@ fun CreateListingPageView(
 							.weight(1f)
 							.border(
 								width = dimensionResource(id = R.dimen.xxxs),
-								color = MaterialTheme.subletrPalette.textFieldBorderColor,
+								color =
+								if (!attemptCreate || canCreate(uiState))
+									MaterialTheme.subletrPalette.textFieldBorderColor
+								else
+									MaterialTheme.subletrPalette.warningColor,
 								shape = RoundedCornerShape(dimensionResource(id = R.dimen.xxxxl))
 							),
 						labelStringId = R.string.end_date,
@@ -511,7 +586,10 @@ fun CreateListingPageView(
 						.height(dimensionResource(id = R.dimen.xxl))
 						.padding(bottom = dimensionResource(id = R.dimen.xs)),
 					onClick = {
-						viewModel.createListingStream.onNext(uiState)
+						attemptCreate = true
+						if (canCreate(uiState)) {
+							viewModel.createListingStream.onNext(uiState)
+						}
 					},
 				) {
 					Text(
@@ -530,6 +608,21 @@ private val storeDateFormatISO: DateTimeFormatter = DateTimeFormatter.ISO_LOCAL_
 // TODO: localize date format
 @OptIn(ExperimentalMaterial3Api::class)
 private val displayDateFormatter = DatePickerDefaults.dateFormatter(selectedDateSkeleton = "MM/dd/yyyy")
+
+fun canCreate(uiState: CreateListingPageUiState.Loaded) : Boolean {
+	return !adressIsEmpty(uiState.address) &&
+		uiState.price != 0 &&
+		uiState.startDate != "" &&
+		uiState.endDate != "" &&
+		uiState.numBedrooms != 0
+}
+
+fun adressIsEmpty(addressModel: CreateListingPageUiState.AddressModel) : Boolean {
+	return addressModel.addressCity == "" &&
+		addressModel.addressLine == "" &&
+		addressModel.addressPostalCode == "" &&
+		addressModel.fullAddress == ""
+}
 
 @Composable
 fun CreateListingNumericalInputs(
@@ -571,6 +664,7 @@ fun CreateListingNumericalInputs(
 		}
 	)
 }
+
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
