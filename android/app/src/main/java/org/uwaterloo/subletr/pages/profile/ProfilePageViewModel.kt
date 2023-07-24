@@ -4,7 +4,6 @@ import android.graphics.Bitmap
 import android.util.Log
 import androidx.lifecycle.SavedStateHandle
 import androidx.navigation.NavHostController
-import androidx.navigation.navOptions
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.schedulers.Schedulers
@@ -16,15 +15,12 @@ import org.uwaterloo.subletr.api.apis.UserApi
 import org.uwaterloo.subletr.api.models.GetUserResponse
 import org.uwaterloo.subletr.api.models.ListingDetails
 import org.uwaterloo.subletr.api.models.RateUserRequest
-import org.uwaterloo.subletr.api.models.UserAvatarUpdateRequest
 import org.uwaterloo.subletr.infrastructure.SubletrViewModel
-import org.uwaterloo.subletr.navigation.NavigationDestination
 import org.uwaterloo.subletr.services.IAuthenticationService
 import org.uwaterloo.subletr.services.INavigationService
 import org.uwaterloo.subletr.utils.UWATERLOO_LATITUDE
 import org.uwaterloo.subletr.utils.UWATERLOO_LONGITUDE
 import org.uwaterloo.subletr.utils.base64ToBitmap
-import org.uwaterloo.subletr.utils.toBase64String
 import java.util.Optional
 import javax.inject.Inject
 import kotlin.jvm.optionals.getOrNull

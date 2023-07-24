@@ -8,6 +8,7 @@ import kotlinx.coroutines.coroutineScope
 import org.uwaterloo.subletr.infrastructure.SubletrChildViewModel
 import org.uwaterloo.subletr.pages.home.HomePageUiState
 import org.uwaterloo.subletr.pages.home.HomePageViewModel
+import org.uwaterloo.subletr.pages.home.HomePageViewModel.Companion.CURRENT_LOCATION_STRING_VAL
 import org.uwaterloo.subletr.services.ILocationService
 import org.uwaterloo.subletr.services.INavigationService
 import java.util.concurrent.TimeUnit
@@ -73,9 +74,5 @@ class HomeMapChildViewModel @Inject constructor(
 			}
 			.subscribeOn(Schedulers.computation())
 			.safeSubscribe()
-	}
-
-	companion object {
-		const val CURRENT_LOCATION_STRING_VAL = "CURRENT_LOCATION_STRING_CONSTANT"
 	}
 }

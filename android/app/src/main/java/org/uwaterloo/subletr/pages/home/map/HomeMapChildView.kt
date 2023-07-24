@@ -22,8 +22,6 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.FloatingActionButton
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Slider
@@ -43,7 +41,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.pointer.pointerInteropFilter
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.dimensionResource
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.tooling.preview.Preview
@@ -56,15 +53,13 @@ import com.google.maps.android.compose.MarkerState
 import com.google.maps.android.compose.rememberCameraPositionState
 import kotlinx.coroutines.launch
 import org.uwaterloo.subletr.R
-import org.uwaterloo.subletr.components.textfield.RoundedTextField
 import org.uwaterloo.subletr.navigation.NavigationDestination
 import org.uwaterloo.subletr.pages.home.HomePageUiState
 import org.uwaterloo.subletr.pages.home.HomePageViewModel
-import org.uwaterloo.subletr.pages.home.map.HomeMapChildViewModel.Companion.CURRENT_LOCATION_STRING_VAL
+import org.uwaterloo.subletr.pages.home.components.LocationSearchTextField
 import org.uwaterloo.subletr.pages.home.map.components.HomeMapFiltersRowView
 import org.uwaterloo.subletr.pages.home.map.components.HomeMapListingItemView
 import org.uwaterloo.subletr.services.LocationService
-import org.uwaterloo.subletr.services.LocationService.Companion.locationPermissions
 import org.uwaterloo.subletr.services.NavigationService
 import org.uwaterloo.subletr.theme.SubletrTheme
 import org.uwaterloo.subletr.theme.subletrPalette
@@ -193,15 +188,8 @@ fun HomeMapChildView(
 				userScrollEnabled = scrollEnabled,
 			) {
 				item {
-					RoundedTextField(
-						modifier = Modifier
-							.fillMaxWidth(fraction = 1.0f)
-							.padding(horizontal = dimensionResource(id = R.dimen.xs)),
-						value = if (uiState.addressSearch != CURRENT_LOCATION_STRING_VAL) {
-							uiState.addressSearch
-						} else {
-							stringResource(id = R.string.current_location)
-					    },
+					LocationSearchTextField(
+						addressSearch = uiState.addressSearch,
 						onValueChange = {
 							viewModel.uiStateStream.onNext(
 								uiState.copy(
@@ -209,28 +197,9 @@ fun HomeMapChildView(
 								),
 							)
 						},
-						placeholder = {
-							Text(
-								text = stringResource(id = R.string.address_city_postal_code),
-								color = MaterialTheme.subletrPalette.secondaryTextColor,
-							)
-						},
-						leadingIcon = {
-							Icon(
-								painter = painterResource(id = R.drawable.search_solid_gray_24),
-								contentDescription = stringResource(id = R.string.search),
-								tint = MaterialTheme.subletrPalette.unselectedGray,
-							)
-						},
-						trailingIcon = {
-							IconButton(onClick = {launcher.launch(locationPermissions)}) {
-								Icon(
-									painter = painterResource(id = R.drawable.my_location_solid_pink_24),
-									contentDescription = stringResource(id = R.string.my_location),
-									tint = MaterialTheme.subletrPalette.subletrPink,
-								)
-							}
-						},
+						onLocationIconClick = {
+							launcher.launch(LocationService.locationPermissions)
+						}
 					)
 				}
 				item {

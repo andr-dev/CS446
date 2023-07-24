@@ -6,6 +6,7 @@ sealed interface HomeListUiState: HomePageUiState {
 	object Loading : HomeListUiState
 
 	data class Loaded(
+		val addressSearch: String,
 		val filters: HomePageUiState.FiltersModel,
 		val listingItems: HomePageUiState.ListingItemsModel,
 	) : HomeListUiState

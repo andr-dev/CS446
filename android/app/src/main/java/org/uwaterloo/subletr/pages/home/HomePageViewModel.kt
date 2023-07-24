@@ -21,7 +21,6 @@ import org.uwaterloo.subletr.infrastructure.SubletrViewModel
 import org.uwaterloo.subletr.pages.home.list.HomeListChildViewModel
 import org.uwaterloo.subletr.pages.home.list.HomeListUiState
 import org.uwaterloo.subletr.pages.home.map.HomeMapChildViewModel
-import org.uwaterloo.subletr.pages.home.map.HomeMapChildViewModel.Companion.CURRENT_LOCATION_STRING_VAL
 import org.uwaterloo.subletr.pages.home.map.HomeMapUiState
 import org.uwaterloo.subletr.pages.home.map.MAX_DISTANCE_IN_MINUTES
 import org.uwaterloo.subletr.services.INavigationService
@@ -223,6 +222,7 @@ class HomePageViewModel @Inject constructor(
 				HomePageUiState.HomePageViewType.LIST -> {
 					uiStateStream.onNext(
 						HomeListUiState.Loaded(
+							addressSearch = listingParamsAndResponse.listingParams.filters.addressSearch ?: "",
 							filters = listingParamsAndResponse.listingParams.filters,
 							listingItems = HomePageUiState.ListingItemsModel(
 								listings = listingParamsAndResponse.listingParams.listingPagingParams.previousListingItemsModel.listings +
@@ -305,7 +305,7 @@ class HomePageViewModel @Inject constructor(
 		else if (uiState is HomeListUiState.Loaded) {
 			uiStateStream.onNext(
 				HomeMapUiState.Loaded(
-					addressSearch = "",
+					addressSearch = uiState.addressSearch,
 					transportationMethod = HomePageUiState.TransportationMethod.WALK,
 					filters = uiState.filters,
 					listingItems = uiState.listingItems,
@@ -325,6 +325,7 @@ class HomePageViewModel @Inject constructor(
 		else if (uiState is HomeMapUiState.Loaded) {
 			uiStateStream.onNext(
 				HomeListUiState.Loaded(
+					addressSearch = uiState.addressSearch,
 					filters = uiState.filters,
 					listingItems = uiState.listingItems,
 				)
@@ -366,6 +367,7 @@ class HomePageViewModel @Inject constructor(
 
 	companion object {
 		const val LISTING_PAGE_SIZE = 5
+		const val CURRENT_LOCATION_STRING_VAL = "CURRENT_LOCATION_STRING_CONSTANT"
 	}
 
 	init {

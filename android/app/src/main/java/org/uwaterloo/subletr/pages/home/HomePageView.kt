@@ -158,6 +158,7 @@ fun LoginPageViewLoadedPreview() {
 	SubletrTheme {
 		HomePageView(
 			uiState = HomeListUiState.Loaded(
+				addressSearch = "",
 				listingItems = HomePageUiState.ListingItemsModel(
 					listings = emptyList(),
 					likedListings = emptySet(),
