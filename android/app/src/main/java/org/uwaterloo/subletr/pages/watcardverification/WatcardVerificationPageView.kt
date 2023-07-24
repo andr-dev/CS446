@@ -297,9 +297,9 @@ fun SetCancelButton(
 	uiState: WatcardVerificationUiState.Loaded,
 	viewModel: WatcardVerificationPageViewModel,
 ) {
-	var active by remember { mutableStateOf<Boolean>(true) }
+	var active by remember { mutableStateOf(true) }
 
-	var color by remember { mutableStateOf<Color>(Color.Gray) }
+	var color by remember { mutableStateOf(Color.Transparent) }
 	color = MaterialTheme.subletrPalette.secondaryButtonBackgroundColor
 
 	SecondaryButton(
@@ -310,14 +310,15 @@ fun SetCancelButton(
 			viewModel.navHostController.navigate(NavigationDestination.HOME.fullNavPath)
 		},
 		colors = ButtonDefaults.buttonColors(
-			containerColor = color,
+			containerColor = if (active && uiState.watcard == null || !uiState.submitted)
+				MaterialTheme.subletrPalette.darkerGrayButtonColor
+			else MaterialTheme.subletrPalette.subletrPink,
 			contentColor = MaterialTheme.subletrPalette.primaryTextColor,
 		),
 		enabled = active,
 	) {
 		if (uiState.watcard == null || !uiState.submitted) {
 			active = true
-			color = MaterialTheme.subletrPalette.darkerGrayButtonColor
 			Text(
 				stringResource(id = R.string.skip),
 				color = MaterialTheme.subletrPalette.primaryTextColor
@@ -330,7 +331,6 @@ fun SetCancelButton(
 			)
 		} else {
 			active = true
-			color = MaterialTheme.subletrPalette.subletrPink
 			Text(
 				stringResource(id = R.string.done),
 				color = MaterialTheme.subletrPalette.textOnSubletrPink

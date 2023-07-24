@@ -132,6 +132,17 @@ private fun getTextFieldBorderColor(darkTheme: Boolean): Color {
 private val textFieldBorderColorLight = Color((0xFFE5E5E5))
 private val textFieldBorderColorDark = Color((0xFF928586))
 
+private fun getBottomSheetColor(darkTheme: Boolean): Color {
+	return if (darkTheme) {
+		bottomSheetColorDark
+	}
+	else {
+		bottomSheetColorLight
+	}
+}
+private val bottomSheetColorLight = Color((0xFFFFFFFF))
+private val bottomSheetColorDark = Color((0xFF181213))
+
 val Purple900 = Color(0xFF4A148C)
 val Purple500 = Color(0xFF9C27B0)
 val mapCircleFill = Color(0x8042A5F5)
@@ -151,6 +162,7 @@ data class SubletrCustomColorPalette(
 	val textFieldBackgroundColor: Color = Color.Unspecified,
 	val squaredTextFieldBackgroundColor: Color = Color.Unspecified,
 	val textFieldBorderColor: Color = Color.Unspecified,
+	val bottomSheetColor: Color = Color.Unspecified,
 )
 
 val LocalSubletrCustomColorPalette: ProvidableCompositionLocal<SubletrCustomColorPalette> =
@@ -171,6 +183,7 @@ val OnLightSubletrCustomColorPalette = SubletrCustomColorPalette(
 	textFieldBackgroundColor = getTextFieldBackgroundColor(darkTheme = false),
 	squaredTextFieldBackgroundColor = getSquaredTextFieldBackgroundColor(darkTheme = false),
 	textFieldBorderColor = getTextFieldBorderColor(darkTheme = false),
+	bottomSheetColor = getBottomSheetColor(darkTheme = false),
 )
 
 val OnDarkSubletrCustomColorPalette = SubletrCustomColorPalette(
@@ -186,6 +199,7 @@ val OnDarkSubletrCustomColorPalette = SubletrCustomColorPalette(
 	textFieldBackgroundColor = getTextFieldBackgroundColor(darkTheme = true),
 	squaredTextFieldBackgroundColor = getSquaredTextFieldBackgroundColor(darkTheme = true),
 	textFieldBorderColor = getTextFieldBorderColor(darkTheme = true),
+	bottomSheetColor = getBottomSheetColor(darkTheme = true),
 )
 
 internal val SubletrDarkColorScheme = darkColorScheme(
