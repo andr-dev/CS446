@@ -20,3 +20,9 @@
 |    07-23-2023  |   7h   |    addressed comments for chat page PR and watcard verification PR, changed verifiy watcard ui |
 |    07-23-2023  |   2.5h   |    rebased, resolved conflicts, and updated code to adapt to new implementations |
 |    07-23-2023  |   4h   |    made changes and refactored WatcardVerificationPageView and Model to allow watcard verification page to work synchronizely with backend server |
+|    07-24-2023  |   4.5h   |    refactored WatcardVerificationPage View, Model, and UiState to use the correct backend call instead of using avatar get and upload for testing. Finished listed TODOs|
+|    07-24-2023  |   2h   |    worked with Ahbed to refactor verifiedStream in Model to connect with backend|
+|    07-24-2023  |  0.5h   |    PR review for others|
+|    07-24-2023  |   0.5h   |    refactored ListItems in ChatListingPage|
+|    07-24-2023  |   0.25h   |    final reviews and merged PR |
+|    07-24-2023  |   2.5h   |    modified create listing page to restrict user from creating a page without enough information |
