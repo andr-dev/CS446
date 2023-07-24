@@ -43,7 +43,7 @@ fun PriceFilter(
 	var lowerTextFieldError by remember { mutableStateOf(false) }
 	var upperTextFieldError by remember { mutableStateOf(false) }
 	BasicFilterLayout(
-		modifier = Modifier.height(300.dp),
+		modifier = Modifier.height(220.dp),
 		titleId = R.string.price_range,
 		closeAction = closeAction,
 		content = {

@@ -27,17 +27,23 @@ import kotlin.math.sin
 fun StaticRatingsBar(
 	modifier: Modifier,
 	rating: Float,
+	ratingColor: Color =  MaterialTheme.subletrPalette.subletrPink,
+	backgroundColor: Color =  MaterialTheme.subletrPalette.textFieldBorderColor,
+	onlyShowFilled: Boolean = false,
 ) {
 	Row(
 		modifier = modifier,
 		horizontalArrangement = Arrangement.spacedBy(dimensionResource(id = R.dimen.xxxs))
 	) {
-		for (i in 1..5) {
+		val numStars = if (onlyShowFilled) rating.toInt() else 5
+		for (i in 1..numStars) {
 			RatingStar(
 				rating =
 				if (i - rating <= 0.0f) 1.0f
 				else if (i - rating >= 1.0f) 0.0f
 				else 1 - (i - rating),
+				ratingColor,
+				backgroundColor,
 			)
 		}
 	}

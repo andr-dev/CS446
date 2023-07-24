@@ -64,7 +64,7 @@ fun LocationFilter(
 	var lowerTextFieldError by remember { mutableStateOf(false) }
 	var upperTextFieldError by remember { mutableStateOf(false) }
 	BasicFilterLayout(
-		modifier = Modifier.height(360.dp),
+		modifier = Modifier.height(300.dp),
 		titleId = R.string.location,
 		closeAction = closeAction,
 		content = {

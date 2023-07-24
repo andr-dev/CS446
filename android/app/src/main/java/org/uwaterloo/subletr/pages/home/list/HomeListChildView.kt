@@ -65,6 +65,7 @@ import org.uwaterloo.subletr.pages.home.list.components.HomeListListingItemView
 import org.uwaterloo.subletr.pages.home.list.components.LocationFilter
 import org.uwaterloo.subletr.pages.home.list.components.PriceFilter
 import org.uwaterloo.subletr.pages.home.list.components.PropertyTypeFilter
+import org.uwaterloo.subletr.pages.home.list.components.RatingFilter
 import org.uwaterloo.subletr.pages.home.list.components.RoomFilter
 import org.uwaterloo.subletr.pages.home.list.components.RoommateFilter
 import org.uwaterloo.subletr.services.LocationService
@@ -252,6 +253,16 @@ fun HomeListChildView(
 				)
 			}
 
+			fun updateRatingFilter(newVal: Int) {
+				viewModel.getListingParamsStream.onNext(
+					HomePageViewModel.GetListingParams(
+						filters = uiState.filters.copy(minRating = newVal),
+						transportationMethod = HomePageUiState.TransportationMethod.WALK,
+						homePageView = HomePageUiState.HomePageViewType.LIST,
+					)
+				)
+			}
+
 			fun updateAllFilters(newVal: HomePageUiState.FiltersModel) {
 				viewModel.getListingParamsStream.onNext(
 					HomePageViewModel.GetListingParams(
@@ -332,6 +343,7 @@ fun HomeListChildView(
 								FilterType.PROPERTY_TYPE,
 								FilterType.ROOMMATE,
 								FilterType.DATES,
+								FilterType.RATING,
 							).map {
 								item {
 									FilterButton(
@@ -352,7 +364,7 @@ fun HomeListChildView(
 								modifier = Modifier.wrapContentSize(),
 								onDismissRequest = { isBottomSheetOpen = false },
 								sheetState = modelSheetState,
-								containerColor = MaterialTheme.subletrPalette.primaryBackgroundColor,
+								containerColor = MaterialTheme.subletrPalette.bottomSheetColor,
 								content = {
 									when (filterType.value) {
 										FilterType.LOCATION -> {
@@ -397,6 +409,12 @@ fun HomeListChildView(
 										FilterType.FAVOURITE -> FavouriteFilter(
 											currentFavourite = uiState.filters.favourite,
 											updateFavouriteFilter = ::updateFavouriteFilter,
+											closeAction = ::closeBottomSheet,
+										)
+
+										FilterType.RATING -> RatingFilter(
+											currentRatingPref = uiState.filters.minRating,
+											updateRatingFilter = ::updateRatingFilter,
 											closeAction = ::closeBottomSheet,
 										)
 
@@ -468,6 +486,7 @@ private fun HomeListViewPreview() {
 					favourite = false,
 					timeToDestination = null,
 					addressSearch = null,
+					minRating = 0,
 				),
 			),
 		)

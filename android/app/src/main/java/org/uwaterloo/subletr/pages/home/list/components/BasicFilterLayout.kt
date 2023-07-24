@@ -57,7 +57,7 @@ fun BasicFilterLayout(
 	Scaffold(
 		modifier = modifier
 			.fillMaxWidth(1.0f),
-		containerColor = MaterialTheme.subletrPalette.primaryBackgroundColor,
+		containerColor = MaterialTheme.subletrPalette.bottomSheetColor,
 		topBar = {
 			Row(
 				modifier = Modifier
@@ -90,7 +90,9 @@ fun BasicFilterLayout(
 		},
 		bottomBar = {
 			Column(
-				modifier = Modifier.height(dimensionResource(id = R.dimen.xxl)).background(MaterialTheme.subletrPalette.primaryBackgroundColor),
+				modifier = Modifier
+					.height(dimensionResource(id = R.dimen.xxl))
+					.background(MaterialTheme.subletrPalette.bottomSheetColor),
 			) {
 				FilterDefaultDivider()
 				Row(
@@ -200,7 +202,13 @@ fun DefaultFilterButton(
 			horizontal = dimensionResource(id = R.dimen.s),
 			vertical = dimensionResource(id = R.dimen.xs),
 		),
-		content = { Text(text = text, color = if (isSelected) Color.White else MaterialTheme.subletrPalette.primaryTextColor) },
+		content = {
+			Text(
+				text = text,
+				color = if (isSelected) MaterialTheme.subletrPalette.textOnSubletrPink
+				else MaterialTheme.subletrPalette.primaryTextColor,
+			)
+		},
 		colors = ButtonDefaults.buttonColors(
 			containerColor =
 			if (isSelected) MaterialTheme.subletrPalette.subletrPink

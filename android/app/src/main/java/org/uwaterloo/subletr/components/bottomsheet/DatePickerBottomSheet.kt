@@ -51,8 +51,8 @@ fun DatePickerBottomSheet(
 			Box(
 				modifier = Modifier
 					.fillMaxWidth()
-					.height(550.dp) // TODO: change this to not use explicit value
-					.background(MaterialTheme.subletrPalette.primaryBackgroundColor)
+					.height(550.dp)
+					.background(MaterialTheme.subletrPalette.bottomSheetColor)
 			) {
 				LeaseDatePicker(state, onClick)
 				Button(
