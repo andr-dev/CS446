@@ -32,6 +32,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
 import org.uwaterloo.subletr.R
+import org.uwaterloo.subletr.pages.chat.components.ChatListItem
 import org.uwaterloo.subletr.theme.SubletrTheme
 import org.uwaterloo.subletr.theme.subletrPalette
 
@@ -89,7 +90,7 @@ fun ChatListingPageView(
 				} else {
 					LazyColumn(modifier = modifier.padding(padding)) {
 						items(items = uiState.contacts) { contact: Contact ->
-							ListItem(contact = contact)
+							ChatListItem(contact = contact)
 						}
 					}
 				}
@@ -98,91 +99,7 @@ fun ChatListingPageView(
 	}
 }
 
-@Composable
-fun ListItem(contact: Contact) {
-	val name = contact.name
-	val lastMsg = contact.msg.last()
-	Box(
-		modifier = Modifier
-			.padding(
-				vertical = dimensionResource(id = R.dimen.xs),
-				horizontal = dimensionResource(id = R.dimen.s),
-			)
-			.wrapContentHeight()
-			.fillMaxWidth(1.0f)
-			.clip(
-				RoundedCornerShape(
-					dimensionResource(id = R.dimen.s)
-				)
-			)
-			.background(MaterialTheme.subletrPalette.secondaryButtonBackgroundColor),
-	) {
-		Row(verticalAlignment = Alignment.CenterVertically) {
-			Icon(name = name)
-			Column(
-				modifier = Modifier
-					.weight(1f)
-					.padding(vertical = dimensionResource(id = R.dimen.s)),
-				verticalArrangement = Arrangement.Center,
-			) {
-				Text(text = name,
-					style = MaterialTheme.typography.titleSmall)
-				Text(text = lastMsg,
-					style = MaterialTheme.typography.bodySmall)
-			}
-			if (contact.unread > 0) {
-				Notification(contact.unread)
-			}
-			
-		}
-	}
-}
 
-@Composable
-fun Icon(name: String) {
-	Box(
-		modifier = Modifier
-			.padding(dimensionResource(id = R.dimen.s))
-			.clip(CircleShape),
-	) {
-		Box(
-			modifier = Modifier
-				.width(dimensionResource(id = R.dimen.xxl))
-				.height(dimensionResource(id = R.dimen.xxl))
-				.background(MaterialTheme.subletrPalette.subletrPink),
-			contentAlignment = Alignment.Center,
-		) {
-			Text(
-				text = name.first().toString(),
-				style = MaterialTheme.typography.titleSmall,
-				color = MaterialTheme.subletrPalette.textOnSubletrPink,
-			)
-		}
-	}
-}
-
-@Composable
-fun Notification(n: Int = 1) {
-	Box(
-		modifier = Modifier
-			.padding(dimensionResource(id = R.dimen.s))
-			.clip(CircleShape),
-	) {
-		Box(
-			modifier = Modifier
-				.width(dimensionResource(id = R.dimen.l))
-				.height(dimensionResource(id = R.dimen.l))
-				.background(MaterialTheme.subletrPalette.subletrPink),
-			contentAlignment = Alignment.Center,
-		) {
-			Text(
-				text = n.toString(),
-				color = MaterialTheme.subletrPalette.textOnSubletrPink,
-				style = MaterialTheme.typography.labelLarge,
-			)
-		}
-	}
-}
 
 @Preview(showBackground = true)
 @Composable
