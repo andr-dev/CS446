@@ -27,11 +27,11 @@ import org.uwaterloo.subletr.theme.subletrPalette
 
 
 @Composable
-fun ChatListItem(contact: Contact) {
+fun ChatListItem(modifier: Modifier = Modifier, contact: Contact) {
 	val name = contact.name
 	val lastMsg = contact.msg.last()
 	Box(
-		modifier = Modifier
+		modifier = modifier
 			.padding(
 				vertical = dimensionResource(id = R.dimen.xs),
 				horizontal = dimensionResource(id = R.dimen.s),
