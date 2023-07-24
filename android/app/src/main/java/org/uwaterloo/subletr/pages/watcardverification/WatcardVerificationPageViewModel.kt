@@ -49,13 +49,13 @@ class WatcardVerificationPageViewModel @Inject constructor (
 			}
 				.getOrDefault(false)
 		}
-
+		.subscribeOn(Schedulers.io())
 
 	override val uiStateStream: Observable<WatcardVerificationUiState> = Observable.combineLatest(
 		verifiedStream,
 		submittedStream,
 		watcardBitmapStream,
-	){ verifiedStream, submittedStream, watcardBitmapStream ->
+	) { verifiedStream, submittedStream, watcardBitmapStream ->
 			WatcardVerificationUiState.Loaded(
 				watcard = watcardBitmapStream.getOrNull(),
 				submitted = submittedStream,
