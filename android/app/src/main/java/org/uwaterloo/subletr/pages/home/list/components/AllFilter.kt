@@ -4,11 +4,16 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.FlowRow
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
@@ -19,6 +24,7 @@ import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
@@ -46,6 +52,8 @@ import kotlinx.coroutines.launch
 import org.uwaterloo.subletr.R
 import org.uwaterloo.subletr.components.bottomsheet.DatePickerBottomSheet
 import org.uwaterloo.subletr.components.button.DateInputButton
+import org.uwaterloo.subletr.components.button.SecondaryButton
+import org.uwaterloo.subletr.components.rating.StaticRatingsBar
 import org.uwaterloo.subletr.components.switch.PrimarySwitch
 import org.uwaterloo.subletr.enums.Gender
 import org.uwaterloo.subletr.enums.HousingType
@@ -63,7 +71,7 @@ import java.util.Date
 import java.util.Locale
 
 @SuppressWarnings("CyclomaticComplexMethod","LongMethod","ComplexCondition")
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class)
 @Composable
 fun AllFilter(
 	currentFilterVals: HomePageUiState.FiltersModel,
@@ -161,6 +169,13 @@ fun AllFilter(
 			currentFilterVals.gender
 		)
 	}
+
+	var ratingPref by remember {
+		mutableIntStateOf(
+			currentFilterVals.minRating
+		)
+	}
+
 	val datePickerBottomSheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
 	BasicFilterLayout(
 		modifier = Modifier.fillMaxHeight(1.0f),
@@ -690,6 +705,66 @@ fun AllFilter(
 						)
 					}
 				}
+				item { PageDivider() }
+				item {
+					FlowRow(
+						horizontalArrangement = Arrangement.spacedBy(dimensionResource(id = R.dimen.xs)),
+						content = {
+							DefaultFilterButton(
+								isSelected = (ratingPref == 0),
+								onClick = { ratingPref = 0 },
+								text = stringResource(
+									id = R.string.any,
+								),
+							)
+							for (i in 5 downTo 1) {
+								SecondaryButton(
+									modifier = Modifier
+										.defaultMinSize(
+											minWidth = dimensionResource(id = R.dimen.xxxxs),
+											minHeight = dimensionResource(id = R.dimen.xxxxs),
+										),
+									onClick = { ratingPref = i },
+									contentPadding = PaddingValues(
+										horizontal = dimensionResource(id = R.dimen.s),
+										vertical = dimensionResource(id = R.dimen.xs),
+									),
+									colors = ButtonDefaults.buttonColors(
+										containerColor =
+										if (ratingPref == i) MaterialTheme.subletrPalette.subletrPink
+										else MaterialTheme.subletrPalette.secondaryButtonBackgroundColor,
+									)
+								) {
+									Row(
+										modifier = Modifier.height(dimensionResource(id = R.dimen.m)),
+										verticalAlignment = Alignment.CenterVertically,
+										horizontalArrangement = Arrangement.spacedBy(dimensionResource(id = R.dimen.xxs)),
+
+										) {
+										StaticRatingsBar(
+											modifier = Modifier
+												.height(dimensionResource(id = R.dimen.m))
+												.padding(dimensionResource(id = R.dimen.xxs)),
+											rating = i.toFloat(),
+											ratingColor = if (ratingPref == i) MaterialTheme.subletrPalette.textOnSubletrPink
+											else MaterialTheme.subletrPalette.primaryTextColor,
+											onlyShowFilled = true,
+										)
+										if (i < 5) {
+											Text(
+												text = "& up",
+												color = if (ratingPref == i) MaterialTheme.subletrPalette.textOnSubletrPink
+												else MaterialTheme.subletrPalette.primaryTextColor,
+											)
+
+										}
+									}
+								}
+							}
+						},
+					)
+				}
+
 				item { Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.xxl))) }
 			}
 
@@ -717,6 +792,7 @@ fun AllFilter(
 			bathroom = null
 			ensuitebathroom = false
 			genderPref = Gender.OTHER
+			ratingPref = 0
 
 
 		},
@@ -753,6 +829,7 @@ fun AllFilter(
 							lowerLocBoundText.toIntOrNull(),
 							upperLocBoundText.toIntOrNull(),
 						),
+						minRating = ratingPref,
 					)
 				)
 
