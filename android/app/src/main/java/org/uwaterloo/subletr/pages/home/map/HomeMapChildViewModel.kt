@@ -42,6 +42,16 @@ class HomeMapChildViewModel @Inject constructor(
 		}
 	}
 
+	fun updateAllFilters(uiState: HomeMapUiState.Loaded, newFilters: HomePageUiState.FiltersModel) {
+		getListingParamsStream.onNext(
+			HomePageViewModel.GetListingParams(
+				filters = newFilters,
+				transportationMethod = uiState.transportationMethod,
+				homePageView = HomePageUiState.HomePageViewType.MAP,
+			)
+		)
+	}
+
 	val getListingParamsStream: PublishSubject<HomePageViewModel.GetListingParams> =
 		PublishSubject.create()
 

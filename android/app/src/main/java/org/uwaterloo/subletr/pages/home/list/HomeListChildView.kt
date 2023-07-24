@@ -56,18 +56,18 @@ import org.uwaterloo.subletr.navigation.NavigationDestination
 import org.uwaterloo.subletr.pages.home.HomePageUiState
 import org.uwaterloo.subletr.pages.home.HomePageViewModel
 import org.uwaterloo.subletr.pages.home.components.LocationSearchTextField
-import org.uwaterloo.subletr.pages.home.list.components.AllFilter
+import org.uwaterloo.subletr.pages.home.components.filters.AllFilter
+import org.uwaterloo.subletr.pages.home.components.filters.DateFilter
+import org.uwaterloo.subletr.pages.home.components.filters.FavouriteFilter
+import org.uwaterloo.subletr.pages.home.components.filters.LocationFilter
+import org.uwaterloo.subletr.pages.home.components.filters.PriceFilter
+import org.uwaterloo.subletr.pages.home.components.filters.PropertyTypeFilter
+import org.uwaterloo.subletr.pages.home.components.filters.RatingFilter
+import org.uwaterloo.subletr.pages.home.components.filters.RoomFilter
+import org.uwaterloo.subletr.pages.home.components.filters.RoommateFilter
 import org.uwaterloo.subletr.pages.home.list.components.ButtonWithIcon
-import org.uwaterloo.subletr.pages.home.list.components.DateFilter
-import org.uwaterloo.subletr.pages.home.list.components.FavouriteFilter
 import org.uwaterloo.subletr.pages.home.list.components.FilterButton
 import org.uwaterloo.subletr.pages.home.list.components.HomeListListingItemView
-import org.uwaterloo.subletr.pages.home.list.components.LocationFilter
-import org.uwaterloo.subletr.pages.home.list.components.PriceFilter
-import org.uwaterloo.subletr.pages.home.list.components.PropertyTypeFilter
-import org.uwaterloo.subletr.pages.home.list.components.RatingFilter
-import org.uwaterloo.subletr.pages.home.list.components.RoomFilter
-import org.uwaterloo.subletr.pages.home.list.components.RoommateFilter
 import org.uwaterloo.subletr.services.LocationService
 import org.uwaterloo.subletr.services.NavigationService
 import org.uwaterloo.subletr.theme.SubletrTheme
@@ -149,8 +149,9 @@ fun HomeListChildView(
 				CircularProgressIndicator()
 			}
 		} else if (uiState is HomeListUiState.Loaded) {
-			val filterType = remember { mutableStateOf(FilterType.LOCATION) }
-			val modelSheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
+			var filterType by remember { mutableStateOf(FilterType.LOCATION) }
+			val coroutineScope = rememberCoroutineScope()
+			val modalSheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
 			var isBottomSheetOpen by remember {
 				mutableStateOf(false)
 			}
@@ -322,10 +323,9 @@ fun HomeListChildView(
 										.height(dimensionResource(id = R.dimen.l)),
 									iconId = R.drawable.tune_round_black_24,
 									onClick = {
-										filterType.value = FilterType.ALL
+										filterType = FilterType.ALL
 										coroutineScope.launch {
 											isBottomSheetOpen = true
-
 										}
 									},
 									border = BorderStroke(
@@ -349,7 +349,7 @@ fun HomeListChildView(
 									FilterButton(
 										filterName = stringResource(id = it.stringId),
 										onClick = {
-											filterType.value = it
+											filterType = it
 											coroutineScope.launch {
 												isBottomSheetOpen = true
 											}
@@ -363,10 +363,10 @@ fun HomeListChildView(
 							ModalBottomSheet(
 								modifier = Modifier.wrapContentSize(),
 								onDismissRequest = { isBottomSheetOpen = false },
-								sheetState = modelSheetState,
+								sheetState = modalSheetState,
 								containerColor = MaterialTheme.subletrPalette.bottomSheetColor,
 								content = {
-									when (filterType.value) {
+									when (filterType) {
 										FilterType.LOCATION -> {
 											LocationFilter(
 												currentLocationRange = uiState.filters.locationRange,
