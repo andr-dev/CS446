@@ -67,7 +67,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
-import io.reactivex.rxjava3.subjects.BehaviorSubject
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import org.uwaterloo.subletr.R
@@ -200,6 +199,7 @@ fun CreateListingPageView(
 							Text(
 								text = stringResource(id = R.string.address_format_label),
 								color = MaterialTheme.subletrPalette.secondaryTextColor,
+
 							)
 						},
 						label = {
@@ -310,7 +310,7 @@ fun CreateListingPageView(
 							.border(
 								width = dimensionResource(id = R.dimen.xxxs),
 								color =
-								if (!attemptCreate || canCreate(uiState))
+								if (!attemptCreate || uiState.startDate != "")
 									MaterialTheme.subletrPalette.textFieldBorderColor
 								else
 									MaterialTheme.subletrPalette.warningColor,
@@ -331,7 +331,7 @@ fun CreateListingPageView(
 							.border(
 								width = dimensionResource(id = R.dimen.xxxs),
 								color =
-								if (!attemptCreate || canCreate(uiState))
+								if (!attemptCreate || uiState.endDate != "")
 									MaterialTheme.subletrPalette.textFieldBorderColor
 								else
 									MaterialTheme.subletrPalette.warningColor,
