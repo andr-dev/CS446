@@ -176,6 +176,7 @@ fun LoginPageViewLoadedPreview() {
 					favourite = false,
 					timeToDestination = null,
 					addressSearch = null,
+					minRating = 0,
 				),
 			),
 		)

@@ -34,7 +34,7 @@ fun ImagePickerBottomSheet(
 		modifier = Modifier,
 		onDismissRequest = onDismissRequest,
 		sheetState = bottomSheetState,
-		containerColor = MaterialTheme.subletrPalette.primaryBackgroundColor,
+		containerColor = MaterialTheme.subletrPalette.bottomSheetColor,
 		dragHandle = { BottomSheetDefaults.DragHandle(
 			width = dimensionResource(id = R.dimen.xl)
 		)},
@@ -43,7 +43,7 @@ fun ImagePickerBottomSheet(
 				modifier = Modifier
 					.fillMaxWidth()
 					.height(dimensionResource(id = R.dimen.xxxxxxxl))
-					.background(MaterialTheme.subletrPalette.primaryBackgroundColor)
+					.background(MaterialTheme.subletrPalette.bottomSheetColor)
 			) {
 				Row(
 					modifier = Modifier

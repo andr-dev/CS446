@@ -58,6 +58,7 @@ class HomePageViewModel @Inject constructor(
 				favourite = false,
 				timeToDestination = null,
 				addressSearch = null,
+				minRating = 0,
 			),
 			transportationMethod = HomePageUiState.TransportationMethod.WALK,
 			homePageView = HomePageUiState.HomePageViewType.LIST,
