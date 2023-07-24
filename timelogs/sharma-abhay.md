@@ -33,5 +33,6 @@
 |2023-07-20| 3 hours (17:00 - 20:00) | Worked on functionality for users to upload avatar and finalized UI for account page |
 |2023-07-20| 1.5 hours (21:30 - 23:00) | Created app logo and figma for dark mode |
 |2023-07-21| 5 hours (19:30 - 00:30) | Created user profile page |
-|2023-07-22| 1.5 hours (13:00 - 14:30) | Added owner card to listing details page |
-|2023-07-22| 2 hours (19:00 - 21:00) | Created filter for user rating |
+|2023-07-23| 1.5 hours (13:00 - 14:30) | Added owner card to listing details page |
+|2023-07-23| 2 hours (19:00 - 21:00) | Created filter for user rating |
+|2023-07-24| 3 hours (9:30 - 12:30) | Fixed watcard upload and verification for the Watcard page and worked with Alex to implement it |
