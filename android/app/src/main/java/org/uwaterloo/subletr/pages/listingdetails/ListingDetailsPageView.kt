@@ -79,6 +79,7 @@ import org.uwaterloo.subletr.components.button.PrimaryButton
 import org.uwaterloo.subletr.components.button.SecondaryButton
 import org.uwaterloo.subletr.components.rating.StaticRatingsBar
 import org.uwaterloo.subletr.enums.Gender
+import org.uwaterloo.subletr.navigation.NavigationDestination
 import org.uwaterloo.subletr.pages.listingdetails.ListingDetailsPageUiState.Loading.getInfoDisplay
 import org.uwaterloo.subletr.pages.listingdetails.ListingDetailsPageUiState.Loading.toListOfInfo
 import org.uwaterloo.subletr.theme.SubletrTheme
@@ -275,7 +276,13 @@ fun ListingDetailsPageView(
 					PrimaryButton(
 						modifier = Modifier
 							.height(dimensionResource(id = R.dimen.xl)),
-						onClick = { /*TODO*/ },
+						onClick = {
+							viewModel.ownerIdStream.value?.let {
+								viewModel.navHostController.navigate(
+									"${NavigationDestination.INDIVIDUAL_CHAT_PAGE.rootNavPath}/${it}"
+								)
+							}
+						},
 					) {
 						Text(
 							text = stringResource(id = R.string.message_sublet_owner),

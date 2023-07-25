@@ -1,5 +1,6 @@
 package org.uwaterloo.subletr.pages.individualchat
 
+import android.graphics.Bitmap
 import org.uwaterloo.subletr.models.ChatItemModel
 
 sealed interface IndividualChatPageUiState {
@@ -7,7 +8,8 @@ sealed interface IndividualChatPageUiState {
 
 	data class BasicInfo(
 		val contactName: String,
-		val address: String,
+		val address: String?,
+		val avatar: Bitmap?,
 	)
 
 	data class Loaded(

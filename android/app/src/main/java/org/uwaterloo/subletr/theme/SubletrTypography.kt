@@ -130,7 +130,7 @@ val headerPrimaryTitle
 		color = MaterialTheme.subletrPalette.primaryTextColor,
 		fontFamily = FontFamily.Default,
 		fontWeight = FontWeight.Bold,
-		fontSize = 16.sp,
+		fontSize = 20.sp,
 		letterSpacing = 0.sp,
 		textAlign = TextAlign.Center,
 	)
