@@ -47,6 +47,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.rememberDateRangePickerState
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -89,7 +90,6 @@ import java.time.format.DateTimeFormatter
 import java.util.Date
 import java.util.Locale
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CreateListingPageView(
 	modifier: Modifier = Modifier,
@@ -101,13 +101,9 @@ fun CreateListingPageView(
 	val scrollState = rememberScrollState()
 	val coroutineScope = rememberCoroutineScope()
 
-	val dateRangePickerState = rememberDateRangePickerState()
 
-	var autocompleteExpanded by remember { mutableStateOf(false) }
-	val focusManager = LocalFocusManager.current
 
-	var openDatePicker by rememberSaveable { mutableStateOf(false) }
-	val datePickerBottomSheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
+	val openDatePicker = rememberSaveable { mutableStateOf(false) }
 
 
 	var attemptCreate by remember { mutableStateOf(false) }
@@ -164,89 +160,16 @@ fun CreateListingPageView(
 				verticalArrangement = Arrangement.Center,
 			) {
 
-				if (attemptCreate && !canCreate(uiState = uiState)) {
-					Spacer(
-						modifier = Modifier.height(dimensionResource(id = R.dimen.xxs)),
-					)
-					Column(
-						modifier = Modifier
-							.fillMaxSize(),
-						//verticalArrangement = Arrangement.Center,
-						horizontalAlignment = Alignment.CenterHorizontally
-					) {
-						Text(
-							text = stringResource (id = R.string.update_fields),
-							color = MaterialTheme.subletrPalette.warningColor
-						)
-					}
-					Spacer(
-						modifier = Modifier.height(dimensionResource(id = R.dimen.xs)),
-					)
-				} else {
-					Spacer(
-						modifier = Modifier.height(dimensionResource(id = R.dimen.m)),
-					)
-				}
+				WarnText(
+					uiState = uiState,
+					attemptCreate = attemptCreate,
+				)
 
-				ExposedDropdownMenuBox(
-					modifier = Modifier,
-					expanded = autocompleteExpanded,
-					onExpandedChange = { autocompleteExpanded = true },
-				) {
-					RoundedTextField(
-						modifier = Modifier
-							.fillMaxWidth()
-							.menuAnchor()
-							.border(
-								width = dimensionResource(id = R.dimen.xxxs),
-								color =
-								if (!attemptCreate || !addressIsEmpty(uiState.address))
-									MaterialTheme.subletrPalette.textFieldBorderColor
-								else
-									MaterialTheme.subletrPalette.warningColor,
-								shape = RoundedCornerShape(dimensionResource(id = R.dimen.xxxxl))
-							),
-						placeholder = {
-							Text(
-								text = stringResource(id = R.string.address_format_label),
-								color = MaterialTheme.subletrPalette.secondaryTextColor,
-
-							)
-						},
-						label = {
-							Text(
-								text = stringResource(id = R.string.address),
-								color =
-								if (!attemptCreate || !addressIsEmpty(uiState.address))
-									MaterialTheme.subletrPalette.secondaryTextColor
-								else
-									MaterialTheme.subletrPalette.warningColor,
-							)
-						},
-						value = uiState.address.fullAddress,
-						onValueChange = {
-							viewModel.fullAddressStream.onNext(it)
-						}
-					)
-
-					ExposedDropdownMenu(
-						modifier = Modifier,
-						expanded = autocompleteExpanded,
-						onDismissRequest = { autocompleteExpanded = false },
-					) {
-						uiState.addressAutocompleteOptions.map { prediction ->
-							DropdownMenuItem(
-								modifier = Modifier,
-								text = { Text(text = prediction.getFullText(null).toString()) },
-								onClick = {
-									viewModel.fullAddressStream.onNext(prediction.getFullText(null).toString())
-									focusManager.clearFocus()
-									autocompleteExpanded = false
-								},
-							)
-						}
-					}
-				}
+				AddressInputBox(
+					uiState = uiState,
+					viewModel = viewModel,
+					attemptCreate = attemptCreate,
+				)
 
 				Spacer(
 					modifier = Modifier.height(dimensionResource(id = R.dimen.m)),
@@ -268,57 +191,26 @@ fun CreateListingPageView(
 					horizontalArrangement =  Arrangement.spacedBy(dimensionResource(id = R.dimen.s)),
 					verticalAlignment = Alignment.CenterVertically,
 				) {
-					DateInputButton(
-						modifier = Modifier
-							.fillMaxWidth()
-							.weight(1f)
-							.border(
-								width = dimensionResource(id = R.dimen.xxxs),
-								color =
-								if (!attemptCreate || uiState.startDate != "")
-									MaterialTheme.subletrPalette.textFieldBorderColor
-								else
-									MaterialTheme.subletrPalette.warningColor,
-								shape = RoundedCornerShape(dimensionResource(id = R.dimen.xxxxl))
-							),
-						labelStringId = R.string.start_date,
-						labelColor =
-						if (!attemptCreate || uiState.startDate != "")
-							MaterialTheme.subletrPalette.secondaryTextColor
-						else
-							MaterialTheme.subletrPalette.warningColor,
-						value = uiState.startDateDisplayText,
-						onClick = {
-							coroutineScope.launch {
-								openDatePicker = true
-							}
-						})
 
-					DateInputButton(
-						modifier = Modifier
-							.fillMaxWidth()
-							.weight(1f)
-							.border(
-								width = dimensionResource(id = R.dimen.xxxs),
-								color =
-								if (!attemptCreate || uiState.endDate != "")
-									MaterialTheme.subletrPalette.textFieldBorderColor
-								else
-									MaterialTheme.subletrPalette.warningColor,
-								shape = RoundedCornerShape(dimensionResource(id = R.dimen.xxxxl))
-							),
+					DateInputBox(
+						modifier = Modifier.weight(1f),
+						labelStringId = R.string.start_date,
+						attemptCreate = attemptCreate,
+						coroutineScope = coroutineScope,
+						dateString = uiState.startDate,
+						displayString = uiState.startDateDisplayText,
+						openDatePicker = openDatePicker,
+					)
+					DateInputBox(
+						modifier = Modifier.weight(1f),
 						labelStringId = R.string.end_date,
-						labelColor =
-						if (!attemptCreate || uiState.endDate != "")
-							MaterialTheme.subletrPalette.secondaryTextColor
-						else
-							MaterialTheme.subletrPalette.warningColor,
-						value = uiState.endDateDisplayText,
-						onClick = {
-							coroutineScope.launch {
-								openDatePicker = true
-							}
-						})
+						attemptCreate = attemptCreate,
+						coroutineScope = coroutineScope,
+						dateString = uiState.endDate,
+						displayString = uiState.endDateDisplayText,
+						openDatePicker = openDatePicker,
+					)
+
 				}
 
 				Spacer(
@@ -514,48 +406,12 @@ fun CreateListingPageView(
 					modifier = Modifier.height(dimensionResource(id = R.dimen.m)),
 				)
 
-				if (openDatePicker) {
-					DatePickerBottomSheet(
-						datePickerBottomSheetState,
-						dateRangePickerState,
-						onDismissRequest = { openDatePicker = false },
-						onClick = {
-							coroutineScope.launch { datePickerBottomSheetState.hide() }.invokeOnCompletion {
-								if (!datePickerBottomSheetState.isVisible) {
-									openDatePicker = false
-								}
-								if (dateRangePickerState.selectedStartDateMillis != null) {
-									val startButtonText =
-										displayDateFormatter.formatDate(dateRangePickerState.selectedStartDateMillis, locale = Locale.getDefault())!!
-									viewModel.startDateDisplayTextStream.onNext(startButtonText)
-									val startDate = SimpleDateFormat("MM/dd/yyyy").parse(startButtonText)
-									viewModel.startDateStream.onNext(
-										if (startDate is Date)
-											startDate.toInstant().atOffset(ZoneOffset.UTC).format(
-												storeDateFormatISO
-											)
-										else uiState.startDate
-									)
-								} else {
-									viewModel.startDateDisplayTextStream.onNext("")
-									viewModel.startDateStream.onNext("")
-								}
-								if (dateRangePickerState.selectedEndDateMillis != null) {
-									val endButtonText =
-										displayDateFormatter.formatDate(dateRangePickerState.selectedEndDateMillis, locale = Locale.getDefault())!!
-									viewModel.endDateDisplayTextStream.onNext(endButtonText)
-									val endDate = SimpleDateFormat("MM/dd/yyyy").parse(endButtonText)
-									viewModel.endDateStream.onNext(
-											endDate.toInstant().atOffset(ZoneOffset.UTC).format(
-												storeDateFormatISO
-											)
-									)
-								} else {
-									viewModel.endDateDisplayTextStream.onNext("")
-									viewModel.endDateStream.onNext("")
-								}
-							}
-						}
+				if (openDatePicker.value) {
+					DatePicker(
+						uiState = uiState,
+						viewModel = viewModel,
+						coroutineScope = coroutineScope,
+						openDatePicker = openDatePicker,
 					)
 				}
 
@@ -588,6 +444,36 @@ private val storeDateFormatISO: DateTimeFormatter = DateTimeFormatter.ISO_LOCAL_
 @OptIn(ExperimentalMaterial3Api::class)
 private val displayDateFormatter = DatePickerDefaults.dateFormatter(selectedDateSkeleton = "MM/dd/yyyy")
 
+@Composable
+fun WarnText(
+	modifier: Modifier = Modifier,
+	attemptCreate: Boolean,
+	uiState: CreateListingPageUiState.Loaded,
+) {
+	if (attemptCreate && !canCreate(uiState = uiState)) {
+		Spacer(
+			modifier = Modifier.height(dimensionResource(id = R.dimen.xxs)),
+		)
+		Column(
+			modifier = modifier
+				.fillMaxSize(),
+			//verticalArrangement = Arrangement.Center,
+			horizontalAlignment = Alignment.CenterHorizontally
+		) {
+			Text(
+				text = stringResource (id = R.string.update_fields),
+				color = MaterialTheme.subletrPalette.warningColor
+			)
+		}
+		Spacer(
+			modifier = Modifier.height(dimensionResource(id = R.dimen.xs)),
+		)
+	} else {
+		Spacer(
+			modifier = Modifier.height(dimensionResource(id = R.dimen.m)),
+		)
+	}
+}
 fun canCreate(uiState: CreateListingPageUiState.Loaded) : Boolean {
 	return !addressIsEmpty(uiState.address) &&
 		uiState.price != 0 &&
@@ -603,6 +489,166 @@ fun addressIsEmpty(addressModel: CreateListingPageUiState.AddressModel) : Boolea
 		addressModel.fullAddress == ""
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun AddressInputBox(
+	modifier: Modifier = Modifier,
+	uiState: CreateListingPageUiState.Loaded,
+	viewModel: CreateListingPageViewModel,
+	attemptCreate: Boolean,
+) {
+	var autocompleteExpanded by remember { mutableStateOf(false) }
+	val focusManager = LocalFocusManager.current
+
+	ExposedDropdownMenuBox(
+		modifier = modifier,
+		expanded = autocompleteExpanded,
+		onExpandedChange = { autocompleteExpanded = true },
+	) {
+		RoundedTextField(
+			modifier = Modifier
+				.fillMaxWidth()
+				.menuAnchor()
+				.border(
+					width = dimensionResource(id = R.dimen.xxxs),
+					color =
+					if (!attemptCreate || !addressIsEmpty(uiState.address))
+						MaterialTheme.subletrPalette.textFieldBorderColor
+					else
+						MaterialTheme.subletrPalette.warningColor,
+					shape = RoundedCornerShape(dimensionResource(id = R.dimen.xxxxl))
+				),
+			placeholder = {
+				Text(
+					text = stringResource(id = R.string.address_format_label),
+					color = MaterialTheme.subletrPalette.secondaryTextColor,
+
+					)
+			},
+			label = {
+				Text(
+					text = stringResource(id = R.string.address),
+					color =
+					if (!attemptCreate || !addressIsEmpty(uiState.address))
+						MaterialTheme.subletrPalette.secondaryTextColor
+					else
+						MaterialTheme.subletrPalette.warningColor,
+				)
+			},
+			value = uiState.address.fullAddress,
+			onValueChange = {
+				viewModel.fullAddressStream.onNext(it)
+			}
+		)
+
+		ExposedDropdownMenu(
+			modifier = Modifier,
+			expanded = autocompleteExpanded,
+			onDismissRequest = { autocompleteExpanded = false },
+		) {
+			uiState.addressAutocompleteOptions.map { prediction ->
+				DropdownMenuItem(
+					modifier = Modifier,
+					text = { Text(text = prediction.getFullText(null).toString()) },
+					onClick = {
+						viewModel.fullAddressStream.onNext(prediction.getFullText(null).toString())
+						focusManager.clearFocus()
+						autocompleteExpanded = false
+					},
+				)
+			}
+		}
+	}
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun DatePicker(
+	uiState: CreateListingPageUiState.Loaded,
+	viewModel: CreateListingPageViewModel,
+	coroutineScope: CoroutineScope,
+	openDatePicker: MutableState<Boolean>,
+) {
+	val datePickerBottomSheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
+	val dateRangePickerState = rememberDateRangePickerState()
+	DatePickerBottomSheet(
+		datePickerBottomSheetState,
+		dateRangePickerState,
+		onDismissRequest = { openDatePicker.value = false },
+		onClick = {
+			coroutineScope.launch { datePickerBottomSheetState.hide() }.invokeOnCompletion {
+				if (!datePickerBottomSheetState.isVisible) {
+					openDatePicker.value = false
+				}
+				if (dateRangePickerState.selectedStartDateMillis != null) {
+					val startButtonText =
+						displayDateFormatter.formatDate(dateRangePickerState.selectedStartDateMillis, locale = Locale.getDefault())!!
+					viewModel.startDateDisplayTextStream.onNext(startButtonText)
+					val startDate = SimpleDateFormat("MM/dd/yyyy").parse(startButtonText)
+					viewModel.startDateStream.onNext(
+						if (startDate is Date)
+							startDate.toInstant().atOffset(ZoneOffset.UTC).format(
+								storeDateFormatISO
+							)
+						else uiState.startDate
+					)
+				} else {
+					viewModel.startDateDisplayTextStream.onNext("")
+					viewModel.startDateStream.onNext("")
+				}
+				if (dateRangePickerState.selectedEndDateMillis != null) {
+					val endButtonText =
+						displayDateFormatter.formatDate(dateRangePickerState.selectedEndDateMillis, locale = Locale.getDefault())!!
+					viewModel.endDateDisplayTextStream.onNext(endButtonText)
+					val endDate = SimpleDateFormat("MM/dd/yyyy").parse(endButtonText)
+					viewModel.endDateStream.onNext(
+						endDate.toInstant().atOffset(ZoneOffset.UTC).format(
+							storeDateFormatISO
+						)
+					)
+				} else {
+					viewModel.endDateDisplayTextStream.onNext("")
+					viewModel.endDateStream.onNext("")
+				}
+			}
+		}
+	)
+}
+@Composable
+fun DateInputBox(
+	modifier: Modifier = Modifier,
+	labelStringId: Int,
+	attemptCreate: Boolean,
+	coroutineScope: CoroutineScope,
+	dateString: String,
+	displayString: String,
+	openDatePicker: MutableState<Boolean>,
+) {
+	DateInputButton(
+		modifier = modifier
+			.fillMaxWidth()
+			.border(
+				width = dimensionResource(id = R.dimen.xxxs),
+				color =
+				if (!attemptCreate || dateString != "")
+					MaterialTheme.subletrPalette.textFieldBorderColor
+				else
+					MaterialTheme.subletrPalette.warningColor,
+				shape = RoundedCornerShape(dimensionResource(id = R.dimen.xxxxl))
+			),
+		labelStringId = labelStringId,
+		labelColor =
+		if (!attemptCreate || dateString != "")
+			MaterialTheme.subletrPalette.secondaryTextColor
+		else
+			MaterialTheme.subletrPalette.warningColor,
+		value = displayString,
+		onClick = {
+			coroutineScope.launch {
+				openDatePicker.value = true
+			}
+		})
+}
 @Composable
 fun CreateListingNumericalInputs(
 	modifier: Modifier = Modifier,
