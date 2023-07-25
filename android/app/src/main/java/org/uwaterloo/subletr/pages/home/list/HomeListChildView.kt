@@ -456,11 +456,7 @@ fun HomeListChildView(
 					HomeListListingItemView(
 						listingSummary = listingSummary,
 						listingImage = listingImage,
-						detailsNavigation = {
-							viewModel.navHostController.navigate(
-								route = "${NavigationDestination.LISTING_DETAILS.rootNavPath}/${listingSummary.listingId}"
-							)
-						},
+						viewModel = viewModel,
 					)
 				}
 			}

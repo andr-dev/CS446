@@ -52,6 +52,8 @@ class HomeMapChildViewModel @Inject constructor(
 		)
 	}
 
+	val navigateToChatStream: PublishSubject<Int> = PublishSubject.create()
+
 	val getListingParamsStream: PublishSubject<HomePageViewModel.GetListingParams> =
 		PublishSubject.create()
 

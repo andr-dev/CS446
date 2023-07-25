@@ -238,7 +238,9 @@ fun HomeMapListingItemView(
 								else MaterialTheme.subletrPalette.darkerGrayButtonColor,
 							)
 							.fillMaxWidth(fraction = 1.0f),
-						onClick = { /*TODO*/ },
+						onClick = {
+					    	viewModel.navigateToChatStream.onNext(listingSummary.listingId)
+						},
 					) {
 						Icon(
 							painter = painterResource(id = R.drawable.chat_bubble_outline_gray_24),
