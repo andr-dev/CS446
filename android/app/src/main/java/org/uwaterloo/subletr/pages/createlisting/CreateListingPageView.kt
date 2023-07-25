@@ -75,6 +75,7 @@ import org.uwaterloo.subletr.components.bottomsheet.DatePickerBottomSheet
 import org.uwaterloo.subletr.components.bottomsheet.ImagePickerBottomSheet
 import org.uwaterloo.subletr.components.button.DateInputButton
 import org.uwaterloo.subletr.components.button.PrimaryButton
+import org.uwaterloo.subletr.components.dropdown.RoundedExposedDropdown
 import org.uwaterloo.subletr.components.textfield.RoundedTextField
 import org.uwaterloo.subletr.enums.EnsuiteBathroomOption
 import org.uwaterloo.subletr.enums.ListingForGenderOption
@@ -353,7 +354,7 @@ fun CreateListingPageView(
 					modifier = Modifier.height(dimensionResource(id = R.dimen.s)),
 				)
 
-				CreateListingSelectionInput(
+				RoundedExposedDropdown(
 					dropdownItems = EnsuiteBathroomOption.values(),
 					labelId = R.string.ensuite_bathroom,
 					selectedDropdownItem = uiState.bathroomsEnsuite,
@@ -383,7 +384,7 @@ fun CreateListingPageView(
 					modifier = Modifier.height(dimensionResource(id = R.dimen.xs)),
 				)
 
-				CreateListingSelectionInput(
+				RoundedExposedDropdown(
 					dropdownItems = ListingForGenderOption.values(),
 					labelId = R.string.gender,
 					selectedDropdownItem = uiState.gender,
@@ -397,7 +398,7 @@ fun CreateListingPageView(
 					modifier = Modifier.height(dimensionResource(id = R.dimen.s)),
 				)
 
-				CreateListingSelectionInput(
+				RoundedExposedDropdown(
 					dropdownItems = HousingType.values(),
 					labelId = R.string.housing_type,
 					selectedDropdownItem = uiState.housingType,
@@ -572,62 +573,6 @@ fun CreateListingNumericalInputs(
 	)
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun <T> CreateListingSelectionInput(
-	modifier: Modifier = Modifier,
-	dropdownItems: Array<T>,
-	labelId: Int,
-	selectedDropdownItem: T,
-	dropdownItemToString: @Composable (T) -> String,
-	setSelectedDropdownItem: (T) -> Unit,
-) {
-	var expanded by remember {
-		mutableStateOf(false)
-	}
-
-	ExposedDropdownMenuBox(
-		modifier = modifier,
-		expanded = expanded,
-		onExpandedChange = { expanded = !expanded },
-	) {
-		RoundedTextField(
-			modifier = modifier
-				.fillMaxWidth()
-				.menuAnchor()
-				.border(
-					dimensionResource(id = R.dimen.xxxs),
-					MaterialTheme.subletrPalette.textFieldBorderColor,
-					RoundedCornerShape(dimensionResource(id = R.dimen.xxxxl))
-				),
-			readOnly = true,
-			value = dropdownItemToString(selectedDropdownItem),
-			onValueChange = {},
-			label = { Text(text = stringResource(id = labelId)) },
-			trailingIcon = {
-				ExposedDropdownMenuDefaults.TrailingIcon(
-					expanded = expanded
-				)
-			},
-		)
-		DropdownMenu(
-			modifier = modifier.exposedDropdownSize(),
-			expanded = expanded,
-			onDismissRequest = { expanded = false },
-		) {
-			dropdownItems.forEach {
-				DropdownMenuItem(
-					modifier = modifier,
-					onClick = {
-						setSelectedDropdownItem(it)
-						expanded = false
-					},
-					text = { Text(text = dropdownItemToString(it)) },
-				)
-			}
-		}
-	}
-}
 
 @Composable
 fun ImageUploadMethodButton(

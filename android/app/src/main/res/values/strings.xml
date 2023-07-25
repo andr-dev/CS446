@@ -208,4 +208,5 @@
     <string name="bathrooms_in_unit">Bathrooms in unit</string>
     <string name="verified_posts">Verified Posts</string>
     <string name="only_show_verified_users_posts">Only show verified users\' posts</string>
+    <string name="account_creation_error">Account creation failed. Please try again.</string>
 </resources>
