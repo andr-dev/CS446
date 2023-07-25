@@ -21,3 +21,4 @@
 | July 16th | 7 hours | sync with backend to update api calls and look into location service|
 | July 17th | 1 hours | update review and update api calls|
 | July 22th | 4 hours | create all filter|
+| July 24th | 45 mins | create verified User posts filter|
