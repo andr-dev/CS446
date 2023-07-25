@@ -47,7 +47,7 @@ class ListingDetailsPageViewModel @Inject constructor(
 		toggleFavouriteStream.onNext(isFavourite)
 	}
 
-	private val ownerIdStream: BehaviorSubject<Int> = BehaviorSubject.createDefault(0)
+	val ownerIdStream: BehaviorSubject<Int> = BehaviorSubject.createDefault(0)
 	private val ownerNameStream: BehaviorSubject<String> = BehaviorSubject.createDefault("")
 	private val ownerRatingStream: BehaviorSubject<Float> = BehaviorSubject.createDefault(0.0f)
 
@@ -214,9 +214,9 @@ class ListingDetailsPageViewModel @Inject constructor(
 	}
 
 	fun goToProfile() {
-		if (ownerIdStream.value != null) {
+		ownerIdStream.value?.let {
 			navHostController.navigate(
-				route = "${NavigationDestination.PROFILE.rootNavPath}/${ownerIdStream.value}"
+				route = "${NavigationDestination.PROFILE.rootNavPath}/${it}"
 			)
 		}
 	}

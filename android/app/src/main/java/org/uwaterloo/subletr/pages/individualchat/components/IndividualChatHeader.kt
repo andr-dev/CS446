@@ -1,5 +1,6 @@
 package org.uwaterloo.subletr.pages.individualchat.components
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -21,6 +22,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.asImageBitmap
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -84,32 +87,47 @@ fun IndividualChatHeader(
 					.clip(CircleShape),
 				contentAlignment = Alignment.Center,
 			) {
-				Box(
-					modifier = Modifier
-						.width(dimensionResource(id = R.dimen.xl))
-						.height(dimensionResource(id = R.dimen.xl))
-						.background(color = MaterialTheme.subletrPalette.primaryBackgroundColor),
-					contentAlignment = Alignment.Center,
-				) {
-					Text(
-						text = basicInfo.contactName.first().uppercase(),
-						textAlign = TextAlign.Center,
-						style = avatarTextFont,
+				if (basicInfo.avatar != null) {
+					Image(
+						modifier = Modifier
+							.height(dimensionResource(id = R.dimen.xl))
+							.width(dimensionResource(id = R.dimen.xl)),
+						bitmap = basicInfo.avatar.asImageBitmap(),
+						contentDescription = stringResource(id = R.string.avatar),
+						contentScale = ContentScale.Crop,
 					)
+				}
+				else {
+					Box(
+						modifier = Modifier
+							.width(dimensionResource(id = R.dimen.xl))
+							.height(dimensionResource(id = R.dimen.xl))
+							.background(color = MaterialTheme.subletrPalette.primaryBackgroundColor),
+						contentAlignment = Alignment.Center,
+					) {
+						Text(
+							text = basicInfo.contactName.first().uppercase(),
+							textAlign = TextAlign.Center,
+							style = avatarTextFont,
+						)
+					}
 				}
 			}
 			Spacer(modifier = Modifier.width(dimensionResource(id = R.dimen.xs)))
 			Column(
 				modifier = Modifier,
+				verticalArrangement = Arrangement.Center,
 			) {
 				Text(
 					text = basicInfo.contactName,
 					style = headerPrimaryTitle,
 				)
-				Text(
-					text = basicInfo.address,
-					style = headerSecondaryTitle,
-				)
+				if (basicInfo.address != null) {
+					Text(
+						text = basicInfo.address,
+						style = headerSecondaryTitle,
+					)
+				}
 			}
 		}
 	}
@@ -123,6 +141,7 @@ fun IndividualChatHeaderPreview() {
 		basicInfo = IndividualChatPageUiState.BasicInfo(
 			contactName = "Abhed Shwarma",
 			address = "123 University Ave.",
+			avatar = null,
 		),
 		navHostController = rememberNavController(),
 	)

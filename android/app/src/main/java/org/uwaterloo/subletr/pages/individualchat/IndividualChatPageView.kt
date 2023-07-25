@@ -26,7 +26,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -38,7 +37,6 @@ import org.uwaterloo.subletr.models.ChatItemModel
 import org.uwaterloo.subletr.pages.individualchat.components.IndividualChatHeader
 import org.uwaterloo.subletr.pages.individualchat.components.MyChatBubble
 import org.uwaterloo.subletr.pages.individualchat.components.OtherChatBubble
-import org.uwaterloo.subletr.services.NavigationService
 import org.uwaterloo.subletr.theme.SubletrTheme
 import org.uwaterloo.subletr.theme.subletrPalette
 
@@ -145,13 +143,17 @@ fun IndividualChatPageView(
 								.background(color = MaterialTheme.subletrPalette.primaryBackgroundColor)
 								.height(dimensionResource(id = R.dimen.xxl))
 								.aspectRatio(ratio = 1.0f),
-							onClick = {},
+							onClick = {
+								viewModel.sendMessage(
+									uiState = uiState,
+								)
+							},
 						) {
 							Icon(
 								painter = painterResource(
 									id = R.drawable.send_solid_black_24,
 								),
-								contentDescription = stringResource(id = R.string.back_arrow),
+								contentDescription = stringResource(id = R.string.send_message),
 								tint = MaterialTheme.subletrPalette.subletrPink,
 							)
 						}
@@ -168,38 +170,7 @@ fun IndividualChatPageViewLoadingPreview() {
 	SubletrTheme {
 		IndividualChatPageView(
 			modifier = Modifier,
-			viewModel = IndividualChatPageViewModel(
-				navigationService = NavigationService(
-					context = LocalContext.current,
-				),
-			),
 			uiState = IndividualChatPageUiState.Loading,
-		)
-	}
-}
-
-@Preview(showBackground = true)
-@Composable
-fun IndividualChatPageViewLoadedPreview() {
-	SubletrTheme {
-		IndividualChatPageView(
-			modifier = Modifier,
-			viewModel = IndividualChatPageViewModel(
-				navigationService = NavigationService(
-					context = LocalContext.current,
-				),
-			),
-			uiState = IndividualChatPageUiState.Loaded(
-				basicInfo = IndividualChatPageUiState.BasicInfo(
-					contactName = "Abhed Shwarma",
-					address = "123 University Ave.",
-				),
-				chatItems = listOf(
-					ChatItemModel.MyChatItem("my test message"),
-					ChatItemModel.OtherChatItem("other test message")
-				),
-				message = "",
-			),
 		)
 	}
 }
