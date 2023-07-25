@@ -1,8 +1,11 @@
 package org.uwaterloo.subletr.di
 
 import android.content.Context
+import com.google.android.libraries.places.api.Places
+import com.google.android.libraries.places.api.net.PlacesClient
 import dagger.Module
 import dagger.Provides
+import dagger.Reusable
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
@@ -13,7 +16,9 @@ import org.uwaterloo.subletr.api.apis.ListingsApi
 import org.uwaterloo.subletr.api.apis.ServerApi
 import org.uwaterloo.subletr.api.apis.UserApi
 import org.uwaterloo.subletr.api.infrastructure.ApiClient
+import org.uwaterloo.subletr.services.AddressAutocompleteService
 import org.uwaterloo.subletr.services.AuthenticationService
+import org.uwaterloo.subletr.services.IAddressAutocompleteService
 import org.uwaterloo.subletr.services.IAuthenticationService
 import org.uwaterloo.subletr.services.IIoService
 import org.uwaterloo.subletr.services.ISettingsService
@@ -78,6 +83,18 @@ object SingletonModule {
 	@Provides
 	fun provideSettingsService(@ApplicationContext context: Context, ioService: IIoService): ISettingsService {
 		return SettingsService(ioService = ioService, context = context)
+	}
+
+	@Reusable
+	@Provides
+	fun providePlacesClient(@ApplicationContext context: Context): PlacesClient {
+		return Places.createClient(context)
+	}
+
+	@Reusable
+	@Provides
+	fun provideAddressAutocompleteService(placesClient: PlacesClient): IAddressAutocompleteService {
+		return AddressAutocompleteService(placesClient = placesClient)
 	}
 }
 

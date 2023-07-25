@@ -1,22 +1,11 @@
 package org.uwaterloo.subletr.pages.createlisting
 
-import android.content.Context
 import android.graphics.Bitmap
 import android.util.Log
 import androidx.navigation.NavHostController
-import com.google.android.gms.maps.model.LatLng
-import com.google.android.libraries.places.api.Places
 import com.google.android.libraries.places.api.model.AutocompletePrediction
-import com.google.android.libraries.places.api.model.AutocompleteSessionToken
-import com.google.android.libraries.places.api.model.PlaceTypes
-import com.google.android.libraries.places.api.model.RectangularBounds
-import com.google.android.libraries.places.api.net.FindAutocompletePredictionsRequest
-import com.google.android.libraries.places.api.net.FindAutocompletePredictionsResponse
-import com.google.android.libraries.places.api.net.PlacesClient
 import dagger.hilt.android.lifecycle.HiltViewModel
-import dagger.hilt.android.qualifiers.ApplicationContext
 import io.reactivex.rxjava3.core.Observable
-import io.reactivex.rxjava3.core.ObservableEmitter
 import io.reactivex.rxjava3.schedulers.Schedulers
 import io.reactivex.rxjava3.subjects.BehaviorSubject
 import io.reactivex.rxjava3.subjects.PublishSubject
@@ -32,53 +21,24 @@ import org.uwaterloo.subletr.enums.HousingType
 import org.uwaterloo.subletr.enums.ListingForGenderOption
 import org.uwaterloo.subletr.enums.getKey
 import org.uwaterloo.subletr.infrastructure.SubletrViewModel
+import org.uwaterloo.subletr.services.IAddressAutocompleteService
 import org.uwaterloo.subletr.services.INavigationService
-import org.uwaterloo.subletr.utils.CANADA
-import org.uwaterloo.subletr.utils.UWATERLOO_LATITUDE_DOUBLE
-import org.uwaterloo.subletr.utils.UWATERLOO_LONGITUDE_DOUBLE
 import org.uwaterloo.subletr.utils.toBase64String
-import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
 @HiltViewModel
 class CreateListingPageViewModel @Inject constructor(
 	private val listingsApi: ListingsApi,
 	val navigationService: INavigationService,
-	@ApplicationContext applicationContext: Context,
+	addressAutocompleteService: IAddressAutocompleteService,
 ) : SubletrViewModel<CreateListingPageUiState>() {
 	val navHostController: NavHostController get() = navigationService.navHostController
-	private val autocompleteSessionToken: AutocompleteSessionToken = AutocompleteSessionToken.newInstance()
-	private val bounds: RectangularBounds = RectangularBounds.newInstance(
-		LatLng(UWATERLOO_LATITUDE_DOUBLE, UWATERLOO_LONGITUDE_DOUBLE),
-		LatLng(UWATERLOO_LATITUDE_DOUBLE, UWATERLOO_LONGITUDE_DOUBLE)
-	)
-	private val placesClient: PlacesClient = Places.createClient(applicationContext)
 
 	val fullAddressStream: BehaviorSubject<String> = BehaviorSubject.createDefault("")
-	private val addressAutocompleteStream: Observable<ArrayList<AutocompletePrediction>> = fullAddressStream
-		.debounce(1, TimeUnit.SECONDS, Schedulers.computation())
-		.flatMap {
-			Observable.create { emitter: ObservableEmitter<ArrayList<AutocompletePrediction>> ->
-			val request = FindAutocompletePredictionsRequest.builder()
-				.setLocationBias(bounds)
-				.setOrigin(LatLng(UWATERLOO_LATITUDE_DOUBLE, UWATERLOO_LONGITUDE_DOUBLE))
-				.setCountries(CANADA)
-				.setTypesFilter(listOf(PlaceTypes.ADDRESS))
-				.setSessionToken(autocompleteSessionToken)
-				.setQuery(it)
-				.build()
-			placesClient.findAutocompletePredictions(request)
-				.addOnSuccessListener { response: FindAutocompletePredictionsResponse ->
-					val predictions = ArrayList<AutocompletePrediction>()
-					for (prediction in response.autocompletePredictions) {
-						predictions.add(prediction)
-					}
-					emitter.onNext(predictions)
-				}.addOnFailureListener { exception: Exception? ->
-					emitter.onError(exception ?: RuntimeException())
-				}
-			}
-		}.subscribeOn(Schedulers.io())
+	private val addressAutocompleteStream: Observable<ArrayList<AutocompletePrediction>> =
+		addressAutocompleteService.createAddressAutocompleteStream(
+			fullAddressStream = fullAddressStream,
+		)
 
 	private val addressStream: Observable<CreateListingPageUiState.AddressModel> = fullAddressStream
 		.observeOn(Schedulers.computation())
@@ -89,7 +49,10 @@ class CreateListingPageViewModel @Inject constructor(
 				fullAddress = it,
 				addressLine = if (splitAddress.isNotEmpty()) splitAddress[0] else "",
 				addressCity = if (splitAddress.size >= 2) splitAddress[1] else "",
-				addressPostalCode = if (splitAddress.size >= 3) splitAddress[2] else "",
+				addressPostalCode = if (
+					splitAddress.size >= 3 &&
+					splitAddress[2].split(" ").size == POSTAL_CODE_LENGTH
+				) splitAddress[2] else "",
 				addressCountry = if (splitAddress.size >= 4) splitAddress[3] else "Canada",
 			)
 		}
@@ -223,5 +186,9 @@ class CreateListingPageViewModel @Inject constructor(
 			.subscribeOn(Schedulers.io())
 			.onErrorResumeWith(Observable.never())
 			.safeSubscribe()
+	}
+
+	companion object {
+		const val POSTAL_CODE_LENGTH = 3
 	}
 }

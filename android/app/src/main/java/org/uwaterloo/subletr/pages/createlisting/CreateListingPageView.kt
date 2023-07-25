@@ -34,11 +34,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DatePickerDefaults
-import androidx.compose.material3.DropdownMenu
-import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.ExposedDropdownMenuBox
-import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -61,7 +57,6 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -72,6 +67,7 @@ import io.reactivex.rxjava3.subjects.BehaviorSubject
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import org.uwaterloo.subletr.R
+import org.uwaterloo.subletr.components.addressautocomplete.AddressAutocomplete
 import org.uwaterloo.subletr.components.bottomsheet.DatePickerBottomSheet
 import org.uwaterloo.subletr.components.bottomsheet.ImagePickerBottomSheet
 import org.uwaterloo.subletr.components.button.DateInputButton
@@ -79,12 +75,13 @@ import org.uwaterloo.subletr.components.button.PrimaryButton
 import org.uwaterloo.subletr.components.dropdown.RoundedExposedDropdown
 import org.uwaterloo.subletr.components.textfield.RoundedTextField
 import org.uwaterloo.subletr.enums.EnsuiteBathroomOption
-import org.uwaterloo.subletr.enums.ListingForGenderOption
 import org.uwaterloo.subletr.enums.HousingType
+import org.uwaterloo.subletr.enums.ListingForGenderOption
 import org.uwaterloo.subletr.theme.SubletrTheme
 import org.uwaterloo.subletr.theme.SubletrTypography
 import org.uwaterloo.subletr.theme.subletrPalette
 import org.uwaterloo.subletr.utils.ComposeFileProvider
+import org.uwaterloo.subletr.utils.canCreate
 import java.text.SimpleDateFormat
 import java.time.ZoneOffset
 import java.time.format.DateTimeFormatter
@@ -101,12 +98,7 @@ fun CreateListingPageView(
 ) {
 	val scrollState = rememberScrollState()
 	val coroutineScope = rememberCoroutineScope()
-
-
-
 	val openDatePicker = rememberSaveable { mutableStateOf(false) }
-
-
 	var attemptCreate by remember { mutableStateOf(false) }
 	Scaffold(
 		modifier = modifier,
@@ -166,10 +158,11 @@ fun CreateListingPageView(
 					attemptCreate = attemptCreate,
 				)
 
-				AddressInputBox(
-					uiState = uiState,
-					viewModel = viewModel,
-					attemptCreate = attemptCreate,
+				AddressAutocomplete(
+					fullAddress = uiState.address.fullAddress,
+					addressAutocompleteOptions = uiState.addressAutocompleteOptions,
+					setAddress = { inputAddress -> viewModel.fullAddressStream.onNext(inputAddress) },
+					attemptingCreate = attemptCreate,
 				)
 
 				Spacer(
@@ -475,95 +468,6 @@ fun WarnText(
 		)
 	}
 }
-fun canCreate(uiState: CreateListingPageUiState.Loaded) : Boolean {
-	return !addressIsEmpty(uiState.address) &&
-		uiState.price > 0 &&
-		uiState.startDate != "" &&
-		uiState.endDate != "" &&
-		uiState.numBedrooms > 0 &&
-		uiState.numBathrooms > 0 &&
-		uiState.totalNumBathrooms > 0 &&
-		uiState.totalNumBedrooms > 0
-}
-
-fun addressIsEmpty(addressModel: CreateListingPageUiState.AddressModel) : Boolean {
-	return addressModel.addressCity == "" &&
-		addressModel.addressLine == "" &&
-		addressModel.addressPostalCode == "" &&
-		addressModel.fullAddress == ""
-}
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun AddressInputBox(
-	modifier: Modifier = Modifier,
-	uiState: CreateListingPageUiState.Loaded,
-	viewModel: CreateListingPageViewModel,
-	attemptCreate: Boolean,
-) {
-	var autocompleteExpanded by remember { mutableStateOf(false) }
-	val focusManager = LocalFocusManager.current
-
-	ExposedDropdownMenuBox(
-		modifier = modifier,
-		expanded = autocompleteExpanded,
-		onExpandedChange = { autocompleteExpanded = true },
-	) {
-		RoundedTextField(
-			modifier = Modifier
-				.fillMaxWidth()
-				.menuAnchor()
-				.border(
-					width = dimensionResource(id = R.dimen.xxxs),
-					color =
-					if (!attemptCreate || !addressIsEmpty(uiState.address))
-						MaterialTheme.subletrPalette.textFieldBorderColor
-					else
-						MaterialTheme.subletrPalette.warningColor,
-					shape = RoundedCornerShape(dimensionResource(id = R.dimen.xxxxl))
-				),
-			placeholder = {
-				Text(
-					text = stringResource(id = R.string.address_format_label),
-					color = MaterialTheme.subletrPalette.secondaryTextColor,
-
-					)
-			},
-			label = {
-				Text(
-					text = stringResource(id = R.string.address),
-					color =
-					if (!attemptCreate || !addressIsEmpty(uiState.address))
-						MaterialTheme.subletrPalette.secondaryTextColor
-					else
-						MaterialTheme.subletrPalette.warningColor,
-				)
-			},
-			value = uiState.address.fullAddress,
-			onValueChange = {
-				viewModel.fullAddressStream.onNext(it)
-			}
-		)
-
-		ExposedDropdownMenu(
-			modifier = Modifier,
-			expanded = autocompleteExpanded,
-			onDismissRequest = { autocompleteExpanded = false },
-		) {
-			uiState.addressAutocompleteOptions.map { prediction ->
-				DropdownMenuItem(
-					modifier = Modifier,
-					text = { Text(text = prediction.getFullText(null).toString()) },
-					onClick = {
-						viewModel.fullAddressStream.onNext(prediction.getFullText(null).toString())
-						focusManager.clearFocus()
-						autocompleteExpanded = false
-					},
-				)
-			}
-		}
-	}
-}
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -699,63 +603,6 @@ fun CreateListingNumericalInputs(
 			}
 		}
 	)
-}
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun <T> CreateListingSelectionInput(
-	modifier: Modifier = Modifier,
-	dropdownItems: Array<T>,
-	labelId: Int,
-	selectedDropdownItem: T,
-	dropdownItemToString: @Composable (T) -> String,
-	setSelectedDropdownItem: (T) -> Unit,
-) {
-	var expanded by remember {
-		mutableStateOf(false)
-	}
-
-	ExposedDropdownMenuBox(
-		modifier = modifier,
-		expanded = expanded,
-		onExpandedChange = { expanded = !expanded },
-	) {
-		RoundedTextField(
-			modifier = modifier
-				.fillMaxWidth()
-				.menuAnchor()
-				.border(
-					dimensionResource(id = R.dimen.xxxs),
-					MaterialTheme.subletrPalette.textFieldBorderColor,
-					RoundedCornerShape(dimensionResource(id = R.dimen.xxxxl))
-				),
-			readOnly = true,
-			value = dropdownItemToString(selectedDropdownItem),
-			onValueChange = {},
-			label = { Text(text = stringResource(id = labelId)) },
-			trailingIcon = {
-				ExposedDropdownMenuDefaults.TrailingIcon(
-					expanded = expanded
-				)
-			},
-		)
-		DropdownMenu(
-			modifier = modifier.exposedDropdownSize(),
-			expanded = expanded,
-			onDismissRequest = { expanded = false },
-		) {
-			dropdownItems.forEach {
-				DropdownMenuItem(
-					modifier = modifier,
-					onClick = {
-						setSelectedDropdownItem(it)
-						expanded = false
-					},
-					text = { Text(text = dropdownItemToString(it)) },
-				)
-			}
-		}
-	}
 }
 
 @Composable
