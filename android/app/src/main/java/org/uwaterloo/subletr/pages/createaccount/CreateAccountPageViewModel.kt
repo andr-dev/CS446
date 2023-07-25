@@ -13,6 +13,7 @@ import org.uwaterloo.subletr.R
 import org.uwaterloo.subletr.api.apis.UserApi
 import org.uwaterloo.subletr.api.models.CreateUserRequest
 import org.uwaterloo.subletr.enums.Gender
+import org.uwaterloo.subletr.enums.getKey
 import org.uwaterloo.subletr.infrastructure.SubletrViewModel
 import org.uwaterloo.subletr.navigation.NavigationDestination
 import org.uwaterloo.subletr.services.INavigationService
@@ -128,7 +129,7 @@ class CreateAccountPageViewModel @Inject constructor(
 								firstName = uiState.firstName,
 								lastName = uiState.lastName,
 								email = uiState.email,
-								gender = uiState.gender.name,
+								gender = uiState.gender.getKey(),
 								password = uiState.password,
 							)
 						)

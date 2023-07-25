@@ -28,9 +28,9 @@ import org.uwaterloo.subletr.api.models.CreateListingRequest
 import org.uwaterloo.subletr.api.models.ListingsImagesCreateRequest
 import org.uwaterloo.subletr.api.models.ResidenceType
 import org.uwaterloo.subletr.enums.EnsuiteBathroomOption
-import org.uwaterloo.subletr.enums.Gender
-import org.uwaterloo.subletr.enums.ListingForGenderOption
 import org.uwaterloo.subletr.enums.HousingType
+import org.uwaterloo.subletr.enums.ListingForGenderOption
+import org.uwaterloo.subletr.enums.getKey
 import org.uwaterloo.subletr.infrastructure.SubletrViewModel
 import org.uwaterloo.subletr.services.INavigationService
 import org.uwaterloo.subletr.utils.CANADA
@@ -208,7 +208,7 @@ class CreateListingPageViewModel @Inject constructor(
 							bathroomsTotal = it.totalNumBathrooms,
 							roomsAvailable = it.numBedrooms,
 							roomsTotal = it.totalNumBedrooms,
-							gender = it.gender.toString(),
+							gender = it.gender.getKey(),
 						)
 					)
 				}
