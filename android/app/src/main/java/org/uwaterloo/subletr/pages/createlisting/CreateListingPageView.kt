@@ -76,6 +76,7 @@ import org.uwaterloo.subletr.components.bottomsheet.DatePickerBottomSheet
 import org.uwaterloo.subletr.components.bottomsheet.ImagePickerBottomSheet
 import org.uwaterloo.subletr.components.button.DateInputButton
 import org.uwaterloo.subletr.components.button.PrimaryButton
+import org.uwaterloo.subletr.components.dropdown.RoundedExposedDropdown
 import org.uwaterloo.subletr.components.textfield.RoundedTextField
 import org.uwaterloo.subletr.enums.EnsuiteBathroomOption
 import org.uwaterloo.subletr.enums.ListingForGenderOption
@@ -299,7 +300,7 @@ fun CreateListingPageView(
 					modifier = Modifier.height(dimensionResource(id = R.dimen.s)),
 				)
 
-				CreateListingSelectionInput(
+				RoundedExposedDropdown(
 					dropdownItems = EnsuiteBathroomOption.values(),
 					labelId = R.string.ensuite_bathroom,
 					selectedDropdownItem = uiState.bathroomsEnsuite,
@@ -329,7 +330,7 @@ fun CreateListingPageView(
 					modifier = Modifier.height(dimensionResource(id = R.dimen.xs)),
 				)
 
-				CreateListingSelectionInput(
+				RoundedExposedDropdown(
 					dropdownItems = ListingForGenderOption.values(),
 					labelId = R.string.gender,
 					selectedDropdownItem = uiState.gender,
@@ -343,7 +344,7 @@ fun CreateListingPageView(
 					modifier = Modifier.height(dimensionResource(id = R.dimen.s)),
 				)
 
-				CreateListingSelectionInput(
+				RoundedExposedDropdown(
 					dropdownItems = HousingType.values(),
 					labelId = R.string.housing_type,
 					selectedDropdownItem = uiState.housingType,
@@ -699,7 +700,6 @@ fun CreateListingNumericalInputs(
 		}
 	)
 }
-
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

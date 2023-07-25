@@ -1,4 +1,4 @@
-@file:Suppress("MagicNumber")
+@file:Suppress("MagicNumber", "TooManyFunctions")
 
 package org.uwaterloo.subletr.theme
 
@@ -146,13 +146,14 @@ private val bottomSheetColorDark = Color((0xFF181213))
 private fun getWarningColor(darkTheme: Boolean): Color {
 	return if (darkTheme) {
 		warningColorDark
-	}
+  }
 	else {
 		warningColorLight
 	}
 }
 private val warningColorDark = Color((0xFFF2B8B5))
 private val warningColorLight = Color((0xFFB3261E))
+
 
 val Purple900 = Color(0xFF4A148C)
 val Purple500 = Color(0xFF9C27B0)

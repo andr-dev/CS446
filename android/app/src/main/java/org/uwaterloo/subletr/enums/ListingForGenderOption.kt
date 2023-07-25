@@ -8,3 +8,11 @@ enum class ListingForGenderOption(@StringRes val stringId: Int) {
 	FEMALE(R.string.female),
 	ANY(R.string.any);
 }
+
+fun ListingForGenderOption.getKey(): String {
+	return when (this) {
+		ListingForGenderOption.MALE -> "Male"
+		ListingForGenderOption.FEMALE -> "Female"
+		ListingForGenderOption.ANY -> "Any"
+	}
+}

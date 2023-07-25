@@ -9,7 +9,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.imePadding
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
@@ -31,7 +31,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.navOptions
 import org.uwaterloo.subletr.R
 import org.uwaterloo.subletr.components.button.PrimaryButton
-import org.uwaterloo.subletr.components.dropdown.RoundedDropdown
+import org.uwaterloo.subletr.components.dropdown.RoundedExposedDropdown
 import org.uwaterloo.subletr.components.textfield.RoundedPasswordTextField
 import org.uwaterloo.subletr.components.textfield.RoundedTextField
 import org.uwaterloo.subletr.enums.Gender
@@ -54,7 +54,7 @@ fun CreateAccountPageView(
 		Column(
 			modifier = modifier
 				.fillMaxSize(1.0f),
-			horizontalAlignment = Alignment.CenterHorizontally,
+			horizontalAlignment = Alignment.Start,
 			verticalArrangement = Arrangement.Center,
 		) {
 			CircularProgressIndicator()
@@ -63,19 +63,15 @@ fun CreateAccountPageView(
 		Column(
 			modifier = modifier
 				.fillMaxSize(1.0f)
+				.padding(horizontal = dimensionResource(id = R.dimen.xl))
 				.imePadding()
 				.verticalScroll(scrollState),
-			horizontalAlignment = Alignment.CenterHorizontally,
+			horizontalAlignment = Alignment.Start,
 			verticalArrangement = Arrangement.Center,
 		) {
 			Row(
 				verticalAlignment = Alignment.CenterVertically
 			) {
-
-				Spacer(
-					modifier = Modifier.width(dimensionResource(id = R.dimen.xl))
-				)
-
 				Column(
 					modifier = modifier,
 				) {
@@ -97,20 +93,17 @@ fun CreateAccountPageView(
 						)
 					}
 				}
-
-				Spacer(
-					modifier = Modifier.weight(weight = 2.0f)
-				)
 			}
 
-			Spacer(
-				modifier = Modifier.weight(weight = 2.0f)
+			Spacer (
+				modifier = Modifier.height(dimensionResource(id = R.dimen.xs))
 			)
+
 
 			RoundedTextField(
 				modifier = Modifier
 					.fillMaxWidth(ELEMENT_WIDTH),
-				placeholder = {
+				label = {
 					Text(
 						text = stringResource(id = R.string.first_name),
 						color = MaterialTheme.subletrPalette.secondaryTextColor,
@@ -123,20 +116,21 @@ fun CreateAccountPageView(
 				supportingText = {
 					if (uiState.firstNameInfoTextStringId != null) {
 						Text(
-							text = stringResource(id = uiState.firstNameInfoTextStringId)
+							text = stringResource(id = uiState.firstNameInfoTextStringId),
+							color = MaterialTheme.subletrPalette.warningColor,
 						)
 					}
 				},
 			)
 
 			Spacer(
-				modifier = Modifier.weight(weight = 2.0f)
+				modifier = Modifier.height(dimensionResource(id = R.dimen.xs))
 			)
 
 			RoundedTextField(
 				modifier = Modifier
 					.fillMaxWidth(ELEMENT_WIDTH),
-				placeholder = {
+				label = {
 					Text(
 						text = stringResource(id = R.string.last_name),
 						color = MaterialTheme.subletrPalette.secondaryTextColor,
@@ -149,14 +143,15 @@ fun CreateAccountPageView(
 				supportingText = {
 					if (uiState.lastNameInfoTextStringId != null) {
 						Text(
-							text = stringResource(id = uiState.lastNameInfoTextStringId)
+							text = stringResource(id = uiState.lastNameInfoTextStringId),
+							color = MaterialTheme.subletrPalette.warningColor,
 						)
 					}
 				},
 			)
 
 			Spacer(
-				modifier = Modifier.weight(weight = 2.0f)
+				modifier = Modifier.height(dimensionResource(id = R.dimen.xs))
 			)
 
 			RoundedTextField(
@@ -166,7 +161,7 @@ fun CreateAccountPageView(
 					keyboardType = KeyboardType.Email,
 					autoCorrect = false,
 				),
-				placeholder = {
+				label = {
 					Text(
 						text = stringResource(id = R.string.email),
 						color = MaterialTheme.subletrPalette.secondaryTextColor,
@@ -179,20 +174,21 @@ fun CreateAccountPageView(
 				supportingText = {
 					if (uiState.emailInfoTextStringId != null) {
 						Text(
-							text = stringResource(id = uiState.emailInfoTextStringId)
+							text = stringResource(id = uiState.emailInfoTextStringId),
+							color = MaterialTheme.subletrPalette.warningColor,
 						)
 					}
 				},
 			)
 
 			Spacer(
-				modifier = Modifier.weight(weight = 2.0f)
+				modifier = Modifier.height(dimensionResource(id = R.dimen.xs))
 			)
 
 			RoundedPasswordTextField(
 				modifier = Modifier
 					.fillMaxWidth(ELEMENT_WIDTH),
-				placeholder = {
+				label = {
 					Text(
 						text = stringResource(id = R.string.password),
 						color = MaterialTheme.subletrPalette.secondaryTextColor,
@@ -205,20 +201,21 @@ fun CreateAccountPageView(
 				supportingText = {
 					if (uiState.passwordInfoTextStringId != null) {
 						Text(
-							text = stringResource(id = uiState.passwordInfoTextStringId)
+							text = stringResource(id = uiState.passwordInfoTextStringId),
+							color = MaterialTheme.subletrPalette.warningColor,
 						)
 					}
 				},
 			)
 
 			Spacer(
-				modifier = Modifier.weight(weight = 2.0f)
+				modifier = Modifier.height(dimensionResource(id = R.dimen.xs))
 			)
 
 			RoundedPasswordTextField(
 				modifier = Modifier
 					.fillMaxWidth(ELEMENT_WIDTH),
-				placeholder = {
+				label = {
 					Text(
 						text = stringResource(id = R.string.confirm_password),
 						color = MaterialTheme.subletrPalette.secondaryTextColor,
@@ -231,20 +228,22 @@ fun CreateAccountPageView(
 				supportingText = {
 					if (uiState.confirmPasswordInfoTextStringId != null) {
 						Text(
-							text = stringResource(id = uiState.confirmPasswordInfoTextStringId)
+							text = stringResource(id = uiState.confirmPasswordInfoTextStringId),
+							color = MaterialTheme.subletrPalette.warningColor,
 						)
 					}
 				},
 			)
 
 			Spacer(
-				modifier = Modifier.weight(weight = 2.0f)
+				modifier = Modifier.height(dimensionResource(id = R.dimen.xs))
 			)
 
-			RoundedDropdown(
+			RoundedExposedDropdown(
 				modifier = Modifier
 					.fillMaxWidth(ELEMENT_WIDTH),
 				dropdownItems = Gender.values(),
+				labelId = R.string.gender,
 				selectedDropdownItem = uiState.gender,
 				dropdownItemToString = { stringResource(id = it.stringId)},
 				setSelectedDropdownItem = {
@@ -253,7 +252,7 @@ fun CreateAccountPageView(
 			)
 
 			Spacer(
-				modifier = Modifier.weight(weight = 2.0f)
+				modifier = Modifier.height(dimensionResource(id = R.dimen.m))
 			)
 
 			PrimaryButton(
@@ -271,11 +270,31 @@ fun CreateAccountPageView(
 			}
 
 			Spacer(
-				modifier = Modifier.weight(weight = 2.0f)
+				modifier = Modifier.height(dimensionResource(id = R.dimen.s))
+			)
+
+			if (uiState.accountCreationError) {
+				Row(
+					modifier = Modifier.fillMaxWidth(ELEMENT_WIDTH),
+					verticalAlignment = Alignment.CenterVertically,
+					horizontalArrangement = Arrangement.Center
+				) {
+					Text(
+						text = stringResource(id = R.string.account_creation_error),
+						color = MaterialTheme.subletrPalette.warningColor,
+					)
+				}
+			}
+
+			Spacer(
+				modifier = Modifier.height(dimensionResource(id = R.dimen.s))
 			)
 
 			Row(
-				verticalAlignment = Alignment.CenterVertically
+				modifier = Modifier
+					.fillMaxWidth(ELEMENT_WIDTH),
+				verticalAlignment = Alignment.CenterVertically,
+				horizontalArrangement = Arrangement.Center
 			) {
 				Text(
 					text = stringResource(id = R.string.already_have_an_account),
@@ -305,14 +324,14 @@ fun CreateAccountPageView(
 
 			Spacer(
 				modifier = Modifier
-					.weight(weight = 5.0f)
+					.height(dimensionResource(id = R.dimen.s))
 					.imePadding()
 			)
 		}
 	}
 }
 
-private const val ELEMENT_WIDTH = 0.75f
+private const val ELEMENT_WIDTH = 1.0f
 
 @Preview(showBackground = true)
 @Composable
@@ -331,6 +350,7 @@ fun CreateAccountPagePreview() {
 				emailInfoTextStringId = null,
 				passwordInfoTextStringId = null,
 				confirmPasswordInfoTextStringId = null,
+				accountCreationError = false,
 			)
 		)
 	}

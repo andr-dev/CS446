@@ -70,7 +70,7 @@ import java.time.ZoneOffset
 import java.util.Date
 import java.util.Locale
 
-@SuppressWarnings("CyclomaticComplexMethod","LongMethod","ComplexCondition")
+@SuppressWarnings("CyclomaticComplexMethod","LongMethod","ComplexCondition", "MaxLineLength")
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class)
 @Composable
 fun AllFilter(
@@ -173,6 +173,11 @@ fun AllFilter(
 	var ratingPref by remember {
 		mutableIntStateOf(
 			currentFilterVals.minRating
+		)
+	}
+	var showVerifiedOnly by remember {
+		mutableStateOf(
+			currentFilterVals.showVerifiedOnly
 		)
 	}
 
@@ -674,38 +679,11 @@ fun AllFilter(
 				item { PageDivider() }
 				item {
 					Text(
-						text = stringResource(id = R.string.favourite),
+						text = stringResource(id = R.string.rating),
 						style = MaterialTheme.typography.displayMedium,
 						color = MaterialTheme.subletrPalette.primaryTextColor,
 					)
 				}
-				item {
-					Row(
-						modifier = Modifier.fillMaxWidth(1.0f),
-						horizontalArrangement = Arrangement.SpaceBetween,
-						verticalAlignment = Alignment.CenterVertically,
-					) {
-						Text(
-							text = stringResource(id = R.string.only_show_favourites),
-							style = filterRegularFont,
-							color = MaterialTheme.subletrPalette.secondaryTextColor,
-						)
-						PrimarySwitch(
-							modifier = Modifier.height(dimensionResource(id = R.dimen.m)),
-							checked = isFavourite,
-							onCheckedChange = { isFavourite = it },
-							colors = SwitchDefaults.colors(
-								checkedTrackColor = MaterialTheme.subletrPalette.subletrPink,
-								checkedBorderColor = MaterialTheme.subletrPalette.subletrPink,
-								uncheckedTrackColor = MaterialTheme.subletrPalette.secondaryButtonBackgroundColor,
-								uncheckedBorderColor = MaterialTheme.subletrPalette.secondaryButtonBackgroundColor,
-								checkedThumbColor = MaterialTheme.subletrPalette.textOnSubletrPink,
-								uncheckedThumbColor = MaterialTheme.subletrPalette.textOnSubletrPink,
-							)
-						)
-					}
-				}
-				item { PageDivider() }
 				item {
 					FlowRow(
 						horizontalArrangement = Arrangement.spacedBy(dimensionResource(id = R.dimen.xs)),
@@ -764,6 +742,74 @@ fun AllFilter(
 						},
 					)
 				}
+				item { PageDivider() }
+				item {
+					Text(
+						text = stringResource(id = R.string.favourite),
+						style = MaterialTheme.typography.displayMedium,
+						color = MaterialTheme.subletrPalette.primaryTextColor,
+					)
+				}
+				item {
+					Row(
+						modifier = Modifier.fillMaxWidth(1.0f),
+						horizontalArrangement = Arrangement.SpaceBetween,
+						verticalAlignment = Alignment.CenterVertically,
+					) {
+						Text(
+							text = stringResource(id = R.string.only_show_favourites),
+							style = filterRegularFont,
+							color = MaterialTheme.subletrPalette.secondaryTextColor,
+						)
+						PrimarySwitch(
+							modifier = Modifier.height(dimensionResource(id = R.dimen.m)),
+							checked = isFavourite,
+							onCheckedChange = { isFavourite = it },
+							colors = SwitchDefaults.colors(
+								checkedTrackColor = MaterialTheme.subletrPalette.subletrPink,
+								checkedBorderColor = MaterialTheme.subletrPalette.subletrPink,
+								uncheckedTrackColor = MaterialTheme.subletrPalette.secondaryButtonBackgroundColor,
+								uncheckedBorderColor = MaterialTheme.subletrPalette.secondaryButtonBackgroundColor,
+								checkedThumbColor = MaterialTheme.subletrPalette.textOnSubletrPink,
+								uncheckedThumbColor = MaterialTheme.subletrPalette.textOnSubletrPink,
+							)
+						)
+					}
+				}
+				item { PageDivider() }
+				item{
+					Text(
+						text = stringResource(id = R.string.verified_posts),
+						style = MaterialTheme.typography.displayMedium,
+						color = MaterialTheme.subletrPalette.primaryTextColor,
+					)
+				}
+				item{
+					Row(
+						modifier = Modifier.fillMaxWidth(1.0f),
+						horizontalArrangement = Arrangement.SpaceBetween,
+						verticalAlignment = Alignment.CenterVertically,
+					) {
+						Text(
+							text = stringResource(id = R.string.only_show_verified_users_posts),
+							style = filterRegularFont,
+							color = MaterialTheme.subletrPalette.secondaryTextColor,
+						)
+						PrimarySwitch(
+							modifier = Modifier.height(dimensionResource(id = R.dimen.m)),
+							checked = showVerifiedOnly,
+							onCheckedChange = { showVerifiedOnly = it },
+							colors = SwitchDefaults.colors(
+								checkedTrackColor = MaterialTheme.subletrPalette.subletrPink,
+								checkedBorderColor = MaterialTheme.subletrPalette.subletrPink,
+								uncheckedTrackColor = MaterialTheme.subletrPalette.secondaryButtonBackgroundColor,
+								uncheckedBorderColor = MaterialTheme.subletrPalette.secondaryButtonBackgroundColor,
+								checkedThumbColor = MaterialTheme.subletrPalette.textOnSubletrPink,
+								uncheckedThumbColor = MaterialTheme.subletrPalette.textOnSubletrPink,
+							)
+						)
+					}
+				}
 
 				item { Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.xxl))) }
 			}
@@ -793,7 +839,7 @@ fun AllFilter(
 			ensuitebathroom = false
 			genderPref = Gender.OTHER
 			ratingPref = 0
-
+			showVerifiedOnly = false
 
 		},
 		updateFilterAndClose = {
@@ -830,6 +876,7 @@ fun AllFilter(
 							upperLocBoundText.toIntOrNull(),
 						),
 						minRating = ratingPref,
+						showVerifiedOnly = showVerifiedOnly,
 					)
 				)
 

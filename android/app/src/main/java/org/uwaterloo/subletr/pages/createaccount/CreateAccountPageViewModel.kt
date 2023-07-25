@@ -10,11 +10,15 @@ import io.reactivex.rxjava3.subjects.BehaviorSubject
 import io.reactivex.rxjava3.subjects.PublishSubject
 import kotlinx.coroutines.runBlocking
 import org.uwaterloo.subletr.R
+import org.uwaterloo.subletr.api.apis.AuthenticationApi
 import org.uwaterloo.subletr.api.apis.UserApi
 import org.uwaterloo.subletr.api.models.CreateUserRequest
+import org.uwaterloo.subletr.api.models.UserLoginRequest
 import org.uwaterloo.subletr.enums.Gender
+import org.uwaterloo.subletr.enums.getKey
 import org.uwaterloo.subletr.infrastructure.SubletrViewModel
 import org.uwaterloo.subletr.navigation.NavigationDestination
+import org.uwaterloo.subletr.services.IAuthenticationService
 import org.uwaterloo.subletr.services.INavigationService
 import java.util.Optional
 import javax.inject.Inject
@@ -25,6 +29,8 @@ import kotlin.jvm.optionals.getOrNull
 class CreateAccountPageViewModel @Inject constructor(
 	navigationService: INavigationService,
 	userApi: UserApi,
+	authenticationApi: AuthenticationApi,
+	authenticationService: IAuthenticationService,
 ) : SubletrViewModel<CreateAccountPageUiState>() {
 	val navHostController = navigationService.navHostController
 
@@ -46,6 +52,7 @@ class CreateAccountPageViewModel @Inject constructor(
 		BehaviorSubject.createDefault(Optional.empty())
 	private val confirmPasswordInfoTextStringIdStream: BehaviorSubject<Optional<Int>> =
 		BehaviorSubject.createDefault(Optional.empty())
+	private val accountCreationErrorStream: BehaviorSubject<Boolean> = BehaviorSubject.createDefault(false)
 
 	private val observables: List<Observable<*>> = listOf(
 		firstNameStream,
@@ -58,7 +65,8 @@ class CreateAccountPageViewModel @Inject constructor(
 		lastNameInfoTextStringIdStream,
 		emailInfoTextStringIdStream,
 		passwordInfoTextStringIdStream,
-		confirmPasswordInfoTextStringIdStream
+		confirmPasswordInfoTextStringIdStream,
+		accountCreationErrorStream,
 	)
 
 	override val uiStateStream: Observable<CreateAccountPageUiState> = Observable.combineLatest(
@@ -78,6 +86,7 @@ class CreateAccountPageViewModel @Inject constructor(
 			emailInfoTextStringId = (observing[8] as Optional<Int>).getOrNull(),
 			passwordInfoTextStringId = (observing[9] as Optional<Int>).getOrNull(),
 			confirmPasswordInfoTextStringId = (observing[10] as Optional<Int>).getOrNull(),
+			accountCreationError = observing[11] as Boolean
 		)
 	}
 
@@ -86,7 +95,7 @@ class CreateAccountPageViewModel @Inject constructor(
 	init {
 		createAccountStream.map { uiState ->
 			var validInput = true
-
+			accountCreationErrorStream.onNext(false)
 			if (uiState.firstName.isBlank()) {
 				firstNameInfoTextStringIdStream.onNext(Optional.of(R.string.first_name_blank_error))
 				validInput = false
@@ -121,26 +130,42 @@ class CreateAccountPageViewModel @Inject constructor(
 			}
 
 			if (validInput) {
-				runCatching {
-					runBlocking {
+				runBlocking {
+					runCatching {
 						userApi.userCreate(
 							CreateUserRequest(
 								firstName = uiState.firstName,
 								lastName = uiState.lastName,
 								email = uiState.email,
-								gender = uiState.gender.name,
+								gender = uiState.gender.getKey(),
 								password = uiState.password,
 							)
 						)
 					}
+						.onSuccess {
+							runCatching {
+								authenticationApi.authLogin(
+									UserLoginRequest(
+										email = uiState.email,
+										password = uiState.password,
+									)
+								)
+							}
+								.onSuccess {
+									authenticationService.setAccessToken(it.token)
+									navHostController.navigate(NavigationDestination.VERIFY_WATCARD.fullNavPath)
+								}
+								.onFailure {
+									authenticationService.deleteAccessToken()
+									navHostController.navigate(NavigationDestination.LOGIN.fullNavPath)
+								}
+						}
+						.onFailure {
+							accountCreationErrorStream.onNext(true)
+						}
 				}
-					.onSuccess {
-						navHostController.navigate(
-							route = "${NavigationDestination.VERIFY_EMAIL.rootNavPath}/${it.userId}"
-						)
-					}
 					.onFailure {
-						// TODO: Do something
+						accountCreationErrorStream.onNext(true)
 					}
 			}
 		}

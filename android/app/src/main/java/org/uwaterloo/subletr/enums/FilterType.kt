@@ -12,5 +12,6 @@ enum class FilterType (@StringRes val stringId: Int) {
 	DATES(R.string.dates),
 	FAVOURITE(R.string.favourite),
 	RATING(R.string.rating),
+	VERIFIEDPOST(R.string.verified_posts),
 	ALL(R.string.all_filters),
 }

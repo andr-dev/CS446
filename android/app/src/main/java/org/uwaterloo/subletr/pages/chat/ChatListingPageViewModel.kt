@@ -2,7 +2,6 @@ package org.uwaterloo.subletr.pages.chat
 
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.reactivex.rxjava3.subjects.BehaviorSubject
-import org.uwaterloo.subletr.services.INavigationService
 import javax.inject.Inject
 import org.uwaterloo.subletr.infrastructure.SubletrViewModel
 
