@@ -66,8 +66,8 @@ private fun getDarkerGrayButtonColor(darkTheme: Boolean): Color {
 	}
 	else {
 		darkerGrayButtonColorLight
-}
 	}
+}
 private val darkerGrayButtonColorLight = Color((0xFFE5E5E5))
 private val darkerGrayButtonColorDark = Color((0xFF403637))
 
@@ -127,8 +127,8 @@ private fun getTextFieldBorderColor(darkTheme: Boolean): Color {
 	}
 	else {
 		textFieldBorderColorLight
-}
 	}
+}
 private val textFieldBorderColorLight = Color((0xFFE5E5E5))
 private val textFieldBorderColorDark = Color((0xFF928586))
 
@@ -146,13 +146,14 @@ private val bottomSheetColorDark = Color((0xFF181213))
 private fun getWarningColor(darkTheme: Boolean): Color {
 	return if (darkTheme) {
 		warningColorDark
-	} else {
+	}
+	else {
 		warningColorLight
 	}
 }
+private val warningColorDark = Color((0xFFF2B8B5))
+private val warningColorLight = Color((0xFFB3261E))
 
-private val warningColorDark = Color(0xFFF2B8B5)
-private val warningColorLight = Color(0xBFF3261E)
 
 val Purple900 = Color(0xFF4A148C)
 val Purple500 = Color(0xFF9C27B0)
@@ -196,7 +197,7 @@ val OnLightSubletrCustomColorPalette = SubletrCustomColorPalette(
 	squaredTextFieldBackgroundColor = getSquaredTextFieldBackgroundColor(darkTheme = false),
 	textFieldBorderColor = getTextFieldBorderColor(darkTheme = false),
 	bottomSheetColor = getBottomSheetColor(darkTheme = false),
-	warningColor = getWarningColor(darkTheme = false)
+	warningColor = getWarningColor(darkTheme = false),
 )
 
 val OnDarkSubletrCustomColorPalette = SubletrCustomColorPalette(
@@ -213,7 +214,7 @@ val OnDarkSubletrCustomColorPalette = SubletrCustomColorPalette(
 	squaredTextFieldBackgroundColor = getSquaredTextFieldBackgroundColor(darkTheme = true),
 	textFieldBorderColor = getTextFieldBorderColor(darkTheme = true),
 	bottomSheetColor = getBottomSheetColor(darkTheme = true),
-	warningColor = getWarningColor(darkTheme = true)
+	warningColor = getWarningColor(darkTheme = true),
 )
 
 internal val SubletrDarkColorScheme = darkColorScheme(
