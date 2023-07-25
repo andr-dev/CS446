@@ -27,3 +27,4 @@
 | July 19th | 3 hours | Clean up PR for Google Places Autocomplete for addresses when creating sublet listing |
 | July 20th | 6 hours | Listing details image position fix and adding more fields to the create listing page |
 | July 23rd | 3 hours | Refactored the create listing page to match updated UI |
+| July 24th | 8 hours | Attempted Google Routes API integration on the frontend, but as it lacks Android support it wasn't feasible. Also made basic functionality for deleting a sublet |
