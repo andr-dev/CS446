@@ -47,6 +47,7 @@ class CreateAccountPageViewModel @Inject constructor(
 		BehaviorSubject.createDefault(Optional.empty())
 	private val confirmPasswordInfoTextStringIdStream: BehaviorSubject<Optional<Int>> =
 		BehaviorSubject.createDefault(Optional.empty())
+	private val accountCreationErrorStream: BehaviorSubject<Boolean> = BehaviorSubject.createDefault(false)
 
 	private val observables: List<Observable<*>> = listOf(
 		firstNameStream,
@@ -59,7 +60,8 @@ class CreateAccountPageViewModel @Inject constructor(
 		lastNameInfoTextStringIdStream,
 		emailInfoTextStringIdStream,
 		passwordInfoTextStringIdStream,
-		confirmPasswordInfoTextStringIdStream
+		confirmPasswordInfoTextStringIdStream,
+		accountCreationErrorStream,
 	)
 
 	override val uiStateStream: Observable<CreateAccountPageUiState> = Observable.combineLatest(
@@ -79,6 +81,7 @@ class CreateAccountPageViewModel @Inject constructor(
 			emailInfoTextStringId = (observing[8] as Optional<Int>).getOrNull(),
 			passwordInfoTextStringId = (observing[9] as Optional<Int>).getOrNull(),
 			confirmPasswordInfoTextStringId = (observing[10] as Optional<Int>).getOrNull(),
+			accountCreationError = observing[11] as Boolean
 		)
 	}
 
@@ -87,7 +90,7 @@ class CreateAccountPageViewModel @Inject constructor(
 	init {
 		createAccountStream.map { uiState ->
 			var validInput = true
-
+			accountCreationErrorStream.onNext(false)
 			if (uiState.firstName.isBlank()) {
 				firstNameInfoTextStringIdStream.onNext(Optional.of(R.string.first_name_blank_error))
 				validInput = false
@@ -137,11 +140,11 @@ class CreateAccountPageViewModel @Inject constructor(
 				}
 					.onSuccess {
 						navHostController.navigate(
-							route = "${NavigationDestination.VERIFY_EMAIL.rootNavPath}/${it.userId}"
+							route = NavigationDestination.VERIFY_WATCARD.rootNavPath
 						)
 					}
 					.onFailure {
-						// TODO: Do something
+						accountCreationErrorStream.onNext(true)
 					}
 			}
 		}

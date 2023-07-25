@@ -145,8 +145,12 @@ fun LoginPageView(
 			}
 
 			if (uiState.infoTextStringId != null) {
+				Spacer(
+					modifier = Modifier.weight(weight = 3.0f)
+				)
 				Text(
-					text = stringResource(id = uiState.infoTextStringId)
+					text = stringResource(id = uiState.infoTextStringId),
+					color = MaterialTheme.subletrPalette.warningColor,
 				)
 			}
 

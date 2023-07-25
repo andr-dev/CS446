@@ -18,5 +18,6 @@ sealed interface CreateAccountPageUiState {
 		@StringRes val emailInfoTextStringId: Int?,
 		@StringRes val passwordInfoTextStringId: Int?,
 		@StringRes val confirmPasswordInfoTextStringId: Int?,
+		val accountCreationError: Boolean,
 	) : CreateAccountPageUiState
 }
