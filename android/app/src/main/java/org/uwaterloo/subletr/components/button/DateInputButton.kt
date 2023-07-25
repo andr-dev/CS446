@@ -6,6 +6,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import org.uwaterloo.subletr.R
@@ -13,7 +14,13 @@ import org.uwaterloo.subletr.components.textfield.RoundedTextField
 import org.uwaterloo.subletr.theme.subletrPalette
 
 @Composable
-fun DateInputButton(modifier: Modifier, labelStringId: Int, value: String, onClick: () -> Unit) {
+fun DateInputButton(
+	modifier: Modifier,
+	labelStringId: Int,
+	value: String,
+	labelColor: Color = MaterialTheme.subletrPalette.secondaryTextColor,
+	onClick: () -> Unit
+) {
 	RoundedTextField(
 		modifier = modifier,
 		placeholder = {
@@ -25,7 +32,7 @@ fun DateInputButton(modifier: Modifier, labelStringId: Int, value: String, onCli
 		label = {
 			Text(
 				text = stringResource(id = labelStringId),
-				color = MaterialTheme.subletrPalette.secondaryTextColor,
+				color = labelColor,
 			)
 		},
 		trailingIcon = {
