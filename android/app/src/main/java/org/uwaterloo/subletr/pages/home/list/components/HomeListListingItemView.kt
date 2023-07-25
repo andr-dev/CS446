@@ -36,6 +36,8 @@ import org.uwaterloo.subletr.R
 import org.uwaterloo.subletr.api.models.ListingSummary
 import org.uwaterloo.subletr.api.models.ResidenceType
 import org.uwaterloo.subletr.components.button.SecondaryButton
+import org.uwaterloo.subletr.navigation.NavigationDestination
+import org.uwaterloo.subletr.pages.home.list.HomeListChildViewModel
 import org.uwaterloo.subletr.pages.home.list.dateTimeFormatter
 import org.uwaterloo.subletr.theme.listingDescriptionFont
 import org.uwaterloo.subletr.theme.listingTitleFont
@@ -46,7 +48,7 @@ fun HomeListListingItemView(
 	modifier: Modifier = Modifier,
 	listingSummary: ListingSummary,
 	listingImage: Bitmap?,
-	detailsNavigation: () -> Unit,
+	viewModel: HomeListChildViewModel,
 ) {
 	Box(
 		modifier = modifier
@@ -199,7 +201,11 @@ fun HomeListListingItemView(
 						containerColor = MaterialTheme.subletrPalette.darkerGrayButtonColor,
 						contentColor = MaterialTheme.subletrPalette.primaryTextColor,
 					),
-					onClick = detailsNavigation,
+					onClick = {
+						viewModel.navHostController.navigate(
+							route = "${NavigationDestination.LISTING_DETAILS.rootNavPath}/${listingSummary.listingId}"
+						)
+					},
 				) {
 					Text(
 						stringResource(id = R.string.view_details),
@@ -217,7 +223,9 @@ fun HomeListListingItemView(
 						contentColor = MaterialTheme.subletrPalette.primaryTextColor,
 					),
 					iconId = R.drawable.chat_bubble_outline_gray_24,
-					onClick = { /*TODO*/ },
+					onClick = {
+						viewModel.navigateToChatStream.onNext(listingSummary.listingId)
+					},
 					contentDescription = stringResource(id = R.string.chat_icon),
 				)
 				Spacer(modifier = Modifier.width(dimensionResource(id = R.dimen.xs)))

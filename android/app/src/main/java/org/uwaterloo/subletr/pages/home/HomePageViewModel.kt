@@ -18,6 +18,7 @@ import org.uwaterloo.subletr.enums.Gender
 import org.uwaterloo.subletr.enums.HousingType
 import org.uwaterloo.subletr.enums.getGenderFilterString
 import org.uwaterloo.subletr.infrastructure.SubletrViewModel
+import org.uwaterloo.subletr.navigation.NavigationDestination
 import org.uwaterloo.subletr.pages.home.list.HomeListChildViewModel
 import org.uwaterloo.subletr.pages.home.list.HomeListUiState
 import org.uwaterloo.subletr.pages.home.map.HomeMapChildViewModel
@@ -42,6 +43,28 @@ class HomePageViewModel @Inject constructor(
 	homeMapChildViewModel,
 ) {
 	val navHostController: NavHostController get() = navigationService.navHostController
+
+	private val navigateToChatStream = Observable.merge(
+		homeListChildViewModel.navigateToChatStream,
+		homeMapChildViewModel.navigateToChatStream,
+	)
+		.map { listingId ->
+			runCatching {
+				runBlocking {
+					listingsApi.listingsDetails(
+						listingId = listingId,
+						UWATERLOO_LONGITUDE,
+						UWATERLOO_LATITUDE,
+					)
+				}
+			}
+				.onSuccess {
+					navHostController.navigate(
+						route = "${NavigationDestination.INDIVIDUAL_CHAT_PAGE.rootNavPath}/${it.details.ownerUserId}"
+					)
+				}
+		}
+		.subscribeOn(Schedulers.io())
 
 	private val totalNumberOfPagesStream: BehaviorSubject<Int> =
 		BehaviorSubject.createDefault(1)
@@ -463,6 +486,8 @@ class HomePageViewModel @Inject constructor(
 			}
 			.subscribeOn(Schedulers.io())
 			.safeSubscribe()
+
+		navigateToChatStream.safeSubscribe()
 	}
 
 	private fun setMaxRoom(roomNum: Int?): Int? {
