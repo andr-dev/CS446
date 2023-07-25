@@ -30,7 +30,7 @@ fun MainNavigation(
 	navHostController: NavHostController = rememberNavController(),
 ) {
 	val startingDestination: NavigationDestination =
-		if (ApiClient.accessToken == null) NavigationDestination.LOGIN
+		if (ApiClient.accessToken == null) NavigationDestination.CREATE_LISTING
 		else NavigationDestination.HOME
 
 	NavHost(

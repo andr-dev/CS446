@@ -164,19 +164,29 @@ fun CreateListingPageView(
 				verticalArrangement = Arrangement.Center,
 			) {
 
-				Spacer(
-					modifier = Modifier.weight(weight = 1.0f)
-				)
 				if (attemptCreate && !canCreate(uiState = uiState)) {
-					Text(
-						text = stringResource(id = R.string.update_fields),
-						color = MaterialTheme.subletrPalette.warningColor
+					Spacer(
+						modifier = Modifier.height(dimensionResource(id = R.dimen.xxs)),
+					)
+					Column(
+						modifier = Modifier
+							.fillMaxSize(),
+						//verticalArrangement = Arrangement.Center,
+						horizontalAlignment = Alignment.CenterHorizontally
+					) {
+						Text(
+							text = stringResource (id = R.string.update_fields),
+							color = MaterialTheme.subletrPalette.warningColor
+						)
+					}
+					Spacer(
+						modifier = Modifier.height(dimensionResource(id = R.dimen.xs)),
+					)
+				} else {
+					Spacer(
+						modifier = Modifier.height(dimensionResource(id = R.dimen.m)),
 					)
 				}
-
-				Spacer(
-					modifier = Modifier.weight(weight = 1.0f)
-				)
 
 				ExposedDropdownMenuBox(
 					modifier = Modifier,
@@ -190,7 +200,7 @@ fun CreateListingPageView(
 							.border(
 								width = dimensionResource(id = R.dimen.xxxs),
 								color =
-								if (!attemptCreate || !adressIsEmpty(uiState.address))
+								if (!attemptCreate || !addressIsEmpty(uiState.address))
 									MaterialTheme.subletrPalette.textFieldBorderColor
 								else
 									MaterialTheme.subletrPalette.warningColor,
@@ -207,7 +217,7 @@ fun CreateListingPageView(
 							Text(
 								text = stringResource(id = R.string.address),
 								color =
-								if (!attemptCreate || !adressIsEmpty(uiState.address))
+								if (!attemptCreate || !addressIsEmpty(uiState.address))
 									MaterialTheme.subletrPalette.secondaryTextColor
 								else
 									MaterialTheme.subletrPalette.warningColor,
@@ -239,53 +249,6 @@ fun CreateListingPageView(
 				}
 
 				Spacer(
-					modifier = Modifier.weight(weight = 2.0f)
-				)
-
-				RoundedTextField(
-					modifier = Modifier
-						.fillMaxWidth()
-						.border(
-							width = dimensionResource(id = R.dimen.xxxs),
-							color =
-							if (!attemptCreate || uiState.price > 0)
-								MaterialTheme.subletrPalette.textFieldBorderColor
-							else
-								MaterialTheme.subletrPalette.warningColor,
-							shape = RoundedCornerShape(dimensionResource(id = R.dimen.xxxxl))
-						),
-					placeholder = {
-						Text(
-							text = stringResource(id = R.string.price),
-							color =
-							if (!attemptCreate || canCreate(uiState))
-								MaterialTheme.subletrPalette.secondaryTextColor
-							else
-								MaterialTheme.subletrPalette.warningColor,
-						)
-					},
-					label = {
-						Text(
-							text = stringResource(id = R.string.price),
-							color =
-							if (!attemptCreate || uiState.price > 0)
-								MaterialTheme.subletrPalette.secondaryTextColor
-							else
-								MaterialTheme.subletrPalette.warningColor,
-						)
-					},
-					keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-					value = if (uiState.price == 0) "" else uiState.price.toString(),
-					onValueChange = {
-						if (it.isEmpty()) {
-							viewModel.priceStream.onNext(0)
-						} else if (it.matches(numberPattern)) {
-							viewModel.priceStream.onNext(it.toInt())
-						}
-					}
-				)
-
-				Spacer(
 					modifier = Modifier.height(dimensionResource(id = R.dimen.m)),
 				)
 
@@ -293,6 +256,7 @@ fun CreateListingPageView(
 					labelId = R.string.price,
 					viewModelStream = viewModel.priceStream,
 					uiStateValue = uiState.price,
+					attemptCreate = attemptCreate,
 				)
 
 				Spacer(
@@ -318,6 +282,11 @@ fun CreateListingPageView(
 								shape = RoundedCornerShape(dimensionResource(id = R.dimen.xxxxl))
 							),
 						labelStringId = R.string.start_date,
+						labelColor =
+						if (!attemptCreate || uiState.startDate != "")
+							MaterialTheme.subletrPalette.secondaryTextColor
+						else
+							MaterialTheme.subletrPalette.warningColor,
 						value = uiState.startDateDisplayText,
 						onClick = {
 							coroutineScope.launch {
@@ -339,6 +308,11 @@ fun CreateListingPageView(
 								shape = RoundedCornerShape(dimensionResource(id = R.dimen.xxxxl))
 							),
 						labelStringId = R.string.end_date,
+						labelColor =
+						if (!attemptCreate || uiState.endDate != "")
+							MaterialTheme.subletrPalette.secondaryTextColor
+						else
+							MaterialTheme.subletrPalette.warningColor,
 						value = uiState.endDateDisplayText,
 						onClick = {
 							coroutineScope.launch {
@@ -377,12 +351,14 @@ fun CreateListingPageView(
 						labelId = R.string.num_bedrooms,
 						viewModelStream = viewModel.numBedroomsStream,
 						uiStateValue = uiState.numBedrooms,
+						attemptCreate = attemptCreate,
 					)
 					CreateListingNumericalInputs(
 						modifier = Modifier.weight(1f),
 						labelId = R.string.bedrooms_in_unit,
 						viewModelStream = viewModel.totalNumBedroomsStream,
 						uiStateValue = uiState.totalNumBedrooms,
+						attemptCreate = attemptCreate,
 					)
 				}
 
@@ -416,12 +392,14 @@ fun CreateListingPageView(
 						labelId = R.string.num_bathrooms,
 						viewModelStream = viewModel.numBathroomsStream,
 						uiStateValue = uiState.numBathrooms,
+						attemptCreate = attemptCreate,
 					)
 					CreateListingNumericalInputs(
 						modifier = Modifier.weight(1f),
 						labelId = R.string.bathrooms_in_unit,
 						viewModelStream = viewModel.totalNumBathroomsStream,
 						uiStateValue = uiState.totalNumBathrooms,
+						attemptCreate = attemptCreate,
 					)
 				}
 
@@ -611,14 +589,14 @@ private val storeDateFormatISO: DateTimeFormatter = DateTimeFormatter.ISO_LOCAL_
 private val displayDateFormatter = DatePickerDefaults.dateFormatter(selectedDateSkeleton = "MM/dd/yyyy")
 
 fun canCreate(uiState: CreateListingPageUiState.Loaded) : Boolean {
-	return !adressIsEmpty(uiState.address) &&
+	return !addressIsEmpty(uiState.address) &&
 		uiState.price != 0 &&
 		uiState.startDate != "" &&
 		uiState.endDate != "" &&
 		uiState.numBedrooms != 0
 }
 
-fun adressIsEmpty(addressModel: CreateListingPageUiState.AddressModel) : Boolean {
+fun addressIsEmpty(addressModel: CreateListingPageUiState.AddressModel) : Boolean {
 	return addressModel.addressCity == "" &&
 		addressModel.addressLine == "" &&
 		addressModel.addressPostalCode == "" &&
@@ -631,6 +609,7 @@ fun CreateListingNumericalInputs(
 	labelId: Int,
 	viewModelStream: BehaviorSubject<Int>,
 	uiStateValue: Int,
+	attemptCreate: Boolean,
 ) {
 	val numberPattern = remember { Regex("^\\d+\$") }
 
@@ -638,9 +617,11 @@ fun CreateListingNumericalInputs(
 		modifier = modifier
 			.fillMaxWidth()
 			.border(
-				dimensionResource(id = R.dimen.xxxs),
-				MaterialTheme.subletrPalette.textFieldBorderColor,
-				RoundedCornerShape(dimensionResource(id = R.dimen.xxxxl))
+				width = dimensionResource(id = R.dimen.xxxs),
+				color =
+				if (!attemptCreate || uiStateValue > 0) MaterialTheme.subletrPalette.textFieldBorderColor
+				else MaterialTheme.subletrPalette.warningColor,
+				shape = RoundedCornerShape(dimensionResource(id = R.dimen.xxxxl))
 			),
 		placeholder = {
 			Text(
@@ -651,7 +632,11 @@ fun CreateListingNumericalInputs(
 		label = {
 			Text(
 				text = stringResource(id = labelId),
-				color = MaterialTheme.subletrPalette.secondaryTextColor,
+				color =
+				if (!attemptCreate || uiStateValue > 0)
+					MaterialTheme.subletrPalette.secondaryTextColor
+				else
+					MaterialTheme.subletrPalette.warningColor,
 			)
 		},
 		keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
