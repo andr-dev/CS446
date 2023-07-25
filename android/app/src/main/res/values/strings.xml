@@ -206,4 +206,6 @@
     <string name="additional_information">Additional information</string>
     <string name="bedrooms_in_unit">Bedrooms in unit</string>
     <string name="bathrooms_in_unit">Bathrooms in unit</string>
+    <string name="update_fields">Please update the highlighted fields!</string>
+
 </resources>
