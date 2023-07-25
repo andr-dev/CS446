@@ -250,16 +250,6 @@ fun CreateAccountPageView(
 					viewModel.genderStream.onNext(it)
 				},
 			)
-//			RoundedDropdown(
-//				modifier = Modifier
-//					.fillMaxWidth(ELEMENT_WIDTH),
-//				dropdownItems = Gender.values(),
-//				selectedDropdownItem = uiState.gender,
-//				dropdownItemToString = { stringResource(id = it.stringId)},
-//				setSelectedDropdownItem = {
-//					viewModel.genderStream.onNext(it)
-//				},
-//			)
 
 			Spacer(
 				modifier = Modifier.height(dimensionResource(id = R.dimen.m))
