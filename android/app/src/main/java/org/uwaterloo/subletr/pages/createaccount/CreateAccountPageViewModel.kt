@@ -10,11 +10,14 @@ import io.reactivex.rxjava3.subjects.BehaviorSubject
 import io.reactivex.rxjava3.subjects.PublishSubject
 import kotlinx.coroutines.runBlocking
 import org.uwaterloo.subletr.R
+import org.uwaterloo.subletr.api.apis.AuthenticationApi
 import org.uwaterloo.subletr.api.apis.UserApi
 import org.uwaterloo.subletr.api.models.CreateUserRequest
+import org.uwaterloo.subletr.api.models.UserLoginRequest
 import org.uwaterloo.subletr.enums.Gender
 import org.uwaterloo.subletr.infrastructure.SubletrViewModel
 import org.uwaterloo.subletr.navigation.NavigationDestination
+import org.uwaterloo.subletr.services.IAuthenticationService
 import org.uwaterloo.subletr.services.INavigationService
 import java.util.Optional
 import javax.inject.Inject
@@ -25,6 +28,8 @@ import kotlin.jvm.optionals.getOrNull
 class CreateAccountPageViewModel @Inject constructor(
 	navigationService: INavigationService,
 	userApi: UserApi,
+	authenticationApi: AuthenticationApi,
+	authenticationService: IAuthenticationService,
 ) : SubletrViewModel<CreateAccountPageUiState>() {
 	val navHostController = navigationService.navHostController
 
@@ -124,8 +129,8 @@ class CreateAccountPageViewModel @Inject constructor(
 			}
 
 			if (validInput) {
-				runCatching {
-					runBlocking {
+				runBlocking {
+					runCatching {
 						userApi.userCreate(
 							CreateUserRequest(
 								firstName = uiState.firstName,
@@ -136,12 +141,28 @@ class CreateAccountPageViewModel @Inject constructor(
 							)
 						)
 					}
+						.onSuccess {
+							runCatching {
+								authenticationApi.authLogin(
+									UserLoginRequest(
+										email = uiState.email,
+										password = uiState.password,
+									)
+								)
+							}
+								.onSuccess {
+									authenticationService.setAccessToken(it.token)
+									navHostController.navigate(NavigationDestination.VERIFY_WATCARD.fullNavPath)
+								}
+								.onFailure {
+									authenticationService.deleteAccessToken()
+									navHostController.navigate(NavigationDestination.LOGIN.fullNavPath)
+								}
+						}
+						.onFailure {
+							accountCreationErrorStream.onNext(true)
+						}
 				}
-					.onSuccess {
-						navHostController.navigate(
-							route = NavigationDestination.VERIFY_WATCARD.rootNavPath
-						)
-					}
 					.onFailure {
 						accountCreationErrorStream.onNext(true)
 					}
