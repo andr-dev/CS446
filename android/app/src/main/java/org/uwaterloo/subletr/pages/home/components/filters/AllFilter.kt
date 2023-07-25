@@ -70,7 +70,7 @@ import java.time.ZoneOffset
 import java.util.Date
 import java.util.Locale
 
-@SuppressWarnings("CyclomaticComplexMethod","LongMethod","ComplexCondition")
+@SuppressWarnings("CyclomaticComplexMethod","LongMethod","ComplexCondition", "MaxLineLength")
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class)
 @Composable
 fun AllFilter(
@@ -840,8 +840,6 @@ fun AllFilter(
 			genderPref = Gender.OTHER
 			ratingPref = 0
 			showVerifiedOnly = false
-
-
 
 		},
 		updateFilterAndClose = {

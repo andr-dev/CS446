@@ -65,6 +65,7 @@ import org.uwaterloo.subletr.pages.home.components.filters.PropertyTypeFilter
 import org.uwaterloo.subletr.pages.home.components.filters.RatingFilter
 import org.uwaterloo.subletr.pages.home.components.filters.RoomFilter
 import org.uwaterloo.subletr.pages.home.components.filters.RoommateFilter
+import org.uwaterloo.subletr.pages.home.components.filters.VerifiedPostFilter
 import org.uwaterloo.subletr.pages.home.list.components.ButtonWithIcon
 import org.uwaterloo.subletr.pages.home.list.components.FilterButton
 import org.uwaterloo.subletr.pages.home.list.components.HomeListListingItemView
@@ -264,6 +265,16 @@ fun HomeListChildView(
 				)
 			}
 
+			fun updateVerifiedPostFilter(newVal: Boolean) {
+				viewModel.getListingParamsStream.onNext(
+					HomePageViewModel.GetListingParams(
+						filters = uiState.filters.copy(showVerifiedOnly = newVal),
+						transportationMethod = HomePageUiState.TransportationMethod.WALK,
+						homePageView = HomePageUiState.HomePageViewType.LIST,
+					)
+				)
+			}
+
 			fun updateAllFilters(newVal: HomePageUiState.FiltersModel) {
 				viewModel.getListingParamsStream.onNext(
 					HomePageViewModel.GetListingParams(
@@ -344,6 +355,7 @@ fun HomeListChildView(
 								FilterType.ROOMMATE,
 								FilterType.DATES,
 								FilterType.RATING,
+								FilterType.VERIFIEDPOST
 							).map {
 								item {
 									FilterButton(
@@ -424,6 +436,12 @@ fun HomeListChildView(
 											coroutineScope = coroutineScope,
 											closeAction = ::closeBottomSheet,
 										)
+
+										FilterType.VERIFIEDPOST -> VerifiedPostFilter(
+											currentVerified = uiState.filters.showVerifiedOnly,
+											updateFavouriteFilter = ::updateVerifiedPostFilter,
+											closeAction = ::closeBottomSheet,
+										)
 									}
 								},
 							)
@@ -487,6 +505,7 @@ private fun HomeListViewPreview() {
 					timeToDestination = null,
 					addressSearch = null,
 					minRating = 0,
+					showVerifiedOnly = false,
 				),
 			),
 		)
