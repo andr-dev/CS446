@@ -685,6 +685,40 @@ fun AllFilter(
 					)
 				}
 				item {
+					Row(
+						modifier = Modifier.fillMaxWidth(1.0f),
+						horizontalArrangement = Arrangement.SpaceBetween,
+						verticalAlignment = Alignment.CenterVertically,
+					) {
+						Text(
+							text = stringResource(id = R.string.only_show_favourites),
+							style = filterRegularFont,
+							color = MaterialTheme.subletrPalette.secondaryTextColor,
+						)
+						PrimarySwitch(
+							modifier = Modifier.height(dimensionResource(id = R.dimen.m)),
+							checked = isFavourite,
+							onCheckedChange = { isFavourite = it },
+							colors = SwitchDefaults.colors(
+								checkedTrackColor = MaterialTheme.subletrPalette.subletrPink,
+								checkedBorderColor = MaterialTheme.subletrPalette.subletrPink,
+								uncheckedTrackColor = MaterialTheme.subletrPalette.secondaryButtonBackgroundColor,
+								uncheckedBorderColor = MaterialTheme.subletrPalette.secondaryButtonBackgroundColor,
+								checkedThumbColor = MaterialTheme.subletrPalette.textOnSubletrPink,
+								uncheckedThumbColor = MaterialTheme.subletrPalette.textOnSubletrPink,
+							)
+						)
+					}
+				}
+				item { PageDivider() }
+				item {
+					Text(
+						text = stringResource(id = R.string.rating),
+						style = MaterialTheme.typography.displayMedium,
+						color = MaterialTheme.subletrPalette.primaryTextColor,
+					)
+				}
+				item {
 					FlowRow(
 						horizontalArrangement = Arrangement.spacedBy(dimensionResource(id = R.dimen.xs)),
 						content = {

@@ -70,4 +70,8 @@ enum class NavigationDestination(
 		rootNavPath = "chat/profile",
 		fullNavPath = "chat/profile/{userId}",
 	),
+	MANAGE_LISTING(
+		rootNavPath = "account/managelisting",
+		fullNavPath = "account/managelisting/{listingId}",
+	),
 }

@@ -769,7 +769,9 @@ fun AccountPageView(
 							.fillMaxWidth()
 							.height(dimensionResource(id = R.dimen.xl)),
 						onClick = {
-							// TODO: navigate to my sublet page
+							viewModel.navHostController.navigate(
+								route = "${NavigationDestination.MANAGE_LISTING.rootNavPath}/${uiState.listingId}"
+							)
 						},
 						enabled = !nameExpanded && !genderExpanded,
 					) {
