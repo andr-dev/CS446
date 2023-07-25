@@ -206,4 +206,6 @@
     <string name="additional_information">Additional information</string>
     <string name="bedrooms_in_unit">Bedrooms in unit</string>
     <string name="bathrooms_in_unit">Bathrooms in unit</string>
+    <string name="verified_posts">Verified Posts</string>
+    <string name="only_show_verified_users_posts">Only show verified users\' posts</string>
 </resources>

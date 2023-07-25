@@ -47,6 +47,7 @@ interface HomePageUiState {
 		val timeToDestination: Float?,
 		val addressSearch: String?,
 		val minRating: Int,
+		val showVerifiedOnly: Boolean,
 	)
 
 	enum class TransportationMethod {
@@ -64,13 +65,14 @@ interface HomePageUiState {
 
 fun HomePageUiState.FiltersModel.deepEquals(item: HomePageUiState.FiltersModel): Boolean {
 	return this.locationRange == item.locationRange &&
-			this.priceRange == item.priceRange &&
-			this.roomRange == item.roomRange &&
-			this.gender == item.gender &&
-			this.housingType == item.housingType &&
-			this.dateRange == item.dateRange &&
-			this.favourite == item.favourite &&
-			this.timeToDestination == item.timeToDestination &&
-			this.addressSearch == item.addressSearch &&
-			this.minRating == item.minRating
+		this.priceRange == item.priceRange &&
+		this.roomRange == item.roomRange &&
+		this.gender == item.gender &&
+		this.housingType == item.housingType &&
+		this.dateRange == item.dateRange &&
+		this.favourite == item.favourite &&
+		this.timeToDestination == item.timeToDestination &&
+		this.addressSearch == item.addressSearch &&
+		this.minRating == item.minRating &&
+		this.showVerifiedOnly == item.showVerifiedOnly
 }
