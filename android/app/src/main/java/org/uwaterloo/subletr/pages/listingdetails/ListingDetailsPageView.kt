@@ -3,7 +3,6 @@ package org.uwaterloo.subletr.pages.listingdetails
 import android.view.MotionEvent
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
@@ -51,7 +50,6 @@ import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.input.pointer.pointerInteropFilter
 import androidx.compose.ui.layout.ContentScale
@@ -78,6 +76,7 @@ import org.uwaterloo.subletr.api.models.ResidenceType
 import org.uwaterloo.subletr.components.button.PrimaryButton
 import org.uwaterloo.subletr.components.button.SecondaryButton
 import org.uwaterloo.subletr.components.rating.StaticRatingsBar
+import org.uwaterloo.subletr.components.subletdetailsimage.SubletDetailsImageDisplay
 import org.uwaterloo.subletr.enums.Gender
 import org.uwaterloo.subletr.pages.listingdetails.ListingDetailsPageUiState.Loading.getInfoDisplay
 import org.uwaterloo.subletr.pages.listingdetails.ListingDetailsPageUiState.Loading.toListOfInfo
@@ -177,7 +176,7 @@ fun ListingDetailsPageView(
 							CircularProgressIndicator()
 						}
 					} else if (uiState.images.size == 1) {
-						ListingDetailsImageDisplay(imageBitmap = uiState.images[0].asImageBitmap())
+						SubletDetailsImageDisplay(imageBitmap = uiState.images[0].asImageBitmap())
 					} else if (uiState.images.isNotEmpty()) {
 						Column(
 							modifier = Modifier,
@@ -188,7 +187,7 @@ fun ListingDetailsPageView(
 								state = pagerState,
 								contentPadding = PaddingValues(start = dimensionResource(id = R.dimen.xxl)),
 							) { page ->
-								ListingDetailsImageDisplay(imageBitmap = uiState.images[page].asImageBitmap())
+								SubletDetailsImageDisplay(imageBitmap = uiState.images[page].asImageBitmap())
 							}
 
 							Row(
@@ -246,7 +245,7 @@ fun ListingDetailsPageView(
 							)
 						}
 					} else {
-						ListingDetailsImageDisplay()
+						SubletDetailsImageDisplay()
 					}
 				}
 
@@ -439,38 +438,6 @@ fun DetailsInfoColumn(
 				)
 			}
 		}
-	}
-}
-
-@Composable
-fun ListingDetailsImageDisplay(
-	imageBitmap: ImageBitmap? = null
-) {
-	if (imageBitmap != null) {
-		Image(
-			bitmap = imageBitmap,
-			contentDescription = stringResource(id = R.string.listing_image),
-			contentScale = ContentScale.Fit,
-			modifier = Modifier
-				.size(dimensionResource(id = R.dimen.listing_details_image))
-				.clip(RoundedCornerShape(dimensionResource(id = R.dimen.xxs))),
-		)
-	} else {
-		Image(
-			painter = painterResource(id = R.drawable.room),
-			contentDescription = stringResource(id = R.string.listing_image),
-			contentScale = ContentScale.Fit,
-			modifier = Modifier
-				.size(dimensionResource(id = R.dimen.listing_details_image))
-				.clip(RoundedCornerShape(dimensionResource(id = R.dimen.xxs)))
-				.border(
-					width = dimensionResource(id = R.dimen.xxxxs),
-					color = MaterialTheme.subletrPalette.textFieldBorderColor,
-					shape = RoundedCornerShape(
-						size = dimensionResource(id = R.dimen.xxs),
-					),
-				),
-		)
 	}
 }
 
