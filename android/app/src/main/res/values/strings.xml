@@ -86,9 +86,9 @@
         <item quantity="other">%d Bedrooms</item>
     </plurals>
     <string name="filter_menu">filter menu</string>
-    <string name="view_sublets">View Sublets</string>
+    <string name="view_sublets">View sublets</string>
     <string name="plus_sign">+</string>
-    <string name="view_details">View Details</string>
+    <string name="view_details">View details</string>
     <string name="listing_image">Listing image</string>
     <string name="message_sublet_owner">Message sublet owner</string>
     <string name="favourite">Favourite</string>
@@ -108,7 +108,7 @@
     <string name="basement">Basement</string>
     <string name="dorm">Dorm</string>
     <string name="apartment">Apartment</string>
-    <string name="create_new_listing">Create New Listing</string>
+    <string name="create_new_listing">Create new listing</string>
     <string name="address">Address</string>
     <string name="num_bedrooms"># of bedrooms</string>
     <string name="num_bathrooms"># of bathrooms</string>
@@ -128,7 +128,7 @@
     <string name="choose_image">Choose Image</string>
     <string name="add_photo">Add photo</string>
     <string name="empty_chat">You have no contacts</string>
-    <string name="property_type">Property Type</string>
+    <string name="property_type">Property type</string>
     <string name="roommate">Roommate</string>
     <string name="minimum">Minimum</string>
     <string name="maximum">Maximum</string>
@@ -141,7 +141,7 @@
     <string name="bathrooms">Bathrooms</string>
     <string name="any">Any</string>
     <string name="five_plus">5+</string>
-    <string name="roommate_preference">Roommate Preference</string>
+    <string name="roommate_preference">Roommate preference</string>
     <string name="all_filters">All Filters</string>
     <string name="watcard_verification">Watcard Verification</string>
     <string name="watcard_verification_txt2">verify you are a student</string>
@@ -211,4 +211,6 @@
     <string name="only_show_verified_users_posts">Only show verified users\' posts</string>
     <string name="send_message">Send Message</string>
     <string name="account_creation_error">Account creation failed. Please try again.</string>
+    <string name="your_listing">Your listing</string>
+    <string name="delete">Delete</string>
 </resources>

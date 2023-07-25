@@ -169,7 +169,7 @@ fun ListingDetailsPageView(
 				) {
 					if (uiState.isFetchingImages) {
 						Box(
-							modifier = modifier
+							modifier = Modifier
 								.padding(dimensionResource(id = R.dimen.xs))
 								.size(dimensionResource(id = R.dimen.listing_details_image)),
 							contentAlignment = Alignment.Center
@@ -264,6 +264,7 @@ fun ListingDetailsPageView(
 						text = uiState.listingDetails.address,
 						style = SubletrTypography.titleSmall,
 						color = MaterialTheme.subletrPalette.primaryTextColor,
+						textAlign = TextAlign.Center,
 					)
 				}
 

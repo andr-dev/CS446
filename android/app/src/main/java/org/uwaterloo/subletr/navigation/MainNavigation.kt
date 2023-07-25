@@ -21,6 +21,7 @@ import org.uwaterloo.subletr.pages.home.HomePageView
 import org.uwaterloo.subletr.pages.individualchat.IndividualChatPageView
 import org.uwaterloo.subletr.pages.listingdetails.ListingDetailsPageView
 import org.uwaterloo.subletr.pages.login.LoginPageView
+import org.uwaterloo.subletr.pages.managelisting.ManageListingPageView
 import org.uwaterloo.subletr.pages.watcardverification.WatcardVerificationPageView
 import org.uwaterloo.subletr.pages.profile.ProfilePageView
 
@@ -109,6 +110,14 @@ fun MainNavigation(
 			),
 		) {
 			ProfilePageView(
+				modifier = modifier,
+			)
+		}
+		composable(
+			route = NavigationDestination.MANAGE_LISTING.fullNavPath,
+			arguments = listOf(navArgument("listingId") { type = NavType.IntType} )
+		) {
+			ManageListingPageView(
 				modifier = modifier,
 			)
 		}

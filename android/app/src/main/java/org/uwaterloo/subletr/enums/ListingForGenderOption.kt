@@ -16,3 +16,11 @@ fun ListingForGenderOption.getKey(): String {
 		ListingForGenderOption.ANY -> "Any"
 	}
 }
+
+fun String.getGender(): ListingForGenderOption {
+	return when (this) {
+		"Male" -> ListingForGenderOption.MALE
+		"Female" -> ListingForGenderOption.FEMALE
+		else -> ListingForGenderOption.ANY
+	}
+}

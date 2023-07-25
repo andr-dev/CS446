@@ -73,6 +73,7 @@ import org.uwaterloo.subletr.components.bottomsheet.ImagePickerBottomSheet
 import org.uwaterloo.subletr.components.button.DateInputButton
 import org.uwaterloo.subletr.components.button.PrimaryButton
 import org.uwaterloo.subletr.components.dropdown.RoundedExposedDropdown
+import org.uwaterloo.subletr.components.textfield.NumericalInputTextField
 import org.uwaterloo.subletr.components.textfield.RoundedTextField
 import org.uwaterloo.subletr.enums.EnsuiteBathroomOption
 import org.uwaterloo.subletr.enums.HousingType
@@ -100,6 +101,7 @@ fun CreateListingPageView(
 	val coroutineScope = rememberCoroutineScope()
 	val openDatePicker = rememberSaveable { mutableStateOf(false) }
 	var attemptCreate by remember { mutableStateOf(false) }
+
 	Scaffold(
 		modifier = modifier,
 		topBar = {
@@ -126,7 +128,7 @@ fun CreateListingPageView(
 				}
 				Text(
 					text = stringResource(id = R.string.create_new_listing),
-					style = MaterialTheme.typography.titleMedium,
+					style = MaterialTheme.typography.titleSmall,
 					color = MaterialTheme.subletrPalette.primaryTextColor,
 				)
 			}
@@ -169,11 +171,26 @@ fun CreateListingPageView(
 					modifier = Modifier.height(dimensionResource(id = R.dimen.m)),
 				)
 
-				CreateListingNumericalInputs(
+				NumericalInputTextField(
 					labelId = R.string.price,
-					viewModelStream = viewModel.priceStream,
 					uiStateValue = uiState.price,
+					onValueChange = {
+						if (it.isEmpty()) {
+							viewModel.priceStream.onNext(0)
+						} else if (it.matches(numberPattern)) {
+							viewModel.priceStream.onNext(it.toInt())
+						}
+					},
 					attemptCreate = attemptCreate,
+					prefix = {
+						Icon(
+							painter = painterResource(
+								id = R.drawable.dollar_solid_black_24
+							),
+							contentDescription = stringResource(id = R.string.price),
+							tint = MaterialTheme.subletrPalette.primaryTextColor
+						)
+					},
 				)
 
 				Spacer(
@@ -232,19 +249,33 @@ fun CreateListingPageView(
 					horizontalArrangement =  Arrangement.spacedBy(dimensionResource(id = R.dimen.s)),
 					verticalAlignment = Alignment.CenterVertically,
 				) {
-					CreateListingNumericalInputs(
+					NumericalInputTextField(
 						modifier = Modifier.weight(1f),
 						labelId = R.string.num_bedrooms,
-						viewModelStream = viewModel.numBedroomsStream,
 						uiStateValue = uiState.numBedrooms,
+						onValueChange = {
+							if (it.isEmpty()) {
+								viewModel.numBedroomsStream.onNext(0)
+							} else if (it.matches(numberPattern)) {
+								viewModel.numBedroomsStream.onNext(it.toInt())
+							}
+						},
 						attemptCreate = attemptCreate,
+						prefix = null,
 					)
-					CreateListingNumericalInputs(
+					NumericalInputTextField(
 						modifier = Modifier.weight(1f),
 						labelId = R.string.bedrooms_in_unit,
-						viewModelStream = viewModel.totalNumBedroomsStream,
 						uiStateValue = uiState.totalNumBedrooms,
+						onValueChange = {
+							if (it.isEmpty()) {
+								viewModel.totalNumBedroomsStream.onNext(0)
+							} else if (it.matches(numberPattern)) {
+								viewModel.totalNumBedroomsStream.onNext(it.toInt())
+							}
+						},
 						attemptCreate = attemptCreate,
+						prefix = null,
 					)
 				}
 
@@ -273,19 +304,33 @@ fun CreateListingPageView(
 					horizontalArrangement =  Arrangement.spacedBy(dimensionResource(id = R.dimen.s)),
 					verticalAlignment = Alignment.CenterVertically,
 				) {
-					CreateListingNumericalInputs(
+					NumericalInputTextField(
 						modifier = Modifier.weight(1f),
 						labelId = R.string.num_bathrooms,
-						viewModelStream = viewModel.numBathroomsStream,
 						uiStateValue = uiState.numBathrooms,
+						onValueChange = {
+							if (it.isEmpty()) {
+								viewModel.numBathroomsStream.onNext(0)
+							} else if (it.matches(numberPattern)) {
+								viewModel.numBathroomsStream.onNext(it.toInt())
+							}
+						},
 						attemptCreate = attemptCreate,
+						prefix = null,
 					)
-					CreateListingNumericalInputs(
+					NumericalInputTextField(
 						modifier = Modifier.weight(1f),
 						labelId = R.string.bathrooms_in_unit,
-						viewModelStream = viewModel.totalNumBathroomsStream,
 						uiStateValue = uiState.totalNumBathrooms,
+						onValueChange = {
+							if (it.isEmpty()) {
+								viewModel.totalNumBathroomsStream.onNext(0)
+							} else if (it.matches(numberPattern)) {
+								viewModel.totalNumBathroomsStream.onNext(it.toInt())
+							}
+						},
 						attemptCreate = attemptCreate,
+						prefix = null,
 					)
 				}
 
@@ -451,7 +496,6 @@ fun WarnText(
 		Column(
 			modifier = modifier
 				.fillMaxSize(),
-			//verticalArrangement = Arrangement.Center,
 			horizontalAlignment = Alignment.CenterHorizontally
 		) {
 			Text(
@@ -556,53 +600,6 @@ fun DateInputBox(
 				openDatePicker.value = true
 			}
 		})
-}
-@Composable
-fun CreateListingNumericalInputs(
-	modifier: Modifier = Modifier,
-	labelId: Int,
-	viewModelStream: BehaviorSubject<Int>,
-	uiStateValue: Int,
-	attemptCreate: Boolean,
-) {
-	val numberPattern = remember { Regex("^\\d+\$") }
-
-	RoundedTextField(
-		modifier = modifier
-			.fillMaxWidth()
-			.border(
-				width = dimensionResource(id = R.dimen.xxxs),
-				color =
-				if (!attemptCreate || uiStateValue > 0) MaterialTheme.subletrPalette.textFieldBorderColor
-				else MaterialTheme.subletrPalette.warningColor,
-				shape = RoundedCornerShape(dimensionResource(id = R.dimen.xxxxl))
-			),
-		placeholder = {
-			Text(
-				text = stringResource(id = labelId),
-				color = MaterialTheme.subletrPalette.secondaryTextColor,
-			)
-		},
-		label = {
-			Text(
-				text = stringResource(id = labelId),
-				color =
-				if (!attemptCreate || uiStateValue > 0)
-					MaterialTheme.subletrPalette.secondaryTextColor
-				else
-					MaterialTheme.subletrPalette.warningColor,
-			)
-		},
-		keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-		value = if (uiStateValue == 0) "" else uiStateValue.toString(),
-		onValueChange = {
-			if (it.isEmpty()) {
-				viewModelStream.onNext(0)
-			} else if (it.matches(numberPattern)) {
-				viewModelStream.onNext(it.toInt())
-			}
-		}
-	)
 }
 
 @Composable
