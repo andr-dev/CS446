@@ -24,27 +24,25 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DatePickerDefaults
+import androidx.compose.material3.DateRangePickerState
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Snackbar
-import androidx.compose.material3.SnackbarHost
-import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.rememberDateRangePickerState
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.rxjava3.subscribeAsState
 import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -80,11 +78,10 @@ import org.uwaterloo.subletr.theme.SubletrTypography
 import org.uwaterloo.subletr.theme.subletrPalette
 import java.text.SimpleDateFormat
 import java.time.ZoneOffset
-import java.time.format.DateTimeFormatter
 import java.util.Date
 import java.util.Locale
 
-@OptIn(ExperimentalFoundationApi::class)
+@OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun ManageListingPageView(
 	modifier: Modifier = Modifier,
@@ -98,7 +95,6 @@ fun ManageListingPageView(
 	val openDatePicker = rememberSaveable { mutableStateOf(false) }
 	val openDeleteDialog = rememberSaveable { mutableStateOf(false) }
 	val numberPattern = remember { Regex("^\\d+\$") }
-	var attemptCreate by remember { mutableStateOf(false) }
 
 	Scaffold(
 		modifier = modifier,
@@ -145,11 +141,13 @@ fun ManageListingPageView(
 			}
 		} else if (uiState is ManageListingPageUiState.Loaded) {
 
+			val isUpdateValid by remember { derivedStateOf { viewModel.isUpdateValid(uiState.editableFields) } }
 			val imageCount = uiState.images.size
 			val pagerState = rememberPagerState(
 				initialPage = 0,
 				initialPageOffsetFraction = 0f,
 			) { imageCount }
+			val dateRangePickerState = rememberDateRangePickerState()
 
 
 			Column(
@@ -266,14 +264,17 @@ fun ManageListingPageView(
 				}
 
 				Spacer(
-					modifier = Modifier.height(dimensionResource(id = R.dimen.l)),
+					modifier = Modifier.height(dimensionResource(id = R.dimen.s)),
 				)
+
+				WarnText(Modifier, uiState.attemptUpdate, isUpdateValid)
 
 				NumericalInputTextField(
 					labelId = R.string.price,
-					uiStateValue = uiState.editableFields.price!!,
-					attemptCreate = attemptCreate,
+					uiStateValue = uiState.editableFields.price ?: 0,
+					attemptCreate = uiState.attemptUpdate,
 					onValueChange = {
+						viewModel.attemptUpdateStream.onNext(false)
 						if (it.isEmpty()) {
 							viewModel.editableFieldsStream.onNext(uiState.editableFields.copy(price = 0))
 						} else if (it.matches(numberPattern)) {
@@ -307,7 +308,7 @@ fun ManageListingPageView(
 							.border(
 								width = dimensionResource(id = R.dimen.xxxs),
 								color =
-								if (!attemptCreate || uiState.startDateDisplay != "")
+								if (!uiState.attemptUpdate || uiState.startDateDisplay.isNotBlank())
 									MaterialTheme.subletrPalette.textFieldBorderColor
 								else
 									MaterialTheme.subletrPalette.warningColor,
@@ -315,12 +316,13 @@ fun ManageListingPageView(
 							),
 						labelStringId = R.string.start_date,
 						labelColor =
-						if (!attemptCreate || uiState.startDateDisplay != "")
+						if (!uiState.attemptUpdate || uiState.startDateDisplay.isNotBlank())
 							MaterialTheme.subletrPalette.secondaryTextColor
 						else
 							MaterialTheme.subletrPalette.warningColor,
 						value = uiState.startDateDisplay,
 						onClick = {
+							viewModel.attemptUpdateStream.onNext(false)
 							coroutineScope.launch {
 								openDatePicker.value = true
 							}
@@ -333,7 +335,7 @@ fun ManageListingPageView(
 							.border(
 								width = dimensionResource(id = R.dimen.xxxs),
 								color =
-								if (!attemptCreate || uiState.endDateDisplay != "")
+								if (!uiState.attemptUpdate || uiState.endDateDisplay.isNotBlank())
 									MaterialTheme.subletrPalette.textFieldBorderColor
 								else
 									MaterialTheme.subletrPalette.warningColor,
@@ -341,12 +343,13 @@ fun ManageListingPageView(
 							),
 						labelStringId = R.string.end_date,
 						labelColor =
-						if (!attemptCreate || uiState.endDateDisplay != "")
+						if (!uiState.attemptUpdate || uiState.endDateDisplay.isNotBlank())
 							MaterialTheme.subletrPalette.secondaryTextColor
 						else
 							MaterialTheme.subletrPalette.warningColor,
 						value = uiState.endDateDisplay,
 						onClick = {
+							viewModel.attemptUpdateStream.onNext(false)
 							coroutineScope.launch {
 								openDatePicker.value = true
 							}
@@ -382,29 +385,31 @@ fun ManageListingPageView(
 					NumericalInputTextField(
 						modifier = Modifier.weight(1f),
 						labelId = R.string.num_bedrooms,
-						uiStateValue = uiState.editableFields.roomsAvailable!!,
+						uiStateValue = uiState.editableFields.roomsAvailable ?: 0,
 						onValueChange = {
+							viewModel.attemptUpdateStream.onNext(false)
 							if (it.isEmpty()) {
 								viewModel.editableFieldsStream.onNext(uiState.editableFields.copy(roomsAvailable = 0))
 							} else if (it.matches(numberPattern)) {
 								viewModel.editableFieldsStream.onNext(uiState.editableFields.copy(roomsAvailable = it.toInt()))
 							}
 						},
-						attemptCreate = attemptCreate,
+						attemptCreate = uiState.attemptUpdate,
 						prefix = null,
 					)
 					NumericalInputTextField(
 						modifier = Modifier.weight(1f),
 						labelId = R.string.bedrooms_in_unit,
-						uiStateValue = uiState.editableFields.roomsTotal!!,
+						uiStateValue = uiState.editableFields.roomsTotal ?: 0,
 						onValueChange = {
+							viewModel.attemptUpdateStream.onNext(false)
 							if (it.isEmpty()) {
 								viewModel.editableFieldsStream.onNext(uiState.editableFields.copy(roomsTotal = 0))
 							} else if (it.matches(numberPattern)) {
 								viewModel.editableFieldsStream.onNext(uiState.editableFields.copy(roomsTotal = it.toInt()))
 							}
 						},
-						attemptCreate = attemptCreate,
+						attemptCreate = uiState.attemptUpdate,
 						prefix = null,
 					)
 				}
@@ -437,29 +442,31 @@ fun ManageListingPageView(
 					NumericalInputTextField(
 						modifier = Modifier.weight(1f),
 						labelId = R.string.num_bathrooms,
-						uiStateValue = uiState.editableFields.bathroomsAvailable!!,
+						uiStateValue = uiState.editableFields.bathroomsAvailable ?: 0,
 						onValueChange = {
+							viewModel.attemptUpdateStream.onNext(false)
 							if (it.isEmpty()) {
 								viewModel.editableFieldsStream.onNext(uiState.editableFields.copy(bathroomsAvailable = 0))
 							} else if (it.matches(numberPattern)) {
 								viewModel.editableFieldsStream.onNext(uiState.editableFields.copy(bathroomsAvailable = it.toInt()))
 							}
 						},
-						attemptCreate = attemptCreate,
+						attemptCreate = uiState.attemptUpdate,
 						prefix = null,
 					)
 					NumericalInputTextField(
 						modifier = Modifier.weight(1f),
 						labelId = R.string.bathrooms_in_unit,
-						uiStateValue = uiState.editableFields.bathroomsTotal!!,
+						uiStateValue = uiState.editableFields.bathroomsTotal ?: 0,
 						onValueChange = {
+							viewModel.attemptUpdateStream.onNext(false)
 							if (it.isEmpty()) {
 								viewModel.editableFieldsStream.onNext(uiState.editableFields.copy(bathroomsTotal = 0))
 							} else if (it.matches(numberPattern)) {
 								viewModel.editableFieldsStream.onNext(uiState.editableFields.copy(bathroomsTotal = it.toInt()))
 							}
 						},
-						attemptCreate = attemptCreate,
+						attemptCreate = uiState.attemptUpdate,
 						prefix = null,
 					)
 				}
@@ -471,7 +478,7 @@ fun ManageListingPageView(
 				RoundedExposedDropdown(
 					dropdownItems = EnsuiteBathroomOption.values(),
 					labelId = R.string.ensuite_bathroom,
-					selectedDropdownItem = if (uiState.editableFields.bathroomsEnsuite!! == 1)
+					selectedDropdownItem = if (uiState.editableFields.bathroomsEnsuite == 1)
 						EnsuiteBathroomOption.YES
 					else EnsuiteBathroomOption.NO,
 					dropdownItemToString = { stringResource(id = it.stringId) },
@@ -504,7 +511,7 @@ fun ManageListingPageView(
 				RoundedExposedDropdown(
 					dropdownItems = ListingForGenderOption.values(),
 					labelId = R.string.gender,
-					selectedDropdownItem = uiState.editableFields.gender!!.getGender(),
+					selectedDropdownItem = uiState.editableFields.gender?.getGender() ?: ListingForGenderOption.ANY,
 					dropdownItemToString = { stringResource(id = it.stringId) },
 					setSelectedDropdownItem = {
 						viewModel.editableFieldsStream.onNext(
@@ -520,7 +527,7 @@ fun ManageListingPageView(
 				RoundedExposedDropdown(
 					dropdownItems = HousingType.values(),
 					labelId = R.string.housing_type,
-					selectedDropdownItem = uiState.editableFields.residenceType!!.toHousingType(),
+					selectedDropdownItem = uiState.editableFields.residenceType?.toHousingType() ?: HousingType.OTHER,
 					dropdownItemToString = { stringResource(id = it.stringId) },
 					setSelectedDropdownItem = {
 						viewModel.editableFieldsStream.onNext(
@@ -556,7 +563,7 @@ fun ManageListingPageView(
 					},
 					shape = RoundedCornerShape(dimensionResource(id = R.dimen.s)),
 					singleLine = false,
-					value = uiState.editableFields.description!!,
+					value = uiState.editableFields.description ?: "",
 					onValueChange = {
 						viewModel.editableFieldsStream.onNext(uiState.editableFields.copy(description = it))
 					}
@@ -586,6 +593,8 @@ fun ManageListingPageView(
 							color = MaterialTheme.subletrPalette.primaryTextColor,
 						)
 					}
+					
+					val snackBarString = stringResource(id = R.string.updated_listing)
 					PrimaryButton(
 						modifier = Modifier
 							.fillMaxWidth()
@@ -593,10 +602,13 @@ fun ManageListingPageView(
 							.height(dimensionResource(id = R.dimen.xxl))
 							.padding(bottom = dimensionResource(id = R.dimen.xs)),
 						onClick = {
-							coroutineScope.launch {
-								viewModel.snackBarHostState.showSnackbar("Updated listing")
-						  	}
-							viewModel.updateListing(uiState.editableFields)
+							viewModel.attemptUpdateStream.onNext(true)
+							if (isUpdateValid) {
+								coroutineScope.launch {
+									viewModel.snackBarHostState.showSnackbar(snackBarString)
+								}
+								viewModel.updateListing(uiState.editableFields)
+							}
 						},
 					) {
 						Text(
@@ -616,13 +628,17 @@ fun ManageListingPageView(
 						viewModel = viewModel,
 						coroutineScope = coroutineScope,
 						openDatePicker = openDatePicker,
+						dateRangePickerState = dateRangePickerState,
 					)
 				}
 
 				if (openDeleteDialog.value) {
 					DeleteDialog(
 						onDismissRequest = { openDeleteDialog.value = false },
-						onConfirmClick = { openDeleteDialog.value = false },
+						onConfirmClick = {
+							openDeleteDialog.value = false
+							viewModel.deleteListing()
+						},
 					)
 				}
 			}
@@ -630,10 +646,38 @@ fun ManageListingPageView(
 	}
 }
 
-private val storeDateFormatISO: DateTimeFormatter = DateTimeFormatter.ISO_LOCAL_DATE_TIME
-
 @OptIn(ExperimentalMaterial3Api::class)
 private val displayDateFormatter = DatePickerDefaults.dateFormatter(selectedDateSkeleton = "MM/dd/yyyy")
+
+@Composable
+fun WarnText(
+	modifier: Modifier = Modifier,
+	attemptCreate: Boolean,
+	isUpdateValid: Boolean,
+) {
+	if (attemptCreate && !isUpdateValid) {
+		Spacer(
+			modifier = Modifier.height(dimensionResource(id = R.dimen.xxs)),
+		)
+		Column(
+			modifier = modifier
+				.fillMaxSize(),
+			horizontalAlignment = Alignment.CenterHorizontally
+		) {
+			Text(
+				text = stringResource (id = R.string.update_fields),
+				color = MaterialTheme.subletrPalette.warningColor
+			)
+		}
+		Spacer(
+			modifier = Modifier.height(dimensionResource(id = R.dimen.xs)),
+		)
+	} else {
+		Spacer(
+			modifier = Modifier.height(dimensionResource(id = R.dimen.m)),
+		)
+	}
+}
 
 @Composable
 fun DeleteDialog(
@@ -644,13 +688,13 @@ fun DeleteDialog(
 		onDismissRequest = onDismissRequest,
 		title = {
 			Text(
-				text = "Delete listing",
+				text = stringResource(id = R.string.delete_listing),
 				style = SubletrTypography.titleSmall,
 			)
 		},
 		text = {
 			Text(
-				text = "Are you sure you want to delete your listing? This action can not be undone.",
+				text = stringResource(id = R.string.delete_listing_dialog),
 				style = SubletrTypography.bodyLarge,
 			)
 		},
@@ -681,9 +725,12 @@ fun DatePicker(
 	viewModel: ManageListingPageViewModel,
 	coroutineScope: CoroutineScope,
 	openDatePicker: MutableState<Boolean>,
+	dateRangePickerState: DateRangePickerState,
 ) {
 	val datePickerBottomSheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
-	val dateRangePickerState = rememberDateRangePickerState()
+	val placeholderDate = stringResource(id = R.string.placeholder_date)
+	var tempLeaseStart = uiState.editableFields.leaseStart
+	var tempLeaseEnd = uiState.editableFields.leaseEnd
 	DatePickerBottomSheet(
 		datePickerBottomSheetState,
 		dateRangePickerState,
@@ -695,33 +742,48 @@ fun DatePicker(
 				}
 				if (dateRangePickerState.selectedStartDateMillis != null) {
 					val startButtonText =
-						displayDateFormatter.formatDate(dateRangePickerState.selectedStartDateMillis, locale = Locale.getDefault())!!
+						displayDateFormatter.formatDate(
+							dateRangePickerState.selectedStartDateMillis,
+							locale = Locale.getDefault()
+						) ?: placeholderDate
 					viewModel.startDateDisplayTextStream.onNext(startButtonText)
 					val startDate = SimpleDateFormat("MM/dd/yyyy").parse(startButtonText)
-//					viewModel.editableFieldsStream.onNext(uiState.editableFields.copy(
-//						leaseStart = if (startDate is Date)
-//							startDate.toInstant().atOffset(ZoneOffset.UTC).format(storeDateFormatISO)
-//						else uiState.editableFields.leaseStart
-//					))
 
+					tempLeaseStart = if (startDate is Date)
+						startDate.toInstant().atOffset(ZoneOffset.UTC).format(viewModel.storeDateFormatISO)
+					else tempLeaseStart
+
+					viewModel.editableFieldsStream.onNext(uiState.editableFields.copy(
+						leaseStart = tempLeaseStart, leaseEnd = tempLeaseEnd
+					))
 				} else {
 					viewModel.startDateDisplayTextStream.onNext("")
-//					viewModel.editableFieldsStream.onNext(uiState.editableFields.copy(leaseStart = ""))
+					tempLeaseStart = ""
+					viewModel.editableFieldsStream.onNext(uiState.editableFields.copy(
+						leaseStart = tempLeaseStart, leaseEnd = tempLeaseEnd)
+					)
 				}
 				if (dateRangePickerState.selectedEndDateMillis != null) {
 					val endButtonText =
-						displayDateFormatter.formatDate(dateRangePickerState.selectedEndDateMillis, locale = Locale.getDefault())!!
+						displayDateFormatter.formatDate(
+							dateRangePickerState.selectedEndDateMillis,locale = Locale.getDefault()
+						) ?: placeholderDate
 					viewModel.endDateDisplayTextStream.onNext(endButtonText)
 					val endDate = SimpleDateFormat("MM/dd/yyyy").parse(endButtonText)
-//					viewModel.editableFieldsStream.onNext(uiState.editableFields.copy(
-//						leaseEnd = if (endDate is Date)
-//							endDate.toInstant().atOffset(ZoneOffset.UTC).format(storeDateFormatISO)
-//						else uiState.editableFields.leaseEnd
-//					))
 
+					tempLeaseEnd = if (endDate is Date)
+						endDate.toInstant().atOffset(ZoneOffset.UTC).format(viewModel.storeDateFormatISO)
+					else tempLeaseEnd
+
+					viewModel.editableFieldsStream.onNext(uiState.editableFields.copy(
+						leaseStart = tempLeaseStart, leaseEnd = tempLeaseEnd
+					))
 				} else {
 					viewModel.endDateDisplayTextStream.onNext("")
-//					viewModel.editableFieldsStream.onNext(uiState.editableFields.copy(leaseEnd = ""))
+					tempLeaseEnd = ""
+					viewModel.editableFieldsStream.onNext(uiState.editableFields.copy(
+						leaseStart = tempLeaseStart, leaseEnd = tempLeaseEnd)
+					)
 				}
 			}
 		}
@@ -743,6 +805,7 @@ fun ManageListingPageLoadedPreview() {
 				address = "",
 				images = listOf(),
 				isFetchingImages = false,
+				attemptUpdate = false,
 				editableFields = UpdateListingRequest(
 					price = 0,
 					roomsAvailable = 0,
