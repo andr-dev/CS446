@@ -100,9 +100,6 @@ fun ManageListingPageView(
 	val numberPattern = remember { Regex("^\\d+\$") }
 	var attemptCreate by remember { mutableStateOf(false) }
 
-	val snackbarHostState = remember { SnackbarHostState() }
-
-
 	Scaffold(
 		modifier = modifier,
 		topBar = {
@@ -134,21 +131,6 @@ fun ManageListingPageView(
 				)
 			}
 		},
-
-		snackbarHost = {
-			SnackbarHost(snackbarHostState) {
-				Snackbar(
-					containerColor = MaterialTheme.subletrPalette.bottomSheetColor,
-					contentColor = MaterialTheme.subletrPalette.primaryTextColor,
-				) {
-					Text(
-						text = it.visuals.message,
-						style = SubletrTypography.bodyLarge,
-					)
-				}
-			}
-	   	},
-
 		) { paddingValues ->
 		if (uiState is ManageListingPageUiState.Loading) {
 			Column(
@@ -319,7 +301,7 @@ fun ManageListingPageView(
 					verticalAlignment = Alignment.CenterVertically,
 				) {
 					DateInputButton(
-						modifier = modifier
+						modifier = Modifier
 							.fillMaxWidth()
 							.weight(1f)
 							.border(
@@ -345,7 +327,7 @@ fun ManageListingPageView(
 						}
 					)
 					DateInputButton(
-						modifier = modifier
+						modifier = Modifier
 							.fillMaxWidth()
 							.weight(1f)
 							.border(
@@ -357,7 +339,7 @@ fun ManageListingPageView(
 									MaterialTheme.subletrPalette.warningColor,
 								shape = RoundedCornerShape(dimensionResource(id = R.dimen.xxxxl))
 							),
-						labelStringId = R.string.start_date,
+						labelStringId = R.string.end_date,
 						labelColor =
 						if (!attemptCreate || uiState.endDateDisplay != "")
 							MaterialTheme.subletrPalette.secondaryTextColor
@@ -612,7 +594,7 @@ fun ManageListingPageView(
 							.padding(bottom = dimensionResource(id = R.dimen.xs)),
 						onClick = {
 							coroutineScope.launch {
-								snackbarHostState.showSnackbar("Updated listing")
+								viewModel.snackBarHostState.showSnackbar("Updated listing")
 						  	}
 							viewModel.updateListing(uiState.editableFields)
 						},
@@ -716,30 +698,30 @@ fun DatePicker(
 						displayDateFormatter.formatDate(dateRangePickerState.selectedStartDateMillis, locale = Locale.getDefault())!!
 					viewModel.startDateDisplayTextStream.onNext(startButtonText)
 					val startDate = SimpleDateFormat("MM/dd/yyyy").parse(startButtonText)
-					viewModel.editableFieldsStream.onNext(uiState.editableFields.copy(
-						leaseStart = if (startDate is Date)
-							startDate.toInstant().atOffset(ZoneOffset.UTC).format(storeDateFormatISO)
-						else uiState.editableFields.leaseStart
-					))
+//					viewModel.editableFieldsStream.onNext(uiState.editableFields.copy(
+//						leaseStart = if (startDate is Date)
+//							startDate.toInstant().atOffset(ZoneOffset.UTC).format(storeDateFormatISO)
+//						else uiState.editableFields.leaseStart
+//					))
 
 				} else {
 					viewModel.startDateDisplayTextStream.onNext("")
-					viewModel.editableFieldsStream.onNext(uiState.editableFields.copy(leaseStart = ""))
+//					viewModel.editableFieldsStream.onNext(uiState.editableFields.copy(leaseStart = ""))
 				}
 				if (dateRangePickerState.selectedEndDateMillis != null) {
 					val endButtonText =
 						displayDateFormatter.formatDate(dateRangePickerState.selectedEndDateMillis, locale = Locale.getDefault())!!
 					viewModel.endDateDisplayTextStream.onNext(endButtonText)
 					val endDate = SimpleDateFormat("MM/dd/yyyy").parse(endButtonText)
-					viewModel.editableFieldsStream.onNext(uiState.editableFields.copy(
-						leaseEnd = if (endDate is Date)
-							endDate.toInstant().atOffset(ZoneOffset.UTC).format(storeDateFormatISO)
-						else uiState.editableFields.leaseEnd
-					))
+//					viewModel.editableFieldsStream.onNext(uiState.editableFields.copy(
+//						leaseEnd = if (endDate is Date)
+//							endDate.toInstant().atOffset(ZoneOffset.UTC).format(storeDateFormatISO)
+//						else uiState.editableFields.leaseEnd
+//					))
 
 				} else {
 					viewModel.endDateDisplayTextStream.onNext("")
-					viewModel.editableFieldsStream.onNext(uiState.editableFields.copy(leaseEnd = ""))
+//					viewModel.editableFieldsStream.onNext(uiState.editableFields.copy(leaseEnd = ""))
 				}
 			}
 		}

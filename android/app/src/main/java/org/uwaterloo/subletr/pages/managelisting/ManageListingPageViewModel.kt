@@ -2,6 +2,7 @@ package org.uwaterloo.subletr.pages.managelisting
 
 import android.graphics.Bitmap
 import android.util.Log
+import androidx.compose.material3.SnackbarHostState
 import androidx.lifecycle.SavedStateHandle
 import androidx.navigation.NavHostController
 import androidx.navigation.navOptions
@@ -21,6 +22,7 @@ import org.uwaterloo.subletr.api.models.UpdateListingRequest
 import org.uwaterloo.subletr.infrastructure.SubletrViewModel
 import org.uwaterloo.subletr.navigation.NavigationDestination
 import org.uwaterloo.subletr.services.INavigationService
+import org.uwaterloo.subletr.services.ISnackbarService
 import org.uwaterloo.subletr.utils.UWATERLOO_LATITUDE
 import org.uwaterloo.subletr.utils.UWATERLOO_LONGITUDE
 import org.uwaterloo.subletr.utils.base64ToBitmap
@@ -33,8 +35,10 @@ class ManageListingPageViewModel @Inject constructor(
 	private val listingsApi: ListingsApi,
 	val navigationService: INavigationService,
 	savedStateHandle: SavedStateHandle,
+	val snackbarService: ISnackbarService,
 ) : SubletrViewModel<ManageListingPageUiState>() {
 	val navHostController: NavHostController get() = navigationService.navHostController
+	val snackBarHostState: SnackbarHostState get() = snackbarService.snackbarHostState
 
 	private val listingId: Int = checkNotNull(savedStateHandle["listingId"])
 	private val listingIdStream: BehaviorSubject<Int> = BehaviorSubject.createDefault(listingId)
