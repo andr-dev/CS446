@@ -94,7 +94,6 @@ fun ManageListingPageView(
 	val coroutineScope = rememberCoroutineScope()
 	val openDatePicker = rememberSaveable { mutableStateOf(false) }
 	val openDeleteDialog = rememberSaveable { mutableStateOf(false) }
-	val numberPattern = remember { Regex("^\\d+\$") }
 
 	Scaffold(
 		modifier = modifier,
@@ -273,14 +272,10 @@ fun ManageListingPageView(
 					labelId = R.string.price,
 					uiStateValue = uiState.editableFields.price ?: 0,
 					attemptCreate = uiState.attemptUpdate,
-					onValueChange = {
-						viewModel.attemptUpdateStream.onNext(false)
-						if (it.isEmpty()) {
-							viewModel.editableFieldsStream.onNext(uiState.editableFields.copy(price = 0))
-						} else if (it.matches(numberPattern)) {
-							viewModel.editableFieldsStream.onNext(uiState.editableFields.copy(price = it.toInt()))
-						}
-					},
+					triggerOnValueChange = { viewModel.attemptUpdateStream.onNext(false) },
+					changeValue = {
+						viewModel.editableFieldsStream.onNext(uiState.editableFields.copy(price = it))
+				  	},
 					prefix = {
 						Icon(
 							painter = painterResource(
@@ -386,14 +381,10 @@ fun ManageListingPageView(
 						modifier = Modifier.weight(1f),
 						labelId = R.string.num_bedrooms,
 						uiStateValue = uiState.editableFields.roomsAvailable ?: 0,
-						onValueChange = {
-							viewModel.attemptUpdateStream.onNext(false)
-							if (it.isEmpty()) {
-								viewModel.editableFieldsStream.onNext(uiState.editableFields.copy(roomsAvailable = 0))
-							} else if (it.matches(numberPattern)) {
-								viewModel.editableFieldsStream.onNext(uiState.editableFields.copy(roomsAvailable = it.toInt()))
-							}
-						},
+						triggerOnValueChange = { viewModel.attemptUpdateStream.onNext(false) },
+						changeValue = {
+							viewModel.editableFieldsStream.onNext(uiState.editableFields.copy(roomsAvailable = it))
+					  	},
 						attemptCreate = uiState.attemptUpdate,
 						prefix = null,
 					)
@@ -401,13 +392,9 @@ fun ManageListingPageView(
 						modifier = Modifier.weight(1f),
 						labelId = R.string.bedrooms_in_unit,
 						uiStateValue = uiState.editableFields.roomsTotal ?: 0,
-						onValueChange = {
-							viewModel.attemptUpdateStream.onNext(false)
-							if (it.isEmpty()) {
-								viewModel.editableFieldsStream.onNext(uiState.editableFields.copy(roomsTotal = 0))
-							} else if (it.matches(numberPattern)) {
-								viewModel.editableFieldsStream.onNext(uiState.editableFields.copy(roomsTotal = it.toInt()))
-							}
+						triggerOnValueChange = { viewModel.attemptUpdateStream.onNext(false) },
+						changeValue = {
+							viewModel.editableFieldsStream.onNext(uiState.editableFields.copy(roomsTotal = it))
 						},
 						attemptCreate = uiState.attemptUpdate,
 						prefix = null,
@@ -443,13 +430,9 @@ fun ManageListingPageView(
 						modifier = Modifier.weight(1f),
 						labelId = R.string.num_bathrooms,
 						uiStateValue = uiState.editableFields.bathroomsAvailable ?: 0,
-						onValueChange = {
-							viewModel.attemptUpdateStream.onNext(false)
-							if (it.isEmpty()) {
-								viewModel.editableFieldsStream.onNext(uiState.editableFields.copy(bathroomsAvailable = 0))
-							} else if (it.matches(numberPattern)) {
-								viewModel.editableFieldsStream.onNext(uiState.editableFields.copy(bathroomsAvailable = it.toInt()))
-							}
+						triggerOnValueChange = { viewModel.attemptUpdateStream.onNext(false) },
+						changeValue = {
+							viewModel.editableFieldsStream.onNext(uiState.editableFields.copy(bathroomsAvailable = it))
 						},
 						attemptCreate = uiState.attemptUpdate,
 						prefix = null,
@@ -458,13 +441,9 @@ fun ManageListingPageView(
 						modifier = Modifier.weight(1f),
 						labelId = R.string.bathrooms_in_unit,
 						uiStateValue = uiState.editableFields.bathroomsTotal ?: 0,
-						onValueChange = {
-							viewModel.attemptUpdateStream.onNext(false)
-							if (it.isEmpty()) {
-								viewModel.editableFieldsStream.onNext(uiState.editableFields.copy(bathroomsTotal = 0))
-							} else if (it.matches(numberPattern)) {
-								viewModel.editableFieldsStream.onNext(uiState.editableFields.copy(bathroomsTotal = it.toInt()))
-							}
+						triggerOnValueChange = { viewModel.attemptUpdateStream.onNext(false) },
+						changeValue = {
+							viewModel.editableFieldsStream.onNext(uiState.editableFields.copy(bathroomsTotal = it))
 						},
 						attemptCreate = uiState.attemptUpdate,
 						prefix = null,

@@ -101,6 +101,7 @@ fun CreateListingPageView(
 	val scrollState = rememberScrollState()
 	val coroutineScope = rememberCoroutineScope()
 	val openDatePicker = rememberSaveable { mutableStateOf(false) }
+
 	var attemptCreate by remember { mutableStateOf(false) }
 	val dateRangePickerState = rememberDateRangePickerState()
 
@@ -177,13 +178,7 @@ fun CreateListingPageView(
 				NumericalInputTextField(
 					labelId = R.string.price,
 					uiStateValue = uiState.price,
-					onValueChange = {
-						if (it.isEmpty()) {
-							viewModel.priceStream.onNext(0)
-						} else if (it.matches(numberPattern)) {
-							viewModel.priceStream.onNext(it.toInt())
-						}
-					},
+					changeValue = { viewModel.priceStream.onNext(it) },
 					attemptCreate = attemptCreate,
 					prefix = {
 						Icon(
@@ -256,13 +251,7 @@ fun CreateListingPageView(
 						modifier = Modifier.weight(1f),
 						labelId = R.string.num_bedrooms,
 						uiStateValue = uiState.numBedrooms,
-						onValueChange = {
-							if (it.isEmpty()) {
-								viewModel.numBedroomsStream.onNext(0)
-							} else if (it.matches(numberPattern)) {
-								viewModel.numBedroomsStream.onNext(it.toInt())
-							}
-						},
+						changeValue = { viewModel.numBedroomsStream.onNext(it) },
 						attemptCreate = attemptCreate,
 						prefix = null,
 					)
@@ -270,13 +259,7 @@ fun CreateListingPageView(
 						modifier = Modifier.weight(1f),
 						labelId = R.string.bedrooms_in_unit,
 						uiStateValue = uiState.totalNumBedrooms,
-						onValueChange = {
-							if (it.isEmpty()) {
-								viewModel.totalNumBedroomsStream.onNext(0)
-							} else if (it.matches(numberPattern)) {
-								viewModel.totalNumBedroomsStream.onNext(it.toInt())
-							}
-						},
+						changeValue = { viewModel.totalNumBedroomsStream.onNext(it) },
 						attemptCreate = attemptCreate,
 						prefix = null,
 					)
@@ -311,13 +294,7 @@ fun CreateListingPageView(
 						modifier = Modifier.weight(1f),
 						labelId = R.string.num_bathrooms,
 						uiStateValue = uiState.numBathrooms,
-						onValueChange = {
-							if (it.isEmpty()) {
-								viewModel.numBathroomsStream.onNext(0)
-							} else if (it.matches(numberPattern)) {
-								viewModel.numBathroomsStream.onNext(it.toInt())
-							}
-						},
+						changeValue = { viewModel.numBathroomsStream.onNext(it) },
 						attemptCreate = attemptCreate,
 						prefix = null,
 					)
@@ -325,13 +302,7 @@ fun CreateListingPageView(
 						modifier = Modifier.weight(1f),
 						labelId = R.string.bathrooms_in_unit,
 						uiStateValue = uiState.totalNumBathrooms,
-						onValueChange = {
-							if (it.isEmpty()) {
-								viewModel.totalNumBathroomsStream.onNext(0)
-							} else if (it.matches(numberPattern)) {
-								viewModel.totalNumBathroomsStream.onNext(it.toInt())
-							}
-						},
+						changeValue = { viewModel.totalNumBathroomsStream.onNext(it) },
 						attemptCreate = attemptCreate,
 						prefix = null,
 					)

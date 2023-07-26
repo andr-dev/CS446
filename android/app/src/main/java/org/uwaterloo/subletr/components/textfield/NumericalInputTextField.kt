@@ -7,6 +7,7 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
@@ -19,10 +20,13 @@ fun NumericalInputTextField(
 	modifier: Modifier = Modifier,
 	labelId: Int,
 	uiStateValue: Int,
-	onValueChange: (String) -> Unit,
+	triggerOnValueChange: () -> Unit = {},
+	changeValue: (Int) -> Unit,
 	attemptCreate: Boolean,
 	prefix: @Composable (() -> Unit)?,
 ) {
+	val numberPattern = remember { Regex("^\\d+\$") }
+
 	RoundedTextField(
 		modifier = modifier
 			.fillMaxWidth()
@@ -52,6 +56,12 @@ fun NumericalInputTextField(
 		prefix = prefix,
 		keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
 		value = if (uiStateValue == 0) "" else uiStateValue.toString(),
-		onValueChange = onValueChange,
+		onValueChange = {
+			if (it.isEmpty()) {
+				changeValue(0)
+			} else if (it.matches(numberPattern)) {
+				changeValue(it.toInt())
+			}
+		},
 	)
 }
