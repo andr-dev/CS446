@@ -57,6 +57,9 @@ class HomeMapChildViewModel @Inject constructor(
 	val getListingParamsStream: PublishSubject<HomePageViewModel.GetListingParams> =
 		PublishSubject.create()
 
+	val setFavouriteStream: PublishSubject<HomePageViewModel.OldStateAndNewFavourite> =
+		PublishSubject.create()
+
 	override val uiStateStream: PublishSubject<HomeMapUiState> = PublishSubject.create()
 
 	init {

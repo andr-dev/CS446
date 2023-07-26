@@ -66,6 +66,26 @@ class HomePageViewModel @Inject constructor(
 		}
 		.subscribeOn(Schedulers.io())
 
+	val setFavouriteStream: Observable<Unit> = Observable.merge(
+		homeListChildViewModel.setFavouriteStream,
+		homeMapChildViewModel.setFavouriteStream,
+	)
+		.map {
+			if (it.oldUiState is HomeListUiState.Loaded) {
+				if (it.oldUiState.listingItems.likedListings.contains(it.listingId)) {
+					listingsApi.listingsFavourite(it.listingId)
+				}
+				else {
+					listingsApi.listingsUnfavourite(it.listingId)
+				}
+			}
+			else if (it.oldUiState is HomeMapUiState.Loaded) {
+
+			}
+			Unit
+		}
+		.subscribeOn(Schedulers.io())
+
 	private val totalNumberOfPagesStream: BehaviorSubject<Int> =
 		BehaviorSubject.createDefault(1)
 
@@ -464,6 +484,12 @@ class HomePageViewModel @Inject constructor(
 		val listingParams: GetListingParams,
 		val listingsResponse: GetListingsResponse,
 	)
+
+	data class OldStateAndNewFavourite(
+		val oldUiState: HomePageUiState,
+		val listingId: Int,
+	)
+
 
 	companion object {
 		const val LISTING_PAGE_SIZE = 5

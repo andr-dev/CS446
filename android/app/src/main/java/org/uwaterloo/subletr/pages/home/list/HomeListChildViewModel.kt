@@ -46,6 +46,9 @@ class HomeListChildViewModel @Inject constructor(
 	val getListingParamsStream: PublishSubject<HomePageViewModel.GetListingParams> =
 		PublishSubject.create()
 
+	val setFavouriteStream: PublishSubject<HomePageViewModel.OldStateAndNewFavourite> =
+		PublishSubject.create()
+
 	override val uiStateStream: PublishSubject<HomeListUiState> = PublishSubject.create()
 
 	init {
