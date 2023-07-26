@@ -8,12 +8,14 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import org.uwaterloo.subletr.services.IAuthenticationService
 import org.uwaterloo.subletr.services.INavigationService
+import org.uwaterloo.subletr.services.ISnackbarService
 import javax.inject.Inject
 
 @HiltViewModel
 class MainScaffoldViewModel @Inject constructor(
 	private val navigationService: INavigationService,
 	authenticationService: IAuthenticationService,
+	val snackbarService: ISnackbarService,
 ): ViewModel() {
 	val navHostController: NavHostController get() = navigationService.navHostController
 
