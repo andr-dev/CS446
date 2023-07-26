@@ -38,7 +38,7 @@ pub fn format_address_anonymous(
     }
 
     format_address(
-        address_line_iter.collect(),
+        address_line_iter.collect::<Vec<_>>().join(" "),
         address_city,
         address_postalcode,
         address_country,

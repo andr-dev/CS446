@@ -10,5 +10,6 @@ CREATE TABLE user_ratings (
 );
 
 CREATE VIEW user_rating
-AS SELECT user_id, AVG(rating)
+AS SELECT user_id AS user_id, AVG(rating) AS rating
 FROM user_ratings
+GROUP BY user_id
