@@ -44,5 +44,6 @@ sealed interface ManageListingPageUiState {
 		val editableFields: UpdateListingRequest,
 		val startDateDisplay: String,
 		val endDateDisplay: String,
+		val attemptUpdate: Boolean,
 	) : ManageListingPageUiState
 }

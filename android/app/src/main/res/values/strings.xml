@@ -213,4 +213,7 @@
     <string name="account_creation_error">Account creation failed. Please try again.</string>
     <string name="your_listing">Your listing</string>
     <string name="delete">Delete</string>
+    <string name="updated_listing">Updated listing</string>
+    <string name="delete_listing">Delete listing</string>
+    <string name="delete_listing_dialog">Are you sure you want to delete your listing? This action can not be undone.</string>
 </resources>

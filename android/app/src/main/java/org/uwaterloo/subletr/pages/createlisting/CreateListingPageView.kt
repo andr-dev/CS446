@@ -28,13 +28,15 @@ import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DatePickerDefaults
+import androidx.compose.material3.DateRangePickerState
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -60,10 +62,8 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
-import io.reactivex.rxjava3.subjects.BehaviorSubject
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import org.uwaterloo.subletr.R
@@ -89,6 +89,7 @@ import java.time.format.DateTimeFormatter
 import java.util.Date
 import java.util.Locale
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CreateListingPageView(
 	modifier: Modifier = Modifier,
@@ -101,6 +102,8 @@ fun CreateListingPageView(
 	val coroutineScope = rememberCoroutineScope()
 	val openDatePicker = rememberSaveable { mutableStateOf(false) }
 	var attemptCreate by remember { mutableStateOf(false) }
+	val dateRangePickerState = rememberDateRangePickerState()
+
 
 	Scaffold(
 		modifier = modifier,
@@ -451,6 +454,7 @@ fun CreateListingPageView(
 						viewModel = viewModel,
 						coroutineScope = coroutineScope,
 						openDatePicker = openDatePicker,
+						dateRangePickerState = dateRangePickerState,
 					)
 				}
 
@@ -520,9 +524,10 @@ fun DatePicker(
 	viewModel: CreateListingPageViewModel,
 	coroutineScope: CoroutineScope,
 	openDatePicker: MutableState<Boolean>,
+	dateRangePickerState: DateRangePickerState,
 ) {
 	val datePickerBottomSheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
-	val dateRangePickerState = rememberDateRangePickerState()
+	val placeholderDate = stringResource(id = R.string.placeholder_date)
 	DatePickerBottomSheet(
 		datePickerBottomSheetState,
 		dateRangePickerState,
@@ -534,7 +539,10 @@ fun DatePicker(
 				}
 				if (dateRangePickerState.selectedStartDateMillis != null) {
 					val startButtonText =
-						displayDateFormatter.formatDate(dateRangePickerState.selectedStartDateMillis, locale = Locale.getDefault())!!
+						displayDateFormatter.formatDate(
+							dateRangePickerState.selectedStartDateMillis,
+							locale = Locale.getDefault()
+						) ?: placeholderDate
 					viewModel.startDateDisplayTextStream.onNext(startButtonText)
 					val startDate = SimpleDateFormat("MM/dd/yyyy").parse(startButtonText)
 					viewModel.startDateStream.onNext(
@@ -550,7 +558,9 @@ fun DatePicker(
 				}
 				if (dateRangePickerState.selectedEndDateMillis != null) {
 					val endButtonText =
-						displayDateFormatter.formatDate(dateRangePickerState.selectedEndDateMillis, locale = Locale.getDefault())!!
+						displayDateFormatter.formatDate(
+							dateRangePickerState.selectedEndDateMillis,locale = Locale.getDefault()
+						) ?: placeholderDate
 					viewModel.endDateDisplayTextStream.onNext(endButtonText)
 					val endDate = SimpleDateFormat("MM/dd/yyyy").parse(endButtonText)
 					viewModel.endDateStream.onNext(
