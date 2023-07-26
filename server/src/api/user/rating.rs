@@ -52,7 +52,7 @@ pub fn user_get_rating(
     let mut dbcon = state.pool.get()?;
 
     let rating: (i32, f32) = user_rating::dsl::user_rating
-        .filter(user_rating::user_id.eq(rating_request.user_id))
+        .filter(user_rating::dsl::user_id.eq(rating_request.user_id))
         .first(&mut dbcon)
         .unwrap_or((0, 0.0));
 
