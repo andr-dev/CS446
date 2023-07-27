@@ -340,13 +340,23 @@ fun HomeMapChildView(
 							.fillMaxWidth(),
 						horizontalArrangement = Arrangement.Center,
 					) {
-						Text(
-							text = stringResource(
-								id = R.string.time_to_destination_integer_minutes,
-								(uiState.timeToDestination).roundToInt(),
-							),
-							style = timeToDestinationFont,
-						)
+						(uiState.timeToDestination).roundToInt().let {
+							if (it > 179) {
+								Text(
+									text = stringResource(id = R.string.time_to_destination_no_limit),
+									style = timeToDestinationFont,
+								)
+							}
+							else {
+								Text(
+									text = stringResource(
+										id = R.string.time_to_destination_integer_minutes,
+										it,
+									),
+									style = timeToDestinationFont,
+								)
+							}
+						}
 					}
 				}
 				item {
