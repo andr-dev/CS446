@@ -216,4 +216,8 @@
     <string name="updated_listing">Updated listing</string>
     <string name="delete_listing">Delete listing</string>
     <string name="delete_listing_dialog">Are you sure you want to delete your listing? This action can not be undone.</string>
+    <string name="address_line">Address line</string>
+    <string name="city">City</string>
+    <string name="postal_code">Postal code</string>
+    <string name="country">Country</string>
 </resources>

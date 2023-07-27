@@ -35,6 +35,11 @@ class CreateListingPageViewModel @Inject constructor(
 	val navHostController: NavHostController get() = navigationService.navHostController
 
 	val fullAddressStream: BehaviorSubject<String> = BehaviorSubject.createDefault("")
+	val addressLineStream: BehaviorSubject<String> = BehaviorSubject.createDefault("")
+	val cityStream: BehaviorSubject<String> = BehaviorSubject.createDefault("")
+	val postalCodeStream: BehaviorSubject<String> = BehaviorSubject.createDefault("")
+	val countryStream: BehaviorSubject<String> = BehaviorSubject.createDefault("")
+	val isAutocompletingStream: BehaviorSubject<Boolean> = BehaviorSubject.createDefault(true)
 	private val addressAutocompleteStream: Observable<ArrayList<AutocompletePrediction>> =
 		addressAutocompleteService.createAddressAutocompleteStream(
 			fullAddressStream = fullAddressStream,
@@ -51,7 +56,7 @@ class CreateListingPageViewModel @Inject constructor(
 				addressCity = if (splitAddress.size >= 2) splitAddress[1] else "",
 				addressPostalCode = if (
 					splitAddress.size >= 3 &&
-					splitAddress[2].split(" ").size == POSTAL_CODE_LENGTH
+					splitAddress[2].trim() != ONTARIO
 				) splitAddress[2] else "",
 				addressCountry = if (splitAddress.size >= 4) splitAddress[3] else "Canada",
 			)
@@ -89,6 +94,11 @@ class CreateListingPageViewModel @Inject constructor(
 
 	private val observables: List<Observable<*>> = listOf(
 		addressStream,
+		addressLineStream,
+		cityStream,
+		postalCodeStream,
+		countryStream,
+		isAutocompletingStream,
 		addressAutocompleteStream,
 		descriptionStream,
 		priceStream,
@@ -113,23 +123,30 @@ class CreateListingPageViewModel @Inject constructor(
 		observing ->
 		@Suppress("UNCHECKED_CAST")
 		CreateListingPageUiState.Loaded(
-			address = observing[0] as CreateListingPageUiState.AddressModel,
-			addressAutocompleteOptions = observing[1] as ArrayList<AutocompletePrediction>,
-			description = observing[2] as String,
-			price = observing[3] as Int,
-			numBedrooms = observing[4] as Int,
-			totalNumBedrooms = observing[5] as Int,
-			numBathrooms = observing[6] as Int,
-			bathroomsEnsuite = observing[7] as EnsuiteBathroomOption,
-			totalNumBathrooms = observing[8] as Int,
-			gender = observing[9] as ListingForGenderOption,
-			housingType = observing[10] as HousingType,
-			startDate = observing[11] as String,
-			startDateDisplayText = observing[12] as String,
-			endDate = observing[13] as String,
-			endDateDisplayText = observing[14] as String,
-			imagesBitmap = observing[15] as MutableList<Bitmap?>,
-			images = observing[16] as List<String>,
+			address = CreateListingPageUiState.AddressModel(
+				fullAddress = (observing[0] as CreateListingPageUiState.AddressModel).fullAddress,
+				addressLine = observing[1] as String,
+				addressCity = observing[2] as String,
+				addressPostalCode = observing[3] as String,
+				addressCountry = observing[4] as String,
+			),
+			isAutocompleting = observing[5] as Boolean,
+			addressAutocompleteOptions = observing[6] as ArrayList<AutocompletePrediction>,
+			description = observing[7] as String,
+			price = observing[8] as Int,
+			numBedrooms = observing[9] as Int,
+			totalNumBedrooms = observing[10] as Int,
+			numBathrooms = observing[11] as Int,
+			bathroomsEnsuite = observing[12] as EnsuiteBathroomOption,
+			totalNumBathrooms = observing[13] as Int,
+			gender = observing[14] as ListingForGenderOption,
+			housingType = observing[15] as HousingType,
+			startDate = observing[16] as String,
+			startDateDisplayText = observing[17] as String,
+			endDate = observing[18] as String,
+			endDateDisplayText = observing[19] as String,
+			imagesBitmap = observing[20] as MutableList<Bitmap?>,
+			images = observing[21] as List<String>,
 		)
 	}
 
@@ -137,6 +154,21 @@ class CreateListingPageViewModel @Inject constructor(
 		PublishSubject.create()
 
 	init {
+		fullAddressStream
+			.observeOn(Schedulers.computation())
+			.map {
+				val splitAddress = it.split(",").toTypedArray()
+
+				addressLineStream.onNext(if (splitAddress.isNotEmpty()) splitAddress[0].trim() else "")
+				cityStream.onNext(if (splitAddress.size >= 2) splitAddress[1].trim() else "")
+				postalCodeStream.onNext(
+					if (splitAddress.size >= 3 && splitAddress[2].trim() != ONTARIO)
+						splitAddress[2].trim() else ""
+				)
+				countryStream.onNext(if (splitAddress.size >= 4) splitAddress[3].trim() else "Canada")
+			}
+			.safeSubscribe()
+
 		createListingStream.map {
 			runCatching {
 				runBlocking {
@@ -189,6 +221,6 @@ class CreateListingPageViewModel @Inject constructor(
 	}
 
 	companion object {
-		const val POSTAL_CODE_LENGTH = 3
+		const val ONTARIO = "ON"
 	}
 }

@@ -53,6 +53,7 @@ fun RoundedTextField(
 		focusedContainerColor = MaterialTheme.subletrPalette.textFieldBackgroundColor,
 		unfocusedIndicatorColor = Color.Transparent,
 		focusedIndicatorColor = Color.Transparent,
+		disabledIndicatorColor = Color.Transparent,
 	),
 ) {
 	TextField(

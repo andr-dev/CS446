@@ -21,7 +21,6 @@ import com.google.android.libraries.places.api.model.AutocompletePrediction
 import org.uwaterloo.subletr.R
 import org.uwaterloo.subletr.components.textfield.RoundedTextField
 import org.uwaterloo.subletr.theme.subletrPalette
-import org.uwaterloo.subletr.utils.addressStringIsEmpty
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -31,6 +30,7 @@ fun AddressAutocomplete(
 	addressAutocompleteOptions: ArrayList<AutocompletePrediction>,
 	setAddress: (String) -> Unit,
 	attemptingCreate: Boolean = false,
+	onPredictionSelection: () -> Unit = {},
 ) {
 	var autocompleteExpanded by remember { mutableStateOf(false) }
 	val focusManager = LocalFocusManager.current
@@ -47,7 +47,7 @@ fun AddressAutocomplete(
 				.border(
 					width = dimensionResource(id = R.dimen.xxxs),
 					color =
-					if (!attemptingCreate || !addressStringIsEmpty(fullAddress))
+					if (!attemptingCreate || fullAddress.isNotBlank())
 						MaterialTheme.subletrPalette.textFieldBorderColor
 					else
 						MaterialTheme.subletrPalette.warningColor,
@@ -63,7 +63,7 @@ fun AddressAutocomplete(
 				Text(
 					text = stringResource(id = R.string.address),
 					color =
-						if (!attemptingCreate || !addressStringIsEmpty(fullAddress))
+						if (!attemptingCreate || fullAddress.isNotBlank())
 							MaterialTheme.subletrPalette.secondaryTextColor
 						else
 							MaterialTheme.subletrPalette.warningColor,
@@ -86,8 +86,9 @@ fun AddressAutocomplete(
 					text = { Text(text = prediction.getFullText(null).toString()) },
 					onClick = {
 						setAddress(prediction.getFullText(null).toString())
-						focusManager.clearFocus()
 						autocompleteExpanded = false
+						focusManager.clearFocus()
+						onPredictionSelection()
 					},
 				)
 			}
