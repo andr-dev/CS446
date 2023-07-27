@@ -8,6 +8,12 @@ import android.os.Build
 import android.provider.MediaStore
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.expandVertically
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.shrinkVertically
+import androidx.compose.animation.slideInVertically
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
@@ -34,13 +40,12 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DatePickerDefaults
 import androidx.compose.material3.DateRangePickerState
-import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberDateRangePickerState
 import androidx.compose.material3.rememberModalBottomSheetState
@@ -59,10 +64,12 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
@@ -78,10 +85,12 @@ import org.uwaterloo.subletr.components.textfield.RoundedTextField
 import org.uwaterloo.subletr.enums.EnsuiteBathroomOption
 import org.uwaterloo.subletr.enums.HousingType
 import org.uwaterloo.subletr.enums.ListingForGenderOption
+import org.uwaterloo.subletr.pages.createlisting.CreateListingPageUiState.Loading.getInfoDisplay
 import org.uwaterloo.subletr.theme.SubletrTheme
 import org.uwaterloo.subletr.theme.SubletrTypography
 import org.uwaterloo.subletr.theme.subletrPalette
 import org.uwaterloo.subletr.utils.ComposeFileProvider
+import org.uwaterloo.subletr.utils.addressHasEmpty
 import org.uwaterloo.subletr.utils.canCreate
 import java.text.SimpleDateFormat
 import java.time.ZoneOffset
@@ -105,6 +114,7 @@ fun CreateListingPageView(
 	var attemptCreate by remember { mutableStateOf(false) }
 	val dateRangePickerState = rememberDateRangePickerState()
 
+	val density = LocalDensity.current
 
 	Scaffold(
 		modifier = modifier,
@@ -164,12 +174,64 @@ fun CreateListingPageView(
 					attemptCreate = attemptCreate,
 				)
 
-				AddressAutocomplete(
-					fullAddress = uiState.address.fullAddress,
-					addressAutocompleteOptions = uiState.addressAutocompleteOptions,
-					setAddress = { inputAddress -> viewModel.fullAddressStream.onNext(inputAddress) },
-					attemptingCreate = attemptCreate,
-				)
+				AnimatedVisibility(
+					visible = uiState.isAutocompleting,
+					enter = slideInVertically { with(density) { -40.dp.roundToPx() } }
+						+ expandVertically(expandFrom = Alignment.Top)
+						+ fadeIn(initialAlpha = 0.3f),
+					exit = shrinkVertically() + fadeOut(),
+				) {
+					AddressAutocomplete(
+						fullAddress = uiState.address.fullAddress,
+						addressAutocompleteOptions = uiState.addressAutocompleteOptions,
+						setAddress = {  inputAddress -> viewModel.fullAddressStream.onNext(inputAddress) },
+						attemptingCreate = attemptCreate,
+						onPredictionSelection = { viewModel.isAutocompletingStream.onNext(false) },
+					)
+				}
+
+				AnimatedVisibility(
+					visible = !uiState.isAutocompleting,
+					enter = slideInVertically { with(density) { -40.dp.roundToPx() } }
+						+ expandVertically(expandFrom = Alignment.Top)
+						+ fadeIn(initialAlpha = 0.3f),
+					exit = shrinkVertically() + fadeOut(),
+				) {
+					Column(
+						modifier = Modifier
+							.fillMaxWidth()
+							.padding(vertical = dimensionResource(id = R.dimen.s)),
+					) {
+						Surface(
+							modifier = Modifier,
+							onClick = { viewModel.isAutocompletingStream.onNext(true) },
+						) {
+							RoundedTextField(
+								modifier = Modifier
+									.fillMaxWidth()
+									.border(
+										width = dimensionResource(id = R.dimen.xxxs),
+										color =
+										if (!attemptCreate || uiState.address.fullAddress.isNotBlank())
+											MaterialTheme.subletrPalette.textFieldBorderColor
+										else
+											MaterialTheme.subletrPalette.warningColor,
+										shape = RoundedCornerShape(dimensionResource(id = R.dimen.xxxxl)),
+									),
+								enabled = false,
+								readOnly = true,
+								value = uiState.address.fullAddress,
+								onValueChange = {},
+							)
+						}
+
+						IndividualAddressInputs(
+							addressModel = uiState.address,
+							viewModel = viewModel,
+							attemptCreate = attemptCreate,
+						)
+					}
+				}
 
 				Spacer(
 					modifier = Modifier.height(dimensionResource(id = R.dimen.m)),
@@ -436,6 +498,7 @@ fun CreateListingPageView(
 						.padding(bottom = dimensionResource(id = R.dimen.xs)),
 					onClick = {
 						attemptCreate = true
+						viewModel.isAutocompletingStream.onNext(false)
 						if (canCreate(uiState)) {
 							viewModel.createListingStream.onNext(uiState)
 						}
@@ -464,7 +527,7 @@ fun WarnText(
 	attemptCreate: Boolean,
 	uiState: CreateListingPageUiState.Loaded,
 ) {
-	if (attemptCreate && !canCreate(uiState = uiState)) {
+	if (attemptCreate && (!canCreate(uiState = uiState) || addressHasEmpty(uiState.address))) {
 		Spacer(
 			modifier = Modifier.height(dimensionResource(id = R.dimen.xxs)),
 		)
@@ -485,6 +548,63 @@ fun WarnText(
 		Spacer(
 			modifier = Modifier.height(dimensionResource(id = R.dimen.m)),
 		)
+	}
+}
+
+@Composable
+fun IndividualAddressInputs(
+	modifier: Modifier = Modifier,
+	addressModel: CreateListingPageUiState.AddressModel,
+	viewModel: CreateListingPageViewModel,
+	attemptCreate: Boolean,
+) {
+	Column(
+		modifier = modifier,
+	) {
+		addressModel.getInfoDisplay().forEach { addressComponent ->
+			Spacer(
+				modifier = Modifier.height(dimensionResource(id = R.dimen.s)),
+			)
+
+			RoundedTextField(
+				modifier = Modifier
+					.fillMaxWidth()
+					.border(
+						width = dimensionResource(id = R.dimen.xxxs),
+						color =
+						if (!attemptCreate || addressComponent.second.isNotBlank())
+							MaterialTheme.subletrPalette.textFieldBorderColor
+						else
+							MaterialTheme.subletrPalette.warningColor,
+						shape = RoundedCornerShape(dimensionResource(id = R.dimen.xxxxl)),
+					),
+				placeholder = {
+					Text(
+						text = stringResource(id = addressComponent.first),
+						color = MaterialTheme.subletrPalette.secondaryTextColor,
+					)
+				},
+				label = {
+					Text(
+						text = stringResource(id = addressComponent.first),
+						color =
+						if (!attemptCreate || addressComponent.second.isNotBlank())
+							MaterialTheme.subletrPalette.secondaryTextColor
+						else
+							MaterialTheme.subletrPalette.warningColor,
+					)
+				},
+				value = addressComponent.second,
+				onValueChange = {
+					when (addressComponent.first) {
+						R.string.address_line -> viewModel.addressLineStream.onNext(it)
+						R.string.city -> viewModel.cityStream.onNext(it)
+						R.string.postal_code -> viewModel.postalCodeStream.onNext(it)
+						R.string.country -> viewModel.countryStream.onNext(it)
+					}
+				}
+			)
+		}
 	}
 }
 
@@ -808,7 +928,8 @@ fun CreateListingPageLoadedPreview() {
 				endDateDisplayText = "",
 				housingType = HousingType.OTHER,
 				imagesBitmap = ArrayList(),
-				images = ArrayList()
+				images = ArrayList(),
+				isAutocompleting = false,
 			)
 		)
 	}

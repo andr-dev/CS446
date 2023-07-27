@@ -20,4 +20,9 @@ fun addressIsEmpty(addressModel: CreateListingPageUiState.AddressModel): Boolean
 		addressModel.fullAddress == ""
 }
 
-fun addressStringIsEmpty(fullAddress: String): Boolean = fullAddress == ""
+fun addressHasEmpty(addressModel: CreateListingPageUiState.AddressModel): Boolean {
+	return addressModel.addressCity.isBlank() ||
+		addressModel.addressLine.isBlank() ||
+		addressModel.addressPostalCode.isBlank() ||
+		addressModel.fullAddress.isBlank()
+}

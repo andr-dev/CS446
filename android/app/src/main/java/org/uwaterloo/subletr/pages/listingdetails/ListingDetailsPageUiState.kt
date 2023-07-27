@@ -60,5 +60,6 @@ sealed interface ListingDetailsPageUiState {
 		Pair(R.string.bathrooms, bathroomsAvailable),
 		Pair(R.string.ensuite_bathroom, if (bathroomsEnsuite > 0) R.string.yes else R.string.no),
 		Pair(R.string.total_bathrooms_in_house, bathroomsTotal),
+		Pair(R.string.housing_type, residenceType),
 	)
 }

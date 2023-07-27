@@ -2,9 +2,10 @@ package org.uwaterloo.subletr.pages.createlisting
 
 import android.graphics.Bitmap
 import com.google.android.libraries.places.api.model.AutocompletePrediction
+import org.uwaterloo.subletr.R
 import org.uwaterloo.subletr.enums.EnsuiteBathroomOption
-import org.uwaterloo.subletr.enums.ListingForGenderOption
 import org.uwaterloo.subletr.enums.HousingType
+import org.uwaterloo.subletr.enums.ListingForGenderOption
 
 sealed interface CreateListingPageUiState {
 	object Loading : CreateListingPageUiState
@@ -20,6 +21,7 @@ sealed interface CreateListingPageUiState {
 	data class Loaded(
 		val address: AddressModel,
 		val addressAutocompleteOptions: ArrayList<AutocompletePrediction>,
+		val isAutocompleting: Boolean,
 		val description: String,
 		val price: Int,
 		val numBedrooms: Int,
@@ -36,4 +38,11 @@ sealed interface CreateListingPageUiState {
 		val imagesBitmap: MutableList<Bitmap?>,
 		val images: List<String>,
 	) : CreateListingPageUiState
+
+	fun AddressModel.getInfoDisplay(): List<Pair<Int, String>> = listOf(
+		Pair(R.string.address_line, addressLine),
+		Pair(R.string.city, addressCity),
+		Pair(R.string.postal_code, addressPostalCode),
+		Pair(R.string.country, addressCountry),
+	)
 }
