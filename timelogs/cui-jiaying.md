@@ -22,3 +22,5 @@
 | July 17th | 1 hours | update review and update api calls|
 | July 22th | 4 hours | create all filter|
 | July 24th | 45 mins | create verified User posts filter|
+| July 26th | 4 hours | finish d6 demo|
+| July 26th | 1 hours | update d6 documents|
