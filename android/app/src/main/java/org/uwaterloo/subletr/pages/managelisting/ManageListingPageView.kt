@@ -36,10 +36,7 @@ import androidx.compose.material3.rememberDateRangePickerState
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.derivedStateOf
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.rxjava3.subscribeAsState
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -140,14 +137,12 @@ fun ManageListingPageView(
 			}
 		} else if (uiState is ManageListingPageUiState.Loaded) {
 
-			val isUpdateValid by remember { derivedStateOf { viewModel.isUpdateValid(uiState.editableFields) } }
 			val imageCount = uiState.images.size
 			val pagerState = rememberPagerState(
 				initialPage = 0,
 				initialPageOffsetFraction = 0f,
 			) { imageCount }
 			val dateRangePickerState = rememberDateRangePickerState()
-
 
 			Column(
 				modifier = Modifier
@@ -266,7 +261,7 @@ fun ManageListingPageView(
 					modifier = Modifier.height(dimensionResource(id = R.dimen.s)),
 				)
 
-				WarnText(Modifier, uiState.attemptUpdate, isUpdateValid)
+				WarnText(Modifier, uiState.attemptUpdate, viewModel.isUpdateValid(uiState.editableFields))
 
 				NumericalInputTextField(
 					labelId = R.string.price,
@@ -582,7 +577,7 @@ fun ManageListingPageView(
 							.padding(bottom = dimensionResource(id = R.dimen.xs)),
 						onClick = {
 							viewModel.attemptUpdateStream.onNext(true)
-							if (isUpdateValid) {
+							if (viewModel.isUpdateValid(uiState.editableFields)) {
 								coroutineScope.launch {
 									viewModel.snackBarHostState.showSnackbar(snackBarString)
 								}
@@ -596,10 +591,6 @@ fun ManageListingPageView(
 						)
 					}
 				}
-
-				Spacer(
-					modifier = Modifier.height(dimensionResource(id = R.dimen.l)),
-				)
 
 				if (openDatePicker.value) {
 					DatePicker(

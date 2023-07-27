@@ -46,6 +46,8 @@ class AccountPageViewModel @Inject constructor(
 ): SubletrViewModel<AccountPageUiState>() {
 	val navHostController: NavHostController get() = navigationService.navHostController
 
+	val callUserGetStream: BehaviorSubject<Unit> = BehaviorSubject.createDefault(Unit)
+
 	val personalInformationStream: BehaviorSubject<AccountPageUiState.PersonalInformation> =
 		BehaviorSubject.createDefault(AccountPageUiState.PersonalInformation(
 			lastName = "",
@@ -71,7 +73,7 @@ class AccountPageViewModel @Inject constructor(
 	private val avatarStringStream = BehaviorSubject.createDefault(Optional.empty<String>())
 
 	private val userDetailsStream: Observable<Result<GetUserResponse>> =
-		BehaviorSubject.createDefault(Optional.empty<String>()).map {
+		callUserGetStream.map {
 			runBlocking {
 				runCatching {
 					userApi.userGet()
@@ -106,12 +108,26 @@ class AccountPageViewModel @Inject constructor(
 										}
 										.onFailure {
 											Log.d("API ERROR", "Failed to get user's listing's image")
+											navHostController.navigate(
+												route = NavigationDestination.LOGIN.rootNavPath,
+												navOptions = navOptions {
+													popUpTo(navHostController.graph.id)
+												},
+											)
 										}
 								}
 							}
 							.onFailure {
 								Log.d("API ERROR", "Failed to get user's listing details")
+								navHostController.navigate(
+									route = NavigationDestination.LOGIN.rootNavPath,
+									navOptions = navOptions {
+										popUpTo(navHostController.graph.id)
+									},
+								)
 							}
+					} else {
+						listingIdStream.onNext(Optional.empty())
 					}
 				}
 			}

@@ -50,6 +50,7 @@ import androidx.compose.material3.RadioButtonDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -102,6 +103,10 @@ fun AccountPageView(
 		AccountPageUiState.Loading
 	).value,
 ) {
+	LaunchedEffect(true) {
+		viewModel.callUserGetStream.onNext(Unit)
+	}
+
 	var nameExpanded by remember { mutableStateOf(false) }
 	var genderExpanded by remember { mutableStateOf(false) }
 	var initialPersonalInformation by remember {
