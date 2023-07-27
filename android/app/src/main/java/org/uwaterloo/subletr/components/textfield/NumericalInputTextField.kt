@@ -57,6 +57,7 @@ fun NumericalInputTextField(
 		keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
 		value = if (uiStateValue == 0) "" else uiStateValue.toString(),
 		onValueChange = {
+			triggerOnValueChange()
 			if (it.isEmpty()) {
 				changeValue(0)
 			} else if (it.matches(numberPattern)) {
