@@ -28,3 +28,6 @@
 | July 20th | 6 hours | Listing details image position fix and adding more fields to the create listing page |
 | July 23rd | 3 hours | Refactored the create listing page to match updated UI |
 | July 24th | 8 hours | Attempted Google Routes API integration on the frontend, but as it lacks Android support it wasn't feasible. Also made basic functionality for deleting a sublet |
+| July 25th | 8 hours | Made address autocomplete a service so that it can be reusable, attempted to implement snackbar |
+| July 26th | 9 hours | Recorded D6 Project Demonstration, solved create listing address input problems by adding individual address inputs, worked on D6 Project Architecture and Design doc |
+| July 27th | 10 hours | Worked on D6 Project Architecture and Design doc, writing and creating sequence diagram |
