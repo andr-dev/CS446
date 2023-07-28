@@ -27,4 +27,4 @@
 |    07-24-2023  |   0.25h   |    final reviews and merged PR |
 |    07-24-2023  |   2.5h   |    modified create listing page to restrict user from creating a page without enough information |
 |    07-25-2023  |   4.5h   |   refactored CreateListingPageView into using more composable functions. Resolved merge conflicts and added more restrictions on input to match the new updates to master |
-|    07-25-2023  |   3.5h   |   reviewed PRs, worked on D6 documents and demo video |
+|    07-25-2023  |   6.5h   |   reviewed PRs, worked on D6 documents , planned and completed demo video |
