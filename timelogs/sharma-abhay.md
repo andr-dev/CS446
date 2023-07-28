@@ -41,3 +41,5 @@
 |2023-07-25| 3 hours (9:00 - 00:00) | Created manage listing page which allows user to edit and delete their listing |
 |2023-07-26| 2 hours (00:00 - 2:00) | Created snackbar service, updated manage listing page, and worked on debugging API errors |
 |2023-07-26| 4 hours (12:00 - 4:00) | Worked on debugging and D6 final presentation |
+|2023-07-27| 2 hours (16:00 - 18:00) | Fixed update listing and account page bugs and worked on D6 document |
+|2023-07-28| 2 hours (13:00 - 15:00) | Worked on D6 document |
