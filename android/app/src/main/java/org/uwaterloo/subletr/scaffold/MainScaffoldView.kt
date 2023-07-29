@@ -8,16 +8,22 @@ import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavBackStackEntry
 import androidx.navigation.compose.currentBackStackEntryAsState
-import org.uwaterloo.subletr.api.infrastructure.ApiClient
 import org.uwaterloo.subletr.components.bottombar.BottomBarView
-import org.uwaterloo.subletr.navigation.MainNavigation
+import org.uwaterloo.subletr.navigation.MainNavigationView
 import org.uwaterloo.subletr.navigation.NavigationDestination
 import org.uwaterloo.subletr.navigation.isTopLevelDestinationInHierarchy
+import org.uwaterloo.subletr.services.AuthenticationService
+import org.uwaterloo.subletr.services.IoService
+import org.uwaterloo.subletr.services.NavigationService
+import org.uwaterloo.subletr.services.SnackbarService
 import org.uwaterloo.subletr.theme.SubletrTypography
 import org.uwaterloo.subletr.theme.subletrPalette
 
@@ -27,30 +33,29 @@ fun MainScaffoldView(
 	viewModel: MainScaffoldViewModel = hiltViewModel(),
 ) {
 	val snackbarHostState: SnackbarHostState = viewModel.snackbarService.snackbarHostState
-	var currentDestination: NavigationDestination =
-		if (ApiClient.accessToken == null) NavigationDestination.LOGIN
-		else NavigationDestination.HOME
+	val currentBackStackEntry: NavBackStackEntry? by viewModel
+		.navHostController
+		.currentBackStackEntryAsState()
 
-	NavigationDestination.values().forEach {
-		if (
-			viewModel
-				.navHostController
-				.currentBackStackEntryAsState()
-				.value
-				?.destination
-				.isTopLevelDestinationInHierarchy(it)
-		) {
-			currentDestination = it
+	LaunchedEffect(key1 = currentBackStackEntry) {
+		NavigationDestination.values().forEach {
+			if (
+				currentBackStackEntry
+					?.destination
+					.isTopLevelDestinationInHierarchy(it)
+			) {
+				viewModel.currentDestination.value = it
+			}
 		}
 	}
 
 	Scaffold(
 		modifier = modifier,
 		bottomBar = {
-			if (currentDestination.showBottomBar) {
+			if (viewModel.currentDestination.value.showBottomBar) {
 				BottomBarView(
 					modifier = Modifier,
-					currentDestination = currentDestination,
+					currentDestination = viewModel.currentDestination.value,
 				)
 			}
 		},
@@ -70,11 +75,10 @@ fun MainScaffoldView(
 			}
 		}
 	) { paddingValues ->
-		MainNavigation(
+		MainNavigationView(
 			modifier = Modifier.padding(
 				paddingValues = paddingValues
 			),
-			navHostController = viewModel.navHostController,
 		)
 	}
 }
@@ -82,5 +86,17 @@ fun MainScaffoldView(
 @Preview(showBackground = true)
 @Composable
 fun MainScaffoldViewPreview() {
-	MainScaffoldView()
+	MainScaffoldView(
+		viewModel = MainScaffoldViewModel(
+			navigationService = NavigationService(
+				context = LocalContext.current,
+			),
+			authenticationService = AuthenticationService(
+				ioService = IoService(
+					context = LocalContext.current,
+				)
+			),
+			snackbarService = SnackbarService(),
+		)
+	)
 }

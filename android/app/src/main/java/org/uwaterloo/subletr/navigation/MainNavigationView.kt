@@ -1,16 +1,12 @@
 package org.uwaterloo.subletr.navigation
 
-import android.os.Build
-import androidx.annotation.RequiresApi
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.navigation.NavHostController
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
-import org.uwaterloo.subletr.api.infrastructure.ApiClient
 import org.uwaterloo.subletr.pages.account.AccountPageView
 import org.uwaterloo.subletr.pages.changepassword.ChangePasswordPageView
 import org.uwaterloo.subletr.pages.chat.ChatListingPageView
@@ -22,21 +18,17 @@ import org.uwaterloo.subletr.pages.individualchat.IndividualChatPageView
 import org.uwaterloo.subletr.pages.listingdetails.ListingDetailsPageView
 import org.uwaterloo.subletr.pages.login.LoginPageView
 import org.uwaterloo.subletr.pages.managelisting.ManageListingPageView
-import org.uwaterloo.subletr.pages.watcardverification.WatcardVerificationPageView
 import org.uwaterloo.subletr.pages.profile.ProfilePageView
+import org.uwaterloo.subletr.pages.watcardverification.WatcardVerificationPageView
 
 @Composable
-fun MainNavigation(
+fun MainNavigationView(
 	modifier: Modifier = Modifier,
-	navHostController: NavHostController = rememberNavController(),
+	mainNavigationViewModel: MainNavigationViewModel = hiltViewModel(),
 ) {
-	val startingDestination: NavigationDestination =
-		if (ApiClient.accessToken == null) NavigationDestination.LOGIN
-		else NavigationDestination.HOME
-
 	NavHost(
-		navController = navHostController,
-		startDestination = startingDestination.fullNavPath,
+		navController = mainNavigationViewModel.navHostController,
+		startDestination = mainNavigationViewModel.startingDestination.fullNavPath,
 	) {
 		composable(NavigationDestination.LOGIN.fullNavPath) {
 			LoginPageView(
