@@ -28,13 +28,13 @@ class HomeListChildViewModel @Inject constructor(
 					HomePageViewModel.GetListingParams(
 						filters = uiState.filters.copy(
 							addressSearch = HomePageViewModel.CURRENT_LOCATION_STRING_VAL,
+							computedLatLng = LatLng(
+								currentLocation.latitude,
+								currentLocation.longitude,
+							),
 						),
 						transportationMethod = HomePageUiState.TransportationMethod.WALK,
 						homePageView = HomePageUiState.HomePageViewType.LIST,
-						computedLatLng = LatLng(
-							currentLocation.latitude,
-							currentLocation.longitude,
-						),
 					)
 				)
 			}
