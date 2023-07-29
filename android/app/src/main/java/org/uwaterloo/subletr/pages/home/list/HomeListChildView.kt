@@ -151,7 +151,6 @@ fun HomeListChildView(
 			}
 		} else if (uiState is HomeListUiState.Loaded) {
 			var filterType by remember { mutableStateOf(FilterType.LOCATION) }
-			val coroutineScope = rememberCoroutineScope()
 			val modalSheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
 			var isBottomSheetOpen by remember {
 				mutableStateOf(false)
@@ -502,6 +501,7 @@ private fun HomeListViewPreview() {
 					addressSearch = null,
 					minRating = 0,
 					showVerifiedOnly = false,
+					computedLatLng = null,
 				),
 			),
 		)

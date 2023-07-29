@@ -1,6 +1,7 @@
 package org.uwaterloo.subletr.pages.home
 
 import android.graphics.Bitmap
+import com.google.android.gms.maps.model.LatLng
 import org.uwaterloo.subletr.api.models.ListingSummary
 import org.uwaterloo.subletr.enums.Gender
 import org.uwaterloo.subletr.enums.HousingType
@@ -46,6 +47,7 @@ interface HomePageUiState {
 		val favourite: Boolean,
 		val timeToDestination: Float?,
 		val addressSearch: String?,
+		val computedLatLng: LatLng?,
 		val minRating: Int,
 		val showVerifiedOnly: Boolean,
 	)

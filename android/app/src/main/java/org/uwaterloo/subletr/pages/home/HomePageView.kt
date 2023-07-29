@@ -178,6 +178,7 @@ fun LoginPageViewLoadedPreview() {
 					addressSearch = null,
 					minRating = 0,
 					showVerifiedOnly = false,
+					computedLatLng = null,
 				),
 			),
 		)

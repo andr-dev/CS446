@@ -23,19 +23,21 @@ class HomeMapChildViewModel @Inject constructor(
 	suspend fun setLocationToCurrentLocation(uiState: HomeMapUiState.Loaded) {
 		coroutineScope {
 			val currentLocation: Location? = locationService.getLocation()
+
 			if (currentLocation != null) {
+				val latLng = LatLng(
+					currentLocation.latitude,
+					currentLocation.longitude,
+				)
 				getListingParamsStream.onNext(
 					HomePageViewModel.GetListingParams(
 						filters = uiState.filters.copy(
 							timeToDestination = uiState.timeToDestination,
 							addressSearch = CURRENT_LOCATION_STRING_VAL,
+							computedLatLng = latLng,
 						),
 						transportationMethod = uiState.transportationMethod,
 						homePageView = HomePageUiState.HomePageViewType.MAP,
-						computedLatLng = LatLng(
-							currentLocation.latitude,
-							currentLocation.longitude,
-						),
 					)
 				)
 			}
@@ -70,21 +72,21 @@ class HomeMapChildViewModel @Inject constructor(
 			}
 			.skip(1)
 			.debounce(1, TimeUnit.SECONDS)
-			.map {
-				if (it is HomeMapUiState.Loaded) {
+			.map { homeMapUiState: HomeMapUiState ->
+				if (homeMapUiState is HomeMapUiState.Loaded) {
 					getListingParamsStream.onNext(
 						HomePageViewModel.GetListingParams(
-							filters = it.filters.copy(
-								timeToDestination = it.timeToDestination,
-								addressSearch = it.addressSearch.ifEmpty { null },
-								locationRange = if (it.timeToDestination < 180) {
+							filters = homeMapUiState.filters.copy(
+								timeToDestination = homeMapUiState.timeToDestination,
+								addressSearch = homeMapUiState.addressSearch.ifEmpty { null },
+								locationRange = if (homeMapUiState.timeToDestination < 180) {
 									HomePageUiState.LocationRange(
 										lowerBound = null,
 										upperBound = null,
 									)
-								} else it.filters.locationRange,
+								} else homeMapUiState.filters.locationRange,
 							),
-							transportationMethod = it.transportationMethod,
+							transportationMethod = homeMapUiState.transportationMethod,
 							homePageView = HomePageUiState.HomePageViewType.MAP,
 						)
 					)

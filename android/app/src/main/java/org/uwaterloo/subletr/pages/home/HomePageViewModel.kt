@@ -83,6 +83,7 @@ class HomePageViewModel @Inject constructor(
 				addressSearch = null,
 				minRating = 0,
 				showVerifiedOnly = false,
+				computedLatLng = null,
 			),
 			transportationMethod = HomePageUiState.TransportationMethod.WALK,
 			homePageView = HomePageUiState.HomePageViewType.LIST,
@@ -143,9 +144,11 @@ class HomePageViewModel @Inject constructor(
 					.getOrNull()
 					?.let {
 						return@map getListingParams.copy(
-							computedLatLng = LatLng(
-								it.latitude.toDouble(),
-								it.longitude.toDouble(),
+							filters = getListingParams.filters.copy(
+								computedLatLng = LatLng(
+									it.latitude.toDouble(),
+									it.longitude.toDouble(),
+								)
 							)
 						)
 					}
@@ -165,11 +168,11 @@ class HomePageViewModel @Inject constructor(
 					runBlocking {
 						listingsApi.listingsList(
 							longitude =
-							if (getListingParams.computedLatLng != null)
-								getListingParams.computedLatLng.longitude.toFloat()
+							if (getListingParams.filters.computedLatLng != null)
+								getListingParams.filters.computedLatLng.longitude.toFloat()
 							else UWATERLOO_LONGITUDE,
-							latitude = if (getListingParams.computedLatLng != null)
-								getListingParams.computedLatLng.latitude.toFloat()
+							latitude = if (getListingParams.filters.computedLatLng != null)
+								getListingParams.filters.computedLatLng.latitude.toFloat()
 							else UWATERLOO_LATITUDE,
 							pageNumber = getListingParams.listingPagingParams.pageNumber,
 							pageSize = LISTING_PAGE_SIZE,
@@ -447,7 +450,6 @@ class HomePageViewModel @Inject constructor(
 			),
 			pageNumber = 0,
 		),
-		val computedLatLng: LatLng? = null,
 	)
 
 	data class ListingPagingParams(
@@ -471,7 +473,7 @@ class HomePageViewModel @Inject constructor(
 		const val CYCLING_METRES_PER_MINUTE = 250
 		const val BUS_METRES_PER_MINUTE = 350
 		const val DRIVING_METRES_PER_MINUTE = 600
-		const val CURRENT_LOCATION_STRING_VAL = "CURRENT_LOCATION_STRING_CONSTANT"
+		const val CURRENT_LOCATION_STRING_VAL = "CURRENT_LOCATION_STRING_VAL"
 	}
 
 	init {
