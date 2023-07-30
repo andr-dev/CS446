@@ -1,7 +1,6 @@
 package org.uwaterloo.subletr.pages.home.list
 
 import android.Manifest
-import android.graphics.Bitmap
 import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -19,6 +18,7 @@ import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.CircularProgressIndicator
@@ -48,7 +48,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.sp
 import kotlinx.coroutines.launch
 import org.uwaterloo.subletr.R
-import org.uwaterloo.subletr.api.models.ListingSummary
 import org.uwaterloo.subletr.enums.FilterType
 import org.uwaterloo.subletr.enums.Gender
 import org.uwaterloo.subletr.enums.HousingType
@@ -448,13 +447,9 @@ fun HomeListChildView(
 					}
 				}
 
-				items(uiState.listingItems.listings.size) {
-					val listingSummary: ListingSummary = uiState.listingItems.listings[it]
-					val listingImage: Bitmap? =
-						uiState.listingItems.listingsImages.getOrNull(it)
+				items(uiState.listingItems) {
 					HomeListListingItemView(
-						listingSummary = listingSummary,
-						listingImage = listingImage,
+						listingItem = it,
 						viewModel = viewModel,
 					)
 				}
@@ -482,13 +477,7 @@ private fun HomeListViewPreview() {
 			),
 			uiState = HomeListUiState.Loaded(
 				addressSearch = "",
-				listingItems = HomePageUiState.ListingItemsModel(
-					listings = emptyList(),
-					likedListings = emptySet(),
-					listingsImages = emptyList(),
-					selectedListings = emptyList(),
-					timeToDestination = emptyList(),
-				),
+				listingItems = emptyList(),
 				filters = HomePageUiState.FiltersModel(
 					locationRange = HomePageUiState.LocationRange(null, null),
 					priceRange = HomePageUiState.PriceRange(null, null),

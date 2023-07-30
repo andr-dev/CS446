@@ -7,12 +7,12 @@ import org.uwaterloo.subletr.enums.Gender
 import org.uwaterloo.subletr.enums.HousingType
 
 interface HomePageUiState {
-	data class ListingItemsModel (
-		val listings: List<ListingSummary>,
-		val likedListings: Set<String>,
-		val listingsImages: List<Bitmap?>,
-		val selectedListings: List<Boolean>,
-		val timeToDestination: List<Float>,
+	data class ListingItem(
+		val summary: ListingSummary,
+		val timeToDestination: Float,
+		val image: Bitmap? = null,
+		val selected: Boolean = false,
+		val liked: Boolean = false,
 	)
 
 	data class LocationRange(

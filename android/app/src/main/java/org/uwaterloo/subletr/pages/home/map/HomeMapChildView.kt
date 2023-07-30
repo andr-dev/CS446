@@ -87,9 +87,10 @@ fun HomeMapChildView(
 			LatLng(
 				UWATERLOO_LATITUDE.toDouble(),
 				UWATERLOO_LONGITUDE.toDouble(),
-			), DEFAULT_ZOOM)
+			), DEFAULT_ZOOM
+		)
 	}
-	var scrollEnabled: Boolean by remember{ mutableStateOf(true) }
+	var scrollEnabled: Boolean by remember { mutableStateOf(true) }
 	LaunchedEffect(cameraPositionState.isMoving) {
 		if (!cameraPositionState.isMoving) {
 			scrollEnabled = true
@@ -106,16 +107,25 @@ fun HomeMapChildView(
 	) { permissions ->
 		if (uiState is HomeMapUiState.Loaded) {
 			when {
-				permissions.getOrDefault(android.Manifest.permission.ACCESS_FINE_LOCATION, false) -> {
+				permissions.getOrDefault(
+					android.Manifest.permission.ACCESS_FINE_LOCATION,
+					false
+				) -> {
 					coroutineScope.launch {
 						viewModel.setLocationToCurrentLocation(uiState = uiState)
 					}
 				}
-				permissions.getOrDefault(android.Manifest.permission.ACCESS_COARSE_LOCATION, false) -> {
+
+				permissions.getOrDefault(
+					android.Manifest.permission.ACCESS_COARSE_LOCATION,
+					false
+				) -> {
 					coroutineScope.launch {
 						viewModel.setLocationToCurrentLocation(uiState = uiState)
 					}
-				} else -> {
+				}
+
+				else -> {
 					Log.d("LocationLogs", "No Location Permissions")
 				}
 			}
@@ -125,8 +135,8 @@ fun HomeMapChildView(
 	Scaffold(
 		modifier = modifier
 			.fillMaxSize(fraction = 1.0f),
-		topBar = {Box{}},
-		bottomBar = {Box{}},
+		topBar = { Box {} },
+		bottomBar = { Box {} },
 		floatingActionButton = {
 			FloatingActionButton(
 				modifier = Modifier.padding(
@@ -161,12 +171,11 @@ fun HomeMapChildView(
 			) {
 				CircularProgressIndicator()
 			}
-		}
-		else if (uiState is HomeMapUiState.Loaded) {
+		} else if (uiState is HomeMapUiState.Loaded) {
 			val listState: LazyListState = rememberLazyListState()
 			val lastItemIsShowing by remember {
 				derivedStateOf {
-					if (listState.layoutInfo.totalItemsCount == 0) {
+					if (listState.layoutInfo.totalItemsCount - NUM_OF_ITEMS_ABOVE_LISTINGS == 0) {
 						false
 					} else {
 						listState.layoutInfo.visibleItemsInfo.lastOrNull()?.index == listState.layoutInfo.totalItemsCount - 1
@@ -182,8 +191,9 @@ fun HomeMapChildView(
 							transportationMethod = uiState.transportationMethod,
 							listingPagingParams = HomePageViewModel.ListingPagingParams(
 								previousListingItemsModel = uiState.listingItems,
-								pageNumber = listState.layoutInfo.totalItemsCount
-									.floorDiv(HomePageViewModel.LISTING_PAGE_SIZE)
+								pageNumber = (
+									listState.layoutInfo.totalItemsCount - NUM_OF_ITEMS_ABOVE_LISTINGS
+									).floorDiv(HomePageViewModel.LISTING_PAGE_SIZE)
 							),
 							homePageView = HomePageUiState.HomePageViewType.MAP,
 						)
@@ -211,7 +221,7 @@ fun HomeMapChildView(
 										uiState = uiState,
 										newFilters = it,
 									)
-							    },
+								},
 								coroutineScope = coroutineScope,
 								closeAction = ::closeBottomSheet,
 							)
@@ -297,14 +307,13 @@ fun HomeMapChildView(
 						contentDescription = stringResource(id = R.string.google_maps_view),
 						cameraPositionState = cameraPositionState,
 					) {
-						uiState.listingItems.listings.forEachIndexed { index, listingSummary ->
-							val selected = uiState.listingItems.selectedListings.getOrElse(index, {false})
-							if (selected) {
+						uiState.listingItems.forEach { listingItem ->
+							if (listingItem.selected) {
 								Marker(
 									state = MarkerState(
 										position = LatLng(
-											listingSummary.latitude.toDouble(),
-											listingSummary.longitude.toDouble(),
+											listingItem.summary.latitude.toDouble(),
+											listingItem.summary.longitude.toDouble(),
 										)
 									),
 								)
@@ -346,8 +355,7 @@ fun HomeMapChildView(
 									text = stringResource(id = R.string.time_to_destination_no_limit),
 									style = timeToDestinationFont,
 								)
-							}
-							else {
+							} else {
 								Text(
 									text = stringResource(
 										id = R.string.time_to_destination_integer_minutes,
@@ -362,31 +370,22 @@ fun HomeMapChildView(
 				item {
 					Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.s)))
 				}
-				items(count = uiState.listingItems.listings.size) {
-					val listingSummary = uiState.listingItems.listings[it]
-					val listingImage = uiState.listingItems.listingsImages.getOrNull(it)
-					val selected = uiState.listingItems.selectedListings.getOrElse(it) { false }
-					val timeToDestination = uiState.listingItems.timeToDestination.getOrNull(it)
+				items(uiState.listingItems.size) {
 					HomeMapListingItemView(
-						listingSummary = listingSummary,
-						listingImage = listingImage,
-						selected = selected,
+						listingItem = uiState.listingItems[it],
 						viewModel = viewModel,
-						timeToDestination = timeToDestination,
 						setSelected = { newSelected ->
 							viewModel.uiStateStream.onNext(
 								uiState.copy(
-									listingItems = uiState.listingItems.copy(
-										selectedListings = uiState.listingItems.selectedListings
-											.mapIndexed { index, b ->
-												if (it == index) {
-													newSelected
-												}
-												else {
-													b
-												}
-											}
-										),
+									listingItems = uiState.listingItems.mapIndexed { index: Int, listingItem: HomePageUiState.ListingItem ->
+										if (it == index) {
+											listingItem.copy(
+												selected = newSelected,
+											)
+										} else {
+											listingItem
+										}
+									}
 								)
 							)
 						},
@@ -399,6 +398,7 @@ fun HomeMapChildView(
 
 const val MAX_DISTANCE_IN_MINUTES = 180.0f
 private const val DEFAULT_ZOOM = 12.0f
+private const val NUM_OF_ITEMS_ABOVE_LISTINGS = 9
 
 @Preview
 @Composable
