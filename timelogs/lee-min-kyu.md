@@ -34,3 +34,10 @@
 | 2023-07-20 | 1.5 hour(s) | Update Change Password Page |
 | 2023-07-21 | 5.5 hour(s) | Add dark mode support and dark mode toggle |
 | 2023-07-22 | 4.0 hour(s) | Fix Bottom Bar View, fix Listing Item Image Corners, add Current Location functionality, update component diagram |
+| 2023-07-23 | 1.0 hour(s) | Add Time to Destination Filter |
+| 2023-07-24 | 1.0 hour(s) | Add Location Bar to List View and All Filters Modal to Map View |
+| 2023-07-25 | 2.5 hour(s) | Fix Gender Enum Issues, add navigation to chat, and add design examples to deliverable 6 |
+| 2023-07-26 | 4.0 hour(s) | Plan, record, edit, and submit demo video for deliverable 6 |
+| 2023-07-27 | 4.5 hour(s) | Update component diagram and create part of class diagram |
+| 2023-07-28 | 3.0 hour(s) | Complete class diagram, create RxJava streams example, and fix home map filters |
+| 2023-07-29 | 1.5 hour(s) | Fix navigation again |
