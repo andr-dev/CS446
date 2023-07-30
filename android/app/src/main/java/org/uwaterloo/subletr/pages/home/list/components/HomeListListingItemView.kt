@@ -1,6 +1,5 @@
 package org.uwaterloo.subletr.pages.home.list.components
 
-import android.graphics.Bitmap
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -33,10 +32,10 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import org.uwaterloo.subletr.R
-import org.uwaterloo.subletr.api.models.ListingSummary
 import org.uwaterloo.subletr.api.models.ResidenceType
 import org.uwaterloo.subletr.components.button.SecondaryButton
 import org.uwaterloo.subletr.navigation.NavigationDestination
+import org.uwaterloo.subletr.pages.home.HomePageUiState
 import org.uwaterloo.subletr.pages.home.list.HomeListChildViewModel
 import org.uwaterloo.subletr.pages.home.list.dateTimeFormatter
 import org.uwaterloo.subletr.theme.listingDescriptionFont
@@ -46,8 +45,7 @@ import org.uwaterloo.subletr.theme.subletrPalette
 @Composable
 fun HomeListListingItemView(
 	modifier: Modifier = Modifier,
-	listingSummary: ListingSummary,
-	listingImage: Bitmap?,
+	listingItem: HomePageUiState.ListingItem,
 	viewModel: HomeListChildViewModel,
 ) {
 	Box(
@@ -79,7 +77,7 @@ fun HomeListListingItemView(
 				modifier = Modifier
 					.fillMaxWidth(1.0f),
 			) {
-				if (listingImage != null) {
+				if (listingItem.image != null) {
 					Image(
 						modifier = Modifier
 							.height(dimensionResource(id = R.dimen.xxxl))
@@ -89,7 +87,7 @@ fun HomeListListingItemView(
 									size = dimensionResource(id = R.dimen.xxs),
 								),
 							),
-						bitmap = listingImage.asImageBitmap(),
+						bitmap = listingItem.image.asImageBitmap(),
 						contentDescription = stringResource(id = R.string.listing_image),
 						contentScale = ContentScale.Crop,
 					)
@@ -126,7 +124,7 @@ fun HomeListListingItemView(
 
 				) {
 					Text(
-						text = listingSummary.address,
+						text = listingItem.summary.address,
 						style = listingTitleFont,
 						overflow = TextOverflow.Clip,
 						textAlign = TextAlign.Start,
@@ -135,15 +133,15 @@ fun HomeListListingItemView(
 					Text(
 						stringResource(
 							id = R.string.dollar_sign_n,
-							listingSummary.price,
+							listingItem.summary.price,
 						),
 						style = listingTitleFont,
 					)
 					Text(
 						text = stringResource(
 							id = R.string.short_for_all_date_range,
-							dateTimeFormatter(listingSummary.leaseStart),
-							dateTimeFormatter(offsetDateTime = listingSummary.leaseEnd),
+							dateTimeFormatter(listingItem.summary.leaseStart),
+							dateTimeFormatter(offsetDateTime = listingItem.summary.leaseEnd),
 						),
 						style = MaterialTheme.typography.bodyLarge,
 						color = MaterialTheme.subletrPalette.primaryTextColor,
@@ -166,8 +164,8 @@ fun HomeListListingItemView(
 				Text(
 					pluralStringResource(
 						id = R.plurals.n_bedrooms,
-						count = listingSummary.roomsAvailable,
-						listingSummary.roomsAvailable,
+						count = listingItem.summary.roomsAvailable,
+						listingItem.summary.roomsAvailable,
 					),
 					style = listingDescriptionFont,
 				)
@@ -175,7 +173,7 @@ fun HomeListListingItemView(
 				Icon(
 					painter = painterResource(
 						id =
-						when (listingSummary.residenceType) {
+						when (listingItem.summary.residenceType) {
 							ResidenceType.apartment -> R.drawable.apartment_solid_gray_16
 							ResidenceType.other -> R.drawable.other_houses_solid_gray_16
 							else -> R.drawable.home_outline_gray_16
@@ -185,7 +183,7 @@ fun HomeListListingItemView(
 					tint = MaterialTheme.subletrPalette.secondaryTextColor,
 				)
 				Text(
-					text = listingSummary.residenceType.value,
+					text = listingItem.summary.residenceType.value,
 					style = listingDescriptionFont,
 				)
 			}
@@ -203,7 +201,7 @@ fun HomeListListingItemView(
 					),
 					onClick = {
 						viewModel.navHostController.navigate(
-							route = "${NavigationDestination.LISTING_DETAILS.rootNavPath}/${listingSummary.listingId}"
+							route = "${NavigationDestination.LISTING_DETAILS.rootNavPath}/${listingItem.summary.listingId}"
 						)
 					},
 				) {
@@ -224,7 +222,7 @@ fun HomeListListingItemView(
 					),
 					iconId = R.drawable.chat_bubble_outline_gray_24,
 					onClick = {
-						viewModel.navigateToChatStream.onNext(listingSummary.listingId)
+						viewModel.navigateToChatStream.onNext(listingItem.summary.listingId)
 					},
 					contentDescription = stringResource(id = R.string.chat_icon),
 				)

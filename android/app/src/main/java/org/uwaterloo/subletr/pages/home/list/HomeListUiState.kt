@@ -8,7 +8,7 @@ sealed interface HomeListUiState: HomePageUiState {
 	data class Loaded(
 		val addressSearch: String,
 		val filters: HomePageUiState.FiltersModel,
-		val listingItems: HomePageUiState.ListingItemsModel,
+		val listingItems: List<HomePageUiState.ListingItem>,
 	) : HomeListUiState
 
 	object Failed : HomeListUiState

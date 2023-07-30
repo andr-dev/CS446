@@ -159,13 +159,7 @@ fun LoginPageViewLoadedPreview() {
 		HomePageView(
 			uiState = HomeListUiState.Loaded(
 				addressSearch = "",
-				listingItems = HomePageUiState.ListingItemsModel(
-					listings = emptyList(),
-					likedListings = emptySet(),
-					listingsImages = emptyList(),
-					selectedListings = emptyList(),
-					timeToDestination = emptyList(),
-				),
+				listingItems = emptyList(),
 				filters = HomePageUiState.FiltersModel(
 					locationRange = HomePageUiState.LocationRange(),
 					priceRange = HomePageUiState.PriceRange(),

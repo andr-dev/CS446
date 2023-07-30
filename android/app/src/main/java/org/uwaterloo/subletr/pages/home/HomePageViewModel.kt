@@ -28,7 +28,6 @@ import org.uwaterloo.subletr.services.INavigationService
 import org.uwaterloo.subletr.utils.UWATERLOO_LATITUDE
 import org.uwaterloo.subletr.utils.UWATERLOO_LONGITUDE
 import org.uwaterloo.subletr.utils.base64ToBitmap
-import java.lang.Integer.max
 import javax.inject.Inject
 
 @HiltViewModel
@@ -108,13 +107,7 @@ class HomePageViewModel @Inject constructor(
 			if (it.listingPagingParams.pageNumber == 0) {
 				it.copy(
 					listingPagingParams = it.listingPagingParams.copy(
-						previousListingItemsModel = HomePageUiState.ListingItemsModel(
-							listings = emptyList(),
-							likedListings = emptySet(),
-							listingsImages = emptyList(),
-							timeToDestination = emptyList(),
-							selectedListings = emptyList(),
-						)
+						previousListingItemsModel = emptyList()
 					)
 				)
 			}
@@ -221,23 +214,31 @@ class HomePageViewModel @Inject constructor(
 		.onErrorResumeWith(Observable.never())
 		.subscribeOn(Schedulers.io())
 
-	private val imagesStream: Observable<List<Bitmap?>> = listingsStream
+	private val imagesStream: Observable<List<Pair<Int, Bitmap?>>> = listingsStream
 		.map {
 			runBlocking {
 				it.listingsResponse.listings
 					.map { l: ListingSummary ->
 						async {
-							runCatching {
-								listingsApi.listingsImagesGet(l.imgIds.first())
-							}.getOrNull()
+							Pair(
+								l.listingId,
+								runCatching {
+									listingsApi.listingsImagesGet(l.imgIds.first())
+								}.getOrNull()
+							)
 						}
 					}.awaitAll()
 			}
 		}
 		.subscribeOn(Schedulers.io())
 		.observeOn(Schedulers.computation())
-		.map { base64ImageList: List<String?> ->
-			base64ImageList.map { it?.base64ToBitmap() }
+		.map { base64ImageList: List<Pair<Int, String?>> ->
+			base64ImageList.map { (listingId: Int, base64Image: String?) ->
+				Pair(
+					listingId,
+					base64Image?.base64ToBitmap()
+				)
+			}
 		}
 		.observeOn(Schedulers.io())
 		.onErrorResumeWith(Observable.never())
@@ -247,143 +248,88 @@ class HomePageViewModel @Inject constructor(
 			listingsStream,
 			imagesStream,
 		) { listingParamsAndResponse, images ->
+			val getTimeToDestination: (ListingSummary) -> Float = {
+				when (listingParamsAndResponse.listingParams.transportationMethod) {
+					HomePageUiState.TransportationMethod.WALK -> {
+						it.distanceMeters / WALKING_METRES_PER_MINUTE
+					}
+					HomePageUiState.TransportationMethod.BIKE -> {
+						it.distanceMeters / CYCLING_METRES_PER_MINUTE
+					}
+					HomePageUiState.TransportationMethod.BUS -> {
+						it.distanceMeters / BUS_METRES_PER_MINUTE
+					}
+					HomePageUiState.TransportationMethod.CAR -> {
+						it.distanceMeters / DRIVING_METRES_PER_MINUTE
+					}
+				}
+			}
+
+			val newListingItems = (
+				listingParamsAndResponse
+					.listingParams
+					.listingPagingParams
+					.previousListingItemsModel +
+					listingParamsAndResponse.listingsResponse.listings.map {
+						HomePageUiState.ListingItem(
+							summary = it,
+							timeToDestination = getTimeToDestination(it),
+						)
+					}
+				).map {
+					images.forEach { (listingId: Int, imageBitmap: Bitmap?) ->
+						if (it.summary.listingId == listingId) {
+							return@map it.copy(
+								image = imageBitmap,
+							)
+						}
+					}
+					it
+				}
+				.map {
+					if (
+						listingParamsAndResponse.listingsResponse.liked.contains(
+							element = it.summary.listingId.toString(),
+						)
+					) {
+						it.copy(liked = true)
+					}
+					else {
+						it
+					}
+				}
+
 			when (listingParamsAndResponse.listingParams.homePageView) {
 				HomePageUiState.HomePageViewType.LIST -> {
 					uiStateStream.onNext(
 						HomeListUiState.Loaded(
 							addressSearch = listingParamsAndResponse.listingParams.filters.addressSearch ?: "",
 							filters = listingParamsAndResponse.listingParams.filters,
-							listingItems = HomePageUiState.ListingItemsModel(
-								listings = listingParamsAndResponse.listingParams.listingPagingParams.previousListingItemsModel.listings +
-									listingParamsAndResponse.listingsResponse.listings,
-								likedListings = listingParamsAndResponse
-									.listingParams
-									.listingPagingParams
-									.previousListingItemsModel
-									.likedListings +
-									listingParamsAndResponse.listingsResponse.liked,
-								listingsImages = listingParamsAndResponse
-									.listingParams.listingPagingParams.previousListingItemsModel.listingsImages +
-										images,
-								selectedListings = emptyList(),
-								timeToDestination = emptyList(),
-							),
+							listingItems = newListingItems,
 						)
 					)
 				}
 				HomePageUiState.HomePageViewType.MAP -> {
-					val newListings = listingParamsAndResponse
-						.listingParams
-						.listingPagingParams
-						.previousListingItemsModel
-						.listings +
-						listingParamsAndResponse.listingsResponse.listings
-					val newLikedListings = listingParamsAndResponse
-						.listingParams
-						.listingPagingParams
-						.previousListingItemsModel
-						.likedListings +
-						listingParamsAndResponse.listingsResponse.liked
-					val newListingImages = listingParamsAndResponse
-						.listingParams
-						.listingPagingParams
-						.previousListingItemsModel
-						.listingsImages +
-						images
-					val newSelectedListings = listingParamsAndResponse
-						.listingParams
-						.listingPagingParams
-						.previousListingItemsModel
-						.selectedListings +
-						List(
-							size = max(
-								newListings.size -
-									listingParamsAndResponse
-										.listingParams
-										.listingPagingParams
-										.previousListingItemsModel
-										.selectedListings
-										.size,
-								0)
-						) { false }
-					val newTimeToDestination = newListings.map {
-						when (listingParamsAndResponse.listingParams.transportationMethod) {
-							HomePageUiState.TransportationMethod.WALK -> {
-								it.distanceMeters / WALKING_METRES_PER_MINUTE
-							}
-							HomePageUiState.TransportationMethod.BIKE -> {
-								it.distanceMeters / CYCLING_METRES_PER_MINUTE
-							}
-							HomePageUiState.TransportationMethod.BUS -> {
-								it.distanceMeters / BUS_METRES_PER_MINUTE
-							}
-							HomePageUiState.TransportationMethod.CAR -> {
-								it.distanceMeters / DRIVING_METRES_PER_MINUTE
-							}
-						}
-					}
-
-					val filteredListings = if (
-						(listingParamsAndResponse
-							.listingParams
-							.filters
-							.timeToDestination ?: 200.0f) < 180
-					) {
-						newListings.filterIndexed { index, item ->
-							newTimeToDestination.getOrElse(index) { 200.0f } <
+					val filteredListingItems = newListingItems.filter {
+						if ((listingParamsAndResponse
+								.listingParams
+								.filters
+								.timeToDestination ?: 200.0f) < 180) {
+							it.timeToDestination <
 								(listingParamsAndResponse
 									.listingParams
 									.filters
 									.timeToDestination ?: 210.0f)
 						}
-					} else {
-						newListings
-					}
-
-					val filteredListingImages = if (
-						(listingParamsAndResponse
-							.listingParams
-							.filters
-							.timeToDestination ?: 200.0f) < 180
-					) {
-						newListingImages.filterIndexed { index, item ->
-							newTimeToDestination.getOrElse(index) { 200.0f } <
-								(listingParamsAndResponse
-									.listingParams
-									.filters
-									.timeToDestination ?: 210.0f)
+						else {
+							true
 						}
-					} else {
-						newListingImages
-					}
-
-					val filteredTimeToDestination = if (
-					(listingParamsAndResponse
-						.listingParams
-						.filters
-						.timeToDestination ?: 200.0f) < 180
-					) {
-						newTimeToDestination.filter { item: Float ->
-							item <
-								(listingParamsAndResponse
-									.listingParams
-									.filters
-									.timeToDestination ?: 210.0f)
-						}
-					} else {
-						newTimeToDestination
 					}
 
 					uiStateStream.onNext(
 						HomeMapUiState.Loaded(
 							filters = listingParamsAndResponse.listingParams.filters,
-							listingItems = HomePageUiState.ListingItemsModel(
-								listings = filteredListings,
-								likedListings = newLikedListings,
-								listingsImages = filteredListingImages,
-								selectedListings = newSelectedListings,
-								timeToDestination = filteredTimeToDestination,
-							),
+							listingItems = filteredListingItems,
 							transportationMethod = listingParamsAndResponse.listingParams.transportationMethod,
 							addressSearch = listingParamsAndResponse.listingParams.filters.addressSearch ?: "",
 							timeToDestination = listingParamsAndResponse.listingParams.filters.timeToDestination
@@ -441,19 +387,13 @@ class HomePageViewModel @Inject constructor(
 		val homePageView: HomePageUiState.HomePageViewType,
 		val transportationMethod: HomePageUiState.TransportationMethod,
 		val listingPagingParams: ListingPagingParams = ListingPagingParams(
-			previousListingItemsModel = HomePageUiState.ListingItemsModel(
-				listings = listOf(),
-				likedListings = setOf(),
-				listingsImages = listOf(),
-				selectedListings = emptyList(),
-				timeToDestination = emptyList(),
-			),
+			previousListingItemsModel = emptyList(),
 			pageNumber = 0,
 		),
 	)
 
 	data class ListingPagingParams(
-		val previousListingItemsModel: HomePageUiState.ListingItemsModel,
+		val previousListingItemsModel: List<HomePageUiState.ListingItem>,
 		val pageNumber: Int,
 	)
 

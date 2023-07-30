@@ -10,6 +10,6 @@ interface HomeMapUiState: HomePageUiState {
 		val transportationMethod: HomePageUiState.TransportationMethod,
 		val timeToDestination: Float,
 		val filters: HomePageUiState.FiltersModel,
-		val listingItems: HomePageUiState.ListingItemsModel,
+		val listingItems: List<HomePageUiState.ListingItem>,
 	) : HomeMapUiState
 }

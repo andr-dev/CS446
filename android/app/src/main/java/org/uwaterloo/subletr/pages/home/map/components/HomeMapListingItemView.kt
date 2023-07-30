@@ -1,6 +1,5 @@
 package org.uwaterloo.subletr.pages.home.map.components
 
-import android.graphics.Bitmap
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -38,9 +37,9 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import org.uwaterloo.subletr.R
-import org.uwaterloo.subletr.api.models.ListingSummary
 import org.uwaterloo.subletr.components.button.SecondaryButton
 import org.uwaterloo.subletr.navigation.NavigationDestination
+import org.uwaterloo.subletr.pages.home.HomePageUiState
 import org.uwaterloo.subletr.pages.home.list.dateTimeFormatter
 import org.uwaterloo.subletr.pages.home.map.HomeMapChildViewModel
 import org.uwaterloo.subletr.theme.listingTitleFont
@@ -50,10 +49,7 @@ import kotlin.math.roundToInt
 @Composable
 fun HomeMapListingItemView(
 	modifier: Modifier = Modifier,
-	listingSummary: ListingSummary,
-	listingImage: Bitmap?,
-	selected: Boolean,
-	timeToDestination: Float?,
+	listingItem: HomePageUiState.ListingItem,
 	viewModel: HomeMapChildViewModel,
 	setSelected: (Boolean) -> Unit,
 ) {
@@ -64,14 +60,14 @@ fun HomeMapListingItemView(
 			.border(
 				width = dimensionResource(id = R.dimen.xxxs),
 				shape = RoundedCornerShape(size = dimensionResource(id = R.dimen.xxs)),
-				color = if (selected) MaterialTheme.subletrPalette.subletrPink else Color.Transparent,
+				color = if (listingItem.selected) MaterialTheme.subletrPalette.subletrPink else Color.Transparent,
 			),
 		onClick = {
-		  	setSelected(!selected)
+			setSelected(!listingItem.selected)
 		},
 		colors = ButtonDefaults.buttonColors(
 			containerColor =
-			if (selected) MaterialTheme.subletrPalette.primaryBackgroundColor
+			if (listingItem.selected) MaterialTheme.subletrPalette.primaryBackgroundColor
 			else MaterialTheme.subletrPalette.secondaryButtonBackgroundColor,
 			contentColor = MaterialTheme.subletrPalette.primaryTextColor,
 		),
@@ -88,7 +84,7 @@ fun HomeMapListingItemView(
 					.padding(top = dimensionResource(id = R.dimen.xxs)),
 				verticalAlignment = Alignment.CenterVertically,
 			) {
-				if (listingImage != null) {
+				if (listingItem.image != null) {
 					Image(
 						modifier = Modifier
 							.height(dimensionResource(id = R.dimen.xxxl))
@@ -96,12 +92,11 @@ fun HomeMapListingItemView(
 							.clip(
 								shape = RoundedCornerShape(size = dimensionResource(id = R.dimen.xxs)),
 							),
-						bitmap = listingImage.asImageBitmap(),
+						bitmap = listingItem.image.asImageBitmap(),
 						contentDescription = stringResource(id = R.string.listing_image),
 						contentScale = ContentScale.Crop,
 					)
-				}
-				else {
+				} else {
 					Image(
 						modifier = Modifier
 							.height(dimensionResource(id = R.dimen.xxxl))
@@ -130,7 +125,7 @@ fun HomeMapListingItemView(
 					verticalArrangement = Arrangement.Center,
 				) {
 					Text(
-						text = listingSummary.address,
+						text = listingItem.summary.address,
 						style = listingTitleFont,
 						overflow = TextOverflow.Clip,
 						textAlign = TextAlign.Start,
@@ -139,7 +134,7 @@ fun HomeMapListingItemView(
 					Text(
 						stringResource(
 							id = R.string.dollar_sign_n,
-							listingSummary.price,
+							listingItem.summary.price,
 						),
 						style = listingTitleFont,
 					)
@@ -155,16 +150,10 @@ fun HomeMapListingItemView(
 						)
 						Spacer(modifier = Modifier.width(dimensionResource(id = R.dimen.xxs)))
 						Text(
-							text = if (timeToDestination != null) {
-								stringResource(
-									id = R.string.n_minutes,
-									timeToDestination.roundToInt(),
-								)
-							} else {
-								stringResource(
-									id = R.string.time_not_available,
-								)
-						    },
+							text = stringResource(
+								id = R.string.n_minutes,
+								listingItem.timeToDestination.roundToInt(),
+							),
 							style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Bold),
 							color = MaterialTheme.subletrPalette.primaryTextColor,
 						)
@@ -173,10 +162,10 @@ fun HomeMapListingItemView(
 						text = stringResource(
 							id = R.string.short_for_all_date_range,
 							dateTimeFormatter(
-								offsetDateTime = listingSummary.leaseStart,
+								offsetDateTime = listingItem.summary.leaseStart,
 							),
 							dateTimeFormatter(
-								offsetDateTime = listingSummary.leaseEnd,
+								offsetDateTime = listingItem.summary.leaseEnd,
 							),
 						),
 						style = MaterialTheme.typography.bodyLarge,
@@ -199,17 +188,17 @@ fun HomeMapListingItemView(
 						.fillMaxHeight(fraction = 1.0f),
 					colors = ButtonDefaults.buttonColors(
 						containerColor =
-						if (selected) MaterialTheme.subletrPalette.primaryBackgroundColor
+						if (listingItem.selected) MaterialTheme.subletrPalette.primaryBackgroundColor
 						else MaterialTheme.subletrPalette.darkerGrayButtonColor,
 						contentColor = MaterialTheme.subletrPalette.primaryTextColor,
 					),
 					border = BorderStroke(
 						width = dimensionResource(id = R.dimen.xxxs),
-						color = if (selected) MaterialTheme.subletrPalette.primaryTextColor else Color.Transparent,
+						color = if (listingItem.selected) MaterialTheme.subletrPalette.primaryTextColor else Color.Transparent,
 					),
 					onClick = {
 						viewModel.navHostController.navigate(
-							route = "${NavigationDestination.LISTING_DETAILS.rootNavPath}/${listingSummary.listingId}"
+							route = "${NavigationDestination.LISTING_DETAILS.rootNavPath}/${listingItem.summary.listingId}"
 						)
 					},
 				) {
@@ -226,7 +215,7 @@ fun HomeMapListingItemView(
 						.border(
 							width = dimensionResource(id = R.dimen.xxxs),
 							shape = RoundedCornerShape(dimensionResource(id = R.dimen.xl)),
-							color = if (selected) MaterialTheme.subletrPalette.primaryTextColor else Color.Transparent,
+							color = if (listingItem.selected) MaterialTheme.subletrPalette.primaryTextColor else Color.Transparent,
 						)
 						.weight(weight = 0.5f),
 				) {
@@ -234,12 +223,12 @@ fun HomeMapListingItemView(
 						modifier = Modifier
 							.background(
 								color =
-								if (selected) MaterialTheme.subletrPalette.primaryBackgroundColor
+								if (listingItem.selected) MaterialTheme.subletrPalette.primaryBackgroundColor
 								else MaterialTheme.subletrPalette.darkerGrayButtonColor,
 							)
 							.fillMaxWidth(fraction = 1.0f),
 						onClick = {
-					    	viewModel.navigateToChatStream.onNext(listingSummary.listingId)
+							viewModel.navigateToChatStream.onNext(listingItem.summary.listingId)
 						},
 					) {
 						Icon(
@@ -256,19 +245,19 @@ fun HomeMapListingItemView(
 						.border(
 							width = dimensionResource(id = R.dimen.xxxs),
 							shape = RoundedCornerShape(dimensionResource(id = R.dimen.xl)),
-							color = if (selected) MaterialTheme.subletrPalette.primaryTextColor else Color.Transparent,
+							color = if (listingItem.selected) MaterialTheme.subletrPalette.primaryTextColor else Color.Transparent,
 						),
 				) {
 					IconButton(
 						modifier = Modifier
 							.background(
 								color =
-								if (selected) MaterialTheme.subletrPalette.primaryBackgroundColor
+								if (listingItem.selected) MaterialTheme.subletrPalette.primaryBackgroundColor
 								else MaterialTheme.subletrPalette.darkerGrayButtonColor,
 							)
 							.fillMaxWidth(fraction = 1.0f),
 						onClick = {
-							  /*TODO*/
+							/*TODO*/
 						},
 					) {
 						Icon(
