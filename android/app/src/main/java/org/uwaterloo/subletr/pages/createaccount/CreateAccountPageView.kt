@@ -154,16 +154,9 @@ fun CreateAccountPageView(
 				modifier = Modifier.height(dimensionResource(id = R.dimen.xs))
 			)
 
-			RoundedExposedDropdown(
-				modifier = Modifier
-					.fillMaxWidth(ELEMENT_WIDTH),
-				dropdownItems = Gender.values(),
-				labelId = R.string.gender,
-				selectedDropdownItem = uiState.gender,
-				dropdownItemToString = { stringResource(id = it.stringId)},
-				setSelectedDropdownItem = {
-					viewModel.genderStream.onNext(it)
-				},
+			GenderSelector(
+				uiState = uiState,
+				viewModel = viewModel,
 			)
 
 			Spacer(
@@ -290,7 +283,7 @@ fun PasswordInputBox(
 
 	) {
 	RoundedPasswordTextField(
-		modifier = Modifier
+		modifier = modifier
 			.fillMaxWidth(ELEMENT_WIDTH),
 		label = {
 			Text(
@@ -312,6 +305,26 @@ fun PasswordInputBox(
 		},
 	)
 }
+
+@Composable
+fun GenderSelector(
+	modifier: Modifier = Modifier,
+	uiState: CreateAccountPageUiState.Loaded,
+	viewModel: CreateAccountPageViewModel,
+) {
+	RoundedExposedDropdown(
+		modifier = modifier
+			.fillMaxWidth(ELEMENT_WIDTH),
+		dropdownItems = Gender.values(),
+		labelId = R.string.gender,
+		selectedDropdownItem = uiState.gender,
+		dropdownItemToString = { stringResource(id = it.stringId)},
+		setSelectedDropdownItem = {
+			viewModel.genderStream.onNext(it)
+		},
+	)
+}
+
 @Preview(showBackground = true)
 @Composable
 fun CreateAccountPagePreview() {
