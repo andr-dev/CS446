@@ -40,4 +40,5 @@
 | 2023-07-26 | 4.0 hour(s) | Plan, record, edit, and submit demo video for deliverable 6 |
 | 2023-07-27 | 4.5 hour(s) | Update component diagram and create part of class diagram |
 | 2023-07-28 | 3.0 hour(s) | Complete class diagram, create RxJava streams example, and fix home map filters |
-| 2023-07-29 | 1.5 hour(s) | Fix navigation again |
+| 2023-07-30 | 1.5 hour(s) | Refactor Home Page View Model |
+| 2023-08-01 | 2.0 hour(s) | Worked on deliverable 7 |
