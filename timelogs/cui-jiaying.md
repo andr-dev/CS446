@@ -24,3 +24,4 @@
 | July 24th | 45 mins | create verified User posts filter|
 | July 26th | 4 hours | finish d6 demo|
 | July 26th | 1 hours | update d6 documents|
+| Aug 1st | 1 hour | Worked on D7 document |
