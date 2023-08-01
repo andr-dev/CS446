@@ -72,6 +72,8 @@ fun HomePageView(
 			}
 		},
 		content = { padding: PaddingValues ->
+			LaunchedEffect(key1 = true, block = { viewModel.updateListingIdStream.onNext(Unit) })
+
 			when (uiState) {
 				is HomeListUiState.Failed -> {
 					LaunchedEffect(key1 = true) {
@@ -174,6 +176,7 @@ fun LoginPageViewLoadedPreview() {
 					showVerifiedOnly = false,
 					computedLatLng = null,
 				),
+				userListingId = null,
 			),
 		)
 	}

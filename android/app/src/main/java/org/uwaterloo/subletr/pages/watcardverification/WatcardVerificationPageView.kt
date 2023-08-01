@@ -121,6 +121,15 @@ fun WatcardVerificationPageView(
 				uiState = uiState,
 				viewModel = viewModel,
 			)
+
+			Spacer(modifier = Modifier.weight(3.0f))
+
+			SecondaryButton(onClick = {
+				viewModel.navHostController.navigate(NavigationDestination.HOME.fullNavPath)
+			}) {
+				Text(text = stringResource(id = R.string.cancel))
+			}
+
 			Spacer(modifier = Modifier.weight(8.0f))
 		}
 	}
@@ -164,7 +173,7 @@ fun SetContent(
 				width = dimensionResource(id = R.dimen.xxxs),
 			)
 			.background(MaterialTheme.subletrPalette.secondaryButtonBackgroundColor)
-			.clickable (
+			.clickable(
 				enabled = !uiState.submitted
 			) {
 				openImagePicker = true

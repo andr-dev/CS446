@@ -9,6 +9,7 @@ sealed interface HomeListUiState: HomePageUiState {
 		val addressSearch: String,
 		val filters: HomePageUiState.FiltersModel,
 		val listingItems: List<HomePageUiState.ListingItem>,
+		val userListingId: Int?,
 	) : HomeListUiState
 
 	object Failed : HomeListUiState

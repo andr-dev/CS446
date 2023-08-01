@@ -11,5 +11,6 @@ interface HomeMapUiState: HomePageUiState {
 		val timeToDestination: Float,
 		val filters: HomePageUiState.FiltersModel,
 		val listingItems: List<HomePageUiState.ListingItem>,
+		val userListingId: Int?,
 	) : HomeMapUiState
 }

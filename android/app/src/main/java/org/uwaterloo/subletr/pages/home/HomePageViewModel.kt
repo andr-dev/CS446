@@ -12,6 +12,7 @@ import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.runBlocking
 import org.uwaterloo.subletr.api.apis.GeocodeApi
 import org.uwaterloo.subletr.api.apis.ListingsApi
+import org.uwaterloo.subletr.api.apis.UserApi
 import org.uwaterloo.subletr.api.models.GetListingsResponse
 import org.uwaterloo.subletr.api.models.ListingSummary
 import org.uwaterloo.subletr.enums.Gender
@@ -28,7 +29,9 @@ import org.uwaterloo.subletr.services.INavigationService
 import org.uwaterloo.subletr.utils.UWATERLOO_LATITUDE
 import org.uwaterloo.subletr.utils.UWATERLOO_LONGITUDE
 import org.uwaterloo.subletr.utils.base64ToBitmap
+import java.util.Optional
 import javax.inject.Inject
+import kotlin.jvm.optionals.getOrNull
 
 @HiltViewModel
 class HomePageViewModel @Inject constructor(
@@ -37,11 +40,28 @@ class HomePageViewModel @Inject constructor(
 	val homeMapChildViewModel: HomeMapChildViewModel,
 	private val listingsApi: ListingsApi,
 	private val geocodeApi: GeocodeApi,
+	private val userApi: UserApi,
 ) : SubletrViewModel<HomePageUiState>(
 	homeListChildViewModel,
 	homeMapChildViewModel,
 ) {
 	val navHostController: NavHostController get() = navigationService.navHostController
+
+	val updateListingIdStream: BehaviorSubject<Unit> = BehaviorSubject.createDefault(Unit)
+
+	val userListingIdStream: Observable<Optional<Int>> = updateListingIdStream.map {
+		val userGetResponse = runCatching {
+			runBlocking {
+				userApi.userGet()
+			}
+		}
+			.getOrNull()
+		if (userGetResponse?.listingId != null) {
+			Optional.of(userGetResponse.listingId)
+		} else {
+			Optional.empty()
+		}
+	}
 
 	private val navigateToChatStream = Observable.merge(
 		homeListChildViewModel.navigateToChatStream,
@@ -247,7 +267,8 @@ class HomePageViewModel @Inject constructor(
 		Observable.combineLatest(
 			listingsStream,
 			imagesStream,
-		) { listingParamsAndResponse, images ->
+			userListingIdStream,
+		) { listingParamsAndResponse, images, userListingId ->
 			val getTimeToDestination: (ListingSummary) -> Float = {
 				when (listingParamsAndResponse.listingParams.transportationMethod) {
 					HomePageUiState.TransportationMethod.WALK -> {
@@ -306,6 +327,7 @@ class HomePageViewModel @Inject constructor(
 							addressSearch = listingParamsAndResponse.listingParams.filters.addressSearch ?: "",
 							filters = listingParamsAndResponse.listingParams.filters,
 							listingItems = newListingItems,
+							userListingId = userListingId.getOrNull(),
 						)
 					)
 				}
@@ -333,7 +355,8 @@ class HomePageViewModel @Inject constructor(
 							transportationMethod = listingParamsAndResponse.listingParams.transportationMethod,
 							addressSearch = listingParamsAndResponse.listingParams.filters.addressSearch ?: "",
 							timeToDestination = listingParamsAndResponse.listingParams.filters.timeToDestination
-								?: MAX_DISTANCE_IN_MINUTES
+								?: MAX_DISTANCE_IN_MINUTES,
+							userListingId = userListingId.getOrNull(),
 						)
 					)
 				}
@@ -358,7 +381,8 @@ class HomePageViewModel @Inject constructor(
 					filters = uiState.filters,
 					listingItems = uiState.listingItems,
 					timeToDestination = uiState.filters.timeToDestination
-						?: MAX_DISTANCE_IN_MINUTES
+						?: MAX_DISTANCE_IN_MINUTES,
+					userListingId = uiState.userListingId
 				)
 			)
 		}
@@ -376,6 +400,7 @@ class HomePageViewModel @Inject constructor(
 					addressSearch = uiState.addressSearch,
 					filters = uiState.filters,
 					listingItems = uiState.listingItems,
+					userListingId = uiState.userListingId,
 				)
 			)
 		}
