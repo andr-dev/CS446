@@ -43,3 +43,5 @@
 |2023-07-26| 4 hours (12:00 - 4:00) | Worked on debugging and D6 final presentation |
 |2023-07-27| 2 hours (16:00 - 18:00) | Fixed update listing and account page bugs and worked on D6 document |
 |2023-07-28| 2 hours (13:00 - 15:00) | Worked on D6 document |
+|2023-08-31| 1 hour (18:00 - 19:00) | Worked on D7 document |
+|2023-08-01| 2 hour (14:00 - 16:00) | Worked on D7 document and updated add icon to edit on homepage when user has listing |
