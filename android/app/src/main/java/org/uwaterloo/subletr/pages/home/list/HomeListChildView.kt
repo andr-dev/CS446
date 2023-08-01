@@ -25,6 +25,7 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FabPosition
 import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Scaffold
@@ -42,6 +43,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.dimensionResource
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.tooling.preview.Preview
@@ -115,19 +117,36 @@ fun HomeListChildView(
 					all = dimensionResource(id = R.dimen.zero),
 				),
 				onClick = {
-					viewModel.navHostController.navigate(NavigationDestination.CREATE_LISTING.fullNavPath)
+					if (uiState is HomeListUiState.Loaded && uiState.userListingId != null) {
+						viewModel.navHostController.navigate(
+							route = "${NavigationDestination.MANAGE_LISTING.rootNavPath}/${uiState.userListingId}"
+						)
+					} else {
+						viewModel.navHostController.navigate(NavigationDestination.CREATE_LISTING.fullNavPath)
+					}
 				},
 				shape = CircleShape,
 				containerColor = MaterialTheme.subletrPalette.subletrPink,
 				contentColor = MaterialTheme.subletrPalette.textOnSubletrPink,
 			) {
-				Text(
-					stringResource(id = R.string.plus_sign),
-					style = TextStyle(
-						fontSize = 24.sp
-					),
-					color = MaterialTheme.subletrPalette.textOnSubletrPink,
-				)
+				if (uiState is HomeListUiState.Loaded && uiState.userListingId != null) {
+					Icon(
+						painter = painterResource(
+							id = R.drawable.edit_outline_black_24
+						),
+						contentDescription = stringResource(id = R.string.edit),
+						tint = MaterialTheme.subletrPalette.textOnSubletrPink,
+					)
+				} else {
+					Text(
+						stringResource(id = R.string.plus_sign),
+						style = TextStyle(
+							fontSize = 24.sp
+						),
+						color = MaterialTheme.subletrPalette.textOnSubletrPink,
+					)
+				}
+
 			}
 		},
 		topBar = {
@@ -492,6 +511,7 @@ private fun HomeListViewPreview() {
 					showVerifiedOnly = false,
 					computedLatLng = null,
 				),
+				userListingId = null,
 			),
 		)
 	}
