@@ -25,3 +25,11 @@
 | Jul 12th | 2 hours (13:00 - 15:00) | Finalized listings definitions on backend          |
 | Jul 15th | 1 hour  (12:00 - 13:00) | Updated GetListingsRequest endpoint                |
 | Jul 17th | 4 hours (13:00 - 17:00) | Finalized existing endpoints + added geocoding api |
+| Jul 18th | 3 hours (15:00 - 18:00) | Added user avatar endpoint + anonymize listings    |
+| Jul 19th | 1 hour  (14:00 - 15:00) | Decreased geocode api precision + trim addresses   |
+| Jul 20th | 1 hour  (10:00 - 11:00) | Fix HTTP error codes on server error               |
+| Jul 21th | 2 hours                 | Add user verified DB table + route                 |
+| Jul 23th | 3 hours (12:00 - 15:00) | Added watcard upload + admin verify endpoint       |
+| Jul 24th | 2 hour  (13:00 - 14:00) | Added listings update / delete endpoints           |
+| Jul 26th | 1 hour  (10:00 - 11:00) | Fixed user_rating schema and address formatting    |
+| Jul 26th | 4 hours                 | Finish D6 demo with team                           |
