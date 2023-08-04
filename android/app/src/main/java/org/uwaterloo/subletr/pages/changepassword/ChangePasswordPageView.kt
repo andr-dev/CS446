@@ -24,11 +24,13 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
+import io.reactivex.rxjava3.subjects.BehaviorSubject
 import org.uwaterloo.subletr.R
 import org.uwaterloo.subletr.components.button.SecondaryButton
 import org.uwaterloo.subletr.components.textfield.UnderlinedPasswordTextField
 import org.uwaterloo.subletr.theme.changePasswordTopBarTitle
 import org.uwaterloo.subletr.theme.subletrPalette
+import kotlin.reflect.jvm.internal.impl.resolve.constants.StringValue
 
 @Composable
 fun ChangePasswordPageView(
@@ -92,19 +94,10 @@ fun ChangePasswordPageView(
 						.height(dimensionResource(id = R.dimen.l)),
 				)
 
-				UnderlinedPasswordTextField(
-					modifier = Modifier.fillMaxWidth(fraction = ELEMENT_WIDTH),
-					value = uiState.oldPassword,
-					onValueChange = {
-						viewModel.oldPasswordStream.onNext(it)
-					},
-					label = {
-						Text(
-							modifier = Modifier,
-							text = stringResource(id = R.string.old_password),
-							color = MaterialTheme.subletrPalette.secondaryTextColor,
-						)
-					},
+				PasswordInputBox(
+					stringValue = uiState.oldPassword,
+					viewModelStream = viewModel.oldPasswordStream,
+					txtID = R.string.old_password,
 				)
 
 				Spacer(
@@ -112,18 +105,10 @@ fun ChangePasswordPageView(
 						.height(dimensionResource(id = R.dimen.l)),
 				)
 
-				UnderlinedPasswordTextField(
-					modifier = Modifier.fillMaxWidth(fraction = ELEMENT_WIDTH),
-					value = uiState.newPassword,
-					onValueChange = {
-						viewModel.newPasswordStream.onNext(it)
-					},
-					label = {
-						Text(
-							text = stringResource(id = R.string.new_password),
-							color = MaterialTheme.subletrPalette.secondaryTextColor,
-						)
-					},
+				PasswordInputBox(
+					stringValue = uiState.newPassword,
+					viewModelStream = viewModel.newPasswordStream,
+					txtID = R.string.new_password,
 				)
 
 				Spacer(
@@ -131,18 +116,10 @@ fun ChangePasswordPageView(
 						.height(dimensionResource(id = R.dimen.l)),
 				)
 
-				UnderlinedPasswordTextField(
-					modifier = Modifier.fillMaxWidth(fraction = ELEMENT_WIDTH),
-					value = uiState.confirmNewPassword,
-					onValueChange = {
-						viewModel.confirmNewPasswordStream.onNext(it)
-					},
-					label = {
-						Text(
-							text = stringResource(id = R.string.confirm_new_password),
-							color = MaterialTheme.subletrPalette.secondaryTextColor,
-						)
-					},
+				PasswordInputBox(
+					stringValue = uiState.confirmNewPassword,
+					viewModelStream = viewModel.confirmNewPasswordStream,
+					txtID = R.string.confirm_password,
 				)
 
 				Spacer(
@@ -175,6 +152,28 @@ fun ChangePasswordPageView(
 
 private const val ELEMENT_WIDTH = 0.80f
 
+@Composable
+fun PasswordInputBox(
+	modifier: Modifier = Modifier,
+	stringValue: String,
+	viewModelStream: BehaviorSubject<String>,
+	txtID: Int,
+){
+	UnderlinedPasswordTextField(
+		modifier = modifier.fillMaxWidth(fraction = ELEMENT_WIDTH),
+		value = stringValue,
+		onValueChange = {
+			viewModelStream.onNext(it)
+		},
+		label = {
+			Text(
+				modifier = Modifier,
+				text = stringResource(id = txtID),
+				color = MaterialTheme.subletrPalette.secondaryTextColor,
+			)
+		},
+	)
+}
 @Preview(showBackground = true)
 @Composable
 fun ChangePasswordPageViewPreview() {

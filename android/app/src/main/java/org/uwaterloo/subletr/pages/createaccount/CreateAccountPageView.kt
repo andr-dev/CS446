@@ -11,7 +11,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -25,10 +24,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.navOptions
+import io.reactivex.rxjava3.subjects.BehaviorSubject
 import org.uwaterloo.subletr.R
 import org.uwaterloo.subletr.components.button.PrimaryButton
 import org.uwaterloo.subletr.components.dropdown.RoundedExposedDropdown
@@ -100,155 +99,64 @@ fun CreateAccountPageView(
 			)
 
 
-			RoundedTextField(
-				modifier = Modifier
-					.fillMaxWidth(ELEMENT_WIDTH),
-				label = {
-					Text(
-						text = stringResource(id = R.string.first_name),
-						color = MaterialTheme.subletrPalette.secondaryTextColor,
-					)
-				},
-				value = uiState.firstName,
-				onValueChange = {
-					viewModel.firstNameStream.onNext(it)
-				},
-				supportingText = {
-					if (uiState.firstNameInfoTextStringId != null) {
-						Text(
-							text = stringResource(id = uiState.firstNameInfoTextStringId),
-							color = MaterialTheme.subletrPalette.warningColor,
-						)
-					}
-				},
+			TextInputBox(
+				strValue = uiState.firstName,
+				viewModelStream = viewModel.firstNameStream,
+				infoTextToString = uiState.firstNameInfoTextStringId,
+				txtID = R.string.first_name
 			)
 
 			Spacer(
 				modifier = Modifier.height(dimensionResource(id = R.dimen.xs))
 			)
 
-			RoundedTextField(
-				modifier = Modifier
-					.fillMaxWidth(ELEMENT_WIDTH),
-				label = {
-					Text(
-						text = stringResource(id = R.string.last_name),
-						color = MaterialTheme.subletrPalette.secondaryTextColor,
-					)
-				},
-				value = uiState.lastName,
-				onValueChange = {
-					viewModel.lastNameStream.onNext(it)
-				},
-				supportingText = {
-					if (uiState.lastNameInfoTextStringId != null) {
-						Text(
-							text = stringResource(id = uiState.lastNameInfoTextStringId),
-							color = MaterialTheme.subletrPalette.warningColor,
-						)
-					}
-				},
+			TextInputBox(
+				strValue = uiState.lastName,
+				viewModelStream = viewModel.lastNameStream,
+				infoTextToString = uiState.lastNameInfoTextStringId,
+				txtID = R.string.last_name,
 			)
 
 			Spacer(
 				modifier = Modifier.height(dimensionResource(id = R.dimen.xs))
 			)
 
-			RoundedTextField(
-				modifier = Modifier
-					.fillMaxWidth(ELEMENT_WIDTH),
-				keyboardOptions = KeyboardOptions(
-					keyboardType = KeyboardType.Email,
-					autoCorrect = false,
-				),
-				label = {
-					Text(
-						text = stringResource(id = R.string.email),
-						color = MaterialTheme.subletrPalette.secondaryTextColor,
-					)
-				},
-				value = uiState.email,
-				onValueChange = {
-					viewModel.emailStream.onNext(it)
-				},
-				supportingText = {
-					if (uiState.emailInfoTextStringId != null) {
-						Text(
-							text = stringResource(id = uiState.emailInfoTextStringId),
-							color = MaterialTheme.subletrPalette.warningColor,
-						)
-					}
-				},
+			TextInputBox(
+				strValue = uiState.email,
+				viewModelStream = viewModel.emailStream,
+				infoTextToString = uiState.emailInfoTextStringId,
+				txtID = R.string.email,
 			)
 
 			Spacer(
 				modifier = Modifier.height(dimensionResource(id = R.dimen.xs))
 			)
 
-			RoundedPasswordTextField(
-				modifier = Modifier
-					.fillMaxWidth(ELEMENT_WIDTH),
-				label = {
-					Text(
-						text = stringResource(id = R.string.password),
-						color = MaterialTheme.subletrPalette.secondaryTextColor,
-					)
-				},
-				value = uiState.password,
-				onValueChange = {
-					viewModel.passwordStream.onNext(it)
-				},
-				supportingText = {
-					if (uiState.passwordInfoTextStringId != null) {
-						Text(
-							text = stringResource(id = uiState.passwordInfoTextStringId),
-							color = MaterialTheme.subletrPalette.warningColor,
-						)
-					}
-				},
+			PasswordInputBox(
+				strValue = uiState.password,
+				viewModelStream = viewModel.passwordStream,
+				infoTextToString = uiState.passwordInfoTextStringId,
+				txtID = R.string.password,
 			)
 
 			Spacer(
 				modifier = Modifier.height(dimensionResource(id = R.dimen.xs))
 			)
 
-			RoundedPasswordTextField(
-				modifier = Modifier
-					.fillMaxWidth(ELEMENT_WIDTH),
-				label = {
-					Text(
-						text = stringResource(id = R.string.confirm_password),
-						color = MaterialTheme.subletrPalette.secondaryTextColor,
-					)
-				},
-				value = uiState.confirmPassword,
-				onValueChange = {
-					viewModel.confirmPasswordStream.onNext(it)
-				},
-				supportingText = {
-					if (uiState.confirmPasswordInfoTextStringId != null) {
-						Text(
-							text = stringResource(id = uiState.confirmPasswordInfoTextStringId),
-							color = MaterialTheme.subletrPalette.warningColor,
-						)
-					}
-				},
+			PasswordInputBox(
+				strValue = uiState.confirmPassword,
+				viewModelStream = viewModel.confirmPasswordStream,
+				infoTextToString = uiState.confirmPasswordInfoTextStringId,
+				txtID = R.string.confirm_password,
 			)
 
 			Spacer(
 				modifier = Modifier.height(dimensionResource(id = R.dimen.xs))
 			)
 
-			RoundedExposedDropdown(
-				modifier = Modifier
-					.fillMaxWidth(ELEMENT_WIDTH),
-				dropdownItems = Gender.values(),
-				labelId = R.string.gender,
-				selectedDropdownItem = uiState.gender,
-				dropdownItemToString = { stringResource(id = it.stringId)},
-				setSelectedDropdownItem = {
-					viewModel.genderStream.onNext(it)
-				},
+			GenderSelector(
+				uiState = uiState,
+				viewModel = viewModel,
 			)
 
 			Spacer(
@@ -332,6 +240,90 @@ fun CreateAccountPageView(
 }
 
 private const val ELEMENT_WIDTH = 1.0f
+
+@Composable
+fun TextInputBox(
+	modifier: Modifier = Modifier,
+	strValue: String,
+	viewModelStream: BehaviorSubject<String>,
+	infoTextToString: Int?,
+	txtID: Int,
+) {
+	RoundedTextField(
+		modifier = modifier
+			.fillMaxWidth(ELEMENT_WIDTH),
+		label = {
+			Text(
+				text = stringResource(id = txtID),
+				color = MaterialTheme.subletrPalette.secondaryTextColor,
+			)
+		},
+		value = strValue,
+		onValueChange = {
+			viewModelStream.onNext(it)
+		},
+		supportingText = {
+			if (infoTextToString != null) {
+				Text(
+					text = stringResource(id = infoTextToString),
+					color = MaterialTheme.subletrPalette.warningColor,
+				)
+			}
+		},
+	)
+}
+
+@Composable
+fun PasswordInputBox(
+	modifier: Modifier = Modifier,
+	strValue: String,
+	viewModelStream: BehaviorSubject<String>,
+	infoTextToString: Int?,
+	txtID: Int,
+
+	) {
+	RoundedPasswordTextField(
+		modifier = modifier
+			.fillMaxWidth(ELEMENT_WIDTH),
+		label = {
+			Text(
+				text = stringResource(id = txtID),
+				color = MaterialTheme.subletrPalette.secondaryTextColor,
+			)
+		},
+		value = strValue,
+		onValueChange = {
+			viewModelStream.onNext(it)
+		},
+		supportingText = {
+			if (infoTextToString != null) {
+				Text(
+					text = stringResource(id = infoTextToString),
+					color = MaterialTheme.subletrPalette.warningColor,
+				)
+			}
+		},
+	)
+}
+
+@Composable
+fun GenderSelector(
+	modifier: Modifier = Modifier,
+	uiState: CreateAccountPageUiState.Loaded,
+	viewModel: CreateAccountPageViewModel,
+) {
+	RoundedExposedDropdown(
+		modifier = modifier
+			.fillMaxWidth(ELEMENT_WIDTH),
+		dropdownItems = Gender.values(),
+		labelId = R.string.gender,
+		selectedDropdownItem = uiState.gender,
+		dropdownItemToString = { stringResource(id = it.stringId)},
+		setSelectedDropdownItem = {
+			viewModel.genderStream.onNext(it)
+		},
+	)
+}
 
 @Preview(showBackground = true)
 @Composable
